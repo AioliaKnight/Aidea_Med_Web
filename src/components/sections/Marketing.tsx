@@ -42,22 +42,22 @@ const cardVariants = {
 // 服務內容資料
 const services = [
   {
-    title: '醫療傳播的頂尖轉譯者',
-    subtitle: 'Medical Translator Communication',
-    description: '專業醫療知識與行銷傳播的完美結合，讓複雜的醫療資訊轉化為大眾易懂的語言。',
-    keywords: ['專業知識轉譯', '醫療溝通', '內容策略']
+    title: '診所品牌升級',
+    subtitle: 'Brand Enhancement',
+    description: '專業診所品牌定位與規劃,打造高端醫療服務形象',
+    keywords: ['品牌策略', '視覺升級', '服務設計']
   },
   {
-    title: '數據分析後的行動策略',
-    subtitle: 'Data Analysis Action Strategies',
-    description: '透過深度數據分析，制定精準的行銷策略，為您的診所帶來實質的成長。',
-    keywords: ['數據驅動', '策略規劃', '成效追蹤']
+    title: '牙醫數位行銷',
+    subtitle: 'Digital Marketing',
+    description: '整合數位行銷策略,提升診所能見度與諮詢轉換',
+    keywords: ['精準投放', '社群經營', '口碑行銷']
   },
   {
-    title: '品牌永續的長效價值',
-    subtitle: 'Brand Sustainability Value',
-    description: '建立持久的品牌價值，創造長期競爭優勢，實現永續經營的目標。',
-    keywords: ['品牌建立', '價值創造', '永續發展']
+    title: '診所業績成長',
+    subtitle: 'Growth Strategy',
+    description: '制定完整成長策略,優化營運流程提升診所績效',
+    keywords: ['績效優化', '流程改善', '顧客經營']
   }
 ]
 
@@ -70,8 +70,8 @@ const serviceItems = [
         <path d="M15 11l-3 3-3-3" />
       </svg>
     ),
-    title: '數位廣告投放',
-    description: '精準投放、效益最大化'
+    title: '品牌規劃',
+    description: '專業診所定位'
   },
   {
     icon: (
@@ -79,8 +79,8 @@ const serviceItems = [
         <path d="M12 5l7 7-7 7M5 12h14" />
       </svg>
     ),
-    title: '廣告企劃製作',
-    description: '創意策略、品牌傳播'
+    title: '合規行銷',
+    description: '精準廣告投放'
   },
   {
     icon: (
@@ -89,8 +89,8 @@ const serviceItems = [
         <path d="M12 7v14" />
       </svg>
     ),
-    title: '品牌識別重塑',
-    description: '視覺設計、品牌定位'
+    title: '內容策展',
+    description: '專業知識傳播'
   },
   {
     icon: (
@@ -98,8 +98,8 @@ const serviceItems = [
         <path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
       </svg>
     ),
-    title: '社群內容經營',
-    description: '互動經營、口碑建立'
+    title: '口碑經營',
+    description: '病患推薦轉介'
   },
   {
     icon: (
@@ -107,8 +107,8 @@ const serviceItems = [
         <path d="M17 8a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
     ),
-    title: '數位真人客服',
-    description: '即時回應、專業諮詢'
+    title: '數位升級',
+    description: '全通路整合'
   },
   {
     icon: (
@@ -116,8 +116,8 @@ const serviceItems = [
         <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
     ),
-    title: '網站SEO行銷',
-    description: '搜尋優化、流量提升'
+    title: '績效成長',
+    description: '營運目標達成'
   }
 ]
 
@@ -261,10 +261,12 @@ export default function Marketing() {
             className="text-center mb-20"
           >
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-brand-red mb-4">
-              ALL WE CAN DO
+              專業 • 創新
+              <br />
+              牙醫行銷
             </h2>
             <p className="text-xl md:text-2xl text-gray-600">
-              [ 服務項目 ]
+              [ 為您打造完整的牙醫診所行銷方案 ]
             </p>
           </motion.div>
 

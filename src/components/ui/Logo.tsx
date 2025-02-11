@@ -38,27 +38,42 @@ const LOGO_SIZES: Record<Exclude<LogoSize, 'custom'>, { width: number; height: n
   lg: { width: 240, height: 50 },
 }
 
-// 動畫變體
+// Logo 動畫變體
 const logoVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
+  hidden: { 
+    opacity: 0, 
+    scale: 0.8,
+    y: -10
+  },
   visible: { 
     opacity: 1, 
     scale: 1,
+    y: 0,
     transition: {
-      duration: 0.3,
-      ease: 'easeOut'
+      type: "spring",
+      stiffness: 260,
+      damping: 20
     }
   },
   hover: {
     scale: 1.02,
     transition: {
-      duration: 0.2,
-      ease: 'easeInOut'
+      type: "spring",
+      stiffness: 400,
+      damping: 25
     }
   },
   tap: {
     scale: 0.98
   }
+}
+
+// Logo 樣式
+const logoStyles = {
+  wrapper: 'relative inline-block transition-transform duration-300',
+  image: 'object-contain transition-all duration-300',
+  loading: 'absolute inset-0 bg-gray-200 rounded animate-pulse',
+  link: 'inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded'
 }
 
 function Logo({
@@ -89,7 +104,7 @@ function Logo({
       whileHover="hover"
       whileTap="tap"
       className={cn(
-        'relative',
+        logoStyles.wrapper,
         isLoading && 'animate-pulse',
         className
       )}
@@ -100,7 +115,7 @@ function Logo({
         width={dimensions.width}
         height={dimensions.height}
         className={cn(
-          'object-contain transition-opacity duration-300',
+          logoStyles.image,
           isLoading ? 'opacity-0' : 'opacity-100'
         )}
         priority={priority}
@@ -115,7 +130,7 @@ function Logo({
       {/* 載入中狀態 */}
       {isLoading && (
         <div 
-          className="absolute inset-0 bg-gray-200 rounded animate-pulse"
+          className={logoStyles.loading}
           aria-label="Loading logo"
         />
       )}
@@ -127,8 +142,10 @@ function Logo({
     return (
       <motion.a
         href={href}
-        className="inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded"
-        aria-label="Go to homepage"
+        className={logoStyles.link}
+        aria-label="回到首頁"
+        whileHover="hover"
+        whileTap="tap"
       >
         {LogoImage}
       </motion.a>

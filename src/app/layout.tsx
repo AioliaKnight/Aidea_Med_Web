@@ -4,6 +4,7 @@ import { Noto_Sans_TC, Noto_Serif_TC } from 'next/font/google'
 import { ScrollProvider } from '@/contexts/ScrollContext'
 import { LoadingProvider } from '@/contexts/LoadingContext'
 import Navbar from '@/components/ui/Navbar'
+import RespondIO from '@/components/ui/RespondIO'
 import './globals.css'
 
 const notoSans = Noto_Sans_TC({
@@ -39,6 +40,7 @@ export default function RootLayout({
               {children}
             </main>
             <Analytics />
+            <RespondIO />
           </ScrollProvider>
         </LoadingProvider>
       </body>

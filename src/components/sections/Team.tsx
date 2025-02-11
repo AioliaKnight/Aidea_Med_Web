@@ -10,6 +10,8 @@ interface TeamMember {
   role: string
   description: string
   image: string
+  expertise: string[]
+  certifications?: string[]
   socialLinks?: {
     linkedin?: string
     twitter?: string
@@ -20,8 +22,10 @@ const team: TeamMember[] = [
   {
     name: '張醫師',
     role: '醫療顧問',
-    description: '擁有20年臨床經驗，深入了解醫療產業需求',
+    description: '擁有15年牙醫臨床經驗,深入了解診所營運與病患需求,協助診所優化服務流程。',
     image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=張醫師',
+    expertise: ['醫療管理', '服務設計'],
+    certifications: ['醫療管理碩士'],
     socialLinks: {
       linkedin: '#',
       twitter: '#'
@@ -29,9 +33,11 @@ const team: TeamMember[] = [
   },
   {
     name: '王經理',
-    role: '行銷總監',
-    description: '數位行銷專家，擅長制定精準的行銷策略',
-    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=王經理',
+    role: '品牌策略總監',
+    description: '專注牙醫品牌策略規劃,擅長挖掘診所特色價值,建立差異化競爭優勢。',
+    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=王總監',
+    expertise: ['品牌策略', '成長駭客'],
+    certifications: ['數位行銷認證'],
     socialLinks: {
       linkedin: '#'
     }
@@ -39,8 +45,10 @@ const team: TeamMember[] = [
   {
     name: '李設計師',
     role: '創意總監',
-    description: '資深品牌設計師，為診所打造獨特視覺識別',
-    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=李設計師',
+    description: '專精醫療資訊視覺化,將專業知識轉化為易懂內容,提升診所專業形象。',
+    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=李總監',
+    expertise: ['內容策展', '視覺設計'],
+    certifications: ['醫療傳播碩士'],
     socialLinks: {
       linkedin: '#',
       twitter: '#'
@@ -48,9 +56,11 @@ const team: TeamMember[] = [
   },
   {
     name: '陳工程師',
-    role: '技術總監',
-    description: '專注於數位科技應用，提供創新技術解決方案',
-    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=陳工程師',
+    role: '數位轉型顧問',
+    description: '協助診所數位化升級,打造流暢的線上服務體驗,提升營運效率。',
+    image: 'https://placehold.co/400x400/FF0000/FFFFFF/png?text=陳總監',
+    expertise: ['流程優化', '數位工具'],
+    certifications: ['專案管理認證'],
     socialLinks: {
       linkedin: '#'
     }
@@ -101,8 +111,8 @@ export default function Team() {
             <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-brand-red to-brand-red/80 bg-clip-text text-transparent">
               專業團隊
             </h2>
-            <p className="text-xl text-gray-600">
-              擁有醫療與行銷雙領域專業的頂尖人才
+            <p className="text-xl text-gray-600 mb-12">
+              集結醫療與行銷專家,為您的診所打造最佳成長方案
             </p>
           </motion.div>
 
@@ -152,7 +162,7 @@ export default function Team() {
                 {/* 資訊區塊 */}
                 <motion.div
                   variants={itemVariants}
-                  className="space-y-2"
+                  className="space-y-4"
                 >
                   <h3 className="text-xl font-bold group-hover:text-brand-red transition-colors">
                     {member.name}
@@ -161,6 +171,32 @@ export default function Team() {
                   <p className="text-gray-600 group-hover:text-gray-700 transition-colors">
                     {member.description}
                   </p>
+                  
+                  {/* 專長標籤 */}
+                  <div className="flex flex-wrap gap-2">
+                    {member.expertise.map((item, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* 認證標籤 */}
+                  {member.certifications && (
+                    <div className="flex flex-wrap gap-2">
+                      {member.certifications.map((cert, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 bg-brand-red/10 text-brand-red rounded-full text-sm"
+                        >
+                          {cert}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               </motion.div>
             ))}

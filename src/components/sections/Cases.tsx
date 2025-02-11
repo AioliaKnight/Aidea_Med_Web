@@ -18,38 +18,41 @@ interface CaseType {
 
 const cases: CaseType[] = [
   {
-    title: '牙醫診所品牌升級',
-    category: '品牌設計',
-    description: '透過全新的品牌識別系統，提升診所專業形象',
+    title: '植牙中心品牌升級',
+    category: '品牌升級',
+    description: '協助老字號植牙中心升級品牌形象,打造專業高端的服務體驗',
     image: 'https://placehold.co/600x400/FF0000/FFFFFF/png?text=Case+1',
     stats: [
-      { label: '品牌認知度', value: '+45%' },
-      { label: '新客數成長', value: '+60%' },
+      { label: '諮詢量', value: '+180%' },
+      { label: '植牙案例', value: '+150%' },
+      { label: '客單價', value: '+45%' }
     ]
   },
   {
-    title: '醫美診所數位轉型',
+    title: '牙醫診所數位轉型',
     category: '數位行銷',
-    description: '建立完整的數位行銷策略，大幅提升預約率',
+    description: '導入完整數位行銷策略,建立強大的線上品牌影響力',
     image: 'https://placehold.co/600x400/FF0000/FFFFFF/png?text=Case+2',
     stats: [
-      { label: '網站流量', value: '+120%' },
-      { label: '轉換率', value: '+35%' },
+      { label: '網路諮詢', value: '+200%' },
+      { label: '自費療程', value: '+120%' },
+      { label: '品牌聲量', value: '+160%' }
     ]
   },
   {
-    title: '診所社群經營優化',
-    category: '社群行銷',
-    description: '透過精準的社群內容策略，提升患者互動率',
+    title: '連鎖牙醫診所拓展',
+    category: '業績成長',
+    description: '協助單店牙醫診所發展連鎖體系,實現品牌快速擴張',
     image: 'https://placehold.co/600x400/FF0000/FFFFFF/png?text=Case+3',
     stats: [
-      { label: '社群互動', value: '+80%' },
-      { label: '自然觸及', value: '+150%' },
+      { label: '分店數', value: '+5間' },
+      { label: '營業額', value: '+300%' },
+      { label: '醫師陣容', value: '+8位' }
     ]
   }
 ]
 
-const categories = ['全部', '品牌設計', '數位行銷', '社群行銷']
+const categories = ['全部', '品牌升級', '數位行銷', '業績成長']
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -99,10 +102,10 @@ export default function Cases() {
             className="text-center mb-16 max-w-3xl mx-auto"
           >
             <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-brand-red to-brand-red/80 bg-clip-text text-transparent">
-              成功案例
+              牙醫診所成功案例
             </h2>
             <p className="text-xl text-gray-600">
-              我們協助診所突破困境，實現業務成長
+              實證案例分享，展現專業牙醫行銷的實力
             </p>
           </motion.div>
 
