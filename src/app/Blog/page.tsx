@@ -1,50 +1,45 @@
 import { Metadata } from 'next'
-import { getPaginatedPosts, getAllCategories } from '@/lib/sanity'
-import Blog from '@/components/sections/Blog'
+import BlogPage from '@/components/pages/BlogPage'
+import { client } from '@/lib/sanity'
+import { groq } from 'next-sanity'
 
-interface BlogPageProps {
-  searchParams: {
-    page?: string
-    category?: string
-    search?: string
-    sort?: 'latest' | 'popular'
+export const revalidate = 3600 // 每小時重新驗證一次
+
+export async function generateMetadata(): Promise<Metadata> {
+  const query = groq`*[_type == "category"] {
+    title,
+    description
+  }`
+  const categories = await client.fetch(query)
+
+  const categoryTitles = categories.map((cat: { title: string }) => cat.title).join('、')
+
+  return {
+    title: '部落格 | Aidea:Med',
+    description: `探索醫療行銷的最新趨勢、案例分析和專業見解。分類包含：${categoryTitles}`,
+    openGraph: {
+      title: '部落格 | Aidea:Med',
+      description: `探索醫療行銷的最新趨勢、案例分析和專業見解。分類包含：${categoryTitles}`,
+      type: 'website',
+      url: 'https://aideamed.com/blog',
+      images: [
+        {
+          url: 'https://aideamed.com/images/blog-og.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Aidea:Med 部落格',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: '部落格 | Aidea:Med',
+      description: `探索醫療行銷的最新趨勢、案例分析和專業見解。分類包含：${categoryTitles}`,
+      images: ['https://aideamed.com/images/blog-og.jpg'],
+    },
   }
 }
 
-export const metadata: Metadata = {
-  title: '部落格 | 專業知識分享',
-  description: '深入探討牙醫行銷趨勢與實務經驗',
-}
-
-export const revalidate = 3600 // 每小時重新生成一次頁面
-
-export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const page = searchParams.page ? parseInt(searchParams.page) : 1
-  const category = searchParams.category || ''
-  const search = searchParams.search || ''
-  const sort = (searchParams.sort as 'latest' | 'popular') || 'latest'
-
-  const [{ posts, totalPages, currentPage }, categories] = await Promise.all([
-    getPaginatedPosts({
-      page,
-      category,
-      search,
-      sortBy: sort,
-    }),
-    getAllCategories(),
-  ])
-
-  return (
-    <main>
-      <Blog
-        posts={posts}
-        categories={categories}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        searchQuery={search}
-        selectedCategory={category}
-        sortBy={sort}
-      />
-    </main>
-  )
+export default async function Page() {
+  return <BlogPage />
 } 

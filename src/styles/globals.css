@@ -1,0 +1,280 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 主要背景色 */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    /* 卡片元素 */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+ 
+    /* 彈出元素 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+ 
+    /* 主要品牌色 - 紅色 */
+    --primary: 0 85% 45%;
+    --primary-foreground: 0 0% 100%;
+ 
+    /* 次要色 - 淺灰色 */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+ 
+    /* 中性色 */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+ 
+    /* 強調色 - 深紅色 */
+    --accent: 0 90% 35%;
+    --accent-foreground: 0 0% 100%;
+ 
+    /* 警示色 */
+    --destructive: 0 85% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* 邊框與輸入框 */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 85% 45%;
+ 
+    /* 圓角 - 降低圓角 */
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 100%;
+ 
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+ 
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
+ 
+    --primary: 0 85% 45%;
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+ 
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+ 
+    --accent: 0 90% 35%;
+    --accent-foreground: 0 0% 100%;
+ 
+    --destructive: 0 85% 45%;
+    --destructive-foreground: 0 0% 100%;
+ 
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 85% 45%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* 自定義滾動條 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+/* 平滑滾動 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 載入動畫 */
+.loading {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm;
+}
+
+.loading::after {
+  content: "";
+  @apply h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-lg;
+}
+
+/* 頁面轉場動畫 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
+  transition: opacity 400ms ease-in, transform 400ms ease-in;
+}
+
+/* 漸層背景 - 移除透明度 */
+.gradient-primary {
+  @apply bg-gradient-to-br from-primary to-accent;
+}
+
+.gradient-secondary {
+  @apply bg-gradient-to-br from-secondary to-secondary;
+}
+
+.gradient-radial {
+  @apply bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))];
+}
+
+/* 陰影效果 - 降低陰影 */
+.shadow-soft {
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1);
+}
+
+.shadow-hover {
+  @apply transition-transform duration-300;
+}
+
+.shadow-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* 文字漸層 */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-accent;
+}
+
+/* 互動效果 */
+.hover-lift {
+  @apply transition-all duration-300 ease-out;
+  transform: translateY(0);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(220, 38, 38, 0.15);
+}
+
+.hover-scale {
+  @apply transition-all duration-300 ease-out;
+  transform: scale(1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* 容器樣式 */
+.container-custom {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8 relative z-10;
+}
+
+/* 按鈕基礎樣式 - 更平面化 */
+.btn-base {
+  @apply inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-semibold transition-transform duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95;
+}
+
+.btn-primary {
+  @apply btn-base bg-primary text-primary-foreground hover:bg-accent focus:ring-primary;
+}
+
+.btn-secondary {
+  @apply btn-base bg-white text-primary hover:bg-gray-50 focus:ring-primary;
+}
+
+.btn-outline {
+  @apply btn-base border-2 border-white text-white hover:bg-white hover:text-primary focus:ring-white;
+}
+
+/* 卡片樣式 - 更平面化 */
+.card {
+  @apply bg-white rounded-md border border-border transition-transform duration-300 ease-out overflow-hidden;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* 動畫效果 - 簡化 */
+.animate-float {
+  animation: float 4s ease-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* 滾動顯示動畫 - 簡化 */
+.fade-up {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 背景裝飾 */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f87171' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* 文字裝飾 */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(220, 38, 38, 0.15);
+}
+
+/* 響應式設計 */
+@media (max-width: 640px) {
+  .container-custom {
+    @apply px-4;
+  }
+  
+  .btn-base {
+    @apply px-4 py-2 text-sm;
+  }
+} 
