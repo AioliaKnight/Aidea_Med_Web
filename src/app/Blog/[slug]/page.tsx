@@ -5,10 +5,12 @@ import { notFound } from 'next/navigation'
 import BlogPost from '@/components/pages/BlogPost'
 import { urlForImage } from '@/lib/sanity'
 
-interface Props {
-  params: {
-    slug: string
-  }
+interface PageParams {
+  slug: string
+}
+
+interface PageProps {
+  params: Promise<PageParams>
 }
 
 export const revalidate = 3600 // 每小時重新驗證一次
@@ -42,8 +44,11 @@ async function getPost(slug: string) {
   return post
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPost(params.slug)
+export async function generateMetadata(
+  { params }: PageProps
+): Promise<Metadata> {
+  const resolvedParams = await params
+  const post = await getPost(resolvedParams.slug)
 
   if (!post) {
     return {
@@ -86,8 +91,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params }: Props) {
-  const post = await getPost(params.slug)
+export default async function Page({ params }: PageProps) {
+  const resolvedParams = await params
+  const post = await getPost(resolvedParams.slug)
 
   if (!post) {
     notFound()

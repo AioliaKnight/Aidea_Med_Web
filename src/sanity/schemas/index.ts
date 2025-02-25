@@ -1,3 +1,3 @@
-import { post, category } from '@/lib/schema'
+import { post, category } from './schema'
 
 export const schemaTypes = [post, category] 

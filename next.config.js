@@ -7,6 +7,8 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  distDir: 'build',
   images: {
     formats: ['image/avif', 'image/webp'],
     dangerouslyAllowSVG: true,

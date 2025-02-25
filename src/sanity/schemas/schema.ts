@@ -1,4 +1,4 @@
-import { defineType, defineField } from 'sanity';
+import { defineType, defineField, defineArrayMember } from 'sanity';
 
 export const post = defineType({
   name: 'post',
@@ -25,7 +25,6 @@ export const post = defineType({
       name: 'excerpt',
       title: 'Excerpt',
       type: 'text',
-      rows: 4,
     }),
     defineField({
       name: 'mainImage',
@@ -39,7 +38,10 @@ export const post = defineType({
       name: 'categories',
       title: 'Categories',
       type: 'array',
-      of: [{ type: 'reference', to: { type: 'category' } }],
+      of: [defineArrayMember({
+        type: 'reference',
+        to: [{ type: 'category' }]
+      })],
     }),
     defineField({
       name: 'publishedAt',
@@ -51,11 +53,11 @@ export const post = defineType({
       title: 'Body',
       type: 'array',
       of: [
-        { type: 'block' },
-        {
+        defineArrayMember({ type: 'block' }),
+        defineArrayMember({
           type: 'image',
-          options: { hotspot: true },
-        },
+          options: { hotspot: true }
+        })
       ],
     }),
   ],
