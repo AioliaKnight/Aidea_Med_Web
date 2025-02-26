@@ -39,16 +39,10 @@ const builder = imageUrlBuilder(client)
 /**
  * 將 Sanity 圖片引用轉換為可用的 URL 字串
  */
-export function urlForImage(source: SanityImageSource) {
-  // 如果來源無效則返回空字串
+export function urlForImage(source: SanityImageSource | null | undefined) {
+  // 如果來源無效則返回空字串或默認圖片
   if (!source) {
-    return {
-      width: () => ({
-        height: () => ({
-          url: () => ''
-        })
-      })
-    }
+    return builder.image('image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg')
   }
   
   return builder.image(source)

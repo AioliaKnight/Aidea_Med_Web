@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Sanity Studio 連接頁面
  */
