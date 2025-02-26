@@ -6,6 +6,9 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-02-25'
 
+/**
+ * 標準 Sanity 客戶端，適用於獲取已發布的內容
+ */
 export const client = createClient({
   projectId,
   dataset,
@@ -13,8 +16,40 @@ export const client = createClient({
   useCdn: false,
 })
 
+/**
+ * 用於預覽草稿內容的客戶端
+ */
+export const previewClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
+  perspective: 'previewDrafts',
+})
+
+/**
+ * 根據是否在預覽模式選擇適當的客戶端
+ */
+export const getClient = (preview = false) => (preview ? previewClient : client)
+
+// 圖片 URL 建構器
 const builder = imageUrlBuilder(client)
 
+/**
+ * 將 Sanity 圖片引用轉換為可用的 URL 字串
+ */
 export function urlForImage(source: SanityImageSource) {
+  // 如果來源無效則返回空字串
+  if (!source) {
+    return {
+      width: () => ({
+        height: () => ({
+          url: () => ''
+        })
+      })
+    }
+  }
+  
   return builder.image(source)
-} 
+}

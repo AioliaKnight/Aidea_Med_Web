@@ -11,7 +11,6 @@ import {deskTool} from 'sanity/desk'
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
 import {apiVersion, dataset, projectId} from './src/sanity/env'
 import {schemaTypes} from './src/sanity/schemas'
-import {structure} from './src/sanity/structure'
 
 export default defineConfig({
   basePath: '/studio',
@@ -22,7 +21,7 @@ export default defineConfig({
     types: schemaTypes,
   },
   plugins: [
-    deskTool({structure}),
+    deskTool(),
     // Vision is for querying with GROQ from inside the Studio
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),

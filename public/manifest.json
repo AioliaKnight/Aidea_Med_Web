@@ -1,12 +1,12 @@
 {
-  "name": "Aidea:Med - 醫療行銷顧問公司",
+  "name": "Aidea:Med",
   "short_name": "Aidea:Med",
-  "description": "專注於醫療診所和牙醫診所的整合行銷顧問公司，提供創新的 AI 驅動行銷解決方案。",
+  "description": "醫療行銷顧問公司品牌網站",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "orientation": "portrait",
+  "theme_color": "#0066CC",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",

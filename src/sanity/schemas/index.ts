@@ -1,3 +1,2 @@
-import { post, category } from './schema'
-
-export const schemaTypes = [post, category] 
+import { schemaTypes } from './schema'
+export { schemaTypes } 
