@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
-import { client } from '@/lib/sanity'
+import { client, handleSanityError } from '@/lib/sanity'
 import { groq } from 'next-sanity'
 import { urlForImage } from '@/lib/sanity'
 import { toast } from 'react-hot-toast'
@@ -64,15 +64,16 @@ export default function BlogPage() {
         const result = await client.fetch(query)
         setCategories(result)
       } catch (err) {
+        const errorMessage = handleSanityError(err);
         console.error('Error fetching categories:', err)
-        setError('無法載入文章分類')
+        setError('無法載入文章分類：' + errorMessage)
         toast.error('無法載入文章分類')
       }
     }
 
     const fetchPosts = async () => {
       try {
-        const query = groq`*[_type == "blog" ${
+        const query = groq`*[_type == "post" ${
           searchQuery
             ? `&& (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`
             : ''
@@ -94,8 +95,9 @@ export default function BlogPage() {
         setPosts(prev => (page === 1 ? result : [...prev, ...result]))
         setLoading(false)
       } catch (err) {
+        const errorMessage = handleSanityError(err);
         console.error('Error fetching posts:', err)
-        setError('無法載入文章列表')
+        setError('無法載入文章列表：' + errorMessage)
         toast.error('無法載入文章列表')
         setLoading(false)
       }
@@ -109,6 +111,7 @@ export default function BlogPage() {
     setSearchQuery(value)
     setPage(1)
     setHasMore(true)
+    setPosts([]) // 清空當前文章，避免舊的搜索結果混合
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
       params.set('q', value)
@@ -139,19 +142,30 @@ export default function BlogPage() {
         post.categories.some(cat => cat.title === selectedCategory)
       )
 
-  const featuredPost = posts[0]
+  const featuredPost = filteredPosts[0]
 
   if (error) {
     return (
       <div className="min-h-screen py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">{error}</h1>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-full"
-          >
-            重新整理
-          </button>
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto bg-red-50 p-6 rounded-xl border border-red-100">
+            <h1 className="text-2xl font-bold text-red-700 mb-4">載入錯誤</h1>
+            <p className="text-red-600 mb-6">{error}</p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-primary text-white px-6 py-2 rounded-full hover:bg-primary/90 transition-colors"
+              >
+                重新整理
+              </button>
+              <Link 
+                href="/studio"
+                className="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors text-center"
+              >
+                前往 Sanity Studio 檢查
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -225,19 +239,19 @@ export default function BlogPage() {
                     )}
                   </div>
                   <div className="p-8 lg:p-12">
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                      {featuredPost.categories.map((category, index) => (
-                        <span key={index}>
-                          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">
+                    <div className="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-2">
+                      {featuredPost.categories && featuredPost.categories.length > 0 ? (
+                        featuredPost.categories.map((category, index) => (
+                          <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full">
                             {category.title}
                           </span>
-                          {index < featuredPost.categories.length - 1 && (
-                            <span className="mx-2">•</span>
-                          )}
+                        ))
+                      ) : (
+                        <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full">
+                          未分類
                         </span>
-                      ))}
-                      <span className="mx-2">•</span>
-                      <span>
+                      )}
+                      <span className="text-gray-500">
                         {format(new Date(featuredPost.publishedAt), 'PPP', {
                           locale: zhTW,
                         })}
@@ -311,45 +325,89 @@ export default function BlogPage() {
                   </div>
                 ) : (
                   <>
-                    {filteredPosts.slice(1).map((post) => (
-                      <Link key={post._id} href={`/blog/${post.slug}`}>
-                        <div className="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-shadow h-full">
-                          <div className="aspect-w-16 aspect-h-9 relative">
-                            {post.mainImage ? (
-                              <Image
-                                src={urlForImage(post.mainImage).url()}
-                                alt={post.title}
-                                fill
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gray-200" />
-                            )}
-                          </div>
-                          <div className="p-6">
-                            <div className="flex items-center text-sm text-gray-500 mb-4">
-                              {post.categories.map((category, index) => (
-                                <span key={index}>
-                                  <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">
-                                    {category.title}
-                                  </span>
-                                  {index < post.categories.length - 1 && (
-                                    <span className="mx-2">•</span>
+                    {/* 如果有特色文章，則展示除了第一篇之外的所有文章 */}
+                    {featuredPost 
+                      ? filteredPosts.slice(1).map((post) => (
+                          <Link key={post._id} href={`/blog/${post.slug}`}>
+                            <div className="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-shadow h-full">
+                              <div className="aspect-w-16 aspect-h-9 relative">
+                                {post.mainImage ? (
+                                  <Image
+                                    src={urlForImage(post.mainImage).url()}
+                                    alt={post.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-200" />
+                                )}
+                              </div>
+                              <div className="p-6">
+                                <div className="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-2">
+                                  {post.categories && post.categories.length > 0 ? (
+                                    post.categories.map((category, index) => (
+                                      <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full">
+                                        {category.title}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                      未分類
+                                    </span>
                                   )}
+                                </div>
+                                <h3 className="text-xl font-bold mb-4 group-hover:text-primary transition-colors">
+                                  {post.title}
+                                </h3>
+                                <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                                <span className="text-primary font-semibold group-hover:underline">
+                                  閱讀全文 →
                                 </span>
-                              ))}
+                              </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 group-hover:text-primary transition-colors">
-                              {post.title}
-                            </h3>
-                            <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                            <span className="text-primary font-semibold group-hover:underline">
-                              閱讀全文 →
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
+                          </Link>
+                        ))
+                      : filteredPosts.map((post) => (
+                          <Link key={post._id} href={`/blog/${post.slug}`}>
+                            <div className="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-shadow h-full">
+                              <div className="aspect-w-16 aspect-h-9 relative">
+                                {post.mainImage ? (
+                                  <Image
+                                    src={urlForImage(post.mainImage).url()}
+                                    alt={post.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-200" />
+                                )}
+                              </div>
+                              <div className="p-6">
+                                <div className="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-2">
+                                  {post.categories && post.categories.length > 0 ? (
+                                    post.categories.map((category, index) => (
+                                      <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full">
+                                        {category.title}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                      未分類
+                                    </span>
+                                  )}
+                                </div>
+                                <h3 className="text-xl font-bold mb-4 group-hover:text-primary transition-colors">
+                                  {post.title}
+                                </h3>
+                                <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                                <span className="text-primary font-semibold group-hover:underline">
+                                  閱讀全文 →
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))
+                    }
                     {loading && page > 1 && (
                       <div className="col-span-full flex justify-center py-8">
                         <Spinner />

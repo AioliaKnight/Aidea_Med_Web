@@ -7,6 +7,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { projectId, dataset, apiVersion } from '@/sanity/env'
 
 // 動態導入 SanityFetch 組件，避免服務器端渲染問題
 const SanityFetch = dynamic(() => import('../components/SanityFetch'), {
@@ -20,10 +21,8 @@ const SanityFetch = dynamic(() => import('../components/SanityFetch'), {
 })
 
 export default function StudioPage() {
-  // 環境變數
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '0xftlo5k'
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
-  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-02-25'
+  // Sanity 環境設定已從 env.ts 導入
+  const studioUrl = projectId ? `https://${projectId}.sanity.studio/` : 'https://www.sanity.io/manage'
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
@@ -59,7 +58,7 @@ export default function StudioPage() {
           <div className="bg-blue-50 rounded-lg p-4">
             <h2 className="text-lg font-semibold text-blue-800 mb-2">專案資訊</h2>
             <ul className="space-y-2 text-gray-700">
-              <li><span className="font-medium">專案 ID:</span> {projectId}</li>
+              <li><span className="font-medium">專案 ID:</span> {projectId || '未設定'}</li>
               <li><span className="font-medium">資料集:</span> {dataset}</li>
               <li><span className="font-medium">API 版本:</span> {apiVersion}</li>
             </ul>
@@ -73,6 +72,20 @@ export default function StudioPage() {
             </ul>
           </div>
           
+          <div className="p-4 bg-blue-50 rounded-lg">
+            <h2 className="text-lg font-semibold text-blue-800 mb-2">CORS 設定說明</h2>
+            <p className="text-gray-700 mb-3">
+              若遇到跨域請求錯誤，請確保在 Sanity 管理介面中新增以下允許的來源：
+            </p>
+            <ul className="list-disc ml-5 text-sm text-gray-700">
+              <li>開發環境: <code className="bg-white px-1 rounded">http://localhost:3000</code></li>
+              <li>生產環境: <code className="bg-white px-1 rounded">https://aideamed.com</code> (或您的實際網域)</li>
+            </ul>
+            <p className="text-sm text-gray-700 mt-3">
+              路徑: Sanity 管理頁面 → 專案設定 → API → CORS Origins
+            </p>
+          </div>
+          
           <div className="mt-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">Sanity 連接測試</h2>
             <SanityFetch />
@@ -81,7 +94,7 @@ export default function StudioPage() {
 
         <div className="flex flex-col space-y-4">
           <a 
-            href={`https://${projectId}.sanity.studio/`}
+            href={studioUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-center transition-colors"

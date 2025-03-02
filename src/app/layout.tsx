@@ -28,17 +28,6 @@ export default function RootLayout({
   return (
     <html lang="zh-TW" suppressHydrationWarning>
       <head>
-        {/* 字體預加載 */}
-        <link 
-          rel="preconnect" 
-          href="https://fonts.googleapis.com" 
-        />
-        <link 
-          rel="preconnect" 
-          href="https://fonts.gstatic.com" 
-          crossOrigin="anonymous" 
-        />
-        
         {/* PWA 相關設定 */}
         <link
           rel="manifest"
@@ -59,9 +48,26 @@ export default function RootLayout({
         
         {/* PWA 圖示 */}
         <link
+          rel="icon"
+          href="/favicon.ico"
+          sizes="any"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/icons/icon-192x192.png"
+          href="/apple-touch-icon.png"
         />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">
@@ -69,8 +75,7 @@ export default function RootLayout({
           <ClientProviders>
             {/* 導航欄在 Suspense 外以避免不必要的重新渲染 */}
             <Navbar />
-            
-            <main className="min-h-screen pt-20">
+            <main className="min-h-screen pt-0">
               <Suspense
                 fallback={
                   <Loading

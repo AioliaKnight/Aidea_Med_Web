@@ -153,7 +153,7 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
                 imageLoading ? 'opacity-0' : 'opacity-100'
               }`}
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onLoadingComplete={() => setImageLoading(false)}
+              onLoad={() => setImageLoading(false)}
               onError={() => setImageError(true)}
               priority
             />

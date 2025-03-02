@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { client } from '@/lib/sanity'
+import { client, handleSanityError } from '@/lib/sanity'
 import Image from 'next/image'
 import { urlForImage } from '@/lib/sanity'
+import Link from 'next/link'
 
 type Post = {
   _id: string
@@ -41,9 +42,9 @@ export default function SanityFetch() {
         setPosts(result)
         setLoading(false)
       } catch (err) {
-        setError('無法載入文章。請確認 Sanity 配置是否正確。')
+        const errorMessage = handleSanityError(err);
+        setError(errorMessage)
         setLoading(false)
-        console.error('Sanity 查詢錯誤:', err)
       }
     }
 
@@ -84,6 +85,16 @@ export default function SanityFetch() {
             <li>API Token 權限是否充足</li>
             <li>CORS 設定是否允許此網站</li>
           </ul>
+          <p className="mt-3 text-sm text-gray-600">
+            <a 
+              href="https://www.sanity.io/manage" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              前往 Sanity 管理頁面設定 →
+            </a>
+          </p>
         </div>
       </div>
     )
@@ -93,9 +104,17 @@ export default function SanityFetch() {
     return (
       <div className="p-6 bg-yellow-50 rounded-lg">
         <h3 className="text-lg font-semibold text-yellow-800 mb-2">尚無內容</h3>
-        <p className="text-yellow-700">
+        <p className="text-yellow-700 mb-3">
           您的 Sanity 資料庫中尚未有任何文章。請前往 Sanity Studio 新增內容。
         </p>
+        <a 
+          href="/studio"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline text-sm"
+        >
+          前往 Sanity Studio 新增文章 →
+        </a>
       </div>
     )
   }
@@ -130,6 +149,12 @@ export default function SanityFetch() {
             </div>
           </div>
         ))}
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <Link href="/blog" className="text-blue-600 hover:underline text-sm">
+          查看所有文章 →
+        </Link>
       </div>
     </div>
   )

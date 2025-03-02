@@ -1,0 +1,40 @@
+{
+  "name": "image-tools",
+  "version": "1.0.0",
+  "description": "一個綜合圖片處理工具，包含WebP轉換、響應式圖片、favicon和PWA圖標生成功能",
+  "main": "image-tools.js",
+  "bin": {
+    "image-tools": "./image-tools.js",
+    "favicon-gen": "./favicon.js",
+    "pwa-icons-gen": "./pwa-icons.js"
+  },
+  "scripts": {
+    "start": "node image-tools.js",
+    "convert": "node image-tools.js convert",
+    "webp": "node image-tools.js webp",
+    "favicon": "node image-tools.js favicon",
+    "favicon-direct": "node favicon.js",
+    "icons": "node image-tools.js icons",
+    "icons-direct": "node pwa-icons.js",
+    "batch": "node image-tools.js batch"
+  },
+  "keywords": [
+    "image",
+    "webp",
+    "responsive",
+    "favicon",
+    "pwa",
+    "optimization",
+    "compression",
+    "sharp",
+    "icons"
+  ],
+  "author": "AideaMed",
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.32.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
