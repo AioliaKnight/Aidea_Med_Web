@@ -139,10 +139,11 @@ export default function BlogPage() {
   const filteredPosts = selectedCategory === 'all'
     ? posts
     : posts.filter(post =>
+        post.categories && post.categories.length > 0 && 
         post.categories.some(cat => cat.title === selectedCategory)
       )
 
-  const featuredPost = filteredPosts[0]
+  const featuredPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
 
   if (error) {
     return (

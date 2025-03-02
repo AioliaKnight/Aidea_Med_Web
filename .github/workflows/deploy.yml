@@ -1,42 +1,53 @@
-name: Deploy to Vercel
+name: 部署到 GitHub Pages
+
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    branches: [ main ]
+  # 允許手動觸發工作流程
+  workflow_dispatch:
 
 jobs:
-  Deploy-Production:
+  build-and-deploy:
+    name: 建置與部署
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: 檢出程式碼
+        uses: actions/checkout@v3
+        
+      - name: 設定 Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: 18
           cache: 'npm'
           
-      - name: Install dependencies
+      - name: 安裝依賴
         run: npm ci
         
-      - name: Run tests
-        run: npm test
+      - name: 顯示 Next.js 資訊
+        run: npx next info
         
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: 建置專案
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+          NEXT_PUBLIC_BASE_URL: https://您的用戶名.github.io/aidea-med-web
+          
+      # 確保將 .nojekyll 檔案新增到輸出目錄
+      - name: 新增 .nojekyll 檔案
+        run: touch out/.nojekyll
         
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        
-      - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 
+      - name: 部署到 GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: out
+          branch: gh-pages
+          
+      - name: 檢查部署狀態
+        run: |
+          echo "部署已完成，等待頁面可訪問..."
+          sleep 60
+          echo "請前往 GitHub 儲存庫的 'Settings' -> 'Pages' 查看部署狀態" 
