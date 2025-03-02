@@ -34,7 +34,7 @@ jobs:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
           NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
-          NEXT_PUBLIC_BASE_URL: https://您的用戶名.github.io/aidea-med-web
+          NEXT_PUBLIC_BASE_URL: https://aioliaknight.github.io/aidea-med-web
           
       # 確保將 .nojekyll 檔案新增到輸出目錄
       - name: 新增 .nojekyll 檔案

@@ -55,7 +55,7 @@ const nextConfig = {
   // 設定環境變數
   env: {
     NEXT_PUBLIC_BASE_URL: process.env.NODE_ENV === 'production' 
-      ? 'https://您的用戶名.github.io/aidea-med-web'
+      ? 'https://aioliaknight.github.io/aidea-med-web'
       : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
   },
   // 自訂路徑重寫 (redirects)
