@@ -75,6 +75,33 @@ function buildOptions(args) {
   return options;
 }
 
+function createCommandOptions(args) {
+  const options = {
+    formats: config.formats,
+    exclude: config.exclude,
+    smartMode: args.options['no-smart'] ? false : config.smartMode,
+    force: args.options.force || config.force,
+    recursive: args.options.recursive || config.recursive
+  };
+
+  // 設置品質
+  if (args.options.quality) {
+    options.quality = parseInt(args.options.quality);
+  }
+
+  // 設置配置
+  if (args.options.profile && profiles[args.options.profile]) {
+    options.profile = args.options.profile;
+  }
+
+  // 設置尺寸
+  if (args.options.sizes) {
+    options.sizes = args.options.sizes.split(',');
+  }
+
+  return options;
+}
+
 /**
  * 執行 WebP 命令
  * @param {Object} params - 參數
@@ -306,7 +333,7 @@ async function handleConvertCommand(args) {
     }
 
     const outputDir = args.targetDir || path.dirname(args.sourceFile);
-    const options = buildOptions(args);
+    const options = createCommandOptions(args);
 
     // 執行轉換
     console.log(`處理單個文件 ${args.sourceFile}...`);
@@ -327,7 +354,7 @@ async function handleConvertCommand(args) {
     }
 
     const outputDir = args.targetDir || args.options.out || sourceDir;
-    const options = buildOptions(args);
+    const options = createCommandOptions(args);
 
     // 執行目錄處理
     console.log(`處理目錄 ${sourceDir}...`);
@@ -368,16 +395,15 @@ async function handleFaviconCommand(args) {
     return;
   }
 
-  // 確定輸出目錄
-  const outputDir = args.targetDir || args.options.out || path.join(path.dirname(args.sourceFile), 'public');
+  const targetDir = args.targetDir || './public';
+  const options = createCommandOptions(args);
 
   // 執行favicon生成
   console.log(`從 ${args.sourceFile} 生成favicon系列圖標...`);
-  const options = buildOptions(args);
-  const result = await generateFavicons(args.sourceFile, outputDir, options);
+  const result = await generateFavicons(args.sourceFile, targetDir, options);
 
   if (result.success) {
-    console.log(`處理完成! 已生成 ${result.count} 個圖標文件到 ${outputDir}`);
+    console.log(`處理完成! 已生成 ${result.count} 個圖標文件到 ${targetDir}`);
   } else {
     console.error(`處理失敗: ${result.error}`);
   }
@@ -405,7 +431,7 @@ async function executeIconsCommand(args) {
 
   // 執行PWA圖標生成
   console.log(`從 ${args.sourceFile} 生成PWA圖標...`);
-  const options = buildOptions(args);
+  const options = createCommandOptions(args);
   const result = await generatePWAIcons(args.sourceFile, outputDir, options);
 
   if (result.success) {
@@ -420,30 +446,27 @@ async function executeIconsCommand(args) {
  * @param {Object} args 命令參數
  */
 async function executeBatchCommand(args) {
-  // 確定來源目錄
-  const sourceDir = args.sourceDir || args.options.dir || config.sourceDir;
+  const sourceDir = args.sourceDir;
+  const targetDir = args.targetDir || args.options.out || sourceDir;
   
+  // 檢查源目錄是否存在
   if (!fs.existsSync(sourceDir)) {
     console.error(`錯誤: 找不到目錄 ${sourceDir}`);
     return;
   }
 
-  // 確定輸出目錄
-  const outputDir = args.targetDir || args.options.out || sourceDir;
-
-  // 確定是否處理子目錄
-  const recursive = args.options.recursive !== undefined ? args.options.recursive : config.recursive;
-
+  const recursive = args.options.recursive || false;
+  
   // 構建選項
-  const options = buildOptions(args);
+  const options = createCommandOptions(args);
   options.recursive = recursive;
 
   // 執行批處理
   console.log(`批量處理目錄 ${sourceDir} 中的圖片...`);
-  console.log(`輸出到: ${outputDir}`);
+  console.log(`輸出到: ${targetDir}`);
   console.log(`處理子目錄: ${recursive ? '是' : '否'}`);
 
-  const results = await processDirectory(sourceDir, outputDir, options);
+  const results = await processDirectory(sourceDir, targetDir, options);
 
   // 打印處理摘要
   console.log('\n====== 處理摘要 ======');
@@ -457,38 +480,6 @@ async function executeBatchCommand(args) {
       console.log(`${index + 1}. ${err.file}: ${err.error}`);
     });
   }
-}
-
-/**
- * 根據命令參數構建選項對象
- * @param {Object} args 命令參數
- * @returns {Object} 選項對象
- */
-function buildOptions(args) {
-  const options = {
-    formats: config.formats,
-    exclude: config.exclude,
-    smartMode: args.options['no-smart'] ? false : config.smartMode,
-    force: args.options.force || config.force,
-    recursive: args.options.recursive || config.recursive
-  };
-
-  // 設置品質
-  if (args.options.quality) {
-    options.quality = parseInt(args.options.quality);
-  }
-
-  // 設置配置
-  if (args.options.profile && profiles[args.options.profile]) {
-    options.profile = args.options.profile;
-  }
-
-  // 設置尺寸
-  if (args.options.sizes) {
-    options.sizes = args.options.sizes.split(',');
-  }
-
-  return options;
 }
 
 /**
