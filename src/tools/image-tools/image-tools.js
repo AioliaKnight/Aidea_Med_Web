@@ -296,7 +296,7 @@ async function executeFaviconCommand({ sourceFile, targetDir, options = {} }) {
  * 執行圖片轉換命令(包含多尺寸)
  * @param {Object} args 命令參數
  */
-async function executeConvertCommand(args) {
+async function handleConvertCommand(args) {
   // 檢查是單個文件還是目錄處理
   if (args.sourceFile) {
     // 單個文件處理
@@ -355,7 +355,7 @@ async function executeConvertCommand(args) {
  * 執行favicon生成命令
  * @param {Object} args 命令參數
  */
-async function executeFaviconCommand(args) {
+async function handleFaviconCommand(args) {
   // 檢查是否指定了源文件
   if (!args.sourceFile) {
     console.error('錯誤: 未指定源文件。請提供logo圖片路徑。');
@@ -520,10 +520,10 @@ async function main() {
       await executeWebpCommand(args);
       break;
     case 'convert':
-      await executeConvertCommand(args);
+      await handleConvertCommand(args);
       break;
     case 'favicon':
-      await executeFaviconCommand(args);
+      await handleFaviconCommand(args);
       break;
     case 'icons':
       await executeIconsCommand(args);
