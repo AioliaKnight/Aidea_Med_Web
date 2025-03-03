@@ -485,7 +485,7 @@ async function executeBatchCommand(args) {
 /**
  * 列出可用的配置設定檔
  */
-function listProfiles() {
+function showAvailableProfiles() {
   console.log('\n可用的圖片處理配置:');
   Object.keys(profiles).forEach((profileName, index) => {
     console.log(`${index + 1}. ${profileName}`);
@@ -523,7 +523,7 @@ async function main() {
       await executeBatchCommand(args);
       break;
     case 'list-profiles':
-      listProfiles();
+      showAvailableProfiles();
       break;
     default:
       console.error(`未知命令: ${args.command}`);
