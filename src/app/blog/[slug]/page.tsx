@@ -10,7 +10,7 @@ interface PageParams {
 }
 
 interface PageProps {
-  params: PageParams | Promise<PageParams>
+  params: PageParams
 }
 
 export const revalidate = 3600 // 每小時重新驗證一次
@@ -62,8 +62,7 @@ export async function generateMetadata(
   { params }: PageProps
 ): Promise<Metadata> {
   try {
-    const resolvedParams = await params
-    const post = await getPost(resolvedParams.slug)
+    const post = await getPost(params.slug)
 
     if (!post) {
       return {
@@ -119,8 +118,7 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: PageProps) {
-  const resolvedParams = await params
-  const post = await getPost(resolvedParams.slug)
+  const post = await getPost(params.slug)
 
   if (!post) {
     notFound()
