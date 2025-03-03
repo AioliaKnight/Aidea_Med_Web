@@ -271,35 +271,24 @@ async function executeFaviconCommand({ sourceFile, targetDir, options = {} }) {
     
     await utils.ensureDirectoryExists(targetDir);
     
-  // 確定輸出路徑
-  const fileExt = path.extname(args.sourceFile);
-  const baseName = path.basename(args.sourceFile, fileExt);
-  const outputDir = args.targetDir || path.dirname(args.sourceFile);
-  const outputPath = path.join(outputDir, `${baseName}.webp`);
+    // 確定輸出路徑
+    const fileExt = path.extname(sourceFile);
+    const baseName = path.basename(sourceFile, fileExt);
+    const outputDir = targetDir || path.dirname(sourceFile);
 
-  // 確定品質
-  const quality = args.options.quality ? parseInt(args.options.quality) : config.quality;
+    // 執行 favicon 生成
+    console.log(`生成 Favicon 圖標，源文件: ${sourceFile}...`);
+    const result = await generateFavicons(sourceFile, outputDir, options);
 
-  // 強制重寫
-  const force = args.options.force || config.force;
-
-  // 檢查輸出文件是否已存在
-  if (utils.fileExists(outputPath) && !force) {
-    console.log(`輸出文件 ${outputPath} 已存在。使用 --force 參數來覆寫。`);
-    return;
-  }
-
-  // 確保輸出目錄存在
-  utils.ensureDirectoryExists(outputDir);
-
-  // 執行轉換
-  console.log(`轉換 ${args.sourceFile} 到 WebP 格式...`);
-  const result = await converters.convertToWebP(args.sourceFile, outputPath, quality);
-
-  if (result.success) {
-    console.log(`轉換成功! 輸出文件: ${outputPath}`);
-  } else {
-    console.error(`轉換失敗: ${result.error}`);
+    if (result.success) {
+      console.log(`Favicon 生成成功! 輸出目錄: ${outputDir}`);
+      return { success: true, outputFiles: result.outputFiles };
+    } else {
+      throw new Error(result.error || '生成 Favicon 失敗');
+    }
+  } catch (error) {
+    console.error(`生成 Favicon 時出錯: ${error.message}`);
+    return { success: false, error: error.message };
   }
 }
 
@@ -321,7 +310,7 @@ async function executeConvertCommand(args) {
 
     // 執行轉換
     console.log(`處理單個文件 ${args.sourceFile}...`);
-    const result = await converters.convertImage(args.sourceFile, outputDir, options);
+    const result = await convertImage(args.sourceFile, outputDir, options);
 
     if (result.success) {
       console.log(`處理完成! 輸出目錄: ${outputDir}`);
@@ -342,7 +331,7 @@ async function executeConvertCommand(args) {
 
     // 執行目錄處理
     console.log(`處理目錄 ${sourceDir}...`);
-    const results = await converters.processDirectory(sourceDir, outputDir, options);
+    const results = await processDirectory(sourceDir, outputDir, options);
 
     // 打印處理摘要
     console.log('\n====== 處理摘要 ======');
@@ -385,7 +374,7 @@ async function executeFaviconCommand(args) {
   // 執行favicon生成
   console.log(`從 ${args.sourceFile} 生成favicon系列圖標...`);
   const options = buildOptions(args);
-  const result = await converters.generateFavicons(args.sourceFile, outputDir, options);
+  const result = await generateFavicons(args.sourceFile, outputDir, options);
 
   if (result.success) {
     console.log(`處理完成! 已生成 ${result.count} 個圖標文件到 ${outputDir}`);
@@ -417,7 +406,7 @@ async function executeIconsCommand(args) {
   // 執行PWA圖標生成
   console.log(`從 ${args.sourceFile} 生成PWA圖標...`);
   const options = buildOptions(args);
-  const result = await converters.generatePWAIcons(args.sourceFile, outputDir, options);
+  const result = await generatePWAIcons(args.sourceFile, outputDir, options);
 
   if (result.success) {
     console.log(`處理完成! 已生成 ${result.count} 個PWA圖標文件到 ${outputDir}`);
@@ -454,7 +443,7 @@ async function executeBatchCommand(args) {
   console.log(`輸出到: ${outputDir}`);
   console.log(`處理子目錄: ${recursive ? '是' : '否'}`);
 
-  const results = await converters.processDirectory(sourceDir, outputDir, options);
+  const results = await processDirectory(sourceDir, outputDir, options);
 
   // 打印處理摘要
   console.log('\n====== 處理摘要 ======');
