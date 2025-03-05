@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { PortableText } from '@portabletext/react'
+import { PortableText, PortableTextComponentProps, PortableTextListComponent, PortableTextBlock } from '@portabletext/react'
 import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import Image from 'next/image'
@@ -220,7 +220,7 @@ const PortableImage = ({ value }: any) => {
             </svg>
           </div>
         )}
-      </div>
+        </div>
       
       {/* 圖片說明 */}
       {value.alt && (
@@ -233,7 +233,7 @@ const PortableImage = ({ value }: any) => {
       {viewerOpen && (
         <ImageViewer
           src={urlForImage(value).auto('format').url()}
-          alt={value.alt || ''}
+        alt={value.alt || ''}
           onClose={closeViewer}
         />
       )}
@@ -300,29 +300,31 @@ const components = {
     ),
   },
   block: {
-    h1: ({ children }: { children: React.ReactNode }) => (
-      <HeadingRenderer level={1}>{children}</HeadingRenderer>
+    h1: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <h1 className="text-3xl font-bold mb-4">{children}</h1>
     ),
-    h2: ({ children }: { children: React.ReactNode }) => (
-      <HeadingRenderer level={2}>{children}</HeadingRenderer>
+    h2: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <h2 className="text-2xl font-bold mb-3">{children}</h2>
     ),
-    h3: ({ children }: { children: React.ReactNode }) => (
-      <HeadingRenderer level={3}>{children}</HeadingRenderer>
+    h3: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <h3 className="text-xl font-bold mb-2">{children}</h3>
     ),
-    h4: ({ children }: { children: React.ReactNode }) => (
-      <HeadingRenderer level={4}>{children}</HeadingRenderer>
+    h4: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <h4 className="text-lg font-bold mb-2">{children}</h4>
     ),
-    normal: ({ children }: { children: React.ReactNode }) => (
-      <p className="mb-4 leading-relaxed">{children}</p>
+    normal: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <p className="mb-4">{children}</p>
     ),
-    blockquote: ({ children }: { children: React.ReactNode }) => (
-      <blockquote className="border-l-4 border-primary pl-4 italic my-6">{children}</blockquote>
+    blockquote: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <blockquote className="border-l-4 border-primary pl-4 italic my-4">
+        {children}
+      </blockquote>
     ),
   },
   marks: {
-    link: ({ children, value }: { children: React.ReactNode; value: any }) => (
+    link: ({ children, value }: { children: React.ReactNode; value?: any }) => (
       <a 
-        href={value.href} 
+        href={value?.href} 
         target="_blank" 
         rel="noopener noreferrer"
         className="text-primary hover:underline"
@@ -332,11 +334,11 @@ const components = {
     ),
   },
   list: {
-    bullet: ({ children }: { children: React.ReactNode }) => (
-      <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>
+    bullet: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <ul className="list-disc pl-6 mb-4">{children}</ul>
     ),
-    number: ({ children }: { children: React.ReactNode }) => (
-      <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>
+    number: ({ children }: PortableTextComponentProps<PortableTextBlock>) => (
+      <ol className="list-decimal pl-6 mb-4">{children}</ol>
     ),
   },
 };
@@ -681,7 +683,10 @@ export default function BlogPost({ post }: Props) {
   
   // 獲取當前 URL 和計算閱讀時間
   useEffect(() => {
-    setCurrentUrl(window.location.href);
+    // 只在客戶端設置 URL
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+    }
     
     // 計算閱讀時間
     const content = post.content || post.body || [];
@@ -749,15 +754,15 @@ export default function BlogPost({ post }: Props) {
 
   // 獲取當前頁面URL用於打印後顯示
   const currentPageUrl = typeof window !== 'undefined' ? window.location.href.split('#')[0] : '';
-  
+
   return (
     <ErrorBoundary>
-      <article className="min-h-screen py-10 md:py-20 bg-gray-50/50" data-url={currentPageUrl}>
+      <article className="min-h-screen py-10 md:py-20 bg-gray-50/50" data-url={currentUrl}>
         <PrintStyles />
         <div className="container mx-auto px-4">
           {/* 文章標題區 - 重新設計 */}
-          <header className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-8 mb-10">
-            <div className="flex flex-wrap gap-2 mb-6 justify-center">
+          <header className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-4 sm:p-8 mb-6 sm:mb-10">
+            <div className="flex flex-wrap gap-2 mb-4 sm:mb-6 justify-center">
               {post.categories && post.categories.length > 0 ? (
                 post.categories.map((category) => (
                   <span
@@ -769,14 +774,14 @@ export default function BlogPost({ post }: Props) {
                 ))
               ) : (
                 <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                  未分類
+                  診所經營
                 </span>
               )}
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-center leading-tight">{post.title}</h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 text-center leading-relaxed">{post.excerpt}</p>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6 text-center leading-tight">{post.title}</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 text-center leading-relaxed">{post.excerpt}</p>
             
-            <div className="flex items-center justify-center text-gray-500 text-sm gap-6 border-t border-gray-100 pt-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center text-gray-500 text-sm gap-3 sm:gap-6 border-t border-gray-100 pt-4 sm:pt-6">
               <time className="flex items-center">
                 <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -792,11 +797,19 @@ export default function BlogPost({ post }: Props) {
             </div>
           </header>
 
+          {/* 主題標語 */}
+          <div className="max-w-4xl mx-auto mb-6 sm:mb-10 text-center">
+            <div className="bg-primary/5 rounded-lg p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold text-primary mb-2">讓診所與醫生專注醫療服務，讓我們專注行銷</h2>
+              <p className="text-sm sm:text-base text-gray-600">專業的醫療行銷團隊，為您的診所打造最佳品牌形象</p>
+            </div>
+          </div>
+
           {/* 主要封面圖片 - 改進視覺效果 */}
           {post.mainImage && (
-            <div className="max-w-5xl mx-auto mb-10 relative group">
+            <div className="max-w-5xl mx-auto mb-6 sm:mb-10 relative group">
               <div 
-                className="rounded-xl overflow-hidden shadow-md relative cursor-zoom-in transform transition-transform hover:shadow-lg"
+                className="rounded-lg sm:rounded-xl overflow-hidden shadow-md relative cursor-zoom-in transform transition-transform hover:shadow-lg"
                 onClick={openCoverViewer}
               >
                 {/* 低清晰度背景圖 */}
@@ -847,25 +860,25 @@ export default function BlogPost({ post }: Props) {
               )}
             </div>
           )}
-          
+
           {/* 內容區域與側邊欄 - 優化排版 */}
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-8">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 sm:gap-8">
             {/* 側邊欄：目錄、閱讀設置和分享按鈕 */}
-            <aside className="md:w-72 md:sticky md:top-20 md:self-start space-y-6 order-2 md:order-1">
-              {/* 字體大小控制 */}
-              <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-                <h3 className="font-bold text-lg mb-3 flex items-center text-gray-800">
+            <aside className="md:w-72 md:sticky md:top-20 md:self-start space-y-4 sm:space-y-6 order-2 md:order-1">
+              {/* 閱讀設置 */}
+              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+                <h3 className="font-bold text-base sm:text-lg mb-3 flex items-center text-gray-800">
                   <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7V5a2 2 0 012-2h14a2 2 0 012 2v2m-18 0v14a2 2 0 002 2h14a2 2 0 002-2V7H3z"/>
                   </svg>
-                  閱讀設置
+                  閱讀體驗
                 </h3>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">字體大小</span>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1 sm:space-x-2">
                     <button 
                       onClick={() => changeFontSize('sm')}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded transition-colors ${
                         fontSize === 'sm' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                       aria-label="小字體"
@@ -874,7 +887,7 @@ export default function BlogPost({ post }: Props) {
                     </button>
                     <button 
                       onClick={() => changeFontSize('md')}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded transition-colors ${
                         fontSize === 'md' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                       aria-label="中字體"
@@ -883,7 +896,7 @@ export default function BlogPost({ post }: Props) {
                     </button>
                     <button 
                       onClick={() => changeFontSize('lg')}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded transition-colors ${
                         fontSize === 'lg' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                       aria-label="大字體"
@@ -894,24 +907,24 @@ export default function BlogPost({ post }: Props) {
                 </div>
               </div>
               
-              {/* 目錄 - 優化樣式 */}
+              {/* 目錄 */}
               {tableOfContents.length > 0 && (
-                <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-                  <h3 className="font-bold text-lg mb-3 flex items-center text-gray-800">
+                <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+                  <h3 className="font-bold text-base sm:text-lg mb-3 flex items-center text-gray-800">
                     <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
-                    目錄
+                    文章大綱
                   </h3>
-                  <nav className="space-y-1 max-h-[40vh] overflow-y-auto pr-2 styled-scrollbar">
+                  <nav className="space-y-1 max-h-[30vh] sm:max-h-[40vh] overflow-y-auto pr-2 styled-scrollbar">
                     {tableOfContents.map((item, index) => (
                       <a
                         key={index}
                         href={`#${item.id}`}
-                        className={`block py-1.5 border-l-2 pl-3 transition-all ${
+                        className={`block py-1 sm:py-1.5 border-l-2 pl-2 sm:pl-3 transition-all ${
                           activeId === item.id ? 'border-primary text-primary font-medium' : 'border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900'
                         } ${
-                          item.level === 1 ? 'font-medium' : item.level === 3 ? 'text-sm pl-4' : 'pl-4'
+                          item.level === 1 ? 'font-medium' : item.level === 3 ? 'text-sm pl-3 sm:pl-4' : 'pl-3 sm:pl-4'
                         }`}
                       >
                         {item.text}
@@ -921,15 +934,15 @@ export default function BlogPost({ post }: Props) {
                 </div>
               )}
               
-              {/* 分享按鈕 - 改進樣式 */}
-              <div className="bg-white p-4 rounded-lg shadow-sm">
-                <h3 className="font-bold text-lg mb-3 flex items-center text-gray-800">
+              {/* 分享按鈕 */}
+              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+                <h3 className="font-bold text-base sm:text-lg mb-3 flex items-center text-gray-800">
                   <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                   </svg>
                   分享文章
                 </h3>
-                <div className="flex space-x-4 text-gray-600">
+                <div className="flex space-x-3 sm:space-x-4 text-gray-600">
                   <ShareButton platform="facebook" url={currentUrl} title={post.title} />
                   <ShareButton platform="twitter" url={currentUrl} title={post.title} />
                   <ShareButton platform="linkedin" url={currentUrl} title={post.title} />
@@ -938,12 +951,12 @@ export default function BlogPost({ post }: Props) {
               </div>
             </aside>
 
-            {/* 文章內容 - 優化排版與樣式 */}
-            <div className={`md:flex-1 order-1 md:order-2 bg-white rounded-lg shadow-sm p-6 md:p-10`}>
+            {/* 文章內容 */}
+            <div className={`md:flex-1 order-1 md:order-2 bg-white rounded-lg shadow-sm p-4 sm:p-6 md:p-10`}>
               <div className={`prose ${
                 fontSize === 'sm' ? 'prose-sm' : 
                 fontSize === 'lg' ? 'prose-xl' : 'prose-base'
-              } max-w-none prose-headings:font-bold prose-headings:text-gray-800 prose-p:text-gray-700 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg`}>
+              } max-w-none prose-headings:font-bold prose-headings:text-gray-800 prose-p:text-gray-700 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:my-4 sm:prose-img:my-8`}>
                 {post.content ? (
                   <PortableText
                     value={post.content}
@@ -963,14 +976,14 @@ export default function BlogPost({ post }: Props) {
               
               {/* 文章標籤 */}
               {post.categories && post.categories.length > 0 && (
-                <div className="mt-12 pt-6 border-t border-gray-100">
+                <div className="mt-8 sm:mt-12 pt-4 sm:pt-6 border-t border-gray-100">
                   <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-gray-500">相關標籤:</span>
+                    <span className="text-sm sm:text-base text-gray-500">相關主題:</span>
                     {post.categories.map((category) => (
                       <Link 
                         href={`/blog?category=${category.title}`} 
                         key={category.title}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary rounded-full text-sm"
+                        className="px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary rounded-full text-xs sm:text-sm transition-colors"
                       >
                         {category.title}
                       </Link>
@@ -981,14 +994,22 @@ export default function BlogPost({ post }: Props) {
             </div>
           </div>
 
-          {/* 訂閱表單 - 保留既有元件 */}
-          <SubscriptionForm />
+          {/* 訂閱表單 */}
+          <div className="max-w-4xl mx-auto mt-8 sm:mt-16">
+            <div className="bg-primary/5 rounded-lg p-4 sm:p-8 text-center">
+              <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">訂閱我們的診所經營專欄</h2>
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+                獲取最新的診所經營策略與數位行銷趨勢，讓您的診所更上一層樓
+              </p>
+              <SubscriptionForm />
+            </div>
+          </div>
           
-          {/* 相關文章 - 優化樣式 */}
+          {/* 相關文章 */}
           {post.related && post.related.length > 0 && (
-            <div className="max-w-4xl mx-auto mt-16">
-              <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">您可能也會喜歡</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="max-w-4xl mx-auto mt-8 sm:mt-16">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-gray-800">更多診所經營指南</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
                 {post.related.map((relatedPost) => (
                   <RelatedArticleCard key={relatedPost.slug} article={relatedPost} />
                 ))}
@@ -996,28 +1017,28 @@ export default function BlogPost({ post }: Props) {
             </div>
           )}
 
-          {/* 返回文章列表 - 優化樣式 */}
-          <div className="flex justify-center mt-12">
+          {/* 返回文章列表 */}
+          <div className="flex justify-center mt-8 sm:mt-12">
             <Link
               href="/blog"
-              className="flex items-center text-primary hover:bg-primary/5 py-2 px-4 rounded-full transition-colors"
+              className="flex items-center text-primary hover:bg-primary/5 py-2 px-4 rounded-full transition-colors text-sm sm:text-base"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              返回文章列表
+              返回診所經營專欄
             </Link>
           </div>
         </div>
         
         {/* 功能按鈕區 */}
-        <div className="fixed bottom-8 left-8 z-10 no-print">
+        <div className="fixed bottom-4 sm:bottom-8 left-4 sm:left-8 z-10 no-print">
           <button
             onClick={() => window.print()}
-            className="bg-white text-gray-700 p-3 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            className="bg-white text-gray-700 p-2 sm:p-3 rounded-full shadow-md hover:bg-gray-100 transition-colors"
             aria-label="列印文章"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
           </button>

@@ -333,16 +333,20 @@ export default function HomePage() {
               }}
               className="space-y-8"
             >
-              <h1 className="text-7xl md:text-8xl font-black tracking-tight leading-none max-w-5xl mx-auto font-display">
-                打造下一個
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none max-w-5xl mx-auto font-display">
+                讓診所
                 <br />
-                <span className="text-white text-shadow-lg">數位牙醫帝國</span>
+                <span className="text-white text-shadow-lg">專注醫療</span>
+                <br />
+                <span className="text-white/90 text-3xl sm:text-4xl md:text-5xl lg:text-6xl mt-4 block">
+                  把行銷交給專家
+                </span>
               </h1>
 
-              <p className="text-2xl md:text-3xl font-medium text-white/95 max-w-3xl mx-auto leading-relaxed">
-                專注於牙醫診所的數位行銷夥伴，
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-white/95 max-w-3xl mx-auto leading-relaxed px-4">
+                專業的醫療行銷團隊，
                 <br className="hidden sm:block" />
-                為您打造最適合的品牌成長策略
+                為您的診所打造最適合的品牌成長策略
               </p>
             </motion.div>
           </AnimatedSection>
@@ -398,23 +402,23 @@ export default function HomePage() {
         
         <div className="container-custom relative z-10">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-5xl font-black mb-4 text-primary font-display">
-              成功案例展示
+            <h2 className="text-4xl sm:text-5xl font-black mb-4 text-primary font-display">
+              診所行銷專家團隊
             </h2>
             <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              透過專業的數位行銷策略，協助診所建立品牌形象、提升營收表現
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+              專業的醫療行銷團隊，讓您專注於提供優質的醫療服務
             </p>
           </AnimatedSection>
           
           {/* 案例輪播控制器 */}
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-8 sm:mb-12 overflow-x-auto px-4">
             <div className="inline-flex bg-white rounded-full shadow-md p-1.5">
               {caseStudies.map((caseStudy, index) => (
                 <button
                   key={caseStudy.id}
                   onClick={() => setCurrentSlide(index)}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                     index === currentSlide 
                       ? 'bg-primary text-white' 
                       : 'text-gray-600 hover:bg-gray-100'
@@ -428,7 +432,7 @@ export default function HomePage() {
           
           {/* 案例輪播卡片 */}
           <div className="relative overflow-hidden">
-            <div className="relative h-[500px] md:h-[450px]">
+            <div className="relative h-[600px] sm:h-[500px] md:h-[450px]">
               <AnimatePresence mode="wait">
                 {caseStudies.map((caseStudy, index) => (
                   index === currentSlide && (
@@ -452,13 +456,13 @@ export default function HomePage() {
                           <div className="absolute top-1/4 right-8 w-6 h-24 bg-white/5"></div>
                           
                           {/* 案例圖片 - 改進載入和顯示方式 */}
-                          <div className="relative z-10 h-full flex items-center justify-center p-6 md:p-8">
+                          <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-6 md:p-8">
                             <motion.div 
                               initial={{ opacity: 0, scale: 0.9 }}
                               whileInView={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.5 }}
                               viewport={{ once: true }}
-                              className="relative w-full h-[220px] md:h-[260px]"
+                              className="relative w-full h-[180px] sm:h-[220px] md:h-[260px]"
                             >
                               {/* 顯示加載動畫，僅在加載中且沒有錯誤時 */}
                               {imageLoadingStates[caseStudy.id] && !imageErrorStates[caseStudy.id] && (
@@ -517,13 +521,13 @@ export default function HomePage() {
                           </div>
                           
                           {/* 強調數字 */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-4 md:p-5 text-white border-t border-white/10">
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-3 sm:p-4 md:p-5 text-white border-t border-white/10">
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-xs uppercase tracking-wider opacity-75 mb-1">成效重點</div>
-                                <div className="text-base md:text-xl font-bold">{caseStudy.highlightLabel}</div>
+                                <div className="text-sm sm:text-base md:text-xl font-bold">{caseStudy.highlightLabel}</div>
                               </div>
-                              <div className="text-2xl md:text-4xl font-black font-gothic">{caseStudy.highlight}</div>
+                              <div className="text-xl sm:text-2xl md:text-4xl font-black font-gothic">{caseStudy.highlight}</div>
                             </div>
                           </div>
                         </div>
@@ -540,18 +544,18 @@ export default function HomePage() {
                           
                           {/* 標題與描述 */}
                           <div>
-                            <h3 className="text-2xl font-bold mb-4 font-gothic">{caseStudy.title}</h3>
-                            <p className="text-gray-600 leading-relaxed mb-6">{caseStudy.description}</p>
+                            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-gothic">{caseStudy.title}</h3>
+                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6">{caseStudy.description}</p>
                           </div>
                           
                           {/* 成效指標 */}
                           <div className="mt-auto">
-                            <div className="text-sm font-medium text-primary mb-4">實際成效</div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="text-sm font-medium text-primary mb-3 sm:mb-4">實際成效</div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                               {caseStudy.results.map((result, idx) => (
                                 <div 
                                   key={idx} 
-                                  className="bg-gray-50 p-3 rounded border-l-2 border-primary"
+                                  className="bg-gray-50 p-2 sm:p-3 rounded border-l-2 border-primary text-sm sm:text-base"
                                 >
                                   <div className="text-gray-800">{result}</div>
                                 </div>
@@ -638,41 +642,62 @@ export default function HomePage() {
         </motion.div>
 
         <div className="container-custom relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
             <AnimatedSection>
-              <h2 className="text-5xl font-black mb-6 text-primary font-display">
-                實際成效數據
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 text-primary font-display">
+                專業醫療行銷團隊
               </h2>
-              <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                透過專業的數位行銷策略，協助診所建立品牌形象、提升營收表現。我們關注實際成果，讓數據說話。
+              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-6 sm:mb-8">
+                擁有豐富的醫療產業經驗，深入了解診所需求，
+                讓您專注於提供優質的醫療服務，我們負責打造您的品牌形象。
               </p>
+              <div className="space-y-4">
+                <div className="flex items-center text-gray-700">
+                  <svg className="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>專業醫療產業背景</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <svg className="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>客製化行銷策略規劃</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <svg className="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>數據導向成效追蹤</span>
+                </div>
+              </div>
               <Link
                 href="/case"
-                className="inline-flex items-center text-primary font-bold hover:underline"
+                className="inline-flex items-center text-primary font-bold hover:underline mt-6"
               >
-                查看完整案例分析
+                了解更多服務內容
                 <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </Link>
             </AnimatedSection>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
               <AnimatedSection delay={0.2}>
-                <div className="text-center bg-gray-50 p-8 rounded-sm shadow-sm border-t-4 border-primary">
-                  <div className="text-6xl font-black text-primary mb-4">
+                <div className="text-center bg-gray-50 p-6 sm:p-8 rounded-sm shadow-sm border-t-4 border-primary">
+                  <div className="text-4xl sm:text-5xl md:text-6xl font-black text-primary mb-3 sm:mb-4">
                     <CountUp end={500} suffix="+" duration={2.5} />
                   </div>
-                  <div className="text-xl text-gray-600">服務醫療院所</div>
+                  <div className="text-lg sm:text-xl text-gray-600">服務醫療院所</div>
                 </div>
               </AnimatedSection>
 
               <AnimatedSection delay={0.4}>
-                <div className="text-center bg-gray-50 p-8 rounded-sm shadow-sm border-t-4 border-primary">
-                  <div className="text-6xl font-black text-primary mb-4">
+                <div className="text-center bg-gray-50 p-6 sm:p-8 rounded-sm shadow-sm border-t-4 border-primary">
+                  <div className="text-4xl sm:text-5xl md:text-6xl font-black text-primary mb-3 sm:mb-4">
                     <CountUp end={150} suffix="%" duration={2.5} />
                   </div>
-                  <div className="text-xl text-gray-600">平均業績成長</div>
+                  <div className="text-lg sm:text-xl text-gray-600">平均業績成長</div>
                 </div>
               </AnimatedSection>
             </div>
@@ -718,12 +743,12 @@ export default function HomePage() {
         <div className="container-custom relative z-10">
           <AnimatedSection>
             <div className="max-w-4xl mx-auto text-center space-y-12">
-              <h2 className="text-6xl md:text-7xl font-black tracking-tight leading-none font-display">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-none font-display">
                 THE MARKETING PARTNER
                 <br />
                 FOR HEALTHCARE
               </h2>
-              <p className="text-2xl text-white/90 leading-relaxed font-gothic">
+              <p className="text-xl sm:text-2xl text-white/90 leading-relaxed font-gothic">
                 COMPREHENSIVE BRAND INTEGRATION
                 <br />
                 START THE CONVERSATION
@@ -770,11 +795,12 @@ export default function HomePage() {
 
         <div className="container-custom relative z-10">
           <AnimatedSection className="text-center mb-20">
-            <h2 className="text-5xl font-black mb-6 text-primary font-display">
-              我們的特色
+            <h2 className="text-4xl sm:text-5xl font-black mb-6 text-primary font-display">
+              全方位診所行銷服務
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              結合 AI 技術與專業經驗，為您的診所打造最適合的數位行銷策略
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+              從品牌定位到數位行銷，我們提供完整的解決方案，
+              讓您專注於提供優質的醫療服務，我們負責打造您的品牌形象
             </p>
           </AnimatedSection>
 
@@ -782,14 +808,14 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <AnimatedSection key={feature.title} delay={index * 0.2}>
                 <motion.div 
-                  className="bg-white p-8 rounded-sm shadow-sm border-l-4 border-primary hover:bg-gray-50 transition-all duration-300"
+                  className="bg-white p-6 sm:p-8 rounded-sm shadow-sm border-l-4 border-primary hover:bg-gray-50 transition-all duration-300"
                   whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(220, 38, 38, 0.1)' }}
                 >
-                  <div className="mb-6 text-primary">
-                    <feature.icon className="w-16 h-16" />
+                  <div className="mb-4 sm:mb-6 text-primary">
+                    <feature.icon className="w-12 h-12 sm:w-16 sm:h-16" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-primary font-gothic">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-primary font-gothic">{feature.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
                 </motion.div>
               </AnimatedSection>
             ))}
@@ -809,23 +835,32 @@ export default function HomePage() {
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
             
             <div className="relative z-10 text-center">
-            <AnimatedSection>
-                <h2 className="text-5xl font-black mb-8 leading-tight font-display">
-                準備好提升您的診所競爭力了嗎？
-              </h2>
-                <p className="text-xl text-white/90 mb-12 leading-relaxed">
-                立即與我們聯繫，讓我們為您的診所打造專屬的數位行銷策略
-              </p>
-              <Link
-                href="/contact"
-                  className="inline-flex items-center bg-white text-primary text-lg px-10 py-4 hover:bg-white/90 transition-all duration-300 shadow-md"
-              >
-                立即預約諮詢
-                  <svg className="ml-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-              </Link>
-            </AnimatedSection>
+              <AnimatedSection>
+                <h2 className="text-4xl sm:text-5xl font-black mb-6 sm:mb-8 leading-tight font-display">
+                  準備好讓您的診所更上一層樓了嗎？
+                </h2>
+                <p className="text-lg sm:text-xl text-white/90 mb-8 sm:mb-12 leading-relaxed max-w-2xl mx-auto">
+                  立即與我們聯繫，讓我們為您的診所打造專屬的行銷策略，
+                  讓您專注於提供優質的醫療服務
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center bg-white text-primary text-lg px-8 sm:px-10 py-3 sm:py-4 hover:bg-white/90 transition-all duration-300 shadow-md"
+                  >
+                    立即預約諮詢
+                    <svg className="ml-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/service"
+                    className="inline-flex items-center justify-center bg-transparent text-white text-lg px-8 sm:px-10 py-3 sm:py-4 border-2 border-white hover:bg-white/10 transition-all duration-300"
+                  >
+                    了解更多服務
+                  </Link>
+                </div>
+              </AnimatedSection>
             </div>
           </div>
         </div>

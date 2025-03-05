@@ -59,15 +59,16 @@ async function getPost(slug: string) {
 }
 
 export async function generateMetadata(
-  { params }: PageProps
+  { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   try {
-    const post = await getPost(params.slug)
+    const slug = await params.slug
+    const post = await getPost(slug)
 
     if (!post) {
       return {
-        title: '找不到文章 | Aidea:Med',
-        description: '抱歉，您要找的文章不存在。',
+        title: '找不到文章',
+        description: '您所尋找的文章不存在或已被移除。',
       }
     }
 
@@ -81,38 +82,38 @@ export async function generateMetadata(
       : ['牙醫行銷', '診所經營']
 
     return {
-      title: `${post.title} | Aidea:Med`,
-      description: post.excerpt || '了解更多關於牙醫診所經營與行銷的專業知識',
+      title: post.title,
+      description: post.excerpt,
       openGraph: {
-        title: `${post.title} | Aidea:Med`,
-        description: post.excerpt || '了解更多關於牙醫診所經營與行銷的專業知識',
+        title: post.title,
+        description: post.excerpt,
         type: 'article',
         url: `https://aideamed.com/blog/${post.slug}`,
-        images: [
+        images: post.mainImage ? [
           {
             url: ogImageUrl,
             width: 1200,
             height: 630,
             alt: post.title,
-          },
-        ],
+          }
+        ] : [],
         publishedTime: post.publishedAt,
         modifiedTime: post.publishedAt,
-        authors: ['Aidea:Med'],
+        authors: ['Aidea'],
         tags: tags,
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${post.title} | Aidea:Med`,
-        description: post.excerpt || '了解更多關於牙醫診所經營與行銷的專業知識',
-        images: [ogImageUrl],
+        title: post.title,
+        description: post.excerpt,
+        images: post.mainImage ? [ogImageUrl] : [],
       },
     }
   } catch (error) {
     console.error('生成元數據時發生錯誤:', error)
     return {
-      title: 'Aidea:Med | 數位行銷專家',
-      description: '牙醫診所的數位行銷夥伴，助您打造數位牙醫帝國',
+      title: '發生錯誤',
+      description: '載入文章時發生錯誤，請稍後再試。',
     }
   }
 }
