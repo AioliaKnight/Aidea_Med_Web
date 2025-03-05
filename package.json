@@ -63,7 +63,7 @@
     "sanity": "^3.77.1",
     "sanity-plugin-asset-source-unsplash": "^3.0.3",
     "sharp": "^0.33.2",
-    "styled-components": "^5.3.11",
+    "styled-components": "^6.1.15",
     "tailwind-merge": "^2.2.1",
     "tempus": "^0.1.10",
     "three": "^0.162.0",
