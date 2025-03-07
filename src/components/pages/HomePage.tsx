@@ -159,6 +159,72 @@ const caseStudies: CaseStudy[] = [
   }
 ]
 
+// 服務流程數據
+const serviceProcess = [
+  {
+    step: '01',
+    title: '需求診斷',
+    description: '深入了解診所現況、目標客群和發展方向，制定客製化行銷策略',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+    )
+  },
+  {
+    step: '02',
+    title: '策略規劃',
+    description: '根據診斷結果，提供完整的行銷策略建議，包含品牌定位、通路規劃等',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    )
+  },
+  {
+    step: '03',
+    title: '執行優化',
+    description: '專業團隊執行行銷策略，持續監測成效並即時調整優化',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    )
+  },
+  {
+    step: '04',
+    title: '成效追蹤',
+    description: '定期提供詳細成效報告，分析關鍵指標並提出改善建議',
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    )
+  }
+]
+
+// 團隊成員數據
+const teamMembers = [
+  {
+    name: '王小明',
+    title: '資深行銷顧問',
+    description: '擁有10年以上醫療產業行銷經驗，專精品牌策略規劃',
+    image: '/team/member1.jpg'
+  },
+  {
+    name: '李小華',
+    title: '數位行銷專家',
+    description: 'Google認證數位行銷專家，擅長社群媒體經營與廣告投放',
+    image: '/team/member2.jpg'
+  },
+  {
+    name: '張小美',
+    title: '品牌設計師',
+    description: '多次獲得設計大獎，為診所打造專業且獨特的品牌識別',
+    image: '/team/member3.jpg'
+  }
+]
+
 // 動畫區塊組件
 interface AnimatedSectionProps {
   children: React.ReactNode
@@ -823,45 +889,124 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA 區塊 - 改進版 */}
-      <section className="relative py-32 bg-white overflow-hidden">
-        {/* 背景漸層 */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"></div>
+      {/* 服務流程區塊 */}
+      <section className="py-32 bg-gray-50">
+        <div className="container-custom">
+          <AnimatedSection className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-black mb-4 text-primary font-display">
+              專業服務流程
+            </h2>
+            <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+              系統化的服務流程，確保每個環節都能達到最佳效果
+            </p>
+          </AnimatedSection>
 
-        <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto bg-primary text-white p-12 rounded-sm shadow-lg relative overflow-hidden">
-            {/* 裝飾元素 */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
-            
-            <div className="relative z-10 text-center">
-              <AnimatedSection>
-                <h2 className="text-4xl sm:text-5xl font-black mb-6 sm:mb-8 leading-tight font-display">
-                  準備好讓您的診所更上一層樓了嗎？
-                </h2>
-                <p className="text-lg sm:text-xl text-white/90 mb-8 sm:mb-12 leading-relaxed max-w-2xl mx-auto">
-                  立即與我們聯繫，讓我們為您的診所打造專屬的行銷策略，
-                  讓您專注於提供優質的醫療服務
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center bg-white text-primary text-lg px-8 sm:px-10 py-3 sm:py-4 hover:bg-white/90 transition-all duration-300 shadow-md"
-                  >
-                    立即預約諮詢
-                    <svg className="ml-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/service"
-                    className="inline-flex items-center justify-center bg-transparent text-white text-lg px-8 sm:px-10 py-3 sm:py-4 border-2 border-white hover:bg-white/10 transition-all duration-300"
-                  >
-                    了解更多服務
-                  </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {serviceProcess.map((process, index) => (
+              <AnimatedSection key={process.step} delay={index * 0.1}>
+                <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                  {/* 背景數字 */}
+                  <div className="absolute -right-4 -top-4 text-8xl font-black text-gray-50 transition-transform duration-300 group-hover:scale-110">
+                    {process.step}
+                  </div>
+                  
+                  {/* 內容 */}
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+                      {process.icon}
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">{process.title}</h3>
+                    <p className="text-gray-600">{process.description}</p>
+                  </div>
                 </div>
               </AnimatedSection>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 團隊介紹區塊 */}
+      <section className="py-32 bg-white">
+        <div className="container-custom">
+          <AnimatedSection className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-black mb-4 text-primary font-display">
+              專業團隊陣容
+            </h2>
+            <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+              擁有豐富產業經驗的專業團隊，為您提供最優質的服務
+            </p>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {teamMembers.map((member, index) => (
+              <AnimatedSection key={member.name} delay={index * 0.1}>
+                <div className="bg-gray-50 rounded-lg overflow-hidden group">
+                  <div className="relative h-64 overflow-hidden">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                    <div className="text-primary font-medium mb-2">{member.title}</div>
+                    <p className="text-gray-600">{member.description}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 諮詢預約區塊 */}
+      <section className="py-32 bg-primary text-white relative overflow-hidden">
+        {/* 背景裝飾 */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.1 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+        >
+          <Image
+            src="/images/bgline-w.png"
+            alt="背景線條"
+            fill
+            className="object-cover mix-blend-soft-light"
+            quality={90}
+            sizes="100vw"
+          />
+        </motion.div>
+
+        <div className="container-custom relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <AnimatedSection>
+              <h2 className="text-4xl sm:text-5xl font-black mb-6 font-display">
+                開始您的品牌成長之旅
+              </h2>
+              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contact"
+                  className="btn-white text-primary text-lg px-8 py-4 rounded-sm hover:bg-white/90 transition-colors"
+                >
+                  預約諮詢
+                </Link>
+                <Link
+                  href="/service"
+                  className="btn-outline-white text-lg px-8 py-4 rounded-sm hover:bg-white/10 transition-colors"
+                >
+                  了解更多
+                </Link>
+              </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
