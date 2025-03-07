@@ -5,22 +5,23 @@ import Logo from './Logo'
 import { cn } from '@/lib/utils'
 
 // 動畫配置常量
-const getAnimationConfig = (duration: number) => ({
-  SPINNER: {
-    duration,
-    ease: 'linear',
-    repeat: Infinity
+const ANIMATION_CONFIG = {
+  LOGO: {
+    duration: 0.6,
+    repeat: Infinity,
+    repeatType: "reverse",
+    ease: "easeInOut"
   },
-  PULSE: {
-    duration,
-    ease: 'easeInOut',
-    repeat: Infinity
+  RING: {
+    duration: 1.2,
+    repeat: Infinity,
+    ease: "linear"
   },
   FADE: {
     duration: 0.3,
-    ease: 'easeInOut'
+    ease: "easeOut"
   }
-}) as const
+} as const
 
 // 容器尺寸預設值
 const CONTAINER_SIZES = {
@@ -36,35 +37,95 @@ const LOGO_SIZES = {
   lg: 'md'
 } as const
 
+// 顏色主題
+const COLOR_THEMES = {
+  slate: {
+    ring: 'border-slate-200 dark:border-slate-800',
+    spinner: 'border-slate-950 dark:border-slate-200',
+    dots: 'bg-slate-950 dark:bg-slate-200',
+    text: 'text-slate-600 dark:text-slate-400'
+  },
+  zinc: {
+    ring: 'border-zinc-200 dark:border-zinc-800',
+    spinner: 'border-zinc-950 dark:border-zinc-200',
+    dots: 'bg-zinc-950 dark:bg-zinc-200',
+    text: 'text-zinc-600 dark:text-zinc-400'
+  },
+  neutral: {
+    ring: 'border-neutral-200 dark:border-neutral-800',
+    spinner: 'border-neutral-950 dark:border-neutral-200',
+    dots: 'bg-neutral-950 dark:bg-neutral-200',
+    text: 'text-neutral-600 dark:text-neutral-400'
+  }
+} as const
+
 // 動畫變體
-const getSpinnerVariants = (duration: number) => ({
-  initial: { rotate: 0 },
-  animate: {
-    rotate: 360,
-    transition: getAnimationConfig(duration).SPINNER
-  }
-})
-
-const getPulseVariants = (duration: number) => ({
-  initial: { opacity: 0.7 },
-  animate: {
-    opacity: 1,
-    transition: getAnimationConfig(duration).PULSE
-  }
-})
-
 const containerVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: getAnimationConfig(0.3).FADE
+  initial: { 
+    opacity: 0,
+  },
+  animate: { 
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeIn"
+    }
+  }
+}
+
+const logoVariants = {
+  initial: { 
+    scale: 0.95,
+    opacity: 0.8
+  },
+  animate: { 
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: ANIMATION_CONFIG.LOGO.duration,
+      repeat: ANIMATION_CONFIG.LOGO.repeat,
+      repeatType: ANIMATION_CONFIG.LOGO.repeatType,
+      ease: ANIMATION_CONFIG.LOGO.ease
+    }
+  }
+}
+
+const ringVariants = {
+  initial: { 
+    rotate: 0,
+    opacity: 0
+  },
+  animate: { 
+    rotate: 360,
+    opacity: 1,
+    transition: {
+      duration: ANIMATION_CONFIG.RING.duration,
+      ease: ANIMATION_CONFIG.RING.ease,
+      repeat: ANIMATION_CONFIG.RING.repeat
+    }
+  }
 }
 
 const textVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-  transition: getAnimationConfig(0.3).FADE
+  initial: { 
+    opacity: 0,
+    y: 4
+  },
+  animate: { 
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  }
 }
 
 interface LoadingProps {
@@ -76,14 +137,12 @@ interface LoadingProps {
   blur?: boolean
   /** 自定義類名 */
   className?: string
-  /** 動畫持續時間 (秒) */
-  duration?: number
   /** 尺寸 */
   size?: keyof typeof CONTAINER_SIZES
-  /** 顏色 */
-  color?: string
-  /** 是否顯示脈衝動畫 */
-  pulse?: boolean
+  /** 顏色主題 */
+  theme?: keyof typeof COLOR_THEMES
+  /** 背景顏色 */
+  background?: string
 }
 
 export default function Loading({
@@ -91,13 +150,11 @@ export default function Loading({
   text,
   blur = false,
   className,
-  duration = 1.5,
   size = 'md',
-  color = 'currentColor',
-  pulse = true
+  theme = 'slate',
+  background = 'bg-background/80'
 }: LoadingProps) {
-  const spinnerVariants = getSpinnerVariants(duration)
-  const pulseVariants = getPulseVariants(duration)
+  const colors = COLOR_THEMES[theme]
 
   return (
     <AnimatePresence>
@@ -108,7 +165,8 @@ export default function Loading({
         className={cn(
           'flex flex-col items-center justify-center gap-4',
           fullscreen && 'fixed inset-0 z-50',
-          blur && 'backdrop-blur-sm',
+          blur && 'backdrop-blur-[2px]',
+          background,
           className
         )}
         variants={containerVariants}
@@ -116,38 +174,80 @@ export default function Loading({
         animate="animate"
         exit="exit"
       >
-        <motion.div
-          className={cn(
-            'relative flex items-center justify-center',
-            CONTAINER_SIZES[size]
-          )}
-          variants={spinnerVariants}
-          initial="initial"
-          animate="animate"
-        >
+        <div className={cn(
+          'relative',
+          CONTAINER_SIZES[size]
+        )}>
+          {/* 旋轉環 */}
           <motion.div
-            className={cn(
-              'absolute inset-0 rounded-full border-2 border-current/40',
-              pulse && 'animate-pulse'
-            )}
-            variants={pulseVariants}
+            className="absolute inset-0"
+            variants={ringVariants}
             initial="initial"
             animate="animate"
-            style={{ borderColor: color }}
-          />
-          <Logo size={LOGO_SIZES[size]} showAnimation={false} />
-        </motion.div>
+          >
+            <div className={cn(
+              'absolute inset-0 rounded-full border-2',
+              colors.ring
+            )} />
+            <div className={cn(
+              'absolute inset-0 rounded-full border-2',
+              colors.spinner,
+              'border-t-transparent border-r-transparent',
+              'transform origin-center'
+            )} />
+          </motion.div>
+          
+          {/* Logo */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            variants={logoVariants}
+            initial="initial"
+            animate="animate"
+          >
+            <Logo 
+              size={LOGO_SIZES[size]}
+              variant="black"
+              showAnimation={false}
+            />
+          </motion.div>
+        </div>
 
+        {/* 載入文字 */}
         {text && (
-          <motion.p
-            className="text-sm font-medium"
+          <motion.div
+            className="flex flex-col items-center gap-3"
             variants={textVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
           >
-            {text}
-          </motion.p>
+            <p className={cn(
+              "text-sm font-medium tracking-wide",
+              colors.text
+            )}>
+              {text}
+            </p>
+            <div className="flex gap-1.5">
+              {[0, 0.15, 0.3].map((delay, index) => (
+                <motion.span
+                  key={index}
+                  className={cn(
+                    "w-1 h-1 rounded-full",
+                    colors.dots
+                  )}
+                  animate={{ 
+                    opacity: [0.3, 1, 0.3],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ 
+                    duration: 0.6, 
+                    repeat: Infinity, 
+                    delay,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
         )}
       </motion.div>
     </AnimatePresence>

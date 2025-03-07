@@ -6,6 +6,7 @@ import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Spinner } from '@/components/common/Spinner'
 
 // SVG圖標組件
 interface IconProps {
@@ -203,25 +204,37 @@ const serviceProcess = [
   }
 ]
 
-// 團隊成員數據
+// 團隊成員資料
 const teamMembers = [
   {
-    name: '王小明',
-    title: '資深行銷顧問',
-    description: '擁有10年以上醫療產業行銷經驗，專精品牌策略規劃',
-    image: '/team/member1.jpg'
+    name: '陳維鈞',
+    nameEn: 'Wilson Chen',
+    title: '創辦人暨執行長',
+    titleEn: 'Founder & CEO',
+    expertise: ['醫療品牌策略', '診所數位轉型', '整合行銷規劃'],
+    description: '擁有超過15年醫療行銷經驗，協助百家診所成功打造品牌。專精於整合數位策略與品牌發展，為診所制定精準的成長方案。曾獲選台灣醫療創新百大。',
+    image: '/images/team/member-1.png',
+    linkedin: 'https://www.linkedin.com/in/wilson-chen/'
   },
   {
-    name: '李小華',
-    title: '數位行銷專家',
-    description: 'Google認證數位行銷專家，擅長社群媒體經營與廣告投放',
-    image: '/team/member2.jpg'
+    name: '張方剛',
+    nameEn: 'Mike Chang',
+    title: '行銷總監',
+    titleEn: 'Marketing Director', 
+    expertise: ['診所社群經營', '醫療SEO優化', '影音內容策略'],
+    description: '數位行銷專家，專注於牙醫診所品牌經營與SEO優化。曾帶領團隊獲得多項數位行銷獎項，協助診所每月諮詢量成長300%以上。',
+    image: '/images/team/member-2.jpg',
+    linkedin: 'https://www.linkedin.com/in/mike-chang/'
   },
   {
-    name: '張小美',
-    title: '品牌設計師',
-    description: '多次獲得設計大獎，為診所打造專業且獨特的品牌識別',
-    image: '/team/member3.jpg'
+    name: '李品憲',
+    nameEn: 'Leo Lee',
+    title: '技術長',
+    titleEn: 'CTO',
+    expertise: ['AI行銷系統', '數據分析', '自動化工具'],
+    description: '資深技術專家，擅長運用AI技術優化醫療行銷流程。開發多項專利技術，協助診所建立數據導向的精準行銷系統。',
+    image: '/images/team/member-3.jpg',
+    linkedin: 'https://www.linkedin.com/in/leo-lee/'
   }
 ]
 
@@ -268,9 +281,98 @@ const AnimatedSection = ({ children, className = '', delay = 0 }: AnimatedSectio
   )
 }
 
+// 團隊成員卡片組件
+interface TeamMemberCardProps {
+  member: typeof teamMembers[0]
+  delay: number
+}
+
+const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
+  const [imageLoading, setImageLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
+
+  return (
+    <AnimatedSection delay={delay}>
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+        <div className="aspect-[4/5] relative overflow-hidden bg-gray-100">
+          {imageLoading && !imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <Spinner />
+            </div>
+          )}
+          {!imageError ? (
+            <Image
+              src={member.image}
+              alt={member.name}
+              fill
+              className={`object-cover transform group-hover:scale-105 transition-transform duration-300 ${
+                imageLoading ? 'opacity-0' : 'opacity-100'
+              }`}
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              onLoad={() => setImageLoading(false)}
+              onError={() => setImageError(true)}
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+              <span className="text-4xl">👤</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+        <div className="p-4 sm:p-6">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-primary mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {member.nameEn}
+                </p>
+              </div>
+              {member.linkedin && (
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-primary transition-colors"
+                  aria-label={`${member.name}的LinkedIn個人檔案`}
+                >
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                </a>
+              )}
+            </div>
+            <p className="text-primary/80 font-medium">
+              {member.title}
+            </p>
+            <p className="text-sm text-gray-500">
+              {member.titleEn}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {member.expertise.map((skill) => (
+              <span
+                key={skill}
+                className="px-2 sm:px-3 py-1 bg-primary/5 text-primary rounded-full text-xs sm:text-sm"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">
+            {member.description}
+          </p>
+        </div>
+      </div>
+    </AnimatedSection>
+  )
+}
+
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isScrolled, setIsScrolled] = useState(false)
   
   // 圖片加載狀態管理
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({})
@@ -289,16 +391,6 @@ export default function HomePage() {
     setImageLoadingStates(initialLoadingState);
     setImageErrorStates(initialErrorState);
   }, []);
-
-  // 監控滾動位置以顯示/隱藏固定導航
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
   
   // 處理圖片加載完成
   const handleImageLoad = (id: string) => {
@@ -461,19 +553,31 @@ export default function HomePage() {
         </motion.div>
         
         {/* 左側裝飾元素 */}
-        <div className="absolute left-0 top-1/4 w-32 h-64 bg-primary/5 -translate-x-1/2"></div>
+        <motion.div 
+          className="absolute left-0 top-1/4 w-32 h-64 bg-primary/5"
+          initial={{ x: "-100%" }}
+          whileInView={{ x: "-50%" }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        />
         
         {/* 右側裝飾元素 */}
-        <div className="absolute right-0 bottom-1/4 w-32 h-64 bg-primary/5 translate-x-1/2"></div>
+        <motion.div 
+          className="absolute right-0 bottom-1/4 w-32 h-64 bg-primary/5"
+          initial={{ x: "100%" }}
+          whileInView={{ x: "50%" }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        />
         
         <div className="container-custom relative z-10">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-black mb-4 text-primary font-display">
-              診所行銷專家團隊
+              成功案例展示
             </h2>
             <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-              專業的醫療行銷團隊，讓您專注於提供優質的醫療服務
+              實際案例展示我們如何幫助診所提升品牌價值、增加營業額
             </p>
           </AnimatedSection>
           
@@ -481,17 +585,19 @@ export default function HomePage() {
           <div className="flex justify-center mb-8 sm:mb-12 overflow-x-auto px-4">
             <div className="inline-flex bg-white rounded-full shadow-md p-1.5">
               {caseStudies.map((caseStudy, index) => (
-                <button
+                <motion.button
                   key={caseStudy.id}
                   onClick={() => setCurrentSlide(index)}
-                  className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 ${
                     index === currentSlide 
-                      ? 'bg-primary text-white' 
+                      ? 'bg-primary text-white scale-105' 
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {caseStudy.category}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -511,26 +617,42 @@ export default function HomePage() {
                       className="absolute inset-0"
                     >
                       <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                        {/* 左側：視覺展示 - 優化圖片顯示 */}
-                        <div className="lg:col-span-5 relative overflow-hidden rounded-sm shadow-lg h-full">
+                        {/* 左側：視覺展示 */}
+                        <div className="lg:col-span-5 relative overflow-hidden rounded-sm shadow-lg h-full group">
                           {/* 背景漸層 */}
-                          <div className={`absolute inset-0 bg-gradient-to-br ${caseStudy.color} opacity-90`}></div>
+                          <motion.div 
+                            className={`absolute inset-0 bg-gradient-to-br ${caseStudy.color} opacity-90`}
+                            initial={{ opacity: 0.7 }}
+                            whileHover={{ opacity: 0.9 }}
+                            transition={{ duration: 0.3 }}
+                          />
                           
                           {/* 裝飾元素 */}
-                          <div className="absolute top-4 left-4 w-12 h-12 border border-white/20 rounded-sm"></div>
-                          <div className="absolute bottom-16 right-4 w-20 h-6 bg-white/10 rounded-sm"></div>
-                          <div className="absolute top-1/4 right-8 w-6 h-24 bg-white/5"></div>
+                          <motion.div 
+                            className="absolute top-4 left-4 w-12 h-12 border border-white/20 rounded-sm"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                          />
+                          <motion.div 
+                            className="absolute bottom-16 right-4 w-20 h-6 bg-white/10 rounded-sm"
+                            animate={{ x: [0, 10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity }}
+                          />
+                          <motion.div 
+                            className="absolute top-1/4 right-8 w-6 h-24 bg-white/5"
+                            animate={{ y: [0, 20, 0] }}
+                            transition={{ duration: 5, repeat: Infinity }}
+                          />
                           
-                          {/* 案例圖片 - 改進載入和顯示方式 */}
+                          {/* 案例圖片 */}
                           <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-6 md:p-8">
                             <motion.div 
                               initial={{ opacity: 0, scale: 0.9 }}
                               whileInView={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.5 }}
-                              viewport={{ once: true }}
                               className="relative w-full h-[180px] sm:h-[220px] md:h-[260px]"
                             >
-                              {/* 顯示加載動畫，僅在加載中且沒有錯誤時 */}
+                              {/* 加載動畫 */}
                               {imageLoadingStates[caseStudy.id] && !imageErrorStates[caseStudy.id] && (
                                 <div className="absolute inset-0 flex items-center justify-center z-20">
                                   <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
@@ -554,7 +676,7 @@ export default function HomePage() {
                                     src={getResponsiveImageSrc(caseStudy)}
                                     alt={caseStudy.title}
                                     fill
-                                    className="object-contain object-center z-10 shadow-lg transition-transform duration-300 hover:scale-105"
+                                    className="object-contain object-center z-10 shadow-lg transition-transform duration-300 group-hover:scale-105"
                                     priority={index === 0} 
                                     quality={90}
                                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -564,14 +686,14 @@ export default function HomePage() {
                                 </picture>
                               </div>
                               
-                              {/* 圖片加載錯誤時的備用內容 */}
+                              {/* 錯誤狀態 */}
                               {imageErrorStates[caseStudy.id] && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/10 backdrop-blur-sm rounded-md z-20">
                                   <svg 
                                     className="w-12 h-12 mb-2" 
                                     fill="none" 
-                                    viewBox="0 0 24 24" 
-                                    stroke="currentColor"
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
                                   >
                                     <path 
                                       strokeLinecap="round" 
@@ -587,31 +709,59 @@ export default function HomePage() {
                           </div>
                           
                           {/* 強調數字 */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-3 sm:p-4 md:p-5 text-white border-t border-white/10">
+                          <motion.div 
+                            className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-3 sm:p-4 md:p-5 text-white border-t border-white/10"
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            transition={{ delay: 0.3 }}
+                          >
                             <div className="flex items-center justify-between">
                               <div>
                                 <div className="text-xs uppercase tracking-wider opacity-75 mb-1">成效重點</div>
                                 <div className="text-sm sm:text-base md:text-xl font-bold">{caseStudy.highlightLabel}</div>
                               </div>
-                              <div className="text-xl sm:text-2xl md:text-4xl font-black font-gothic">{caseStudy.highlight}</div>
+                              <div className="text-xl sm:text-2xl md:text-4xl font-black font-gothic">
+                                <CountUp 
+                                  end={parseInt(caseStudy.highlight)} 
+                                  suffix="%" 
+                                  duration={2} 
+                                />
+                              </div>
                             </div>
-                          </div>
+                          </motion.div>
                         </div>
                         
                         {/* 右側：案例詳情 */}
                         <div className="lg:col-span-7 bg-white p-8 shadow-sm rounded-sm flex flex-col">
                           {/* 案例編號和分類 */}
                           <div className="flex justify-between items-center mb-4">
-                            <div className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
+                            <motion.div 
+                              className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full"
+                              whileHover={{ scale: 1.05 }}
+                            >
                               {caseStudy.category}
-                            </div>
+                            </motion.div>
                             <div className="text-4xl font-black text-gray-200">0{index + 1}</div>
                           </div>
                           
                           {/* 標題與描述 */}
                           <div>
-                            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-gothic">{caseStudy.title}</h3>
-                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6">{caseStudy.description}</p>
+                            <motion.h3 
+                              className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-gothic"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.2 }}
+                            >
+                              {caseStudy.title}
+                            </motion.h3>
+                            <motion.p 
+                              className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 }}
+                            >
+                              {caseStudy.description}
+                            </motion.p>
                           </div>
                           
                           {/* 成效指標 */}
@@ -619,47 +769,60 @@ export default function HomePage() {
                             <div className="text-sm font-medium text-primary mb-3 sm:mb-4">實際成效</div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                               {caseStudy.results.map((result, idx) => (
-                                <div 
+                                <motion.div 
                                   key={idx} 
                                   className="bg-gray-50 p-2 sm:p-3 rounded border-l-2 border-primary text-sm sm:text-base"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.4 + idx * 0.1 }}
+                                  whileHover={{ scale: 1.02 }}
                                 >
                                   <div className="text-gray-800">{result}</div>
-                                </div>
+                                </motion.div>
                               ))}
                             </div>
                             
-                            {/* 按鈕 */}
+                            {/* 按鈕和導航 */}
                             <div className="mt-6 flex justify-between items-center">
-                              <Link
-                                href={`/case/${caseStudy.id}`}
-                                className="inline-flex items-center text-primary font-bold hover:underline"
+                              <motion.div
+                                whileHover={{ x: 5 }}
+                                transition={{ type: "spring", stiffness: 400 }}
                               >
-                                查看完整案例
-                                <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </Link>
+                                <Link
+                                  href={`/case/${caseStudy.id}`}
+                                  className="inline-flex items-center text-primary font-bold hover:underline"
+                                >
+                                  查看完整案例
+                                  <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                  </svg>
+                                </Link>
+                              </motion.div>
                               
                               {/* 分頁導航 */}
                               <div className="flex space-x-2">
-                                <button
+                                <motion.button
                                   onClick={() => setCurrentSlide(prev => (prev - 1 + caseStudies.length) % caseStudies.length)}
                                   className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
                                   aria-label="上一個案例"
                                 >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                   </svg>
-                                </button>
-                                <button
+                                </motion.button>
+                                <motion.button
                                   onClick={() => setCurrentSlide(prev => (prev + 1) % caseStudies.length)}
                                   className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
                                   aria-label="下一個案例"
                                 >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                   </svg>
-                                </button>
+                                </motion.button>
                               </div>
                             </div>
                           </div>
@@ -674,15 +837,20 @@ export default function HomePage() {
           
           {/* 查看更多案例按鈕 */}
           <div className="text-center mt-12">
-            <Link 
-              href="/case" 
-              className="inline-flex items-center justify-center bg-primary text-white px-8 py-3 rounded-sm shadow-md hover:bg-primary/90 transition-colors"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              查看更多成功案例
-              <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </Link>
+              <Link 
+                href="/case" 
+                className="inline-flex items-center justify-center bg-primary text-white px-8 py-3 rounded-sm shadow-md hover:bg-primary/90 transition-colors"
+              >
+                查看更多成功案例
+                <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -840,7 +1008,7 @@ export default function HomePage() {
       </section>
 
       {/* 服務特色 - 改進版 */}
-    <section className="relative py-32 bg-gray-50 overflow-hidden">
+      <section className="relative py-32 bg-gray-50 overflow-hidden">
         {/* 背景線條 */}
         <motion.div
           className="absolute inset-0"
@@ -859,6 +1027,21 @@ export default function HomePage() {
           />
         </motion.div>
 
+        {/* 裝飾元素 */}
+        <motion.div
+          className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        />
+        
+        <motion.div
+          className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        />
+
         <div className="container-custom relative z-10">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-4xl sm:text-5xl font-black mb-6 text-primary font-display">
@@ -866,7 +1049,7 @@ export default function HomePage() {
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
               從品牌定位到數位行銷，我們提供完整的解決方案，
-              讓您專注於提供優質的醫療服務，我們負責打造您的品牌形象
+              讓您專注於提供優質的醫療服務
             </p>
           </AnimatedSection>
 
@@ -874,17 +1057,66 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <AnimatedSection key={feature.title} delay={index * 0.2}>
                 <motion.div 
-                  className="bg-white p-6 sm:p-8 rounded-sm shadow-sm border-l-4 border-primary hover:bg-gray-50 transition-all duration-300"
-                  whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(220, 38, 38, 0.1)' }}
+                  className="group relative bg-white p-6 sm:p-8 rounded-sm shadow-sm hover:shadow-xl transition-all duration-300"
+                  whileHover={{ y: -5 }}
                 >
-                  <div className="mb-4 sm:mb-6 text-primary">
-                    <feature.icon className="w-12 h-12 sm:w-16 sm:h-16" />
+                  {/* 背景裝飾 */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  <div className="relative">
+                    {/* 圖標 */}
+                    <motion.div 
+                      className="mb-4 sm:mb-6 text-primary"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <feature.icon className="w-12 h-12 sm:w-16 sm:h-16" />
+                    </motion.div>
+
+                    {/* 標題 */}
+                    <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-primary font-gothic">
+                      {feature.title}
+                    </h3>
+
+                    {/* 描述 */}
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+
+                    {/* 互動指示器 */}
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary/20 mt-4">
+                      <motion.div
+                        className="h-full bg-primary"
+                        initial={{ width: "0%" }}
+                        whileHover={{ width: "100%" }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-primary font-gothic">{feature.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
                 </motion.div>
               </AnimatedSection>
             ))}
+          </div>
+
+          {/* 服務連結 */}
+          <div className="text-center mt-12">
+            <Link
+              href="/service"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-3 bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors"
+            >
+              <span>探索更多服務內容</span>
+              <motion.svg
+                className="w-4 h-4"
+                initial={{ x: 0 }}
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </motion.svg>
+            </Link>
           </div>
         </div>
       </section>
@@ -935,30 +1167,26 @@ export default function HomePage() {
             </h2>
             <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-              擁有豐富產業經驗的專業團隊，為您提供最優質的服務
+              擁有豐富醫療行銷經驗的跨領域專家團隊，為您的診所打造最適合的品牌成長策略
             </p>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
-              <AnimatedSection key={member.name} delay={index * 0.1}>
-                <div className="bg-gray-50 rounded-lg overflow-hidden group">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                    <div className="text-primary font-medium mb-2">{member.title}</div>
-                    <p className="text-gray-600">{member.description}</p>
-                  </div>
-                </div>
-              </AnimatedSection>
+              <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
             ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/team"
+              className="inline-flex items-center justify-center px-8 py-3 bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors"
+            >
+              認識更多團隊成員
+              <svg className="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>

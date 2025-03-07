@@ -1,9 +1,9 @@
 import { Metadata } from 'next'
-import { client } from '@/lib/sanity'
+import { client } from '@/lib/sanity/client'
 import { groq } from 'next-sanity'
 import { notFound } from 'next/navigation'
 import BlogPost from '@/components/pages/BlogPost'
-import { urlForImage } from '@/lib/sanity'
+import { urlForImage } from '@/lib/sanity/client'
 
 interface PageParams {
   slug: string

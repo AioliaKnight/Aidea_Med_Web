@@ -5,9 +5,9 @@ import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
-import { client, handleSanityError } from '@/lib/sanity'
+import { client, handleSanityError } from '@/lib/sanity/client'
 import { groq } from 'next-sanity'
-import { urlForImage } from '@/lib/sanity'
+import { urlForImage } from '@/lib/sanity/client'
 import { toast } from 'react-hot-toast'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { Spinner } from '@/components/common/Spinner'
@@ -21,9 +21,13 @@ interface Post {
   publishedAt: string
   excerpt: string
   mainImage?: {
+    _type: 'image'
     asset: {
       _ref: string
+      _type: 'reference'
     }
+    alt?: string
+    caption?: string
   }
   categories: Array<{
     title: string

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Script from 'next/script'
 import { Metadata } from 'next'
+import Image from 'next/image'
 
 // 定義案例資料類型
 export interface CaseMetric {
@@ -22,8 +23,20 @@ export interface CaseStudy {
   featured?: boolean;
   color?: string;
   image?: string;
+  imageWebp?: string;
+  imagePlaceholder?: string;
+  imageSizes?: {
+    sm: string;
+    md: string;
+    lg: string;
+  };
   publishedDate?: string;
   updatedDate?: string;
+  testimonial?: {
+    content: string;
+    author: string;
+    title: string;
+  };
 }
 
 // Schema.org 結構化資料類型定義
@@ -77,9 +90,29 @@ export const caseStudies: CaseStudy[] = [
       { value: '300%', label: '品牌知名度提升' },
       { value: '50%', label: '每月穩定回診率成長' }
     ],
-    color: '#4A6CF7', // 主題藍色
+    solutions: [
+      '品牌識別系統重塑',
+      '數位行銷策略規劃',
+      '社群媒體經營優化',
+      '顧客體驗流程改造'
+    ],
+    color: '#4A6CF7',
+    image: '/cases/smile-dental.jpg',
+    imageWebp: '/cases/smile-dental.webp',
+    imagePlaceholder: '/cases/smile-dental-placeholder.jpg',
+    imageSizes: {
+      sm: '/cases/smile-dental-sm.jpg',
+      md: '/cases/smile-dental-md.jpg',
+      lg: '/cases/smile-dental.jpg',
+    },
+    featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
-    updatedDate: '2023-11-20T00:00:00Z'
+    updatedDate: '2023-11-20T00:00:00Z',
+    testimonial: {
+      content: '透過專業的品牌重塑服務，不僅提升了診所形象，更帶來實質的營收成長。團隊的執行力和專業度令人印象深刻。',
+      author: '王小明',
+      title: '診所院長'
+    }
   },
   {
     id: 'kongde-dental',
@@ -395,92 +428,112 @@ export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): JSX.Element => {
   );
 };
 
-// 案例卡片組件 - 優化結構與無障礙體驗
-export interface CaseCardProps {
-  caseStudy: CaseStudy;
-  index: number;
-}
+// 新增案例卡片組件
+export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
+  const [imageLoading, setImageLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
 
-export const CaseCard = ({ caseStudy }: CaseCardProps): JSX.Element => {
   return (
-    <motion.article
-      variants={animations.itemFadeIn}
-      whileHover={{ y: -5 }}
-      className="bg-white border border-gray-100 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md flex flex-col h-full"
-      role="article"
-      aria-labelledby={`case-heading-${caseStudy.id}`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      viewport={{ once: true }}
+      className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
-      <div className="aspect-video relative overflow-hidden" style={{ background: brandColors.primary }}>
-        {/* 扁平設計的幾何元素 */}
-        <div className="absolute inset-0">
-          <div className="absolute top-[10%] right-[5%] w-12 h-12 opacity-20 bg-white rounded-none"></div>
-          <div className="absolute bottom-[15%] left-[10%] w-20 h-8 opacity-10 bg-black rounded-none"></div>
-          <div className="absolute top-[40%] right-[30%] w-8 h-8 opacity-15 bg-white rounded-none"></div>
-        </div>
-        
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-white text-center">
-            <AnimatedNumber 
-              value={caseStudy.metrics[0].value}
-              className="text-5xl font-bold font-gothic"
-            />
-            <div className="text-sm">{caseStudy.metrics[0].label}</div>
+      {/* 圖片區域 */}
+      <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
+        {imageLoading && !imageError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
-        </div>
+        )}
+        {!imageError ? (
+          <Image
+            src={caseStudy.image}
+            alt={caseStudy.name}
+            fill
+            className={`object-cover transform group-hover:scale-105 transition-transform duration-500 ${
+              imageLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            onLoad={() => setImageLoading(false)}
+            onError={() => setImageError(true)}
+            priority={index < 2}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+            <span className="text-4xl">📷</span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="mb-4">
-          <span className="inline-block px-2 py-1 border-l-2 border-primary text-gray-700 text-xs font-medium mb-2">
+
+      {/* 內容區域 */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <span className="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-full">
             {caseStudy.category}
           </span>
-          <h3 id={`case-heading-${caseStudy.id}`} className="text-xl font-bold font-gothic">{caseStudy.name}</h3>
+          {caseStudy.featured && (
+            <span className="flex items-center text-yellow-500">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            </span>
+          )}
         </div>
-        <p className="text-gray-600 mb-5 text-sm">
-          {caseStudy.description.length > 60 
-            ? caseStudy.description.substring(0, 60) + '...' 
-            : caseStudy.description}
+
+        <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+          {caseStudy.name}
+        </h3>
+        
+        <p className="text-gray-600 mb-4 line-clamp-2">
+          {caseStudy.description}
         </p>
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {caseStudy.metrics.slice(0, 2).map((metric: CaseMetric, index: number) => (
-            <div key={index} className="bg-gray-50 border-l-2 border-primary p-3">
-              <AnimatedNumber 
-                value={metric.value}
-                className="text-xl font-bold mb-1 font-gothic text-primary"
-              />
-              <div className="text-xs text-gray-600">{metric.label}</div>
+
+        {/* 成效指標 */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
+            <div key={idx} className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-xl font-bold text-primary mb-1">
+                {metric.value}
+              </div>
+              <div className="text-sm text-gray-600">
+                {metric.label}
+              </div>
             </div>
           ))}
         </div>
-        {caseStudy.solutions && caseStudy.solutions.length > 0 && (
-          <div className="space-y-2 mb-5">
-            {caseStudy.solutions.slice(0, 2).map((solution: string, index: number) => (
-              <p key={index} className="text-gray-500 text-sm flex items-start">
-                <span className="flex-shrink-0 h-5 w-5 flex items-center justify-center bg-primary text-white text-xs mr-2">
-                  {index + 1}
-                </span>
-                <span className="line-clamp-1">{solution}</span>
-              </p>
+
+        {/* 解決方案列表 */}
+        {caseStudy.solutions && (
+          <div className="space-y-2 mb-6">
+            {caseStudy.solutions.slice(0, 3).map((solution, idx) => (
+              <div key={idx} className="flex items-center text-sm text-gray-600">
+                <svg className="w-4 h-4 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {solution}
+              </div>
             ))}
           </div>
         )}
-        <motion.div
-          whileHover={{ x: 5 }}
-          transition={{ duration: 0.2 }}
-          className="mt-auto"
+
+        {/* 查看詳情按鈕 */}
+        <Link
+          href={`/case/${caseStudy.id}`}
+          className="inline-flex items-center justify-center w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
         >
-          <Link href={`/case/${caseStudy.id}`} aria-label={`查看${caseStudy.name}的詳細案例`}>
-            <span className="text-primary font-medium inline-flex items-center group transition-colors duration-300">
-              查看詳細案例
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </span>
-          </Link>
-        </motion.div>
+          查看詳細案例
+          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
       </div>
-    </motion.article>
-  );
-};
+    </motion.div>
+  )
+}
 
 // CTA 組件 - 提供可重用的行動呼籲區塊
 export const CTASection = (): JSX.Element => {
@@ -642,159 +695,111 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
   };
 };
 
-// 頁面主組件
+// 更新主頁面組件
 export default function CasePage(): JSX.Element {
-  // 載入與篩選狀態
-  const [loading, setLoading] = useState<boolean>(false);
-  const [activeCategory, setActiveCategory] = useState<string>('全部');
-  const [isChangingCategory, setIsChangingCategory] = useState<boolean>(false);
-  
-  // 根據類別篩選案例
-  const filteredCases = activeCategory === '全部' 
-    ? caseStudies 
-    : caseStudies.filter(cs => cs.category === activeCategory);
-  
-  // 獲取特色案例和一般案例
-  const featuredCase = filteredCases.find(cs => cs.featured);
-  const regularCases = filteredCases.filter(cs => !cs.featured);
-  
-  // 從案例中提取獨特的類別
-  const uniqueCategories = ['全部', ...Array.from(new Set(caseStudies.map(cs => cs.category)))];
-  
-  // 處理類別變更
-  const handleCategoryChange = (category: string): void => {
-    if (category === activeCategory) return;
-    
-    // 顯示載入狀態並模擬載入時間，提升UX
-    setIsChangingCategory(true);
-    setActiveCategory(category);
-    
-    setTimeout(() => {
-      setIsChangingCategory(false);
-    }, 300);
-  };
-  
-  // SEO結構化資料 - 符合 schema.org 標準
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "itemListElement": caseStudies.map((caseStudy, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "item": {
-        "@type": "Article",
-        "name": caseStudy.name,
-        "headline": `${caseStudy.name} - ${caseStudy.category}`,
-        "description": caseStudy.description,
-        "url": `https://www.aidea-med.com/case/${caseStudy.id}`,
-        "datePublished": caseStudy.publishedDate || new Date().toISOString(),
-        "dateModified": caseStudy.updatedDate || new Date().toISOString(),
-        "publisher": {
-          "@type": "Organization",
-          "name": "雅德數位行銷",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://www.aidea-med.com/logo.png"
-          }
-        },
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": `https://www.aidea-med.com/case/${caseStudy.id}`
-        }
-      }
-    }))
-  };
-  
-  // 模擬完整頁面載入效果（可在實際API整合時移除）
+  const [activeCategory, setActiveCategory] = useState('全部')
+  const [filteredCases, setFilteredCases] = useState(caseStudies)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // 獲取所有案例類別
+  const categories = ['全部', ...new Set(caseStudies.map(cs => cs.category))]
+
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 800);
-  }, []);
-  
-  if (loading) {
-    return <LoadingState />;
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // 處理類別篩選
+  useEffect(() => {
+    if (activeCategory === '全部') {
+      setFilteredCases(caseStudies)
+    } else {
+      setFilteredCases(caseStudies.filter(cs => cs.category === activeCategory))
+    }
+  }, [activeCategory])
+
+  if (isLoading) {
+    return <LoadingState />
   }
-  
+
   return (
-    <>
-      {/* 結構化資料 */}
-      <Script id="structured-data" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      
-      <div className="py-20 min-h-screen bg-white">
-        <div className="container mx-auto px-4">
-          {/* 頁面標題 */}
-          <div className="text-center mb-16">
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-4xl md:text-5xl font-bold font-gothic mb-4"
-            >
-              成功案例展示
-            </motion.h1>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex justify-center mb-4"
-            >
-              <div className="w-20 h-1 bg-primary"></div>
-            </motion.div>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-gray-600 max-w-3xl mx-auto"
-            >
-              透過專業的數位行銷策略，我們協助多家牙醫診所成功打造品牌形象、提升營收，
-              以下是部分合作診所的實際成效。
-            </motion.p>
-          </div>
-          
-          {/* 類別篩選器 */}
-          <CaseFilter 
-            activeCategory={activeCategory} 
-            setActiveCategory={handleCategoryChange}
-            categories={uniqueCategories}
+    <div className="min-h-screen bg-gray-50">
+      {/* 頁面標題區 */}
+      <section className="relative py-20 bg-primary text-white overflow-hidden">
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.1 }}
+          transition={{ duration: 1 }}
+        >
+          <Image
+            src="/images/bgline-w.png"
+            alt="背景線條"
+            fill
+            className="object-cover mix-blend-soft-light"
+            quality={90}
+            sizes="100vw"
           />
-          
-          {/* 內容區 */}
-          {isChangingCategory ? (
-            <LoadingState />
-          ) : filteredCases.length === 0 ? (
+        </motion.div>
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 font-display">
+              成功案例展示
+            </h1>
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+              探索我們如何幫助診所提升品牌價值、增加營業額，
+              打造專屬的品牌成長策略
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 案例篩選與展示區 */}
+      <section className="py-20">
+        <div className="container-custom">
+          {/* 篩選器 */}
+          <CaseFilter
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+            categories={categories}
+          />
+
+          {/* 案例列表 */}
+          {filteredCases.length === 0 ? (
             <EmptyState category={activeCategory} />
           ) : (
-            <div>
-              {/* 特色案例 */}
-              {featuredCase && activeCategory === '全部' && <FeaturedCase caseStudy={featuredCase} />}
-              
-              {/* 一般案例 */}
-              {regularCases.length > 0 && (
-                <motion.div
-                  variants={animations.staggerContainer}
-                  initial="initial"
-                  animate="animate"
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
-                >
-                  {regularCases.map((caseStudy, index) => (
-                    <CaseCard 
-                      key={caseStudy.id} 
-                      caseStudy={caseStudy} 
-                      index={index}
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </div>
+            <motion.div
+              variants={animations.staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {filteredCases.map((caseStudy, index) => (
+                <CaseCard
+                  key={caseStudy.id}
+                  caseStudy={caseStudy}
+                  index={index}
+                />
+              ))}
+            </motion.div>
           )}
-          
-          {/* CTA 區域 */}
-          <CTASection />
-          
-          {/* 回到頂部按鈕 */}
-          <BackToTopButton />
         </div>
-      </div>
-    </>
-  );
+      </section>
+
+      {/* CTA 區域 */}
+      <CTASection />
+
+      {/* 回到頂部按鈕 */}
+      <BackToTopButton />
+    </div>
+  )
 } 
