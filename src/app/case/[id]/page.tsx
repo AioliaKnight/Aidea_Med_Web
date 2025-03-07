@@ -132,6 +132,7 @@ export default function CaseDetail() {
               };
             }
           });
+          foundCase.solutions = formattedSolutions;
         }
         
         // 尋找相同類別的其他案例
