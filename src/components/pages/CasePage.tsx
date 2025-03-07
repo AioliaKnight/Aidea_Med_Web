@@ -649,7 +649,7 @@ export default function CasePage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true)
 
   // 獲取所有案例類別
-  const categories = ['全部', ...new Set(caseStudies.map(cs => cs.category))]
+  const categories = ['全部', ...Array.from(new Set(caseStudies.map(cs => cs.category)))]
 
   useEffect(() => {
     const timer = setTimeout(() => {
