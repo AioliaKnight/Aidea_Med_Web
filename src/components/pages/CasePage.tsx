@@ -44,6 +44,11 @@ export interface CaseStudy {
   };
 }
 
+export interface CaseCardProps {
+  caseStudy: CaseStudy;
+  index: number;
+}
+
 // Schema.org 結構化資料類型定義
 export interface ArticleStructuredData {
   '@context': string;
