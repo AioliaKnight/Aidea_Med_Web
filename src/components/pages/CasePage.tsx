@@ -13,13 +13,18 @@ export interface CaseMetric {
   label: string;
 }
 
+export interface Solution {
+  title: string;
+  description: string;
+}
+
 export interface CaseStudy {
   id: string;
   name: string;
   category: string;
   description: string;
   metrics: CaseMetric[];
-  solutions?: string[];
+  solutions?: Solution[];
   featured?: boolean;
   color?: string;
   image?: string;
@@ -91,10 +96,22 @@ export const caseStudies: CaseStudy[] = [
       { value: '50%', label: '每月穩定回診率成長' }
     ],
     solutions: [
-      '品牌識別系統重塑',
-      '數位行銷策略規劃',
-      '社群媒體經營優化',
-      '顧客體驗流程改造'
+      {
+        title: '品牌識別系統重塑',
+        description: '建立清晰的品牌定位和一致的視覺識別系統，從診所空間設計到線上形象，創造專業且現代化的品牌體驗。'
+      },
+      {
+        title: '數位行銷策略規劃',
+        description: '制定完整的數位行銷策略，包含社群媒體、內容行銷、SEO 優化等多元管道。'
+      },
+      {
+        title: '社群媒體經營優化',
+        description: '針對目標客群偏好，優化社群媒體策略，持續創建高品質的衛教內容，增強診所專業形象與患者互動。'
+      },
+      {
+        title: '顧客體驗流程改造',
+        description: '導入數位化管理系統，提升診所運營效率，優化患者就醫體驗，建立長期忠誠度與口碑推薦系統。'
+      }
     ],
     color: '#4A6CF7',
     image: '/cases/smile-dental.jpg',
@@ -124,11 +141,20 @@ export const caseStudies: CaseStudy[] = [
       { value: '3萬+', label: '社群互動' }
     ],
     solutions: [
-      '建立專業醫療內容庫',
-      '優化社群互動策略',
-      '提升品牌知名度'
+      {
+        title: '建立專業醫療內容庫',
+        description: '規劃並建立完整的醫療知識內容庫，提供高品質的衛教資訊。'
+      },
+      {
+        title: '優化社群互動策略',
+        description: '設計互動式貼文和活動，提升粉絲參與度和互動率。'
+      },
+      {
+        title: '提升品牌知名度',
+        description: '透過多元化的社群行銷策略，擴大品牌影響力和市場佔有率。'
+      }
     ],
-    color: '#FF7A50', // 橘色系
+    color: '#FF7A50',
     publishedDate: '2023-07-10T00:00:00Z',
     updatedDate: '2023-10-05T00:00:00Z'
   },
@@ -142,11 +168,20 @@ export const caseStudies: CaseStudy[] = [
       { value: '90%', label: '客戶滿意度' }
     ],
     solutions: [
-      '品牌識別系統重塑',
-      '服務流程優化',
-      '數位預約系統建置'
+      {
+        title: '品牌識別系統重塑',
+        description: '重新設計品牌視覺識別系統，建立一致性的品牌形象。'
+      },
+      {
+        title: '服務流程優化',
+        description: '優化診所服務流程，提升患者就醫體驗和滿意度。'
+      },
+      {
+        title: '數位預約系統建置',
+        description: '導入智能預約系統，提升預約效率和管理便利性。'
+      }
     ],
-    color: '#7E57C2', // 紫色系
+    color: '#7E57C2',
     publishedDate: '2023-06-20T00:00:00Z',
     updatedDate: '2023-09-15T00:00:00Z'
   },
@@ -160,11 +195,20 @@ export const caseStudies: CaseStudy[] = [
       { value: '210%', label: '品牌曝光' }
     ],
     solutions: [
-      '多平台數位廣告整合',
-      '專業形象重塑',
-      '病患轉介計畫實施'
+      {
+        title: '多平台數位廣告整合',
+        description: '整合各大數位廣告平台，精準投放目標客群。'
+      },
+      {
+        title: '專業形象重塑',
+        description: '建立專業醫療團隊形象，提升品牌公信力。'
+      },
+      {
+        title: '病患轉介計畫實施',
+        description: '建立完整的病患轉介系統，提高客戶忠誠度。'
+      }
     ],
-    color: '#26A69A', // 綠松石色
+    color: '#26A69A',
     featured: true,
     publishedDate: '2023-05-05T00:00:00Z',
     updatedDate: '2023-08-30T00:00:00Z'
@@ -179,11 +223,20 @@ export const caseStudies: CaseStudy[] = [
       { value: '45%', label: '營運成本降低' }
     ],
     solutions: [
-      '智能預約系統導入',
-      '線上客戶關係管理',
-      '行動支付整合'
+      {
+        title: '智能預約系統導入',
+        description: '導入 AI 智能預約系統，提升預約效率和準確度。'
+      },
+      {
+        title: '線上客戶關係管理',
+        description: '建立完整的線上 CRM 系統，優化客戶服務體驗。'
+      },
+      {
+        title: '行動支付整合',
+        description: '整合多元支付方式，提供便利的付款體驗。'
+      }
     ],
-    color: '#EC407A', // 粉紅色
+    color: '#EC407A',
     publishedDate: '2023-04-15T00:00:00Z',
     updatedDate: '2023-07-10T00:00:00Z'
   }
@@ -514,7 +567,7 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
                 <svg className="w-4 h-4 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {solution}
+                {solution.title}
               </div>
             ))}
           </div>
