@@ -15,6 +15,9 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
 
+  // 使用預設圖片或案例圖片
+  const imageSrc = caseStudy.image || '/images/case-placeholder.jpg'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -32,7 +35,7 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
         )}
         {!imageError ? (
           <Image
-            src={caseStudy.image}
+            src={imageSrc}
             alt={caseStudy.name}
             fill
             className={`object-cover transform group-hover:scale-105 transition-transform duration-500 ${
