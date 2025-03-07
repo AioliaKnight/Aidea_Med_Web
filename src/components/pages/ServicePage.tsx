@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Image from 'next/image'
 
 // 定義資料類型
 interface ServiceItem {
@@ -216,9 +215,9 @@ interface ServiceCardProps {
 function ServiceCard({ service, index }: ServiceCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 * index }}
+      variants={animations.fadeIn}
+      initial="initial"
+      animate="animate"
       whileHover={{ y: -5 }}
       className="bg-white p-8 shadow-md hover:shadow-lg transition-all duration-300"
     >
@@ -237,32 +236,27 @@ function ServiceCard({ service, index }: ServiceCardProps) {
         </svg>
       </div>
       <h3 className="text-2xl font-bold mb-4" style={{ color: colors.textDark }}>{service.title}</h3>
-      <ul className="space-y-3 mb-6">
+      <motion.ul 
+        variants={animations.stagger}
+        initial="initial"
+        animate="animate"
+        className="space-y-3 mb-6"
+      >
         {service.items.map((item, idx) => (
           <motion.li 
-            key={idx} 
+            key={idx}
+            variants={animations.slideIn}
             className="flex items-start text-gray-600"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * idx }}
           >
             <span 
               className="w-1.5 h-1.5 flex-shrink-0 mt-2.5 mr-3"
               style={{ background: colors.primary }}
-            ></span>
-            <span className="text-base" style={{ color: colors.textLight }}>{item}</span>
+            />
+            {item}
           </motion.li>
         ))}
-      </ul>
-      <p className="text-base mb-6" style={{ color: colors.textLight }}>
-        {service.description}
-      </p>
-      <div className="inline-flex items-center group">
-        <span className="text-base font-medium mr-2" style={{ color: colors.primary }}>了解更多</span>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-        </svg>
-      </div>
+      </motion.ul>
+      <p className="text-gray-600 mb-6">{service.description}</p>
     </motion.div>
   )
 }

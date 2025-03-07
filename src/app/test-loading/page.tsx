@@ -55,7 +55,7 @@ function LoadingDemo() {
 
 export default function TestLoadingPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 space-y-8">
       <Suspense
         fallback={
           <Loading
@@ -68,7 +68,31 @@ export default function TestLoadingPage() {
           />
         }
       >
-        <LoadingDemo />
+        <div className="container mx-auto py-8">
+          <h1 className="text-3xl font-bold mb-8 text-center">載入動畫測試頁面</h1>
+          <div className="space-y-12">
+            <section>
+              <h2 className="text-2xl font-semibold mb-6">主題展示</h2>
+              <LoadingDemo />
+            </section>
+            
+            <section>
+              <h2 className="text-2xl font-semibold mb-6">異步載入測試</h2>
+              <Suspense
+                fallback={
+                  <Loading
+                    text="載入資料中..."
+                    size="md"
+                    theme="slate"
+                    className="py-12"
+                  />
+                }
+              >
+                <AsyncComponent />
+              </Suspense>
+            </section>
+          </div>
+        </div>
       </Suspense>
     </div>
   )

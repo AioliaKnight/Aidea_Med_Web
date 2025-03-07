@@ -83,7 +83,7 @@ export default function RootLayout({
                     text="載入應用程式..."
                     blur
                     size="lg"
-                    color="primary"
+                    theme="slate"
                   />
                 }
               >

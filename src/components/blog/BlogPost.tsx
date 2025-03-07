@@ -30,12 +30,16 @@ export const BlogPost = ({ post }: BlogPostProps) => {
             viewport={{ once: true }}
             className="my-8"
           >
-            <img
-              src={imageUrl}
-              alt={value.alt || ''}
-              className="w-full rounded-lg shadow-lg cursor-pointer"
-              onClick={() => setSelectedImage({ src: imageUrl, alt: value.alt || '' })}
-            />
+            <div className="relative">
+              <Image
+                src={imageUrl}
+                alt={value.alt || ''}
+                width={1200}
+                height={675}
+                className="w-full rounded-lg shadow-lg cursor-pointer"
+                onClick={() => setSelectedImage({ src: imageUrl, alt: value.alt || '' })}
+              />
+            </div>
             {value.caption && (
               <p className="text-center text-gray-600 mt-2">{value.caption}</p>
             )}
