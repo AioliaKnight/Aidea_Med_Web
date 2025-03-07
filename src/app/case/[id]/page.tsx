@@ -218,7 +218,7 @@ export default function CaseDetail() {
                     whileHover={{ x: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <p className="text-white mb-4">"{caseStudy.testimonial.content}"</p>
+                    <p className="text-white mb-4">&quot;{caseStudy.testimonial.content}&quot;</p>
                     <div>
                       <div className="font-medium">{caseStudy.testimonial.author}</div>
                       <div className="text-white/70 text-sm">{caseStudy.testimonial.title}</div>
