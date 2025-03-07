@@ -1,55 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
-import { urlForImage } from '@/lib/sanity/client'
-import { Post, BlogSettings } from '@/types/blog'
-import { SubscriptionForm } from '@/components/common/blog/SubscriptionForm'
-import { BackToTop } from '@/components/common/blog/BackToTop'
+import { urlForImage } from '@/lib/sanity/image'
+import { Post, BlogSettings } from '@/lib/sanity/queries'
+import { SubscriptionForm } from '../common/blog/SubscriptionForm'
+import { BackToTop } from '../common/blog/BackToTop'
+import Image from 'next/image'
 
 interface BlogPageProps {
   posts: Post[]
   settings: BlogSettings
-  total: number
-  page: number
-  totalPages: number
   hasMore: boolean
 }
 
 export const BlogPage = ({
   posts,
   settings,
-  total,
-  page,
-  totalPages,
   hasMore,
 }: BlogPageProps) => {
-  const [currentPage, setCurrentPage] = useState(page)
   const [isLoading, setIsLoading] = useState(false)
-  const [allPosts, setAllPosts] = useState(posts)
-
+  
   const loadMore = async () => {
-    if (isLoading || !hasMore) return
-
     setIsLoading(true)
-    try {
-      const response = await fetch(
-        `/api/blog?page=${currentPage + 1}&limit=9`
-      )
-      const data = await response.json()
-      setAllPosts((prev) => [...prev, ...data.posts])
-      setCurrentPage(data.page)
-    } catch (error) {
-      console.error('Error loading more posts:', error)
-    } finally {
-      setIsLoading(false)
-    }
+    // 實作載入更多邏輯
+    setIsLoading(false)
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-12">
       {/* 標題區塊 */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -64,7 +45,7 @@ export const BlogPage = ({
 
       {/* 文章列表 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {allPosts.map((post, index) => (
+        {posts.map((post, index) => (
           <motion.article
             key={post._id}
             initial={{ opacity: 0, y: 20 }}
@@ -73,11 +54,15 @@ export const BlogPage = ({
             className="bg-white rounded-lg shadow-sm overflow-hidden"
           >
             {post.mainImage && (
-              <img
-                src={urlForImage(post.mainImage).url()}
-                alt={post.mainImage.alt || post.title}
-                className="w-full aspect-video object-cover"
-              />
+              <div className="relative aspect-video">
+                <Image
+                  src={urlForImage(post.mainImage).url()}
+                  alt={post.mainImage.alt || post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
             )}
             <div className="p-6">
               <div className="flex flex-wrap gap-2 mb-4">

@@ -122,7 +122,7 @@ export default function CaseDetail() {
         
         // 處理解決方案
         if (foundCase.solutions) {
-          const formattedSolutions = foundCase.solutions.map((solution: any, index) => {
+          foundCase.solutions = foundCase.solutions.map((solution: any, index) => {
             if (typeof solution === 'object' && solution.title && solution.description) {
               return solution as Solution;
             } else {
@@ -132,7 +132,6 @@ export default function CaseDetail() {
               };
             }
           });
-          foundCase.solutions = formattedSolutions;
         }
         
         // 尋找相同類別的其他案例

@@ -1,4 +1,4 @@
-export default {
+const categorySchema = {
   name: 'category',
   title: '分類',
   type: 'document',
@@ -40,4 +40,6 @@ export default {
       media: 'mainImage',
     },
   },
-} 
+}
+
+export default categorySchema 

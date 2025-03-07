@@ -10,6 +10,7 @@ import { Post } from '@/types/blog'
 import { ImageViewer } from '@/components/common/blog/ImageViewer'
 import { ShareButtons } from '@/components/common/blog/ShareButtons'
 import { BackToTop } from '@/components/common/blog/BackToTop'
+import Image from 'next/image'
 
 interface BlogPostProps {
   post: Post
@@ -67,33 +68,30 @@ export const BlogPost = ({ post }: BlogPostProps) => {
 
         {/* 主圖 */}
         {post.mainImage && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative aspect-video rounded-lg overflow-hidden"
-          >
-            <img
+          <div className="relative aspect-video mb-8">
+            <Image
               src={urlForImage(post.mainImage).url()}
               alt={post.mainImage.alt || post.title}
-              className="w-full h-full object-cover cursor-pointer"
-              onClick={() =>
-                setSelectedImage({
-                  src: urlForImage(post.mainImage).url(),
-                  alt: post.mainImage.alt || post.title,
-                })
-              }
+              fill
+              className="object-cover"
+              priority
+              sizes="100vw"
             />
-          </motion.div>
+          </div>
         )}
 
         {/* 作者資訊 */}
         <div className="flex items-center space-x-4">
-          {post.author.image && (
-            <img
-              src={urlForImage(post.author.image).url()}
-              alt={post.author.name}
-              className="w-12 h-12 rounded-full"
-            />
+          {post.author?.image && (
+            <div className="relative w-12 h-12 rounded-full overflow-hidden">
+              <Image
+                src={urlForImage(post.author.image).url()}
+                alt={post.author.name}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
           )}
           <div>
             <h2 className="font-medium">{post.author.name}</h2>
@@ -143,11 +141,15 @@ export const BlogPost = ({ post }: BlogPostProps) => {
                   className="bg-white rounded-lg shadow-sm overflow-hidden"
                 >
                   {relatedPost.mainImage && (
-                    <img
-                      src={urlForImage(relatedPost.mainImage).url()}
-                      alt={relatedPost.mainImage.alt || relatedPost.title}
-                      className="w-full aspect-video object-cover"
-                    />
+                    <div className="relative aspect-video mb-4">
+                      <Image
+                        src={urlForImage(relatedPost.mainImage).url()}
+                        alt={relatedPost.mainImage.alt || relatedPost.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
                   )}
                   <div className="p-4">
                     <h4 className="font-medium mb-2">{relatedPost.title}</h4>

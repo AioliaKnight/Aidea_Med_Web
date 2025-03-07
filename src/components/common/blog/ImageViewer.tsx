@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface ImageViewerProps {
   src: string
@@ -46,14 +48,14 @@ export const ImageViewer = ({ src, alt, onClose }: ImageViewerProps) => {
             onClick={onClose}
             aria-label="關閉圖片"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <XMarkIcon className="h-6 w-6" />
           </button>
-          <img
+          <Image
             src={src}
             alt={alt}
-            className="max-w-full max-h-[90vh] object-contain"
+            fill
+            className="object-contain"
+            sizes="90vw"
             onClick={(e) => e.stopPropagation()}
           />
           {alt && (

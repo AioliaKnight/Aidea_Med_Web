@@ -1,4 +1,4 @@
-export default {
+const authorSchema = {
   name: 'author',
   title: '作者',
   type: 'document',
@@ -30,9 +30,7 @@ export default {
     {
       name: 'bio',
       title: '簡介',
-      type: 'array',
-      of: [{ type: 'block' }],
-      validation: (Rule: any) => Rule.required(),
+      type: 'text',
     },
   ],
   preview: {
@@ -41,4 +39,6 @@ export default {
       media: 'image',
     },
   },
-} 
+}
+
+export default authorSchema 

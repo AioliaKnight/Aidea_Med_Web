@@ -1,4 +1,4 @@
-export default {
+const blogSettingsSchema = {
   name: 'blogSettings',
   title: '部落格設定',
   type: 'document',
@@ -66,4 +66,6 @@ export default {
       media: 'mainImage',
     },
   },
-} 
+}
+
+export default blogSettingsSchema 
