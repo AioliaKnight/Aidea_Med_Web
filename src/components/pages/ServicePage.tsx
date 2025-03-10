@@ -2,6 +2,11 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { memo } from 'react'
+
+// 從配置文件導入
+import { colors } from '@/config/theme'
+import { animations } from '@/config/animations'
 
 // 定義資料類型
 interface ServiceItem {
@@ -25,19 +30,6 @@ interface PricingPlan {
   features: string[];
   btnText: string;
   isPopular: boolean;
-}
-
-// 主要品牌色系
-const colors = {
-  primary: '#E61E25', // 品牌紅色
-  primaryDark: '#CC1A20', // 深紅色
-  secondary: '#1A1A1A', // 深黑色
-  light: '#FFFFFF', // 白色
-  gray: '#F5F5F5', // 淺灰色背景
-  grayDark: '#E0E0E0', // 深灰色
-  textDark: '#2A2A2A', // 深色文字
-  textLight: '#666666', // 淺色文字
-  accent: '#FFD700', // 強調色（金色）
 }
 
 // 服務數據
@@ -184,49 +176,32 @@ const pricingPlans: PricingPlan[] = [
   }
 ]
 
-// 動畫配置
-const animations = {
-  fadeIn: {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5, ease: 'easeOut' }
-  },
-  slideIn: {
-    initial: { opacity: 0, x: -20 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.4, ease: 'easeOut' }
-  },
-  scaleIn: {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.4, ease: 'easeOut' }
-  },
-  stagger: {
-    animate: { transition: { staggerChildren: 0.1 } }
-  }
-}
-
 // 服務卡片組件
 interface ServiceCardProps {
   service: ServiceItem;
   index: number;
 }
 
-function ServiceCard({ service, index }: ServiceCardProps) {
+// 使用 memo 優化子組件
+const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardProps) {
   return (
     <motion.div
       variants={animations.fadeIn}
       initial="initial"
       animate="animate"
       whileHover={{ y: -5 }}
-      className="bg-white p-8 shadow-md hover:shadow-lg transition-all duration-300"
+      className="bg-white p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300"
+      role="article"
+      aria-labelledby={`service-title-${service.id}`}
     >
       <div 
-        className="w-16 h-16 flex items-center justify-center mb-6 text-white"
+        className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center mb-4 sm:mb-6 text-white"
         style={{ background: colors.primary }}
+        role="img"
+        aria-label={`${service.title} 圖標`}
       >
         <svg
-          className="w-8 h-8"
+          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -235,31 +210,35 @@ function ServiceCard({ service, index }: ServiceCardProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d={service.icon} />
         </svg>
       </div>
-      <h3 className="text-2xl font-bold mb-4" style={{ color: colors.textDark }}>{service.title}</h3>
+      <h3 
+        id={`service-title-${service.id}`}
+        className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4" 
+        style={{ color: colors.textDark }}
+      >
+        {service.title}
+      </h3>
       <motion.ul 
         variants={animations.stagger}
         initial="initial"
         animate="animate"
-        className="space-y-3 mb-6"
+        className="space-y-2 sm:space-y-3 mb-4 sm:mb-6"
+        role="list"
       >
         {service.items.map((item, idx) => (
           <motion.li 
             key={idx}
             variants={animations.slideIn}
-            className="flex items-start text-gray-600"
+            className="flex items-start text-sm sm:text-base text-gray-600"
           >
-            <span 
-              className="w-1.5 h-1.5 flex-shrink-0 mt-2.5 mr-3"
-              style={{ background: colors.primary }}
-            />
+            <span className="mr-2 text-primary" role="presentation">•</span>
             {item}
           </motion.li>
         ))}
       </motion.ul>
-      <p className="text-gray-600 mb-6">{service.description}</p>
+      <p className="text-sm sm:text-base text-gray-600">{service.description}</p>
     </motion.div>
   )
-}
+})
 
 // 流程步驟組件
 interface ProcessStepProps {
@@ -267,34 +246,40 @@ interface ProcessStepProps {
   index: number;
 }
 
-function ProcessStep({ step, index }: ProcessStepProps) {
+// 使用 memo 優化流程步驟組件
+const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-      className="relative px-6"
+    <motion.div
+      variants={animations.fadeIn}
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true }}
+      className="relative"
+      role="listitem"
+      aria-label={`步驟 ${step.step}: ${step.title}`}
     >
-      <div className="text-center bg-white p-8 shadow-md hover:shadow-lg transition-all duration-300">
+      <div className="flex flex-col items-center text-center">
         <div 
-          className="w-16 h-16 flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white"
-          style={{ background: colors.primary }}
+          className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
+          role="presentation"
         >
           {step.step}
         </div>
-        <h3 className="text-xl font-bold mb-3" style={{ color: colors.textDark }}>{step.title}</h3>
-        <p className="text-base" style={{ color: colors.textLight }}>
-          {step.description}
-        </p>
+        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: colors.textDark }}>
+          {step.title}
+        </h3>
+        <p className="text-sm sm:text-base text-gray-600">{step.description}</p>
       </div>
       {index < serviceProcess.length - 1 && (
-        <div className="hidden md:block absolute top-1/2 right-0 w-12 h-0.5 -translate-y-1/2" style={{ background: colors.grayDark }}>
-          <div className="absolute right-0 top-1/2 w-2 h-2 -translate-y-1/2" style={{ background: colors.primary }}></div>
-        </div>
+        <div 
+          className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gray-200 -z-10"
+          role="presentation"
+          aria-hidden="true"
+        />
       )}
     </motion.div>
   )
-}
+})
 
 // 價格方案組件
 interface PricingPlanProps {
@@ -302,60 +287,80 @@ interface PricingPlanProps {
   index: number;
 }
 
-function PricingPlan({ plan, index }: PricingPlanProps) {
+// 使用 memo 優化價格方案組件
+const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-      whileHover={{ y: -5 }}
-      className={`p-8 transition-all duration-300 ${
+    <motion.div
+      variants={animations.scaleIn}
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true }}
+      className={`relative p-4 sm:p-6 md:p-8 ${
         plan.isPopular 
-          ? 'bg-primary text-white shadow-lg' 
-          : 'bg-white shadow-md hover:shadow-lg'
+          ? 'bg-primary text-white transform scale-105 shadow-xl' 
+          : 'bg-white text-gray-900'
       }`}
+      role="article"
+      aria-labelledby={`plan-title-${index}`}
     >
       {plan.isPopular && (
-        <div className="inline-block px-4 py-1 text-sm font-semibold mb-4 bg-white text-primary">
-          最受歡迎
+        <div 
+          className="absolute -top-4 right-4 bg-accent text-primary px-3 py-1 text-sm font-medium rounded-full transform -translate-y-2"
+          role="note"
+          aria-label="熱門方案"
+        >
+          熱門方案
         </div>
       )}
-      <h3 className="text-2xl font-bold mb-4" style={{ color: plan.isPopular ? colors.light : colors.textDark }}>{plan.title}</h3>
-      <div className="text-4xl font-black mb-6">
-        <span style={{ color: plan.isPopular ? colors.light : colors.primary }}>{plan.price}</span>
-        <span className="text-base font-normal ml-2" style={{ color: plan.isPopular ? colors.light : colors.textLight }}>{plan.period}</span>
+      <h3 
+        id={`plan-title-${index}`}
+        className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
+      >
+        {plan.title}
+      </h3>
+      <div className="mb-4 sm:mb-6">
+        <span className="text-2xl sm:text-3xl md:text-4xl font-bold">{plan.price}</span>
+        <span className="text-base sm:text-lg">{plan.period}</span>
       </div>
-      <div className="w-full h-px mb-6" style={{ background: plan.isPopular ? colors.light : colors.grayDark }}></div>
-      <ul className="space-y-4 mb-8">
+      <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8" role="list">
         {plan.features.map((feature, idx) => (
-          <motion.li 
-            key={idx} 
-            className="flex items-start"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * idx }}
+          <li 
+            key={idx}
+            className="flex items-center text-sm sm:text-base"
+            role="listitem"
           >
-            <svg className="w-5 h-5 flex-shrink-0 mr-3" style={{ color: plan.isPopular ? colors.light : colors.primary }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
-            <span className="text-base" style={{ color: plan.isPopular ? colors.light : colors.textLight }}>{feature}</span>
-          </motion.li>
+            {feature}
+          </li>
         ))}
       </ul>
-      <motion.button 
-        whileHover={{ scale: 1.02 }} 
-        whileTap={{ scale: 0.98 }}
-        className={`w-full py-4 font-medium text-lg transition-all duration-300 ${
+      <Link
+        href="/contact"
+        className={`block w-full py-2 sm:py-3 px-4 sm:px-6 text-center font-medium transition-all duration-300 rounded-lg text-sm sm:text-base ${
           plan.isPopular
-            ? 'bg-white text-primary'
-            : 'bg-primary text-white'
+            ? 'bg-white text-primary hover:bg-gray-100'
+            : 'bg-primary text-white hover:bg-primary-dark'
         }`}
+        aria-label={`選擇 ${plan.title} 方案`}
       >
         {plan.btnText}
-      </motion.button>
+      </Link>
     </motion.div>
   )
-}
+})
 
 // 服務特色部分
 function ServiceFeature() {
@@ -419,16 +424,19 @@ export default function ServicePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-primary text-white py-32">
+      <section 
+        className="relative bg-primary text-white py-16 sm:py-20 md:py-24 lg:py-32"
+        role="banner"
+      >
         <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
+            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
           >
             <motion.h1 
-              className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 font-display"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 font-display"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -436,7 +444,7 @@ export default function ServicePage() {
               專業的醫療行銷服務
             </motion.h1>
             <motion.p 
-              className="text-xl md:text-2xl text-white mb-8"
+              className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -451,13 +459,13 @@ export default function ServicePage() {
             >
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 免費諮詢
               </Link>
               <Link
                 href="#pricing"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 查看方案
               </Link>
@@ -467,24 +475,35 @@ export default function ServicePage() {
       </section>
 
       {/* 核心服務 */}
-      <section className="py-32 bg-white">
+      <section 
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
+        role="region"
+        aria-labelledby="core-services-title"
+      >
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>
+            <h2 
+              id="core-services-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
+              style={{ color: colors.textDark }}
+            >
               我們的核心服務
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               提供完整的醫療行銷解決方案，幫助診所建立品牌形象、提升市場競爭力
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6"
+            role="list"
+          >
             {coreServices.map((service, index) => (
               <ServiceCard key={service.id} service={service} index={index} />
             ))}
@@ -493,24 +512,32 @@ export default function ServicePage() {
       </section>
 
       {/* 服務流程 */}
-      <section className="py-32 bg-gray-50">
+      <section 
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gray-50"
+        role="region"
+        aria-labelledby="service-process-title"
+      >
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>
+            <h2 
+              id="service-process-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
+              style={{ color: colors.textDark }}
+            >
               專業服務流程
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               系統化的服務流程，確保每個環節都能達到最佳效果
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6">
             {serviceProcess.map((step, index) => (
               <ProcessStep key={step.step} step={step} index={index} />
             ))}
@@ -519,24 +546,33 @@ export default function ServicePage() {
       </section>
 
       {/* 價格方案 */}
-      <section id="pricing" className="py-32 bg-white">
+      <section 
+        id="pricing" 
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
+        role="region"
+        aria-labelledby="pricing-title"
+      >
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>
+            <h2 
+              id="pricing-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
+              style={{ color: colors.textDark }}
+            >
               選擇適合的方案
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               根據診所需求提供彈性的服務方案，協助您達成行銷目標
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
             {pricingPlans.map((plan, index) => (
               <PricingPlan key={plan.title} plan={plan} index={index} />
             ))}
@@ -545,31 +581,38 @@ export default function ServicePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 bg-primary text-white">
+      <section 
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white"
+        role="region"
+        aria-labelledby="cta-title"
+      >
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
+            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display">
+            <h2 
+              id="cta-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6"
+            >
               開始您的品牌成長之旅
             </h2>
-            <p className="text-xl mb-8 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
               立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 預約諮詢
               </Link>
               <Link
                 href="/case"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white/10 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 查看案例
               </Link>
