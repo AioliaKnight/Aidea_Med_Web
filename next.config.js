@@ -54,7 +54,7 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   env: {
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com',
   },
   async redirects() {
     return [

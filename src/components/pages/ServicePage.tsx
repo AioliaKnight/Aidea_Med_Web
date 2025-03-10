@@ -190,18 +190,18 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       initial="initial"
       animate="animate"
       whileHover={{ y: -5 }}
-      className="bg-white p-8 shadow-md hover:shadow-lg transition-all duration-300"
+      className="bg-white p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300"
       role="article"
       aria-labelledby={`service-title-${service.id}`}
     >
       <div 
-        className="w-16 h-16 flex items-center justify-center mb-6 text-white"
+        className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center mb-4 sm:mb-6 text-white"
         style={{ background: colors.primary }}
         role="img"
         aria-label={`${service.title} 圖標`}
       >
         <svg
-          className="w-8 h-8"
+          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -212,7 +212,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       </div>
       <h3 
         id={`service-title-${service.id}`}
-        className="text-2xl font-bold mb-4" 
+        className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4" 
         style={{ color: colors.textDark }}
       >
         {service.title}
@@ -221,21 +221,21 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
         variants={animations.stagger}
         initial="initial"
         animate="animate"
-        className="space-y-3 mb-6"
+        className="space-y-2 sm:space-y-3 mb-4 sm:mb-6"
         role="list"
       >
         {service.items.map((item, idx) => (
           <motion.li 
             key={idx}
             variants={animations.slideIn}
-            className="flex items-start text-gray-600"
+            className="flex items-start text-sm sm:text-base text-gray-600"
           >
-            <span className="mr-2" role="presentation">•</span>
+            <span className="mr-2 text-primary" role="presentation">•</span>
             {item}
           </motion.li>
         ))}
       </motion.ul>
-      <p className="text-gray-600">{service.description}</p>
+      <p className="text-sm sm:text-base text-gray-600">{service.description}</p>
     </motion.div>
   )
 })
@@ -260,15 +260,15 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
     >
       <div className="flex flex-col items-center text-center">
         <div 
-          className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mb-4"
+          className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
           role="presentation"
         >
           {step.step}
         </div>
-        <h3 className="text-xl font-bold mb-2" style={{ color: colors.textDark }}>
+        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: colors.textDark }}>
           {step.title}
         </h3>
-        <p className="text-gray-600">{step.description}</p>
+        <p className="text-sm sm:text-base text-gray-600">{step.description}</p>
       </div>
       {index < serviceProcess.length - 1 && (
         <div 
@@ -295,7 +295,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       initial="initial"
       whileInView="animate"
       viewport={{ once: true }}
-      className={`relative p-8 ${
+      className={`relative p-4 sm:p-6 md:p-8 ${
         plan.isPopular 
           ? 'bg-primary text-white transform scale-105 shadow-xl' 
           : 'bg-white text-gray-900'
@@ -305,7 +305,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
     >
       {plan.isPopular && (
         <div 
-          className="absolute top-0 right-0 bg-accent text-primary px-4 py-1 text-sm font-medium transform translate-y-0 translate-x-0"
+          className="absolute -top-4 right-4 bg-accent text-primary px-3 py-1 text-sm font-medium rounded-full transform -translate-y-2"
           role="note"
           aria-label="熱門方案"
         >
@@ -314,23 +314,23 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       )}
       <h3 
         id={`plan-title-${index}`}
-        className="text-2xl font-bold mb-4"
+        className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
       >
         {plan.title}
       </h3>
-      <div className="mb-6">
-        <span className="text-4xl font-bold">{plan.price}</span>
-        <span className="text-lg">{plan.period}</span>
+      <div className="mb-4 sm:mb-6">
+        <span className="text-2xl sm:text-3xl md:text-4xl font-bold">{plan.price}</span>
+        <span className="text-base sm:text-lg">{plan.period}</span>
       </div>
-      <ul className="space-y-3 mb-8" role="list">
+      <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8" role="list">
         {plan.features.map((feature, idx) => (
           <li 
             key={idx}
-            className="flex items-center"
+            className="flex items-center text-sm sm:text-base"
             role="listitem"
           >
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -349,7 +349,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       </ul>
       <Link
         href="/contact"
-        className={`block w-full py-3 px-6 text-center font-medium transition-all duration-300 ${
+        className={`block w-full py-2 sm:py-3 px-4 sm:px-6 text-center font-medium transition-all duration-300 rounded-lg text-sm sm:text-base ${
           plan.isPopular
             ? 'bg-white text-primary hover:bg-gray-100'
             : 'bg-primary text-white hover:bg-primary-dark'
@@ -425,7 +425,7 @@ export default function ServicePage() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section 
-        className="relative bg-primary text-white py-32"
+        className="relative bg-primary text-white py-16 sm:py-20 md:py-24 lg:py-32"
         role="banner"
       >
         <div className="container-custom relative z-10">
@@ -433,10 +433,10 @@ export default function ServicePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
+            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
           >
             <motion.h1 
-              className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 font-display"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 font-display"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -444,7 +444,7 @@ export default function ServicePage() {
               專業的醫療行銷服務
             </motion.h1>
             <motion.p 
-              className="text-xl md:text-2xl text-white mb-8"
+              className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -459,13 +459,13 @@ export default function ServicePage() {
             >
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 免費諮詢
               </Link>
               <Link
                 href="#pricing"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 查看方案
               </Link>
@@ -476,7 +476,7 @@ export default function ServicePage() {
 
       {/* 核心服務 */}
       <section 
-        className="py-32 bg-white"
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
         role="region"
         aria-labelledby="core-services-title"
       >
@@ -486,22 +486,22 @@ export default function ServicePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
             <h2 
               id="core-services-title"
-              className="text-4xl md:text-5xl font-bold mb-6 font-display" 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
               style={{ color: colors.textDark }}
             >
               我們的核心服務
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               提供完整的醫療行銷解決方案，幫助診所建立品牌形象、提升市場競爭力
             </p>
           </motion.div>
 
           <div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6"
             role="list"
           >
             {coreServices.map((service, index) => (
@@ -513,7 +513,7 @@ export default function ServicePage() {
 
       {/* 服務流程 */}
       <section 
-        className="py-32 bg-gray-50"
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gray-50"
         role="region"
         aria-labelledby="service-process-title"
       >
@@ -523,17 +523,21 @@ export default function ServicePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>
+            <h2 
+              id="service-process-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
+              style={{ color: colors.textDark }}
+            >
               專業服務流程
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               系統化的服務流程，確保每個環節都能達到最佳效果
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6">
             {serviceProcess.map((step, index) => (
               <ProcessStep key={step.step} step={step} index={index} />
             ))}
@@ -544,7 +548,7 @@ export default function ServicePage() {
       {/* 價格方案 */}
       <section 
         id="pricing" 
-        className="py-32 bg-white"
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
         role="region"
         aria-labelledby="pricing-title"
       >
@@ -554,17 +558,21 @@ export default function ServicePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>
+            <h2 
+              id="pricing-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
+              style={{ color: colors.textDark }}
+            >
               選擇適合的方案
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
               根據診所需求提供彈性的服務方案，協助您達成行銷目標
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
             {pricingPlans.map((plan, index) => (
               <PricingPlan key={plan.title} plan={plan} index={index} />
             ))}
@@ -574,7 +582,7 @@ export default function ServicePage() {
 
       {/* CTA Section */}
       <section 
-        className="py-32 bg-primary text-white"
+        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white"
         role="region"
         aria-labelledby="cta-title"
       >
@@ -584,24 +592,27 @@ export default function ServicePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
+            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display">
+            <h2 
+              id="cta-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6"
+            >
               開始您的品牌成長之旅
             </h2>
-            <p className="text-xl mb-8 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
               立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 預約諮詢
               </Link>
               <Link
                 href="/case"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white/10 transition-all duration-300 text-sm sm:text-base rounded-lg"
               >
                 查看案例
               </Link>

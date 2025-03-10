@@ -235,6 +235,10 @@ const ShareButton = ({ platform, url, title }: { platform: string, url: string, 
     line: {
       url: `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`,
       icon: 'M52.62 103.78c-11.42.33-22.39-4.95-30.7-13.14-9.35-9.23-13.94-21.37-14.49-34.03-.55-12.63 3.36-25.46 12.18-34.93 8.51-9.15 20.69-14.79 32.96-15 13.23-.22 26.64 5.07 36.19 14.18 10.43 9.73 15.84 23.61 15.74 37.48-.1 13.69-5.28 27.36-15.22 37.27-8.9 8.84-20.97 13.14-32.69 13.44-1.32 0-2.64 0-3.97-.27z M39.86 47.53h-7.55c-1.12 0-2.03.9-2.03 2.01v16.08c0 1.11.91 2.02 2.03 2.02h7.55c1.12 0 2.03-.91 2.03-2.02V49.54c0-1.11-.91-2.01-2.03-2.01z M75.56 47.53h-7.55c-1.12 0-2.03.9-2.03 2.01v16.08c0 1.11.91 2.02 2.03 2.02h7.55c1.12 0 2.03-.91 2.03-2.02V49.54c0-1.11-.91-2.01-2.03-2.01z M66.45 56.19H59.2c-1.04.03-1.88.9-1.85 1.94-.03 1.04.81 1.91 1.85 1.94h7.25c1.05-.03 1.88-.9 1.85-1.94.04-1.04-.8-1.91-1.85-1.94-1.94-1.94z M50.19 47.53h-1.92c-1.12 0-2.03.9-2.03 2.01v7.17h5.99v-7.17c0-1.11-.92-2.01-2.04-2.01z M52.23 58.13h-5.99v7.49c0 1.11.91 2.02 2.03 2.02h1.92c1.12 0 2.04-.91 2.04-2.02v-7.49z'
+    },
+    copy: {
+      url: url,
+      icon: 'M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3'
     }
   };
 
@@ -258,9 +262,9 @@ const ShareButton = ({ platform, url, title }: { platform: string, url: string, 
       whileTap={{ scale: 0.95 }}
       onClick={handleShare}
       className="relative group"
-      aria-label={`分享到 ${platform}`}
+      aria-label={platform === 'copy' ? '複製連結' : `分享到 ${platform}`}
     >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" stroke="currentColor" strokeWidth={platform === 'copy' ? 1.5 : 0}>
         <path d={shareConfig[platform as keyof typeof shareConfig].icon} />
       </svg>
       {isCopied && (
