@@ -1,4 +1,4 @@
-import { createClient } from 'next-sanity'
+import { createClient, ClientPerspective } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import { SanityImage } from '@/types/blog'
 
@@ -16,12 +16,16 @@ Object.entries(requiredEnvVars).forEach(([key, value]) => {
   }
 })
 
+// 定義有效的 perspective 值
+const PUBLISHED: ClientPerspective = 'published'
+const PREVIEW_DRAFTS: ClientPerspective = 'previewDrafts'
+
 const config = {
   projectId: requiredEnvVars.projectId,
   dataset: requiredEnvVars.dataset,
   apiVersion: requiredEnvVars.apiVersion,
   useCdn: process.env.NODE_ENV === 'production',
-  perspective: 'published',
+  perspective: PUBLISHED,
   token: process.env.SANITY_API_TOKEN,
   // CORS 配置
   cors: {
@@ -59,7 +63,7 @@ export const urlForImage = (source: SanityImage | null | undefined) => {
 export const previewClient = createClient({
   ...config,
   useCdn: false,
-  perspective: 'previewDrafts',
+  perspective: PREVIEW_DRAFTS,
   token: process.env.SANITY_API_TOKEN,
 })
 
