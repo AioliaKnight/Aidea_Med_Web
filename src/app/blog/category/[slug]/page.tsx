@@ -15,7 +15,7 @@ interface PageProps {
 export const revalidate = 3600; // 每小時重新驗證一次
 
 // 生成靜態頁面參數
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<PageParams[]> {
   try {
     // 獲取所有分類的 slug
     const { categories } = await BlogService.getCategories();
@@ -35,7 +35,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { slug: string } }
+  { params }: { params: PageParams }
 ): Promise<Metadata> {
   try {
     const { category, error } = await BlogService.getPostsByCategory(params.slug);
