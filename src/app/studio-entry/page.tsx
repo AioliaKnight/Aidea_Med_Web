@@ -27,10 +27,16 @@ export default function StudioEntryPage() {
         
         // 測試 Sanity 連接
         const result = await client.fetch('*[_type == "post"][0]')
-        console.log("Sanity connection success:", result)
+        // 只在開發環境中記錄日誌
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Sanity connection success:", result)
+        }
         setConnectionStatus('success')
       } catch (error) {
-        console.error("Sanity connection error:", error)
+        // 只在開發環境中記錄錯誤
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Sanity connection error:", error)
+        }
         setConnectionStatus('error')
         
         // 使用處理 Sanity 錯誤的輔助函數

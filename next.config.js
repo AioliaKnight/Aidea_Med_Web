@@ -3,6 +3,7 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB
   runtimeCaching: [
     {
       urlPattern: /^https?.*/,
@@ -84,6 +85,10 @@ const nextConfig = {
       {
         source: '/health',
         destination: '/api/health',
+      },
+      {
+        source: '/sanity-check',
+        destination: '/api/sanity-check',
       }
     ]
   },
