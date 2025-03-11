@@ -1,12 +1,11 @@
 import { Metadata } from 'next'
 import BlogPage from '@/components/pages/BlogPage'
 import { client } from '@/lib/sanity/client'
-import { groq } from 'next-sanity'
 
 export const revalidate = 3600 // 每小時重新驗證一次
 
 export async function generateMetadata(): Promise<Metadata> {
-  const query = groq`*[_type == "category"] {
+  const query = `*[_type == "category"] {
     title,
     description
   }`

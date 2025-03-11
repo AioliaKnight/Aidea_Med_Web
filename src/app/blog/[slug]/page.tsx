@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { client } from '@/lib/sanity/client'
-import { groq } from 'next-sanity'
 import { notFound } from 'next/navigation'
 import BlogPost from '@/components/pages/BlogPost'
 import { urlForImage } from '@/lib/sanity/client'
@@ -16,7 +15,7 @@ interface PageProps {
 export const revalidate = 3600 // 每小時重新驗證一次
 
 async function getPost(slug: string) {
-  const query = groq`
+  const query = `
     *[_type == "post" && slug.current == $slug][0] {
       title,
       "slug": slug.current,

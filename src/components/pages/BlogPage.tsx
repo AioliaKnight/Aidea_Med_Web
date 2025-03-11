@@ -6,7 +6,6 @@ import { zhTW } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import { client, handleSanityError } from '@/lib/sanity/client'
-import { groq } from 'next-sanity'
 import { urlForImage } from '@/lib/sanity/client'
 import { toast } from 'react-hot-toast'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
@@ -65,7 +64,7 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const query = groq`*[_type == "category"] {
+        const query = `*[_type == "category"] {
           _id,
           title,
           description,
