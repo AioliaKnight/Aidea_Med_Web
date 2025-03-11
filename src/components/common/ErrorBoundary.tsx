@@ -4,6 +4,7 @@ import { Component, ErrorInfo, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
+  fallback?: ReactNode
 }
 
 interface State {
@@ -27,6 +28,10 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback
+      }
+      
       return (
         <div className="min-h-screen py-20">
           <div className="container mx-auto px-4 text-center">
