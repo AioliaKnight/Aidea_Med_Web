@@ -20,10 +20,14 @@ export async function generateStaticParams() {
     // 獲取所有分類的 slug
     const { categories } = await BlogService.getCategories();
     
+    if (!categories || categories.length === 0) {
+      return [];
+    }
+
     // 返回所有 slug 作為靜態頁面的參數
-    return categories.map((cat: Category) => ({
-      slug: cat.slug,
-    }));
+    return categories.map((category: Category) => ({
+      slug: category.slug || '',
+    })).filter(params => params.slug);
   } catch (error) {
     console.error('生成靜態參數時發生錯誤:', error);
     return [];
