@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import BlogDetail from '@/components/blog/BlogDetail'
 import { urlForImage } from '@/lib/sanity'
 import { BlogService } from '@/lib/sanity/services'
+import { Post } from '@/types/blog'
 
 interface PageParams {
   slug: string
@@ -15,15 +16,21 @@ interface PageProps {
 export const revalidate = 3600 // 每小時重新驗證一次
 
 // 生成靜態頁面參數
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<PageParams[]> {
   try {
     // 獲取所有文章的 slug
     const { posts } = await BlogService.getPosts({ limit: 100 });
     
+    if (!posts || posts.length === 0) {
+      return [];
+    }
+
     // 返回所有 slug 作為靜態頁面的參數
-    return posts.map((post: any) => ({
-      slug: post.slug,
-    }));
+    return posts
+      .filter((post: Post): post is Post => Boolean(post?.slug))
+      .map((post: Post): PageParams => ({
+        slug: post.slug,
+      }));
   } catch (error) {
     console.error('生成靜態參數時發生錯誤:', error);
     return [];
