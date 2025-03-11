@@ -60,7 +60,8 @@ type PageState = 'loading' | 'error' | 'empty' | 'loaded'
 
 // 分頁設置
 const POSTS_PER_PAGE = 9
-const QUERY_TIMEOUT = 10000 // 10秒查詢超時
+const QUERY_TIMEOUT = 15000 // 15秒查詢超時
+const RETRY_ATTEMPTS = 2 // 失敗後重試次數
 
 // ============================================================================
 // 動畫配置
@@ -109,6 +110,72 @@ const animations = {
 }
 
 // ============================================================================
+// Sanity 查詢片段
+// ============================================================================
+
+const GROQ_FRAGMENTS = {
+  // 基本查詢片段 - 用於輕量級查詢
+  basicPost: `
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    mainImage {
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
+    "categories": categories[]->{
+      _id, 
+      title,
+      "slug": slug.current
+    }
+  `,
+  
+  // 完整查詢片段 - 用於更詳細的信息
+  fullPost: `
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    updatedAt,
+    excerpt,
+    mainImage {
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
+    "categories": categories[]->{
+      _id,
+      title,
+      "slug": slug.current,
+      description
+    },
+    "readingTime": round(length(pt::text(content)) / 5 / 180)
+  `
+}
+
+// 備用安全查詢 - 用於故障恢復
+const FALLBACK_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) [0...9] {
+  ${GROQ_FRAGMENTS.basicPost}
+}`
+
+// ============================================================================
 // 輔助函數
 // ============================================================================
 
@@ -131,7 +198,7 @@ const simplifyPost = (post: any): Post => {
     _id: post._id || '',
     _type: post._type || 'post',
     title: post.title || '無標題',
-    slug: post.slug?.current || post.slug || `post-${post._id}`,
+    slug: post.slug || '',
     publishedAt: post.publishedAt || '',
     updatedAt: post.updatedAt || '',
     excerpt: post.excerpt || '',
@@ -140,103 +207,111 @@ const simplifyPost = (post: any): Post => {
       ? post.categories.map((cat: any) => ({
           _id: cat._id || '',
           title: cat.title || '',
-          slug: cat.slug?.current || cat.slug || '',
+          slug: cat.slug || '',
           description: cat.description || ''
         }))
       : [],
     readingTime: post.readingTime || 0,
-    author: post.author || { _id: '', name: '', slug: '' },
+    author: post.author || null,
     content: post.content || [],
     status: post.status || 'published'
   }
 }
 
 // 獲取狀態文本
-const getStatusText = (state: PageState, error: string | null): { title: string, message: string } => {
+const getStatusText = (state: PageState, error: string | null): { title: string, message: string, icon: React.ReactNode } => {
   switch (state) {
     case 'loading':
       return {
         title: '載入中',
-        message: '正在載入文章內容，請稍候...'
+        message: '正在載入文章內容，請稍候...',
+        icon: (
+          <Spinner className="mb-6 h-12 w-12 text-primary" />
+        )
       }
     case 'error':
       return {
         title: '載入失敗',
-        message: error || '無法載入文章，請稍後再試'
+        message: error || '無法載入文章，請稍後再試',
+        icon: (
+          <svg 
+            className="mx-auto mb-4 h-16 w-16 text-red-500" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={1.5} 
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+            />
+          </svg>
+        )
       }
     case 'empty':
       return {
         title: '沒有找到符合條件的文章',
-        message: '請嘗試使用其他關鍵詞或瀏覽所有文章類別'
+        message: '請嘗試使用其他關鍵詞或瀏覽所有文章類別',
+        icon: (
+          <svg 
+            className="mx-auto mb-4 h-16 w-16 text-blue-400" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={1.5} 
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" 
+            />
+          </svg>
+        )
       }
     default:
       return {
         title: '',
-        message: ''
+        message: '',
+        icon: null
       }
   }
 }
 
-// ============================================================================
-// Sanity 查詢片段
-// ============================================================================
-
-const GROQ_FRAGMENTS = {
-  // 基本查詢片段 - 用於輕量級查詢
-  basicPost: `
-    _id,
-    _type,
-    title,
-    "slug": slug.current,
-    publishedAt,
-    excerpt,
-    mainImage,
-    categories[]->{
-      _id, 
-      title,
-      "slug": slug.current
-    }
-  `,
+// 以重試機制執行查詢
+const executeQueryWithRetry = async (query: string, params: any = {}, maxRetries: number = RETRY_ATTEMPTS) => {
+  let lastError;
   
-  // 完整查詢片段 - 用於更詳細的信息
-  fullPost: `
-    _id,
-    _type,
-    title,
-    "slug": slug.current,
-    publishedAt,
-    updatedAt,
-    excerpt,
-    mainImage {
-      _type,
-      asset->{
-        _ref,
-        _type,
-        url,
-        metadata {
-          dimensions,
-          lqip,
-          palette
-        }
-      },
-      alt,
-      crop,
-      hotspot
-    },
-    categories[]->{
-      _id,
-      title,
-      "slug": slug.current,
-      description
-    },
-    "readingTime": round(length(pt::text(content)) / 5 / 180)
-  `
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      // 設置查詢超時
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('查詢超時')), QUERY_TIMEOUT)
+      })
+      
+      // 嘗試執行查詢
+      return await Promise.race([
+        client.fetch(query, params, {
+          cache: 'no-store'
+        }),
+        timeoutPromise
+      ]);
+    } catch (err) {
+      lastError = err;
+      console.log(`查詢失敗 (嘗試 ${attempt + 1}/${maxRetries + 1}):`, err);
+      
+      // 最後一次嘗試失敗時，拋出錯誤
+      if (attempt === maxRetries) {
+        throw err;
+      }
+      
+      // 延遲後重試 (增加延遲時間)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+    }
+  }
 }
-
-// 備用安全查詢 - 用於故障恢復
-const FALLBACK_QUERY = `*[_type == "post" && defined(slug)] | order(publishedAt desc) [0...9] {
-  ${GROQ_FRAGMENTS.basicPost}
-}`
 
 // ============================================================================
 // 子組件
@@ -246,10 +321,8 @@ const FALLBACK_QUERY = `*[_type == "post" && defined(slug)] | order(publishedAt 
 const BlogCard = ({ post, index }: BlogCardProps) => {
   const formattedDate = formatPublishDate(post.publishedAt)
   
-  // 檢查 slug 是否為字符串
-  const postSlug = typeof post.slug === 'string' 
-    ? post.slug 
-    : (post.slug as any)?.current || `post-${post._id}`
+  // 檢查 slug 是否存在
+  const postSlug = post.slug || `post-${post._id}`
                   
   // 檢查分類是否存在
   const hasCategories = Array.isArray(post.categories) && post.categories.length > 0
@@ -387,7 +460,7 @@ const SearchBar = ({ searchQuery, onSearchChange }: SearchBarProps) => (
         name="search"
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="block w-full border-0 bg-white py-3 pl-10 pr-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary"
+        className="block w-full border-0 bg-white py-3 pl-10 pr-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
         placeholder="輸入關鍵字搜尋..."
         aria-label="搜尋文章"
       />
@@ -397,75 +470,48 @@ const SearchBar = ({ searchQuery, onSearchChange }: SearchBarProps) => (
 
 // 狀態顯示組件
 const StatusDisplay = ({ state, error }: { state: PageState, error: string | null }) => {
-  const { title, message } = getStatusText(state, error)
+  const { title, message, icon } = getStatusText(state, error)
   
-  if (state === 'loading') {
+  if (state === 'loading' || state === 'error' || state === 'empty') {
+    const bgColors = {
+      loading: 'bg-white',
+      error: 'bg-red-50',
+      empty: 'bg-blue-50'
+    }
+    
+    const textColors = {
+      loading: 'text-gray-800',
+      error: 'text-red-800',
+      empty: 'text-blue-800'
+    }
+    
+    const messageColors = {
+      loading: 'text-gray-600',
+      error: 'text-red-600',
+      empty: 'text-blue-600'
+    }
+    
     return (
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="flex flex-col items-center justify-center py-16"
+        className={`rounded-lg ${bgColors[state]} p-8 text-center`}
       >
-        <Spinner className="mb-6 h-12 w-12 text-primary" />
-        <h3 className="mb-2 text-xl font-semibold text-gray-800">{title}</h3>
-        <p className="text-gray-600">{message}</p>
-      </motion.div>
-    )
-  }
-  
-  if (state === 'error') {
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="rounded-lg bg-red-50 p-8 text-center"
-      >
-        <svg 
-          className="mx-auto mb-4 h-16 w-16 text-red-500" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={1.5} 
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
-          />
-        </svg>
-        <h3 className="mb-2 text-xl font-semibold text-red-800">{title}</h3>
-        <p className="text-red-600">{message}</p>
-      </motion.div>
-    )
-  }
-  
-  if (state === 'empty') {
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="rounded-lg bg-blue-50 p-8 text-center"
-      >
-        <svg 
-          className="mx-auto mb-4 h-16 w-16 text-blue-400" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={1.5} 
-            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" 
-          />
-        </svg>
-        <h3 className="mb-2 text-xl font-semibold text-blue-800">{title}</h3>
-        <p className="text-blue-600">{message}</p>
+        {icon}
+        <h3 className={`mb-2 text-xl font-semibold ${textColors[state]}`}>{title}</h3>
+        <p className={messageColors[state]}>{message}</p>
+        
+        {state === 'error' && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.location.reload()}
+            className="mt-6 inline-flex items-center justify-center rounded bg-primary px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
+          >
+            重新載入
+          </motion.button>
+        )}
       </motion.div>
     )
   }
@@ -542,7 +588,7 @@ const PostList = ({ posts, loading, error, hasMore, onLoadMore }: PostListProps)
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onLoadMore}
-            className="inline-flex items-center justify-center bg-primary px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded bg-primary px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
             aria-label="載入更多文章"
           >
             載入更多文章
@@ -574,7 +620,7 @@ const CTASection = () => (
         >
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center bg-white px-6 py-3 text-base font-medium text-primary transition-colors hover:bg-gray-100"
+            className="inline-flex items-center justify-center rounded bg-white px-6 py-3 text-base font-medium text-primary transition-colors hover:bg-gray-100"
           >
             預約免費諮詢
           </Link>
@@ -606,10 +652,11 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
   const [hasMore, setHasMore] = useState<boolean>(!initialPosts)
   const [total, setTotal] = useState<number>(0)
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true)
+  const [retryCount, setRetryCount] = useState<number>(0)
   
   // 記錄組件是否仍然掛載
   const isMounted = useRef<boolean>(true)
-  
+
   useEffect(() => {
     return () => {
       isMounted.current = false
@@ -621,10 +668,15 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
   // 獲取分類列表
   const fetchCategories = useCallback(async () => {
     try {
-      // 簡化查詢
-      const query = `*[_type == "category"] { _id, title, "slug": slug.current } | order(title asc)`
+      // 簡化查詢，確保獲取所有必要字段
+      const query = `*[_type == "category" && defined(title)] {
+          _id,
+          title,
+          "slug": slug.current,
+          description
+      } | order(title asc)`
       
-      const result = await client.fetch(query)
+      const result = await executeQueryWithRetry(query)
       
       if (isMounted.current) {
         setCategories(result || [])
@@ -633,15 +685,15 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       if (!isMounted.current) return
       
       const errorMessage = handleSanityError(err)
-      console.error('Error fetching categories:', err)
+      console.error('Error fetching categories:', errorMessage)
       toast.error('無法載入文章分類')
     }
   }, [])
 
   // 構建查詢條件
   const buildFilterConditions = useCallback((category: string, search: string): string => {
-    // 確保至少篩選發布狀態
-    let filterConditions = '_type == "post" && defined(slug)'
+    // 確保至少篩選發布狀態和 slug 存在
+    let filterConditions = '_type == "post" && defined(slug.current)'
     
     // 添加分類過濾
     if (category && category !== 'all') {
@@ -685,16 +737,8 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
         "total": count(*[${filterConditions}])
       }`
       
-      // 設置查詢超時
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('查詢超時')), QUERY_TIMEOUT)
-      })
-      
-      // 執行查詢並處理可能的超時
-      const result = await Promise.race([
-        client.fetch(query),
-        timeoutPromise
-      ]) as any
+      // 執行查詢（帶有重試機制）
+      const result = await executeQueryWithRetry(query)
       
       // 不再掛載，不執行後續操作
       if (!isMounted.current) return
@@ -718,18 +762,31 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       setHasMore((result.total || 0) > (start + (result.posts?.length || 0)))
       setLoading(false)
       setIsInitialLoad(false)
+      setRetryCount(0) // 重置重試計數
     } catch (err) {
       console.error('Error fetching posts:', err)
       
       if (!isMounted.current) return
       
+      // 如果是第一次嘗試失敗，增加重試計數並在短暫延遲後再次嘗試
+      if (retryCount < RETRY_ATTEMPTS) {
+        setRetryCount(prev => prev + 1)
+        setTimeout(() => {
+          if (isMounted.current) {
+            fetchPosts()
+          }
+        }, 2000) // 2秒後重試
+        return
+      }
+      
       // 嘗試使用備用方案
       if (page === 1) {
         try {
-          const fallbackResult = await client.fetch(FALLBACK_QUERY)
+          const fallbackResult = await executeQueryWithRetry(FALLBACK_QUERY)
           setPosts(fallbackResult.map((post: any) => simplifyPost(post)))
           setHasMore(false)
           setLoading(false)
+          toast.success('已使用備用方式載入文章')
           return
         } catch (fallbackErr) {
           console.error('Fallback query also failed:', fallbackErr)
@@ -740,9 +797,9 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       setError('無法載入文章：' + errorMessage)
       setLoading(false)
       setPosts(page === 1 ? [] : posts)
-      toast.error('無法載入文章')
+      toast.error('無法載入文章，請稍後再試')
     }
-  }, [initialPosts, page, searchQuery, selectedCategory, buildFilterConditions, isInitialLoad, posts])
+  }, [initialPosts, page, searchQuery, selectedCategory, buildFilterConditions, isInitialLoad, posts, retryCount])
 
   // ========== 事件處理邏輯 ==========
   
@@ -759,7 +816,7 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       } else {
         params.delete('q')
       }
-      
+        
       router.push(`/blog?${params.toString()}`)
     }, 500),
     [router, searchParams]
@@ -799,6 +856,15 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
   useEffect(() => {
     fetchPosts()
   }, [fetchPosts, page, searchQuery, selectedCategory])
+  
+  // 重設頁面（當搜索或分類變更時）
+  useEffect(() => {
+    // 僅在非初始載入時執行
+    if (!isInitialLoad) {
+      setPage(1)
+      setPosts([])
+    }
+  }, [searchQuery, selectedCategory, isInitialLoad])
   
   // ========== 計算派生數據 ==========
   
