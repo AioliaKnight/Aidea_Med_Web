@@ -89,7 +89,7 @@ const nextConfig = {
       {
         source: '/sanity-check',
         destination: '/api/sanity-check',
-      }
+      },
     ]
   },
   async headers() {

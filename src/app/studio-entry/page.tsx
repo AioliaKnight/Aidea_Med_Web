@@ -7,36 +7,66 @@ import { projectId, dataset, apiVersion } from '@/sanity/env'
 import { client, handleSanityError } from '@/lib/sanity/client'
 
 export default function StudioEntryPage() {
-  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'success' | 'error'>('checking')
+  const [connectionStatus, setConnectionStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [debugInfo, setDebugInfo] = useState<any>(null)
+  const [debugInfo, setDebugInfo] = useState<Record<string, any>>({})
+  const [isRetrying, setIsRetrying] = useState<boolean>(false)
 
   useEffect(() => {
     async function checkConnection() {
       try {
-        // 顯示環境信息以便診斷
+        // 收集環境信息
         const envInfo = {
           projectId,
           dataset,
           apiVersion,
           nodeEnv: process.env.NODE_ENV,
-          baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
+          baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com',
         }
         
         setDebugInfo(envInfo)
         
-        // 測試 Sanity 連接
-        const result = await client.fetch('*[_type == "post"][0]')
+        // 首先使用健康檢查 API 測試連接
+        try {
+          const healthResponse = await fetch('/api/sanity-check')
+          if (healthResponse.ok) {
+            const healthData = await healthResponse.json()
+            // 只在開發環境中記錄日誌
+            if (process.env.NODE_ENV === 'development') {
+              console.log("Sanity 健康檢查結果:", healthData)
+            }
+            
+            if (healthData.status === 'ok') {
+              setConnectionStatus('success')
+              setErrorMessage('')
+              return
+            }
+          }
+        } catch (healthError) {
+          // 健康檢查失敗，繼續嘗試直接連接
+          if (process.env.NODE_ENV === 'development') {
+            console.warn("Sanity 健康檢查失敗，嘗試直接連接:", healthError)
+          }
+        }
+        
+        // 嘗試直接使用 Sanity 客戶端
+        // 使用非常簡單的查詢確保最大可能性的成功
+        const result = await client.fetch('*[_type == "post"][0..1]{ _id, title }')
+        
         // 只在開發環境中記錄日誌
         if (process.env.NODE_ENV === 'development') {
-          console.log("Sanity connection success:", result)
+          console.log("Sanity 直接連接成功:", result)
         }
+        
         setConnectionStatus('success')
+        setErrorMessage('')
+        
       } catch (error) {
         // 只在開發環境中記錄錯誤
         if (process.env.NODE_ENV === 'development') {
-          console.error("Sanity connection error:", error)
+          console.error("Sanity 連接錯誤:", error)
         }
+        
         setConnectionStatus('error')
         
         // 使用處理 Sanity 錯誤的輔助函數
@@ -50,6 +80,63 @@ export default function StudioEntryPage() {
 
     checkConnection()
   }, [])
+
+  async function retryConnection() {
+    setIsRetrying(true)
+    setConnectionStatus('loading')
+    setErrorMessage('')
+    
+    try {
+      // 清除快取 (如果瀏覽器支援)
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        try {
+          // 嘗試清除 API 快取
+          const cache = await caches.open('next-data')
+          await cache.delete('/api/sanity-check')
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('已清除 API 快取')
+          }
+        } catch (cacheError) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('清除快取失敗:', cacheError)
+          }
+        }
+      }
+      
+      // 直接獲取最新的 Sanity 健康檢查
+      const response = await fetch('/api/sanity-check?t=' + new Date().getTime(), {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
+      
+      const data = await response.json()
+      
+      if (data.status === 'ok') {
+        setConnectionStatus('success')
+        setErrorMessage('')
+        setDebugInfo(prev => ({
+          ...prev,
+          lastCheck: new Date().toISOString(),
+          checkResult: data
+        }))
+      } else {
+        throw new Error(data.message || '連接失敗')
+      }
+    } catch (error) {
+      setConnectionStatus('error')
+      if (typeof handleSanityError === 'function') {
+        setErrorMessage(handleSanityError(error))
+      } else {
+        setErrorMessage(error instanceof Error ? error.message : '連接重試失敗')
+      }
+    } finally {
+      setIsRetrying(false)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
@@ -90,7 +177,7 @@ export default function StudioEntryPage() {
               <li><span className="font-medium">API 版本:</span> {apiVersion}</li>
               <li>
                 <span className="font-medium">連接狀態: </span>
-                {connectionStatus === 'checking' && (
+                {connectionStatus === 'loading' && (
                   <span className="text-yellow-600">檢查中...</span>
                 )}
                 {connectionStatus === 'success' && (
@@ -133,6 +220,59 @@ export default function StudioEntryPage() {
               <li>大型媒體文件上傳可能需要較長時間</li>
             </ul>
           </div>
+        </div>
+
+        <div className="mt-8 p-4 rounded-lg bg-gray-50">
+          <h2 className="text-xl font-semibold mb-2">連接狀態: {
+            connectionStatus === 'loading' ? '檢查中...' :
+            connectionStatus === 'success' ? '連接成功' :
+            '連接失敗'
+          }</h2>
+          
+          {connectionStatus === 'error' && errorMessage && (
+            <div className="mt-2 p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+              <p className="font-medium">錯誤信息:</p>
+              <p className="whitespace-pre-line">{errorMessage}</p>
+            </div>
+          )}
+          
+          {connectionStatus === 'success' && (
+            <div className="mt-2 p-4 bg-green-50 border border-green-200 rounded-md text-green-700">
+              <p>成功連接到 Sanity CMS! 您現在可以繼續進入 Studio。</p>
+            </div>
+          )}
+          
+          <div className="mt-4 flex space-x-4">
+            <button
+              onClick={retryConnection}
+              disabled={isRetrying}
+              className={`px-4 py-2 rounded-md ${
+                isRetrying 
+                  ? 'bg-gray-300 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              {isRetrying ? '重試中...' : '重新檢查連接'}
+            </button>
+            
+            {connectionStatus === 'success' && (
+              <a 
+                href="/studio"
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
+              >
+                繼續進入 Studio
+              </a>
+            )}
+          </div>
+        </div>
+        
+        <div className="mt-8">
+          <details className="bg-gray-50 p-4 rounded-lg">
+            <summary className="font-medium cursor-pointer">診斷資訊</summary>
+            <pre className="mt-2 p-4 bg-gray-100 rounded text-sm overflow-auto">
+              {JSON.stringify(debugInfo, null, 2)}
+            </pre>
+          </details>
         </div>
 
         <div className="flex flex-col space-y-4">

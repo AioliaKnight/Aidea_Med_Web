@@ -87,30 +87,68 @@ export const getPreviewUrl = (slug: string) => {
 
 // 處理 Sanity 查詢錯誤的輔助函數
 export function handleSanityError(error: unknown): string {
-  console.error('Sanity API Error:', error)
+  if (!error) return '連接時發生未知錯誤'
   
-  // 檢查是否為特定 Sanity 錯誤
   const errorMessage = error instanceof Error ? error.message : String(error)
   
-  if (errorMessage.includes('CORS') || errorMessage.includes('Cross-Origin')) {
-    return '跨域請求錯誤 (CORS)。請確認您已在 Sanity 管理介面中正確設置 CORS Origins。'
+  // CORS 錯誤檢測
+  if (
+    errorMessage.includes('CORS') || 
+    errorMessage.includes('cross-origin') || 
+    errorMessage.includes('Access-Control-Allow-Origin')
+  ) {
+    return `CORS 錯誤: 請確保在 Sanity 管理界面 (https://www.sanity.io/manage/project/${config.projectId}) 中已設置允許以下網域訪問：
+    - ${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com'}
+    - http://localhost:3000 (開發環境)
+    - https://aidea-web.vercel.app (部署預覽環境)`
   }
   
-  if (errorMessage.includes('ENOTFOUND') || errorMessage.includes('getaddrinfo')) {
-    return '無法連接到 Sanity API。請檢查您的網路連接或確認 Sanity 專案 ID 是否正確。'
+  // 連接錯誤檢測
+  if (
+    errorMessage.includes('network') || 
+    errorMessage.includes('failed to fetch') || 
+    errorMessage.includes('timeout') ||
+    errorMessage.includes('abort')
+  ) {
+    return `連接錯誤: 無法連接到 Sanity API。請檢查您的網絡連接，或 Sanity 服務是否運行正常。詳細錯誤: ${errorMessage}`
   }
   
-  if (errorMessage.includes('Unauthorized') || errorMessage.includes('authorization')) {
-    return '授權錯誤。請確認您的 API Token 權限設置是否正確。'
+  // 認證錯誤檢測
+  if (
+    errorMessage.includes('authentication') || 
+    errorMessage.includes('auth') || 
+    errorMessage.includes('unauthorized') || 
+    errorMessage.includes('401') ||
+    errorMessage.includes('403')
+  ) {
+    return `認證錯誤: Sanity API 金鑰或項目 ID 可能無效。請檢查您的環境變量設置。詳細錯誤: ${errorMessage}`
   }
   
-  if (errorMessage.includes('dataset')) {
-    return '數據集錯誤。請確認您的數據集名稱是否正確。'
+  // 數據集錯誤檢測
+  if (
+    errorMessage.includes('dataset') || 
+    errorMessage.includes('not found')
+  ) {
+    return `數據集錯誤: "${config.dataset}" 數據集可能不存在或無法訪問。請確認數據集名稱是否正確，以及是否有訪問權限。`
   }
   
-  if (errorMessage.includes('rate limit')) {
-    return 'API 請求次數超過限制。請稍後再試。'
+  // 速率限制錯誤
+  if (
+    errorMessage.includes('rate limit') || 
+    errorMessage.includes('too many requests') ||
+    errorMessage.includes('429')
+  ) {
+    return `速率限制錯誤: 您的請求頻率過高。請稍後再試，或考慮升級您的 Sanity 計劃。`
   }
   
-  return '連接 Sanity API 時發生錯誤。請檢查控制台以獲取更多資訊。'
+  // 查詢語法錯誤
+  if (
+    errorMessage.includes('syntax') || 
+    errorMessage.includes('query')
+  ) {
+    return `查詢錯誤: Sanity GROQ 查詢語法可能有誤。詳細錯誤: ${errorMessage}`
+  }
+  
+  // 默認錯誤消息
+  return `連接 Sanity API 時發生錯誤。請檢查控制台以獲取更多資訊。錯誤詳情: ${errorMessage}`
 } 
