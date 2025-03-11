@@ -178,7 +178,7 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
                 重新整理
               </button>
               <Link 
-                href="/studio"
+                href="/studio-entry"
                 className="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors text-center"
               >
                 前往 Sanity Studio 檢查

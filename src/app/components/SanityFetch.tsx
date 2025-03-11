@@ -108,7 +108,7 @@ export default function SanityFetch() {
           您的 Sanity 資料庫中尚未有任何文章。請前往 Sanity Studio 新增內容。
         </p>
         <a 
-          href="/studio"
+          href="/studio-entry"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline text-sm"

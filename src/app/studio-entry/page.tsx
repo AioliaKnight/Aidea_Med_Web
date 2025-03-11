@@ -1,9 +1,5 @@
 'use client'
 
-/**
- * Sanity Studio 連接頁面
- */
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
