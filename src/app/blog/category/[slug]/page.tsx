@@ -25,9 +25,11 @@ export async function generateStaticParams(): Promise<PageParams[]> {
     }
 
     // 返回所有 slug 作為靜態頁面的參數
-    return categories.map((category: Category) => ({
-      slug: category.slug || '',
-    })).filter(params => params.slug);
+    return categories
+      .filter((category: Category): category is Category => Boolean(category.slug))
+      .map((category: Category): PageParams => ({
+        slug: category.slug,
+      }));
   } catch (error) {
     console.error('生成靜態參數時發生錯誤:', error);
     return [];
