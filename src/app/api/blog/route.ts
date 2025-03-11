@@ -5,6 +5,7 @@ import { BlogQueryParams } from '@/types/blog'
 import { handleSanityError } from '@/lib/sanity/client'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 60 // 每 60 秒重新驗證
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -23,18 +24,14 @@ export async function GET(request: Request) {
       start,
       end,
       category: category || undefined,
-      search: search ? search.replace(/[*"']/g, '') : undefined,
+      search: search ? search.replace(/[*"']/g, '') : undefined, // 清理搜索參數
       sort,
       order: order as 'asc' | 'desc',
     }
 
-    const fetchOptions = {
-      cache: 'no-store',
-      next: { revalidate: 60 }
-    }
-
-    const result = await client.fetch(getPosts, params, fetchOptions)
-    const settings = await client.fetch(getBlogSettings, {}, fetchOptions)
+    // 使用標準參數，不傳遞額外選項
+    const result = await client.fetch(getPosts, params)
+    const settings = await client.fetch(getBlogSettings)
 
     return NextResponse.json({
       posts: result.posts,

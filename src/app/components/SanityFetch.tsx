@@ -38,11 +38,8 @@ export default function SanityFetch() {
           excerpt
         }`
         
-        // 使用增強的選項
-        const result = await client.fetch(query, {}, {
-          cache: 'no-store',
-          next: { revalidate: 300 } // 5分鐘重新驗證
-        })
+        // 使用標準的 fetch 方法
+        const result = await client.fetch(query)
         
         setPosts(result)
         setLoading(false)

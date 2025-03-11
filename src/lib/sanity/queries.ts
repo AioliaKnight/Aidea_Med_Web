@@ -1,4 +1,3 @@
-import { groq } from 'next-sanity'
 import { Post, BlogQueryResult, BlogSettings } from '@/types/blog'
 
 // 重新導出類型

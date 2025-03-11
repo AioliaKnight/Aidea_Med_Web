@@ -106,12 +106,8 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
           }
         }[${(page - 1) * postsPerPage}...${page * postsPerPage}]`
         
-        // 使用增強的錯誤處理和診斷模式
-        const result = await client.fetch(query, {}, {
-          // 禁用暫存，確保獲取最新數據
-          cache: 'no-store',
-          next: { revalidate: 60 } // 1分鐘後重新驗證
-        })
+        // 使用標準的 fetch 方法
+        const result = await client.fetch(query)
         
         if (result.length < postsPerPage) {
           setHasMore(false)
