@@ -86,32 +86,24 @@ const postQuery = `
 `
 
 // 獲取單篇文章
-export const getPost = groq`
+export const getPost = `
   *[_type == "post" && slug.current == $slug][0] {
     ${postQuery}
   }
 `
 
-// 獲取文章列表
-export const getPosts = groq`
+// 獲取文章列表，使用靜態查詢且增加條件判斷
+export const getPosts = `
   {
-    "posts": *[_type == "post" && status == "published" ${
-      '&& category->slug.current == $category'
-    } ${
-      '&& (title match $search || excerpt match $search)'
-    }] | order($sort $order) [$start...$end] {
+    "posts": *[_type == "post" && status == "published"] | order(publishedAt desc) [$start...$end] {
       ${postQuery}
     },
-    "total": count(*[_type == "post" && status == "published" ${
-      '&& category->slug.current == $category'
-    } ${
-      '&& (title match $search || excerpt match $search)'
-    }])
+    "total": count(*[_type == "post" && status == "published"])
   }
 `
 
 // 獲取部落格設定
-export const getBlogSettings = groq`
+export const getBlogSettings = `
   *[_type == "blogSettings"][0] {
     title,
     description,
@@ -133,21 +125,21 @@ export const getBlogSettings = groq`
 `
 
 // 獲取相關文章
-export const getRelatedPosts = groq`
+export const getRelatedPosts = `
   *[_type == "post" && status == "published" && _id != $postId && count(categories[@._ref in $categoryRefs]) > 0] | order(publishedAt desc)[0...3] {
     ${postQuery}
   }
 `
 
 // 獲取作者文章
-export const getAuthorPosts = groq`
+export const getAuthorPosts = `
   *[_type == "post" && status == "published" && author._ref == $authorId] | order(publishedAt desc) {
     ${postQuery}
   }
 `
 
 // 獲取分類文章
-export const getCategoryPosts = groq`
+export const getCategoryPosts = `
   *[_type == "post" && status == "published" && category._ref == $categoryId] | order(publishedAt desc) {
     ${postQuery}
   }

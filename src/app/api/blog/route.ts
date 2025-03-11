@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { client } from '@/lib/sanity/client'
 import { getPosts, getBlogSettings } from '@/lib/sanity/queries'
 import { BlogQueryParams } from '@/types/blog'
+import { handleSanityError } from '@/lib/sanity/client'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -20,13 +23,18 @@ export async function GET(request: Request) {
       start,
       end,
       category: category || undefined,
-      search: search || undefined,
+      search: search ? search.replace(/[*"']/g, '') : undefined,
       sort,
       order: order as 'asc' | 'desc',
     }
 
-    const result = await client.fetch(getPosts, params)
-    const settings = await client.fetch(getBlogSettings)
+    const fetchOptions = {
+      cache: 'no-store',
+      next: { revalidate: 60 }
+    }
+
+    const result = await client.fetch(getPosts, params, fetchOptions)
+    const settings = await client.fetch(getBlogSettings, {}, fetchOptions)
 
     return NextResponse.json({
       posts: result.posts,
@@ -37,9 +45,15 @@ export async function GET(request: Request) {
       settings,
     })
   } catch (error) {
+    const errorMessage = handleSanityError(error)
     console.error('Error fetching blog posts:', error)
+    
     return NextResponse.json(
-      { error: 'Failed to fetch blog posts' },
+      { 
+        error: '無法獲取部落格文章', 
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     )
   }

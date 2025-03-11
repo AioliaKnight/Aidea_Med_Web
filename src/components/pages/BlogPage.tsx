@@ -88,7 +88,8 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       }
 
       try {
-        const query = groq`*[_type == "post" ${
+        // 確保使用標準格式的 GROQ 查詢
+        const query = `*[_type == "post" ${
           searchQuery
             ? `&& (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`
             : ''
@@ -104,7 +105,14 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
             "slug": slug.current
           }
         }[${(page - 1) * postsPerPage}...${page * postsPerPage}]`
-        const result = await client.fetch(query)
+        
+        // 使用增強的錯誤處理和診斷模式
+        const result = await client.fetch(query, {}, {
+          // 禁用暫存，確保獲取最新數據
+          cache: 'no-store',
+          next: { revalidate: 60 } // 1分鐘後重新驗證
+        })
+        
         if (result.length < postsPerPage) {
           setHasMore(false)
         }

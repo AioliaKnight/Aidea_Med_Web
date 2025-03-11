@@ -27,6 +27,8 @@ const config = {
   useCdn: process.env.NODE_ENV === 'production',
   perspective: PUBLISHED,
   token: process.env.SANITY_API_TOKEN,
+  // 明確指定 API 主機，解決 URL 錯誤
+  apiHost: 'https://apicdn.sanity.io',
   // CORS 配置
   cors: {
     allowOrigins: [
@@ -65,6 +67,8 @@ export const previewClient = createClient({
   useCdn: false,
   perspective: PREVIEW_DRAFTS,
   token: process.env.SANITY_API_TOKEN,
+  // 預覽模式使用標準 API 端點而非 CDN
+  apiHost: 'https://api.sanity.io',
 })
 
 // 獲取預覽客戶端

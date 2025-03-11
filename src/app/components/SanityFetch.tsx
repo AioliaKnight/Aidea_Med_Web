@@ -28,7 +28,7 @@ export default function SanityFetch() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // GROQ 查詢語言示例
+        // 使用標準字符串而非 groq 模板字串
         const query = `*[_type == "post"] | order(publishedAt desc)[0...3] {
           _id,
           title,
@@ -38,11 +38,17 @@ export default function SanityFetch() {
           excerpt
         }`
         
-        const result = await client.fetch(query)
+        // 使用增強的選項
+        const result = await client.fetch(query, {}, {
+          cache: 'no-store',
+          next: { revalidate: 300 } // 5分鐘重新驗證
+        })
+        
         setPosts(result)
         setLoading(false)
       } catch (err) {
         const errorMessage = handleSanityError(err);
+        console.error('Error fetching demo posts:', err)
         setError(errorMessage)
         setLoading(false)
       }
