@@ -111,6 +111,56 @@ export default function BlogList({
   const router = useRouter()
   const searchParams = useSearchParams()
   
+  // 處理搜尋
+  const handleSearch = useCallback(async (query: string) => {
+    if (loading) return
+    
+    setLoading(true)
+    setSearchQuery(query)
+    
+    try {
+      if (!query.trim()) {
+        // 如果搜尋為空，恢復到原來的分類篩選
+        handleCategoryChange(selectedCategory)
+        return
+      }
+      
+      const searchQueryEscaped = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+      
+      const searchQuery = `*[_type == "post" && status == "published" ${
+        selectedCategory ? `&& count(categories[*[_id == "${selectedCategory}"]]) > 0` : ''
+      } && (title match "*${searchQueryEscaped}*" || excerpt match "*${searchQueryEscaped}*")] | order(publishedAt desc) [0...${postsPerPage}] {
+        _id,
+        title,
+        "slug": slug.current,
+        publishedAt,
+        excerpt,
+        mainImage,
+        "categories": categories[]->{
+          _id,
+          title,
+          "slug": slug.current
+        }
+      }`
+      
+      const result = await client.fetch(searchQuery)
+      
+      setPosts(result || [])
+      setPage(1)
+      setHasMore((result || []).length === postsPerPage)
+      
+      // 更新 URL 參數
+      const params = new URLSearchParams()
+      params.set('q', query)
+      router.push(`/blog?${params.toString()}`)
+    } catch (error) {
+      console.error('搜尋文章時發生錯誤:', error)
+      toast.error('搜尋失敗，請稍後再試')
+    } finally {
+      setLoading(false)
+    }
+  }, [loading, selectedCategory, postsPerPage, router])
+  
   // 處理搜尋查詢變更
   useEffect(() => {
     const query = searchParams?.get('q')
@@ -208,56 +258,6 @@ export default function BlogList({
     } catch (error) {
       console.error('篩選分類時發生錯誤:', error)
       toast.error('載入文章失敗，請稍後再試')
-    } finally {
-      setLoading(false)
-    }
-  }
-  
-  // 處理搜尋
-  const handleSearch = async (query: string) => {
-    if (loading) return
-    
-    setLoading(true)
-    setSearchQuery(query)
-    
-    try {
-      if (!query.trim()) {
-        // 如果搜尋為空，恢復到原來的分類篩選
-        handleCategoryChange(selectedCategory)
-        return
-      }
-      
-      const searchQueryEscaped = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-      
-      const searchQuery = `*[_type == "post" && status == "published" ${
-        selectedCategory ? `&& count(categories[*[_id == "${selectedCategory}"]]) > 0` : ''
-      } && (title match "*${searchQueryEscaped}*" || excerpt match "*${searchQueryEscaped}*")] | order(publishedAt desc) [0...${postsPerPage}] {
-        _id,
-        title,
-        "slug": slug.current,
-        publishedAt,
-        excerpt,
-        mainImage,
-        "categories": categories[]->{
-          _id,
-          title,
-          "slug": slug.current
-        }
-      }`
-      
-      const result = await client.fetch(searchQuery)
-      
-      setPosts(result || [])
-      setPage(1)
-      setHasMore((result || []).length === postsPerPage)
-      
-      // 更新 URL 參數
-      const params = new URLSearchParams()
-      params.set('q', query)
-      router.push(`/blog?${params.toString()}`)
-    } catch (error) {
-      console.error('搜尋文章時發生錯誤:', error)
-      toast.error('搜尋失敗，請稍後再試')
     } finally {
       setLoading(false)
     }

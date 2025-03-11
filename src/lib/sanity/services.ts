@@ -1,5 +1,5 @@
 import { client } from './client';
-import * as queries from './queries';
+import { getPosts, getPost, getBlogSettings } from './queries';
 import { Category } from '@/types/blog';
 
 /**
@@ -16,11 +16,10 @@ export const BlogService = {
     category?: string;
   } = {}) {
     try {
-      const result = await client.fetch(queries.getPostsQuery(
-        options.limit || 10,
-        options.offset || 0,
-        options.category
-      ));
+      const result = await client.fetch(getPosts, {
+        start: options.offset || 0,
+        end: (options.offset || 0) + (options.limit || 10),
+      });
       return { posts: result.posts, total: result.total, error: null };
     } catch (error) {
       console.error('獲取文章列表錯誤:', error);
@@ -34,7 +33,7 @@ export const BlogService = {
    */
   async getPost(slug: string) {
     try {
-      const post = await client.fetch(queries.getPostQuery(slug));
+      const post = await client.fetch(getPost, { slug });
       return { post, error: null };
     } catch (error) {
       console.error(`獲取文章錯誤 (${slug}):`, error);
@@ -47,7 +46,7 @@ export const BlogService = {
    */
   async getBlogSettings() {
     try {
-      const settings = await client.fetch(queries.getBlogSettingsQuery());
+      const settings = await client.fetch(getBlogSettings);
       return { settings, error: null };
     } catch (error) {
       console.error('獲取部落格設定錯誤:', error);
@@ -60,7 +59,12 @@ export const BlogService = {
    */
   async getCategories() {
     try {
-      const categories = await client.fetch(queries.getCategoriesQuery());
+      const categories = await client.fetch(`*[_type == "category"] | order(title asc) {
+        _id,
+        title,
+        "slug": slug.current,
+        description
+      }`);
       return { categories, error: null };
     } catch (error) {
       console.error('獲取分類錯誤:', error);

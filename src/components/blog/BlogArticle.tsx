@@ -87,7 +87,6 @@ const ImageViewer = ({ src, alt, onClose }: ImageViewerProps) => {
 export default function BlogArticle({ post }: BlogArticleProps) {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg'>('md');
-  const [showToc, setShowToc] = useState(false);
   
   // 計算閱讀時間
   const readingTime = post.readingTime || 
