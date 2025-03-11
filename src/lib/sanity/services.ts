@@ -16,9 +16,10 @@ export const BlogService = {
     category?: string;
   } = {}) {
     try {
+      const { limit = 10, offset = 0 } = options;
       const result = await client.fetch(getPosts, {
-        start: options.offset || 0,
-        end: (options.offset || 0) + (options.limit || 10),
+        start: offset,
+        end: offset + limit,
       });
       return { posts: result.posts, total: result.total, error: null };
     } catch (error) {

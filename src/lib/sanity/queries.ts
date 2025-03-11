@@ -92,14 +92,24 @@ export const getPost = `
 `
 
 // 獲取文章列表，使用靜態查詢且增加條件判斷
-export const getPosts = `
-  {
-    "posts": *[_type == "post" && status == "published"] | order(publishedAt desc) [$start...$end] {
-      ${postQuery}
+export const getPosts = `{
+  "total": count(*[_type == "post" && status == "published"]),
+  "posts": *[_type == "post" && status == "published"] | order(publishedAt desc) [$start...$end] {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    mainImage {
+      ${imageQuery}
     },
-    "total": count(*[_type == "post" && status == "published"])
+    "categories": categories[]->{
+      _id,
+      title,
+      "slug": slug.current
+    }
   }
-`
+}`
 
 // 獲取部落格設定
 export const getBlogSettings = `
