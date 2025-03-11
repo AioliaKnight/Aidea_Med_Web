@@ -118,7 +118,7 @@ export default function BlogList({
       setSearchQuery(query)
       handleSearch(query)
     }
-  }, [searchParams])
+  }, [searchParams, handleSearch])
   
   // 處理加載更多文章
   const loadMore = async () => {
@@ -372,7 +372,7 @@ export default function BlogList({
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <Spinner theme="primary" />
+                    <Spinner className="h-6 w-6 text-primary" />
                     <span className="ml-2">載入中...</span>
                   </span>
                 ) : (

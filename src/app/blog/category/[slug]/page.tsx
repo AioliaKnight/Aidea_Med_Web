@@ -34,7 +34,7 @@ export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   try {
-    const { posts, category, error } = await BlogService.getPostsByCategory(params.slug);
+    const { category, error } = await BlogService.getPostsByCategory(params.slug);
 
     if (!category || error) {
       return {

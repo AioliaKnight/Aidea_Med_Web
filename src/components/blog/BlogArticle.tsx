@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { PortableText, PortableTextComponentProps } from '@portabletext/react'
+import { useState, useEffect } from 'react'
+import { PortableText } from '@portabletext/react'
 import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import Image from 'next/image'
 import { urlForImage } from '@/lib/sanity'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
-import Link from 'next/link'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Post } from '@/types/blog'
@@ -100,7 +99,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
   };
 
   // 獲取文章目錄
-  const getTableOfContents = useCallback(() => {
+  const getTableOfContents = () => {
     if (!post.content) return [];
     
     return post.content
@@ -115,7 +114,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
         level: block.style === 'h2' ? 2 : 3,
         id: block.children.map((child: any) => child.text).join('').toLowerCase().replace(/\s+/g, '-')
       }));
-  }, [post.content]);
+  };
 
   // 目錄導航
   const TableOfContents = () => {
