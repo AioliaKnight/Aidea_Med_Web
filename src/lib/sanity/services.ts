@@ -60,8 +60,9 @@ export const BlogService = {
    */
   async getCategories() {
     try {
-      const categories = await client.fetch(`*[_type == "category"] | order(title asc) {
+      const categories = await client.fetch(`*[_type == "category" && defined(slug.current)] | order(title asc) {
         _id,
+        _type,
         title,
         "slug": slug.current,
         description
@@ -125,28 +126,46 @@ export const BlogService = {
       }
       
       // 直接查詢該分類的文章
-      const query = `*[_type == "post" && status == "published" && $categoryId in categories[]._ref] | order(publishedAt desc) {
-        "total": count(*[_type == "post" && status == "published" && $categoryId in categories[]._ref]),
-        "posts": *[_type == "post" && status == "published" && $categoryId in categories[]._ref] | order(publishedAt desc) [${offset}...${offset + limit}] {
+      const query = `{
+        "total": count(*[_type == "post" && defined(slug.current) && $categoryId in categories[]._ref]),
+        "posts": *[_type == "post" && defined(slug.current) && $categoryId in categories[]._ref] | order(publishedAt desc) [$start...$end] {
           _id,
+          _type,
           title,
           "slug": slug.current,
           publishedAt,
           excerpt,
-          mainImage,
+          mainImage {
+            _type,
+            asset->{
+              _id,
+              url,
+              metadata {
+                dimensions,
+                lqip
+              }
+            },
+            alt,
+            caption
+          },
           "categories": categories[]->{
             _id,
             title,
-            "slug": slug.current
+            "slug": slug.current,
+            description
           }
         }
-      }[0]`;
+      }`;
       
-      const result = await client.fetch(query, { categoryId: category._id });
+      const result = await client.fetch(query, { 
+        categoryId: category._id,
+        start: offset,
+        end: offset + limit
+      });
       
       return { 
-        posts: result?.posts || [], 
-        total: result?.total || 0, 
+        posts: result.posts || [], 
+        total: result.total || 0, 
         category,
         error: null 
       };
