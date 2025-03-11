@@ -40,21 +40,26 @@ interface Category {
   description?: string
 }
 
-export default function BlogPage() {
+interface BlogPageProps {
+  initialCategory?: string
+  posts?: Post[]
+}
+
+export default function BlogPage({ initialCategory, posts: initialPosts }: BlogPageProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [posts, setPosts] = useState<Post[]>([])
+  const [posts, setPosts] = useState<Post[]>(initialPosts || [])
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    searchParams.get('category') || 'all'
+    initialCategory || searchParams.get('category') || 'all'
   )
   const [searchQuery, setSearchQuery] = useState<string>(
     searchParams.get('q') || ''
   )
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!initialPosts)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(!initialPosts)
   const postsPerPage = 9
 
   useEffect(() => {
@@ -63,7 +68,8 @@ export default function BlogPage() {
         const query = groq`*[_type == "category"] {
           _id,
           title,
-          description
+          description,
+          "slug": slug.current
         }`
         const result = await client.fetch(query)
         setCategories(result)
@@ -76,6 +82,11 @@ export default function BlogPage() {
     }
 
     const fetchPosts = async () => {
+      // 如果有初始文章，則不需要再次獲取
+      if (initialPosts && page === 1) {
+        return
+      }
+
       try {
         const query = groq`*[_type == "post" ${
           searchQuery
@@ -89,7 +100,8 @@ export default function BlogPage() {
           excerpt,
           mainImage,
           categories[]->{
-            title
+            title,
+            "slug": slug.current
           }
         }[${(page - 1) * postsPerPage}...${page * postsPerPage}]`
         const result = await client.fetch(query)
@@ -108,8 +120,10 @@ export default function BlogPage() {
     }
 
     fetchCategories()
-    fetchPosts()
-  }, [page, searchQuery])
+    if (!initialPosts || page > 1) {
+      fetchPosts()
+    }
+  }, [page, searchQuery, initialPosts])
 
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value)

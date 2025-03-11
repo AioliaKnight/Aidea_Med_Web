@@ -20,11 +20,11 @@ const navigation = [
 // 統一導航樣式設定
 const navStyles = {
   // 默認樣式 - 主色調背景
-  default: 'bg-primary backdrop-blur-sm border-b border-white/15',
+  default: 'bg-primary border-b border-white/10',
   // 滾動樣式 - 白色背景
-  scrolled: 'bg-white/95 border-b border-gray-200 shadow-sm',
+  scrolled: 'bg-white border-b border-gray-100',
   // 詳情頁樣式 - 深色透明背景
-  detail: 'bg-black/70 backdrop-blur-sm border-b border-white/10'
+  detail: 'bg-black/90 border-b border-white/10'
 }
 
 // 統一導航文字樣式
@@ -35,7 +35,7 @@ const textStyles = {
     normal: 'text-white/90 hover:text-white',
     activeSecondary: 'text-white/90',
     normalSecondary: 'text-white/75 group-hover:text-white/90',
-    indicator: 'bg-white shadow-glow'
+    indicator: 'bg-white'
   },
   // 滾動狀態文字樣式
   scrolled: {
@@ -49,8 +49,8 @@ const textStyles = {
 
 // 按鈕樣式
 const buttonStyles = {
-  default: 'bg-white text-primary hover:bg-white/90 shadow-sm',
-  scrolled: 'bg-primary text-white hover:bg-primary/90'
+  default: 'bg-white text-primary hover:bg-white/95 transition-colors duration-300',
+  scrolled: 'bg-primary text-white hover:bg-primary/95 transition-colors duration-300'
 }
 
 // 簡化動畫變體
@@ -191,7 +191,7 @@ export default function Navbar() {
           {/* 諮詢按鈕 */}
           <Link href="/contact">
             <span className={cn(
-              'inline-flex items-center px-5 py-2 font-medium text-sm tracking-wide transition-colors',
+              'inline-flex items-center px-6 py-2.5 font-medium text-sm tracking-wide transition-all duration-300',
               getButtonStyle()
             )}>
               CONSULT

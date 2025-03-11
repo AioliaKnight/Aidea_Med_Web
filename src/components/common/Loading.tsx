@@ -56,6 +56,12 @@ const COLOR_THEMES = {
     spinner: 'border-neutral-950 dark:border-neutral-200',
     dots: 'bg-neutral-950 dark:bg-neutral-200',
     text: 'text-neutral-600 dark:text-neutral-400'
+  },
+  primary: {
+    ring: 'border-primary/20',
+    spinner: 'border-primary',
+    dots: 'bg-primary',
+    text: 'text-primary'
   }
 } as const
 

@@ -129,11 +129,12 @@ const serviceProcess: ProcessItem[] = [
 const pricingPlans: PricingPlan[] = [
   {
     title: '基礎方案',
-    price: '$ 25,000',
+    price: '$ 100,000',
     period: '/月',
     features: [
+      '品牌定位與識別系統',
       '社群媒體經營管理',
-      '每月 8 篇優質貼文',
+      '每月 12 篇優質貼文',
       '基礎數據分析報告',
       '每週互動維護服務',
       '基礎 SEO 優化',
@@ -144,32 +145,34 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     title: '進階方案',
-    price: '$ 45,000',
+    price: '$ 150,000',
     period: '/月',
     features: [
+      '完整品牌策略規劃',
       '社群媒體全面管理',
-      '每月 15 篇精選貼文',
+      '每月 20 篇精選貼文',
       'Google/Meta 廣告投放',
       '每週成效分析報告',
       '進階 SEO 優化服務',
       '24/7 專人即時服務',
-      '品牌形象拍攝方案'
+      '專業影音內容製作'
     ],
     btnText: '熱門推薦',
     isPopular: true
   },
   {
     title: '頂級方案',
-    price: '$ 85,000',
+    price: '$ 250,000',
     period: '/月',
     features: [
       '品牌策略完整規劃',
       '全方位數位行銷服務',
-      '專業影音內容製作',
+      '每月 30 篇精選貼文',
+      '進階影音內容製作',
       '完整的數據分析系統',
       '一對一專屬顧問服務',
       '優先預約諮詢服務',
-      '額外加值服務優惠'
+      '客製化加值服務'
     ],
     btnText: '聯繫我們',
     isPopular: false
@@ -190,18 +193,18 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       initial="initial"
       animate="animate"
       whileHover={{ y: -5 }}
-      className="bg-white p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300"
+      className="bg-white p-6 md:p-8 border-0 shadow-none hover:shadow-sm transition-all duration-300"
       role="article"
       aria-labelledby={`service-title-${service.id}`}
     >
       <div 
-        className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center mb-4 sm:mb-6 text-white"
+        className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center mb-6 text-white rounded-none"
         style={{ background: colors.primary }}
         role="img"
         aria-label={`${service.title} 圖標`}
       >
         <svg
-          className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
+          className="w-5 h-5 md:w-7 md:h-7"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -212,7 +215,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       </div>
       <h3 
         id={`service-title-${service.id}`}
-        className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4" 
+        className="text-lg md:text-xl font-bold mb-3 md:mb-4" 
         style={{ color: colors.textDark }}
       >
         {service.title}
@@ -221,21 +224,21 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
         variants={animations.stagger}
         initial="initial"
         animate="animate"
-        className="space-y-2 sm:space-y-3 mb-4 sm:mb-6"
+        className="space-y-2 md:space-y-3 mb-4 md:mb-6"
         role="list"
       >
         {service.items.map((item, idx) => (
           <motion.li 
             key={idx}
             variants={animations.slideIn}
-            className="flex items-start text-sm sm:text-base text-gray-600"
+            className="flex items-start text-sm md:text-base text-gray-600"
           >
             <span className="mr-2 text-primary" role="presentation">•</span>
             {item}
           </motion.li>
         ))}
       </motion.ul>
-      <p className="text-sm sm:text-base text-gray-600">{service.description}</p>
+      <p className="text-sm md:text-base text-gray-600">{service.description}</p>
     </motion.div>
   )
 })
@@ -260,15 +263,15 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
     >
       <div className="flex flex-col items-center text-center">
         <div 
-          className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white flex items-center justify-center text-xl md:text-2xl font-bold mb-3 md:mb-4"
           role="presentation"
         >
           {step.step}
         </div>
-        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: colors.textDark }}>
+        <h3 className="text-base md:text-lg font-bold mb-2" style={{ color: colors.textDark }}>
           {step.title}
         </h3>
-        <p className="text-sm sm:text-base text-gray-600">{step.description}</p>
+        <p className="text-sm md:text-base text-gray-600">{step.description}</p>
       </div>
       {index < serviceProcess.length - 1 && (
         <div 
@@ -295,9 +298,9 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       initial="initial"
       whileInView="animate"
       viewport={{ once: true }}
-      className={`relative p-4 sm:p-6 md:p-8 ${
+      className={`relative p-6 md:p-8 rounded-none ${
         plan.isPopular 
-          ? 'bg-primary text-white transform scale-105 shadow-xl' 
+          ? 'bg-primary text-white transform scale-100 shadow-none' 
           : 'bg-white text-gray-900'
       }`}
       role="article"
@@ -305,7 +308,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
     >
       {plan.isPopular && (
         <div 
-          className="absolute -top-4 right-4 bg-accent text-primary px-3 py-1 text-sm font-medium rounded-full transform -translate-y-2"
+          className="absolute -top-4 right-4 bg-accent text-white px-4 py-1 text-sm font-medium rounded-none"
           role="note"
           aria-label="熱門方案"
         >
@@ -314,23 +317,23 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       )}
       <h3 
         id={`plan-title-${index}`}
-        className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4"
+        className="text-xl md:text-2xl font-bold mb-3 md:mb-4"
       >
         {plan.title}
       </h3>
-      <div className="mb-4 sm:mb-6">
-        <span className="text-2xl sm:text-3xl md:text-4xl font-bold">{plan.price}</span>
-        <span className="text-base sm:text-lg">{plan.period}</span>
+      <div className="mb-4 md:mb-6">
+        <span className="text-2xl md:text-3xl font-bold">{plan.price}</span>
+        <span className="text-base md:text-lg">{plan.period}</span>
       </div>
-      <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8" role="list">
+      <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8" role="list">
         {plan.features.map((feature, idx) => (
           <li 
             key={idx}
-            className="flex items-center text-sm sm:text-base"
+            className="flex items-center text-sm md:text-base"
             role="listitem"
           >
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0"
+              className="w-4 h-4 md:w-5 md:h-5 mr-2 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -349,7 +352,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       </ul>
       <Link
         href="/contact"
-        className={`block w-full py-2 sm:py-3 px-4 sm:px-6 text-center font-medium transition-all duration-300 rounded-lg text-sm sm:text-base ${
+        className={`block w-full py-2 md:py-3 px-4 md:px-6 text-center font-medium transition-all duration-300 rounded-lg text-sm md:text-base ${
           plan.isPopular
             ? 'bg-white text-primary hover:bg-gray-100'
             : 'bg-primary text-white hover:bg-primary-dark'
@@ -387,7 +390,7 @@ function ServiceFeature() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
-      className="rounded-md mb-24 px-4"
+      className="mb-24 px-4"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {features.map((feature, index) => (
@@ -396,10 +399,10 @@ function ServiceFeature() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-            className="bg-white p-8 rounded-md border border-gray-100 shadow-sm"
+            className="bg-white p-8 border-0 shadow-none hover:shadow-sm transition-all duration-300"
           >
             <div 
-              className="w-12 h-12 rounded-md flex items-center justify-center mb-4 text-white"
+              className="w-12 h-12 rounded-none flex items-center justify-center mb-4 text-white"
               style={{ background: colors.primary }}
             >
               <svg

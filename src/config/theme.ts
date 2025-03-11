@@ -1,14 +1,14 @@
 // 主要品牌色系
 export const colors = {
-  primary: '#E61E25', // 品牌紅色
-  primaryDark: '#CC1A20', // 深紅色
-  secondary: '#1A1A1A', // 深黑色
+  primary: '#DC2626', // 主要色調：優雅紅
+  primaryDark: '#B91C1C', // 深紅色
+  secondary: '#111827', // 次要色調：深邃黑
   light: '#FFFFFF', // 白色
-  gray: '#F5F5F5', // 淺灰色背景
-  grayDark: '#E0E0E0', // 深灰色
-  textDark: '#2A2A2A', // 深色文字
-  textLight: '#666666', // 淺色文字
-  accent: '#FFD700', // 強調色（金色）
+  gray: '#F8FAFC', // 淺灰色背景
+  grayDark: '#E5E7EB', // 深灰色
+  textDark: '#1F2937', // 深色文字
+  textLight: '#4B5563', // 淺色文字
+  accent: '#FEF2F2', // 強調色（淺紅）
 } as const;
 
 // 確保顏色對比度符合 WCAG 標準

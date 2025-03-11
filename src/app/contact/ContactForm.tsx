@@ -22,7 +22,7 @@ const initialFormData: FormData = {
   message: ''
 }
 
-export default function ContactPage() {
+export default function ContactForm() {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -183,7 +183,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-medium mb-2">聯絡方式</h3>
                     <p className="text-gray-600">電話：(02) 2345-6789</p>
-                    <p className="text-gray-600">Email：contact@example.com</p>
+                    <p className="text-gray-600">Email：contact@aideamed.com</p>
                   </div>
                 </div>
               </div>

@@ -3,13 +3,9 @@
 import { useState } from 'react'
 import { PortableText } from '@portabletext/react'
 import { motion } from 'framer-motion'
-import { format } from 'date-fns'
-import { zhTW } from 'date-fns/locale'
 import { urlForImage } from '@/lib/sanity/client'
 import { Post } from '@/types/blog'
 import { ImageViewer } from '@/components/common/blog/ImageViewer'
-import { ShareButtons } from '@/components/common/blog/ShareButtons'
-import { BackToTop } from '@/components/common/blog/BackToTop'
 import Image from 'next/image'
 
 interface BlogPostProps {
@@ -46,125 +42,99 @@ export const BlogPost = ({ post }: BlogPostProps) => {
           </motion.div>
         )
       },
+      code: ({ value }: any) => (
+        <pre className="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto my-4">
+          <code className="text-sm font-mono">{value.code}</code>
+        </pre>
+      ),
+      callout: ({ value }: any) => (
+        <div className={`p-4 rounded-lg my-4 ${
+          value.type === 'info' 
+            ? 'bg-blue-50 border-l-4 border-blue-500' 
+            : value.type === 'warning'
+            ? 'bg-yellow-50 border-l-4 border-yellow-500'
+            : value.type === 'error'
+            ? 'bg-red-50 border-l-4 border-red-500'
+            : 'bg-gray-50 border-l-4 border-gray-500'
+        }`}>
+          <p className="text-sm">{value.text}</p>
+        </div>
+      ),
+    },
+    marks: {
+      link: ({ value, children }: any) => {
+        const target = (value?.href || '').startsWith('http') ? '_blank' : undefined
+        return (
+          <a
+            href={value?.href}
+            target={target}
+            rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+            className="text-primary hover:underline"
+          >
+            {children}
+          </a>
+        )
+      },
+      highlight: ({ children }: any) => (
+        <span className="bg-yellow-100 px-1 rounded">{children}</span>
+      ),
+    },
+    block: {
+      h2: ({ children }: any) => (
+        <motion.h2
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="text-2xl font-bold mt-8 mb-4"
+        >
+          {children}
+        </motion.h2>
+      ),
+      h3: ({ children }: any) => (
+        <motion.h3
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="text-xl font-bold mt-6 mb-3"
+        >
+          {children}
+        </motion.h3>
+      ),
+      blockquote: ({ children }: any) => (
+        <blockquote className="border-l-4 border-primary pl-4 italic my-6 text-gray-700">
+          {children}
+        </blockquote>
+      ),
+    },
+    list: {
+      bullet: ({ children }: any) => (
+        <ul className="list-disc list-inside space-y-2 my-4">
+          {children}
+        </ul>
+      ),
+      number: ({ children }: any) => (
+        <ol className="list-decimal list-inside space-y-2 my-4">
+          {children}
+        </ol>
+      ),
     },
   }
 
   return (
-    <article className="max-w-4xl mx-auto px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
-      >
-        {/* 標題區塊 */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex items-center justify-center space-x-4 text-gray-600">
-            <span>{format(new Date(post.publishedAt), 'PPP', { locale: zhTW })}</span>
-            {post.updatedAt && (
-              <>
-                <span>•</span>
-                <span>更新於 {format(new Date(post.updatedAt), 'PPP', { locale: zhTW })}</span>
-              </>
-            )}
-          </div>
-        </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="bg-white rounded-lg shadow-sm p-6 md:p-8"
+    >
+      {/* 摘要 */}
+      <div className="text-gray-600 text-lg border-l-4 border-primary pl-4 italic mb-8">
+        {post.excerpt}
+      </div>
 
-        {/* 主圖 */}
-        {post.mainImage && (
-          <div className="relative aspect-video mb-8">
-            <Image
-              src={urlForImage(post.mainImage).url()}
-              alt={post.mainImage.alt || post.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="100vw"
-            />
-          </div>
-        )}
-
-        {/* 作者資訊 */}
-        <div className="flex items-center space-x-4">
-          {post.author?.image && (
-            <div className="relative w-12 h-12 rounded-full overflow-hidden">
-              <Image
-                src={urlForImage(post.author.image).url()}
-                alt={post.author.name}
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
-            </div>
-          )}
-          <div>
-            <h2 className="font-medium">{post.author.name}</h2>
-            {post.author.bio && (
-              <p className="text-gray-600 text-sm">{post.author.bio}</p>
-            )}
-          </div>
-        </div>
-
-        {/* 分類標籤 */}
-        <div className="flex flex-wrap gap-2">
-          {post.categories.map((category) => (
-            <span
-              key={category._id}
-              className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-            >
-              {category.title}
-            </span>
-          ))}
-        </div>
-
-        {/* 摘要 */}
-        <div className="text-gray-600 text-lg">{post.excerpt}</div>
-
-        {/* 內容 */}
-        <div className="prose prose-lg max-w-none">
-          <PortableText value={post.content} components={components} />
-        </div>
-
-        {/* 分享按鈕 */}
-        <div className="border-t pt-8">
-          <h3 className="text-lg font-medium mb-4">分享文章</h3>
-          <ShareButtons url={window.location.href} title={post.title} />
-        </div>
-
-        {/* 相關文章 */}
-        {post.related && post.related.length > 0 && (
-          <div className="border-t pt-8">
-            <h3 className="text-2xl font-bold mb-6">相關文章</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {post.related.map((relatedPost) => (
-                <motion.div
-                  key={relatedPost._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-white rounded-lg shadow-sm overflow-hidden"
-                >
-                  {relatedPost.mainImage && (
-                    <div className="relative aspect-video mb-4">
-                      <Image
-                        src={urlForImage(relatedPost.mainImage).url()}
-                        alt={relatedPost.mainImage.alt || relatedPost.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <h4 className="font-medium mb-2">{relatedPost.title}</h4>
-                    <p className="text-gray-600 text-sm">{relatedPost.excerpt}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
-      </motion.div>
+      {/* 內容 */}
+      <div className="prose prose-lg max-w-none">
+        <PortableText value={post.content} components={components} />
+      </div>
 
       {/* 圖片檢視器 */}
       {selectedImage && (
@@ -174,9 +144,6 @@ export const BlogPost = ({ post }: BlogPostProps) => {
           onClose={() => setSelectedImage(null)}
         />
       )}
-
-      {/* 回到頂部按鈕 */}
-      <BackToTop />
-    </article>
+    </motion.div>
   )
 } 

@@ -70,7 +70,7 @@ export default function RootLayout({
           href="/apple-touch-icon.png"
         />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">
+      <body className="min-h-screen bg-gray-50 font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">
         <ErrorBoundary>
           <ClientProviders>
             {/* 導航欄在 Suspense 外以避免不必要的重新渲染 */}
@@ -83,7 +83,7 @@ export default function RootLayout({
                     text="載入應用程式..."
                     blur
                     size="lg"
-                    theme="slate"
+                    theme="primary"
                   />
                 }
               >
