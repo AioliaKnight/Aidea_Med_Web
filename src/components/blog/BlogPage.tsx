@@ -8,7 +8,7 @@ import { urlForImage } from '@/lib/sanity/client'
 import { Post, BlogSettings, Category } from '@/types/blog'
 import { SubscriptionForm } from '../common/blog/SubscriptionForm'
 import { BackToTop } from '../common/blog/BackToTop'
-import { Loading } from '../common/Loading'
+import Loading from '../common/Loading'
 import Image from 'next/image'
 import Link from 'next/link'
 
