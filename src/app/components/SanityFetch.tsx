@@ -28,15 +28,8 @@ export default function SanityFetch() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // 使用標準字符串而非 groq 模板字串
-        const query = `*[_type == "post"] | order(publishedAt desc)[0...3] {
-          _id,
-          title,
-          slug,
-          mainImage,
-          publishedAt,
-          excerpt
-        }`
+        // 使用最簡單的查詢語法
+        const query = '*[_type == "post"] | order(publishedAt desc)[0...3] {_id, title, slug, mainImage, publishedAt, excerpt}'
         
         // 使用標準的 fetch 方法
         const result = await client.fetch(query)

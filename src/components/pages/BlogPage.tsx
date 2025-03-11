@@ -87,23 +87,22 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
       }
 
       try {
-        // 確保使用標準格式的 GROQ 查詢
-        const query = `*[_type == "post" ${
-          searchQuery
-            ? `&& (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`
-            : ''
-        }] | order(publishedAt desc) {
-          _id,
-          title,
-          "slug": slug.current,
-          publishedAt,
-          excerpt,
-          mainImage,
-          categories[]->{
-            title,
-            "slug": slug.current
-          }
-        }[${(page - 1) * postsPerPage}...${page * postsPerPage}]`
+        // 使用簡單的基本查詢，不使用字符串插值
+        let query = '*[_type == "post"]'
+        
+        // 添加條件過濾
+        if (searchQuery) {
+          query += ` && (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`
+        }
+        
+        // 添加排序
+        query += ' | order(publishedAt desc)'
+        
+        // 添加投影
+        query += ' {_id, title, "slug": slug.current, publishedAt, excerpt, mainImage, categories[]->{title, "slug": slug.current}}'
+        
+        // 添加分頁
+        query += `[${(page - 1) * postsPerPage}...${page * postsPerPage}]`
         
         // 使用標準的 fetch 方法
         const result = await client.fetch(query)
