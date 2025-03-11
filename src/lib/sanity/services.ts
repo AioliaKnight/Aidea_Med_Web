@@ -1,5 +1,6 @@
 import { client } from './client';
 import * as queries from './queries';
+import { Category } from '@/types/blog';
 
 /**
  * 部落格服務 - 集中處理所有 Sanity 部落格相關數據操作
@@ -15,12 +16,12 @@ export const BlogService = {
     category?: string;
   } = {}) {
     try {
-      const { posts, total } = await queries.getPosts(
+      const result = await client.fetch(queries.getPostsQuery(
         options.limit || 10,
         options.offset || 0,
         options.category
-      );
-      return { posts, total, error: null };
+      ));
+      return { posts: result.posts, total: result.total, error: null };
     } catch (error) {
       console.error('獲取文章列表錯誤:', error);
       return { posts: [], total: 0, error };
@@ -33,7 +34,7 @@ export const BlogService = {
    */
   async getPost(slug: string) {
     try {
-      const post = await queries.getPost(slug);
+      const post = await client.fetch(queries.getPostQuery(slug));
       return { post, error: null };
     } catch (error) {
       console.error(`獲取文章錯誤 (${slug}):`, error);
@@ -46,7 +47,7 @@ export const BlogService = {
    */
   async getBlogSettings() {
     try {
-      const settings = await queries.getBlogSettings();
+      const settings = await client.fetch(queries.getBlogSettingsQuery());
       return { settings, error: null };
     } catch (error) {
       console.error('獲取部落格設定錯誤:', error);
@@ -59,7 +60,7 @@ export const BlogService = {
    */
   async getCategories() {
     try {
-      const categories = await queries.getCategories();
+      const categories = await client.fetch(queries.getCategoriesQuery());
       return { categories, error: null };
     } catch (error) {
       console.error('獲取分類錯誤:', error);
@@ -107,7 +108,7 @@ export const BlogService = {
     try {
       // 先檢查分類是否存在
       const { categories } = await this.getCategories();
-      const category = categories.find(cat => cat.slug === categorySlug);
+      const category = categories.find((cat: Category) => cat.slug === categorySlug);
       
       if (!category) {
         return { 

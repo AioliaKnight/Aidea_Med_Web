@@ -10,10 +10,9 @@ interface TableOfContentsProps {
 
 // 通過提取文章中的標題，生成目錄項目
 function extractTocItems(post: Post) {
-  if (!post.content && !post.body) return [];
+  if (!post.content) return [];
   
-  const content = post.content || post.body || [];
-  return content
+  return post.content
     .filter((block: any) => 
       block._type === 'block' && 
       ['h2', 'h3'].includes(block.style) && 

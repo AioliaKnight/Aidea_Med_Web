@@ -1,89 +1,83 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import BlogList from '@/components/blog/BlogList';
 import { BlogService } from '@/lib/sanity/services';
-import { notFound } from 'next/navigation';
+import { Category } from '@/types/blog';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+interface PageParams {
+  slug: string;
+}
+
+interface PageProps {
+  params: PageParams;
 }
 
 export const revalidate = 3600; // 每小時重新驗證一次
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
-  
+// 生成靜態頁面參數
+export async function generateStaticParams() {
   try {
-    // 使用 BlogService 獲取分類
-    const { categories, error } = await BlogService.getCategories();
-    if (error) throw error;
+    // 獲取所有分類的 slug
+    const { categories } = await BlogService.getCategories();
     
-    const category = categories.find(cat => cat.slug === slug);
-    
-    if (!category) {
+    // 返回所有 slug 作為靜態頁面的參數
+    return categories.map((cat: Category) => ({
+      slug: cat.slug,
+    }));
+  } catch (error) {
+    console.error('生成靜態參數時發生錯誤:', error);
+    return [];
+  }
+}
+
+export async function generateMetadata(
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
+  try {
+    const { posts, category, error } = await BlogService.getPostsByCategory(params.slug);
+
+    if (!category || error) {
       return {
-        title: '分類不存在 | Aidea:Med',
-        description: '您嘗試訪問的分類不存在。',
+        title: '找不到分類',
+        description: '您所尋找的分類不存在或已被移除。',
       };
     }
-    
+
     return {
-      title: `${category.title} | 部落格分類 | Aidea:Med`,
-      description: category.description || `探索 ${category.title} 分類下的所有文章`,
+      title: `${category.title} - 部落格分類`,
+      description: category.description || `瀏覽 ${category.title} 分類的所有文章`,
       openGraph: {
-        title: `${category.title} | 部落格分類 | Aidea:Med`,
-        description: category.description || `探索 ${category.title} 分類下的所有文章`,
-        images: [{
-          url: 'https://aideamed.com/images/blog-og.jpg',
-          width: 1200,
-          height: 630,
-          alt: `${category.title} - Aidea:Med 部落格`,
-        }],
+        title: `${category.title} - 部落格分類`,
+        description: category.description || `瀏覽 ${category.title} 分類的所有文章`,
+        type: 'website',
+        url: `https://aideamed.com/blog/category/${params.slug}`,
       },
     };
   } catch (error) {
-    console.error('獲取分類元數據時發生錯誤:', error);
+    const errorMessage = error instanceof Error ? error.message : '載入分類時發生錯誤，請稍後再試。';
+    console.error('生成元數據時發生錯誤:', error);
     return {
-      title: '部落格分類 | Aidea:Med',
-      description: '探索醫療行銷的最新趨勢和見解',
+      title: '發生錯誤',
+      description: errorMessage,
     };
   }
 }
 
-export default async function CategoryPage({ params }: Props) {
-  const { slug } = params;
-  
+export default async function Page({ params }: PageProps) {
   try {
-    // 使用專門的分類文章獲取方法
-    const { posts, total, category, error } = await BlogService.getPostsByCategory(slug, 10, 0);
+    const { posts, total, category, error } = await BlogService.getPostsByCategory(params.slug);
     
-    if (error) {
-      console.error(`獲取分類 ${slug} 文章錯誤:`, error);
-      if (error.message.includes('不存在')) {
-        notFound();
-      }
-      throw error;
+    if (!category || error) {
+      notFound();
     }
     
-    // 獲取所有分類顯示在分類過濾器
-    const { categories } = await BlogService.getCategories();
-    
-    // 獲取設定
-    const { settings } = await BlogService.getBlogSettings();
-    
     return (
-      <BlogList 
+      <BlogList
         posts={posts}
-        categories={categories}
-        settings={settings}
         title={category.title}
-        description={category.description || `探索 ${category.title} 分類下的所有文章`}
-        currentPage={1}
+        description={category.description || `瀏覽 ${category.title} 分類的所有文章`}
         totalPosts={total}
-        postsPerPage={10}
-        isCategory={true}
-        categorySlug={category._id}
+        categorySlug={params.slug}
       />
     );
   } catch (error) {

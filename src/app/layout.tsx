@@ -39,6 +39,10 @@ export default function RootLayout({
           content="yes" 
         />
         <meta 
+          name="mobile-web-app-capable" 
+          content="yes" 
+        />
+        <meta 
           name="apple-mobile-web-app-status-bar-style" 
           content="default" 
         />
@@ -69,6 +73,22 @@ export default function RootLayout({
           rel="apple-touch-icon"
           sizes="180x180"
           href="/apple-touch-icon.png"
+        />
+        
+        {/* 預加載字體以避免CSP問題 */}
+        <link 
+          rel="preload" 
+          href="/fonts/lato-v24-latin-regular.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/lato-v24-latin-700.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
         />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">

@@ -372,7 +372,7 @@ export default function BlogList({
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <Spinner size="sm" />
+                    <Spinner theme="primary" />
                     <span className="ml-2">載入中...</span>
                   </span>
                 ) : (

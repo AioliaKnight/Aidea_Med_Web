@@ -92,7 +92,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
   
   // 計算閱讀時間
   const readingTime = post.readingTime || 
-    estimateReadingTime(extractTextFromContent(post.content || post.body || []));
+    estimateReadingTime(extractTextFromContent(post.content || []));
   
   // 字體大小切換
   const changeFontSize = (size: 'sm' | 'md' | 'lg') => {
@@ -101,10 +101,9 @@ export default function BlogArticle({ post }: BlogArticleProps) {
 
   // 獲取文章目錄
   const getTableOfContents = useCallback(() => {
-    if (!post.content && !post.body) return [];
+    if (!post.content) return [];
     
-    const content = post.content || post.body || [];
-    return content
+    return post.content
       .filter((block: any) => 
         block._type === 'block' && 
         ['h2', 'h3'].includes(block.style) && 
@@ -116,7 +115,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
         level: block.style === 'h2' ? 2 : 3,
         id: block.children.map((child: any) => child.text).join('').toLowerCase().replace(/\s+/g, '-')
       }));
-  }, [post.content, post.body]);
+  }, [post.content]);
 
   // 目錄導航
   const TableOfContents = () => {
@@ -261,7 +260,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
         {/* 正文內容 */}
         <div className="prose prose-lg max-w-none">
           <PortableText
-            value={post.content || post.body || []}
+            value={post.content || []}
             components={components}
           />
         </div>
