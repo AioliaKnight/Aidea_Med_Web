@@ -59,6 +59,18 @@ export default function SanityImage({
     .width(width || 1200)
     .height(height || 800)
     .url();
+    
+  // 安全地檢查 LQIP 是否存在
+  const hasLqip = Boolean(
+    // @ts-ignore - 忽略類型檢查，因為我們已經在運行時做了檢查
+    typeof image?.asset?.metadata?.lqip === 'string'
+  );
+  
+  // 獲取 LQIP，如果存在
+  const lqip = hasLqip ? 
+    // @ts-ignore - 忽略類型檢查，因為我們已經在運行時做了檢查
+    image?.asset?.metadata?.lqip : 
+    undefined;
   
   return fill ? (
     // 當 fill 為 true 時
@@ -70,8 +82,8 @@ export default function SanityImage({
       priority={priority}
       className={`${className} object-cover`}
       onError={() => setIsError(true)}
-      placeholder={image?.asset?.metadata?.lqip ? 'blur' : 'empty'}
-      blurDataURL={image?.asset?.metadata?.lqip}
+      placeholder={hasLqip ? 'blur' : 'empty'}
+      blurDataURL={lqip}
     />
   ) : (
     // 當 fill 為 false 時
@@ -84,8 +96,8 @@ export default function SanityImage({
       priority={priority}
       className={`${className} object-cover`}
       onError={() => setIsError(true)}
-      placeholder={image?.asset?.metadata?.lqip ? 'blur' : 'empty'}
-      blurDataURL={image?.asset?.metadata?.lqip}
+      placeholder={hasLqip ? 'blur' : 'empty'}
+      blurDataURL={lqip}
     />
   );
 } 

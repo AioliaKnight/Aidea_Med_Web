@@ -1,18 +1,17 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
-import Image from 'next/image'
 import Link from 'next/link'
 import { client, handleSanityError } from '@/lib/sanity/client'
-import { urlForImage } from '@/lib/sanity/client'
 import { toast } from 'react-hot-toast'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { Spinner } from '@/components/common/Spinner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import debounce from 'lodash/debounce'
 import SanityImage from '@/components/blog/SanityImage'
+import { motion } from 'framer-motion'
 
 // 使用單獨的文件存儲類型定義
 import { Post, Category } from '@/types/blog'
@@ -23,6 +22,30 @@ interface BlogPageProps {
   posts?: Post[]
 }
 
+// 動畫配置
+const animations = {
+  fadeIn: {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: {
+        duration: 0.3
+      }
+    }
+  },
+  slideUp: {
+    initial: { opacity: 0, y: 10 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    }
+  }
+};
+
 // 博客卡片組件
 const BlogCard = ({ post }: { post: Post }) => {
   const formattedDate = post.publishedAt
@@ -30,7 +53,12 @@ const BlogCard = ({ post }: { post: Post }) => {
     : '發布日期未知';
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl bg-white h-full">
+    <motion.article 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col overflow-hidden bg-white h-full border border-gray-100"
+    >
       <div className="relative h-48 w-full overflow-hidden">
         <SanityImage
           image={post.mainImage}
@@ -50,22 +78,32 @@ const BlogCard = ({ post }: { post: Post }) => {
           <p className="mb-4 text-gray-600 line-clamp-3">{post.excerpt}</p>
         </div>
         <div className="mt-auto">
-          <Link 
+          <Link
             href={`/blog/${post.slug}`}
-            className="inline-flex items-center font-medium text-blue-600 hover:text-blue-800"
+            className="inline-flex items-center font-medium text-primary hover:underline"
+            aria-label={`閱讀更多關於 ${post.title} 的內容`}
           >
             閱讀更多
-            <svg className="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+            <svg
+              className="ml-1 h-4 w-4"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
             </svg>
           </Link>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };
 
-// 分類篩選器組件
+// 分類過濾器組件
 const CategoryFilter = ({ 
   categories, 
   selectedCategory, 
@@ -75,27 +113,29 @@ const CategoryFilter = ({
   selectedCategory: string, 
   onCategoryChange: (category: string) => void 
 }) => (
-  <div className="mb-8 overflow-x-auto pb-2">
-    <div className="flex space-x-2">
+  <div className="mb-8">
+    <div className="flex flex-wrap gap-2">
       <button
         onClick={() => onCategoryChange('all')}
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+        className={`px-4 py-2 text-sm font-medium transition-colors ${
           selectedCategory === 'all'
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ? 'bg-primary text-white'
+            : 'bg-white text-gray-700 hover:bg-gray-100'
         }`}
+        aria-pressed={selectedCategory === 'all'}
       >
-        全部文章
+        全部
       </button>
       {categories.map((category) => (
         <button
           key={category._id}
-          onClick={() => onCategoryChange(category.title)}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-            selectedCategory === category.title
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          onClick={() => onCategoryChange(category.slug)}
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            selectedCategory === category.slug
+              ? 'bg-primary text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100'
           }`}
+          aria-pressed={selectedCategory === category.slug}
         >
           {category.title}
         </button>
@@ -114,18 +154,30 @@ const SearchBar = ({
 }) => (
   <div className="mb-8">
     <div className="relative">
-      <input
-        type="text"
-        placeholder="搜尋文章..."
-        value={searchQuery}
-        onChange={(e) => onSearchChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 pr-10 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-      />
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <svg
+          className="h-5 w-5 text-gray-400"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fillRule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clipRule="evenodd"
+          />
         </svg>
       </div>
+      <input
+        type="text"
+        name="search"
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+        className="block w-full bg-white py-3 pl-10 pr-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary border-0"
+        placeholder="搜尋文章..."
+        aria-label="搜尋文章"
+      />
     </div>
   </div>
 );
@@ -144,36 +196,37 @@ const PostList = ({
   hasMore: boolean, 
   onLoadMore: () => void 
 }) => (
-  <div className="space-y-8">
+  <div>
     {error && (
-      <div className="rounded-md bg-red-50 p-4 text-red-700">
-        <p>{error}</p>
+      <div className="mb-8 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+        {error}
       </div>
     )}
-    
-    {posts.length > 0 ? (
+
+    {posts.length === 0 && !loading && !error ? (
+      <div className="mb-8 rounded-lg bg-blue-50 p-4 text-sm text-blue-600">
+        沒有找到符合條件的文章
+      </div>
+    ) : (
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <BlogCard key={post._id} post={post} />
         ))}
       </div>
-    ) : !loading && !error ? (
-      <div className="py-12 text-center">
-        <p className="text-lg text-gray-500">沒有找到相關文章</p>
-      </div>
-    ) : null}
-    
+    )}
+
     {loading && (
-      <div className="flex justify-center py-8">
-        <Spinner className="h-8 w-8 text-blue-600" />
+      <div className="mt-8 flex justify-center">
+        <Spinner className="h-8 w-8 text-primary" />
       </div>
     )}
-    
-    {hasMore && posts.length > 0 && !loading && (
-      <div className="flex justify-center pt-4">
+
+    {!loading && hasMore && posts.length > 0 && (
+      <div className="mt-12 flex justify-center">
         <button
           onClick={onLoadMore}
-          className="rounded-md bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="inline-flex items-center justify-center bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary/90 transition-colors"
+          aria-label="載入更多文章"
         >
           載入更多文章
         </button>
@@ -225,59 +278,63 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
 
     try {
       // 構建基本查詢
-      let filter = '*[_type == "post"';
-      
-      // 添加搜索過濾
-      if (searchQuery) {
-        filter += ` && (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`;
-      }
+      let filterConditions = '_type == "post" && status == "published"';
       
       // 添加分類過濾
       if (selectedCategory && selectedCategory !== 'all') {
-        filter += ` && "${selectedCategory}" in categories[]->title`;
+        filterConditions += ` && "${selectedCategory}" in categories[]->slug.current`;
       }
       
-      // 關閉查詢條件
-      filter += ']';
+      // 添加搜索過濾
+      if (searchQuery) {
+        filterConditions += ` && (title match "*${searchQuery}*" || excerpt match "*${searchQuery}*")`;
+      }
       
-      // 完整查詢
-      const query = `${filter} | order(publishedAt desc) {
-        _id, 
-        title, 
-        "slug": slug.current, 
-        publishedAt, 
-        excerpt, 
-        mainImage, 
-        categories[]->{title, "slug": slug.current}
-      }[${(page - 1) * postsPerPage}...${page * postsPerPage}]`;
+      // 計算分頁
+      const start = (page - 1) * postsPerPage;
+      const end = start + postsPerPage;
+      
+      // 執行查詢
+      const query = `{
+        "posts": *[${filterConditions}] | order(publishedAt desc) [${start}...${end}] {
+          _id,
+          _type,
+          title,
+          slug,
+          publishedAt,
+          excerpt,
+          mainImage,
+          categories[]->{
+            _id,
+            title,
+            "slug": slug.current
+          }
+        },
+        "total": count(*[${filterConditions}])
+      }`;
       
       const result = await client.fetch(query);
       
-      // 更新結果數據
-      if (result.length < postsPerPage) {
-        setHasMore(false);
-      }
-      
-      setPosts(prev => (page === 1 ? result : [...prev, ...result]));
+      // 更新狀態
+      setPosts(prevPosts => page === 1 ? result.posts : [...prevPosts, ...result.posts]);
+      setHasMore(result.total > (page * postsPerPage));
+      setLoading(false);
     } catch (err) {
       const errorMessage = handleSanityError(err);
       console.error('Error fetching posts:', err);
-      setError('無法載入文章列表：' + errorMessage);
-      toast.error('無法載入文章列表');
-    } finally {
+      setError('無法載入文章：' + errorMessage);
       setLoading(false);
+      toast.error('無法載入文章');
     }
-  }, [page, searchQuery, selectedCategory, initialPosts, postsPerPage]);
+  }, [initialPosts, page, postsPerPage, searchQuery, selectedCategory]);
 
-  // 延遲搜索，避免頻繁請求
+  // 搜索防抖動處理
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setSearchQuery(value);
       setPage(1);
-      setHasMore(true);
-      setPosts([]); // 清空當前文章，避免舊的搜索結果混合
+      setPosts([]);
       
-      // 更新 URL 參數
       const params = new URLSearchParams(searchParams.toString());
       if (value) {
         params.set('q', value);
@@ -290,14 +347,12 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
     [router, searchParams]
   );
 
-  // 分類改變處理器
+  // 處理分類變更
   const handleCategoryChange = useCallback((category: string) => {
     setSelectedCategory(category);
     setPage(1);
-    setHasMore(true);
-    setPosts([]); // 清空當前文章
+    setPosts([]);
     
-    // 更新 URL 參數
     const params = new URLSearchParams(searchParams.toString());
     if (category !== 'all') {
       params.set('category', category);
@@ -324,14 +379,27 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
 
   return (
     <ErrorBoundary fallback={<div className="py-12 text-center text-red-600">博客頁面載入發生錯誤</div>}>
-      <section className="bg-gray-50 py-16">
+      <section className="bg-white py-16 sm:py-20 md:py-24">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">部落格</h1>
-            <p className="mt-4 text-xl text-gray-600">探索醫療行銷的最新趨勢、案例分析和專業見解</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
+          >
+            <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl mb-4">專業洞察</h1>
+            <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+            <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
+              探索醫療行銷的最新趨勢、案例分析和專業見解，助您的診所脫穎而出
+            </p>
+          </motion.div>
 
-          <div className="mx-auto max-w-5xl">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mx-auto max-w-5xl"
+          >
             <SearchBar 
               searchQuery={searchQuery} 
               onSearchChange={debouncedSearch} 
@@ -350,7 +418,29 @@ export default function BlogPage({ initialCategory, posts: initialPosts }: BlogP
               hasMore={hasMore} 
               onLoadMore={loadMore} 
             />
-          </div>
+          </motion.div>
+        </div>
+      </section>
+      
+      <section className="bg-primary text-white py-16 sm:py-20">
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">想了解更多醫療行銷策略？</h2>
+            <p className="text-lg mb-8">
+              訂閱我們的電子報，獲取最新的醫療行銷趨勢、案例研究和專業建議
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-base"
+            >
+              預約免費諮詢
+            </Link>
+          </motion.div>
         </div>
       </section>
     </ErrorBoundary>

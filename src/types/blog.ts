@@ -5,8 +5,37 @@ export interface SanityImage {
   asset: {
     _ref: string
     _type: 'reference'
+    url?: string
+    metadata?: {
+      dimensions?: {
+        width?: number
+        height?: number
+        aspectRatio?: number
+      }
+      lqip?: string
+      palette?: {
+        dominant?: {
+          background?: string
+          foreground?: string
+        }
+      }
+    }
   }
   alt?: string
+  crop?: {
+    _type: 'sanity.imageCrop'
+    bottom: number
+    left: number
+    right: number
+    top: number
+  }
+  hotspot?: {
+    _type: 'sanity.imageHotspot'
+    height: number
+    width: number
+    x: number
+    y: number
+  }
   caption?: string
 }
 
