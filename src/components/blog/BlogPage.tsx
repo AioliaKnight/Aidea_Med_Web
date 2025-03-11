@@ -32,7 +32,6 @@ export const BlogPage = ({
   hasMore: initialHasMore,
   categories,
   currentPage: initialPage,
-  totalPages,
 }: BlogPageProps) => {
   const [posts, setPosts] = useState(initialPosts)
   const [isLoading, setIsLoading] = useState(false)
