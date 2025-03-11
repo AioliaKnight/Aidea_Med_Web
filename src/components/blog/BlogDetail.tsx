@@ -20,7 +20,6 @@ interface BlogDetailProps {
 }
 
 export const BlogDetail = ({ post, recentPosts }: BlogDetailProps) => {
-  const [isVisible, setIsVisible] = useState(false)
   const [isLoading] = useState(false)
   const [showToc, setShowToc] = useState(false)
 
