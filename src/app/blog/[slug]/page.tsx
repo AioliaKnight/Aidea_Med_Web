@@ -112,7 +112,7 @@ export default async function Page({ params }: PageProps) {
     }
     
     // 獲取相關文章（目前使用最新文章）
-    const { posts: recentPosts, error: recentError } = await BlogService.getPosts({ 
+    const { posts: recentPosts } = await BlogService.getPosts({ 
       limit: 3,
       offset: 0 
     })

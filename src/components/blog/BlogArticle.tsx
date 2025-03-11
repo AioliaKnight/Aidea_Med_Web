@@ -64,9 +64,11 @@ const ImageViewer = ({ src, alt, onClose }: ImageViewerProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
       <div className="relative max-w-5xl max-h-[90vh]">
-        <img 
+        <Image 
           src={src} 
           alt={alt} 
+          width={1920}
+          height={1080}
           className="max-w-full max-h-[80vh] object-contain"
         />
         <button 

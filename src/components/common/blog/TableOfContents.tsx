@@ -52,3 +52,5 @@ export const TableOfContents = React.memo(({ post }: TableOfContentsProps) => {
     </nav>
   );
 }); 
+
+TableOfContents.displayName = 'TableOfContents'; 

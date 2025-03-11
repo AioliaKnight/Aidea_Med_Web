@@ -4,5 +4,13 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "warn",
     "no-console": ["warn", { "allow": ["error"] }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/app/studio-entry/page.tsx", "src/components/common/blog/SanityImage.tsx"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
 } 

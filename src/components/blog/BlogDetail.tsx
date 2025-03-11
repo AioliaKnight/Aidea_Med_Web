@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
-import { urlForImage } from '@/lib/sanity'
 import { Post } from '@/types/blog'
 import BlogPost from './BlogPost'
 import Loading from '../common/Loading'

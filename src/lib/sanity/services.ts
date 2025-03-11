@@ -1,6 +1,5 @@
 import { client } from './client';
 import * as queries from './queries';
-import { SanityImage, Post, Category, BlogSettings } from '@/types/blog';
 
 /**
  * 部落格服務 - 集中處理所有 Sanity 部落格相關數據操作

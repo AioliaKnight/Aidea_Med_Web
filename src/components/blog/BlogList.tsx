@@ -87,6 +87,8 @@ const BlogCard = React.memo(({ post, index }: BlogCardProps) => {
   );
 });
 
+BlogCard.displayName = 'BlogCard';
+
 export default function BlogList({
   posts: initialPosts = [],
   settings,
