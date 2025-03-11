@@ -4,21 +4,41 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { projectId, dataset, apiVersion } from '@/sanity/env'
-import { client } from '@/lib/sanity/client'
+import { client, handleSanityError } from '@/lib/sanity/client'
 
 export default function StudioEntryPage() {
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'success' | 'error'>('checking')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [debugInfo, setDebugInfo] = useState<any>(null)
 
   useEffect(() => {
     async function checkConnection() {
       try {
+        // 顯示環境信息以便診斷
+        const envInfo = {
+          projectId,
+          dataset,
+          apiVersion,
+          nodeEnv: process.env.NODE_ENV,
+          baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
+        }
+        
+        setDebugInfo(envInfo)
+        
         // 測試 Sanity 連接
-        await client.fetch('*[_type == "post"][0]')
+        const result = await client.fetch('*[_type == "post"][0]')
+        console.log("Sanity connection success:", result)
         setConnectionStatus('success')
       } catch (error) {
+        console.error("Sanity connection error:", error)
         setConnectionStatus('error')
-        setErrorMessage(error instanceof Error ? error.message : '連接失敗')
+        
+        // 使用處理 Sanity 錯誤的輔助函數
+        if (typeof handleSanityError === 'function') {
+          setErrorMessage(handleSanityError(error))
+        } else {
+          setErrorMessage(error instanceof Error ? error.message : '連接失敗')
+        }
       }
     }
 
@@ -74,6 +94,16 @@ export default function StudioEntryPage() {
                   <span className="text-red-600">連接失敗: {errorMessage}</span>
                 )}
               </li>
+              {debugInfo && connectionStatus === 'error' && (
+                <li className="mt-2 p-2 bg-gray-100 rounded text-xs">
+                  <details>
+                    <summary className="cursor-pointer font-medium text-gray-700">診斷資訊</summary>
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words">
+                      {JSON.stringify(debugInfo, null, 2)}
+                    </pre>
+                  </details>
+                </li>
+              )}
             </ul>
           </div>
 

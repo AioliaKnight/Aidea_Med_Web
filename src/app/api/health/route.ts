@@ -1,39 +1,57 @@
 import { NextResponse } from 'next/server';
-import { client } from '@/lib/sanity';
+import { client } from '@/lib/sanity/client';
+import { projectId, dataset, apiVersion } from '@/sanity/env';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const timestamp = new Date().toISOString();
+  
   try {
-    // 檢查 Sanity CMS 連線狀態
-    const sanityCheck = await client.fetch(`*[_type == "sanity.imageAsset"][0...1]`);
+    // 測試 Sanity 連接
+    await client.fetch('*[_type == "post"][0]');
     
-    // 檢查環境變數是否已設定
-    const envCheck = {
-      sanityProjectId: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      sanityDataset: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
-      sanityApiVersion: !!process.env.NEXT_PUBLIC_SANITY_API_VERSION,
-      baseUrl: !!process.env.NEXT_PUBLIC_BASE_URL,
-    };
-    
-    return NextResponse.json({ 
+    // 成功回應
+    return NextResponse.json({
       status: 'ok',
-      timestamp: new Date().toISOString(),
+      timestamp,
       sanity: {
         status: 'connected',
-        check: sanityCheck ? 'success' : 'failed'
+        check: 'success',
       },
-      env: envCheck,
-      version: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
-    }, { status: 200 });
+      env: {
+        sanityProjectId: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        sanityDataset: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
+        sanityApiVersion: !!process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+        baseUrl: !!process.env.NEXT_PUBLIC_BASE_URL,
+      },
+      version: {
+        node: process.version,
+        nextjs: '14.2.24',
+      }
+    });
   } catch (error) {
-    console.error('Health check failed:', error);
+    // 錯誤回應
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
-    return NextResponse.json({ 
+    return NextResponse.json({
       status: 'error',
-      timestamp: new Date().toISOString(),
-      message: 'Health check failed',
-      error: error instanceof Error ? error.message : String(error),
+      timestamp,
+      sanity: {
+        status: 'disconnected',
+        error: errorMessage,
+      },
+      env: {
+        sanityProjectId: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        sanityDataset: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
+        sanityApiVersion: !!process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+        baseUrl: !!process.env.NEXT_PUBLIC_BASE_URL,
+      },
+      config: {
+        projectId,
+        dataset,
+        apiVersion,
+      }
     }, { status: 500 });
   }
 } 
