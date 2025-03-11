@@ -20,7 +20,8 @@ interface BlogDetailProps {
 }
 
 export const BlogDetail = ({ post, recentPosts }: BlogDetailProps) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isLoading] = useState(false)
   const [showToc, setShowToc] = useState(false)
 
   // 監聽滾動以顯示/隱藏目錄

@@ -1219,6 +1219,18 @@ export default function HomePage() {
     return caseStudy.image;
   }, []);
 
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
+
+  const handleSlideChange = (index: number) => {
+    setCurrentSlide(index)
+  }
+
+  const handleDotClick = (index: number) => {
+    setCurrentSlide(index)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <section id="hero" className="min-h-[85vh]">

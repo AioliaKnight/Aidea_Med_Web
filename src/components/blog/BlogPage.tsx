@@ -14,11 +14,16 @@ import Link from 'next/link'
 
 interface BlogPageProps {
   posts: Post[]
-  settings: BlogSettings
-  hasMore: boolean
-  categories: Category[]
+  settings?: BlogSettings
+  hasMore?: boolean
+  categories?: Category[]
   currentPage: number
-  totalPages: number
+  totalPosts: number
+  postsPerPage: number
+  isCategory?: boolean
+  categorySlug?: string
+  title?: string
+  description?: string
 }
 
 export const BlogPage = ({
@@ -97,9 +102,9 @@ export const BlogPage = ({
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-12"
       >
-        <h1 className="text-4xl font-bold mb-4">{settings.title}</h1>
+        <h1 className="text-4xl font-bold mb-4">{settings?.title}</h1>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          {settings.description}
+          {settings?.description}
         </p>
       </motion.div>
 
@@ -116,7 +121,7 @@ export const BlogPage = ({
           >
             全部
           </button>
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <button
               key={category._id}
               onClick={() => handleCategoryChange(category.slug)}
