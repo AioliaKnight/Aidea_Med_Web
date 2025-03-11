@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
-import { client } from '@/lib/sanity/client'
 import { notFound } from 'next/navigation'
-import BlogPost from '@/components/pages/BlogPost'
-import { urlForImage } from '@/lib/sanity/client'
+import BlogDetail from '@/components/blog/BlogDetail'
+import { urlForImage } from '@/lib/sanity'
+import { BlogService } from '@/lib/sanity/services'
 
 interface PageParams {
   slug: string
@@ -14,46 +14,19 @@ interface PageProps {
 
 export const revalidate = 3600 // 每小時重新驗證一次
 
-async function getPost(slug: string) {
-  const query = `
-    *[_type == "post" && slug.current == $slug][0] {
-      title,
-      "slug": slug.current,
-      publishedAt,
-      excerpt,
-      mainImage,
-      categories[]->{
-        title,
-        description
-      },
-      content,
-      body,
-      "related": *[_type == "post" && slug.current != $slug && count(categories[@._ref in ^.^.categories[]._ref]) > 0] | order(publishedAt desc) [0...3] {
-        title,
-        "slug": slug.current,
-        publishedAt,
-        excerpt,
-        mainImage,
-        categories[]->{
-          title
-        }
-      }
-    }
-  `
-  
+// 生成靜態頁面參數
+export async function generateStaticParams() {
   try {
-    const post = await client.fetch(query, { slug })
+    // 獲取所有文章的 slug
+    const { posts } = await BlogService.getPosts({ limit: 100 });
     
-    // 檢查是否有找到文章
-    if (!post) {
-      console.error(`找不到 slug 為 "${slug}" 的文章`)
-      return null
-    }
-    
-    return post
+    // 返回所有 slug 作為靜態頁面的參數
+    return posts.map((post: any) => ({
+      slug: post.slug,
+    }));
   } catch (error) {
-    console.error(`獲取文章時發生錯誤 (slug: ${slug}):`, error)
-    return null
+    console.error('生成靜態參數時發生錯誤:', error);
+    return [];
   }
 }
 
@@ -61,24 +34,40 @@ export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   try {
-    const slug = await params.slug
-    const post = await getPost(slug)
+    const slug = params.slug
+    const { post, error } = await BlogService.getPost(slug)
 
-    if (!post) {
+    if (!post || error) {
       return {
         title: '找不到文章',
         description: '您所尋找的文章不存在或已被移除。',
       }
     }
 
-    const ogImageUrl = post.mainImage
-      ? urlForImage(post.mainImage).width(1200).height(630).url()
-      : 'https://aideamed.com/images/blog-og.jpg'
+    // 生成 OG 圖片 URL
+    let ogImageUrl = 'https://aideamed.com/images/blog-og.jpg'
+    if (post.mainImage) {
+      try {
+        // 使用 urlForImage 獲取構建器，然後添加尺寸和格式參數
+        const imageBuilder = urlForImage(post.mainImage)
+        if (typeof imageBuilder === 'object' && typeof imageBuilder.width === 'function') {
+          ogImageUrl = imageBuilder
+            .width(1200)
+            .height(630)
+            .format('jpg')
+            .quality(80)
+            .url()
+        } else if (typeof imageBuilder === 'string') {
+          // 如果 urlForImage 返回字符串，直接添加參數
+          ogImageUrl = `${imageBuilder}?w=1200&h=630&fm=jpg&q=80`
+        }
+      } catch (error) {
+        console.error('生成 OG 圖片 URL 時發生錯誤:', error)
+      }
+    }
 
-    // 檢查 post.categories 是否存在並有內容
-    const tags = post.categories && post.categories.length > 0 
-      ? post.categories.map((cat: { title: string }) => cat.title) 
-      : ['牙醫行銷', '診所經營']
+    // 從文章分類中提取標籤
+    const tags = post.categories?.map((cat: any) => cat.title) || []
 
     return {
       title: post.title,
@@ -87,18 +76,15 @@ export async function generateMetadata(
         title: post.title,
         description: post.excerpt,
         type: 'article',
-        url: `https://aideamed.com/blog/${post.slug}`,
-        images: post.mainImage ? [
+        url: `https://aideamed.com/blog/${slug}`,
+        images: [
           {
             url: ogImageUrl,
             width: 1200,
             height: 630,
             alt: post.title,
-          }
-        ] : [],
-        publishedTime: post.publishedAt,
-        modifiedTime: post.publishedAt,
-        authors: ['Aidea'],
+          },
+        ],
         tags: tags,
       },
       twitter: {
@@ -118,11 +104,25 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: PageProps) {
-  const post = await getPost(params.slug)
-
-  if (!post) {
+  try {
+    // 獲取當前文章
+    const { post, error } = await BlogService.getPost(params.slug)
+    if (!post || error) {
+      notFound()
+    }
+    
+    // 獲取相關文章（目前使用最新文章）
+    const { posts: recentPosts, error: recentError } = await BlogService.getPosts({ 
+      limit: 3,
+      offset: 0 
+    })
+    
+    // 過濾掉當前文章
+    const filteredRecentPosts = recentPosts.filter((p: any) => p._id !== post._id)
+    
+    return <BlogDetail post={post} recentPosts={filteredRecentPosts} />
+  } catch (error) {
+    console.error('載入文章頁面時發生錯誤:', error)
     notFound()
   }
-
-  return <BlogPost post={post} />
 }

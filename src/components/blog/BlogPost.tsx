@@ -3,22 +3,23 @@
 import { useState } from 'react'
 import { PortableText } from '@portabletext/react'
 import { motion } from 'framer-motion'
-import { urlForImage } from '@/lib/sanity/client'
+import { urlForImage } from '@/lib/sanity'
 import { Post } from '@/types/blog'
 import { ImageViewer } from '@/components/common/blog/ImageViewer'
-import Image from 'next/image'
+import SanityImage from '@/components/common/blog/SanityImage'
 
 interface BlogPostProps {
   post: Post
 }
 
-export const BlogPost = ({ post }: BlogPostProps) => {
+export default function BlogPost({ post }: BlogPostProps) {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
 
   const components = {
     types: {
       image: ({ value }: any) => {
-        const imageUrl = urlForImage(value).url()
+        if (!value?.asset?._ref) return null;
+        
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -27,13 +28,23 @@ export const BlogPost = ({ post }: BlogPostProps) => {
             className="my-8"
           >
             <div className="relative">
-              <Image
-                src={imageUrl}
+              <SanityImage
+                image={value}
                 alt={value.alt || ''}
                 width={1200}
                 height={675}
                 className="w-full rounded-lg shadow-lg cursor-pointer"
-                onClick={() => setSelectedImage({ src: imageUrl, alt: value.alt || '' })}
+                onClick={() => {
+                  const imageUrl = urlForImage(value);
+                  const url = typeof imageUrl === 'string' 
+                    ? imageUrl 
+                    : typeof imageUrl.url === 'function' ? imageUrl.url() : '';
+                  
+                  setSelectedImage({ 
+                    src: url, 
+                    alt: value.alt || '' 
+                  })
+                }}
               />
             </div>
             {value.caption && (

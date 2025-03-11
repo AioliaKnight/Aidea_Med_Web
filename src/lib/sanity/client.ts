@@ -27,20 +27,34 @@ const config = {
   useCdn: process.env.NODE_ENV === 'production',
   perspective: PUBLISHED,
   token: process.env.SANITY_API_TOKEN,
-  // CORS 配置
+  // CORS 配置 - 擴展允許更多域名
   cors: {
     allowOrigins: [
       'http://localhost:3000',
       'https://www.aideamed.com',
       'https://aideamed.com',
-      'https://aidea-web.vercel.app'
-    ]
+      'https://aidea-web.vercel.app',
+      'https://aidea-web-aioliaknight.vercel.app',
+      // 允許所有子域名，解決跨域問題
+      /^https:\/\/.*\.vercel\.app$/,
+      /^https:\/\/.*\.aideamed\.com$/
+    ],
+    credentials: true,
   },
   // 添加更多選項用於診斷
   stega: {
     enabled: process.env.NODE_ENV === 'development',
     studioUrl: '/studio',
   },
+  // 添加重試機制
+  retry: {
+    retries: 5, // 增加重試次數
+    factor: 2,
+    minTimeout: 1000,
+    maxTimeout: 20000 // 增加最大超時時間
+  },
+  // 添加超時設置
+  timeout: 60000, // 增加到60秒
 }
 
 // 建立 Sanity 客戶端
@@ -51,12 +65,19 @@ const builder = imageUrlBuilder(client)
 
 // 圖片 URL 生成函數
 export const urlForImage = (source: SanityImage | null | undefined) => {
-  // 如果來源無效則返回默認圖片
-  if (!source) {
+  try {
+    // 如果來源無效則返回默認圖片構建器
+    if (!source || !source.asset) {
+      return builder.image('image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg')
+    }
+    
+    // 返回圖片構建器，不包含任何轉換
+    return builder.image(source)
+  } catch (error) {
+    console.error('Sanity 圖片處理錯誤:', error);
+    // 發生錯誤時返回默認圖片構建器
     return builder.image('image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg')
   }
-  
-  return builder.image(source)
 }
 
 // 預覽客戶端
@@ -90,6 +111,15 @@ export function handleSanityError(error: unknown): string {
   if (!error) return '連接時發生未知錯誤'
   
   const errorMessage = error instanceof Error ? error.message : String(error)
+  console.error('Sanity Error:', error)
+  
+  // CSP 錯誤檢測
+  if (
+    errorMessage.includes('Content-Security-Policy') ||
+    errorMessage.includes('CSP')
+  ) {
+    return `內容安全策略(CSP)錯誤: 網站的安全策略可能阻止了對Sanity API的訪問。請確認CSP配置中包含了 'connect-src' 允許 *.sanity.io 和 *.apicdn.sanity.io 域名。`
+  }
   
   // CORS 錯誤檢測
   if (
@@ -97,10 +127,11 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('cross-origin') || 
     errorMessage.includes('Access-Control-Allow-Origin')
   ) {
-    return `CORS 錯誤: 請確保在 Sanity 管理界面 (https://www.sanity.io/manage/project/${config.projectId}) 中已設置允許以下網域訪問：
+    return `CORS 錯誤: 請確保在 Sanity 管理界面中已設置允許以下網域訪問：
     - ${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com'}
     - http://localhost:3000 (開發環境)
-    - https://aidea-web.vercel.app (部署預覽環境)`
+    - https://aidea-web.vercel.app (部署預覽環境)
+    - https://aidea-web-aioliaknight.vercel.app (Vercel 預覽環境)`
   }
   
   // 連接錯誤檢測
@@ -110,7 +141,7 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('timeout') ||
     errorMessage.includes('abort')
   ) {
-    return `連接錯誤: 無法連接到 Sanity API。請檢查您的網絡連接，或 Sanity 服務是否運行正常。詳細錯誤: ${errorMessage}`
+    return `連接錯誤: 無法連接到 Sanity API。請檢查您的網絡連接，或 Sanity 服務是否運行正常。如果問題持續存在，請稍後再試。`
   }
   
   // 認證錯誤檢測
@@ -121,7 +152,7 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('401') ||
     errorMessage.includes('403')
   ) {
-    return `認證錯誤: Sanity API 金鑰或項目 ID 可能無效。請檢查您的環境變量設置。詳細錯誤: ${errorMessage}`
+    return `認證錯誤: 請確認 Sanity API Token 是否有效，以及是否具有適當的權限。`
   }
   
   // 數據集錯誤檢測
@@ -129,7 +160,7 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('dataset') || 
     errorMessage.includes('not found')
   ) {
-    return `數據集錯誤: "${config.dataset}" 數據集可能不存在或無法訪問。請確認數據集名稱是否正確，以及是否有訪問權限。`
+    return `數據集錯誤: "${config.dataset}" 數據集可能不存在或無法訪問。請確認數據集設置是否正確。`
   }
   
   // 速率限制錯誤
@@ -138,7 +169,7 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('too many requests') ||
     errorMessage.includes('429')
   ) {
-    return `速率限制錯誤: 您的請求頻率過高。請稍後再試，或考慮升級您的 Sanity 計劃。`
+    return `速率限制錯誤: 請求頻率過高，系統已自動限制。請稍後再試。`
   }
   
   // 查詢語法錯誤
@@ -146,9 +177,9 @@ export function handleSanityError(error: unknown): string {
     errorMessage.includes('syntax') || 
     errorMessage.includes('query')
   ) {
-    return `查詢錯誤: Sanity GROQ 查詢語法可能有誤。詳細錯誤: ${errorMessage}`
+    return `查詢錯誤: 請檢查 GROQ 查詢語法是否正確。`
   }
   
   // 默認錯誤消息
-  return `連接 Sanity API 時發生錯誤。請檢查控制台以獲取更多資訊。錯誤詳情: ${errorMessage}`
+  return `發生錯誤：${errorMessage}`
 } 
