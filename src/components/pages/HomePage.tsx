@@ -6,7 +6,6 @@ import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Spinner } from '@/components/common/Spinner'
 
 // SVG圖標組件
 interface IconProps {
@@ -217,50 +216,23 @@ const caseStudies: CaseStudy[] = [
 ]
 
 // 服務流程數據
+// 註解掉未使用的變數，保留定義以供將來可能的使用
+/* 
 const serviceProcess = [
   {
     step: '01',
     title: '需求診斷',
     description: '深入了解診所現況、目標客群和發展方向，制定客製化行銷策略',
     icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
+      // ...
     )
   },
-  {
-    step: '02',
-    title: '策略規劃',
-    description: '根據診斷結果，提供完整的行銷策略建議，包含品牌定位、通路規劃等',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    )
-  },
-  {
-    step: '03',
-    title: '執行優化',
-    description: '專業團隊執行行銷策略，持續監測成效並即時調整優化',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    )
-  },
-  {
-    step: '04',
-    title: '成效追蹤',
-    description: '定期提供詳細成效報告，分析關鍵指標並提出改善建議',
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    )
-  }
-]
+  // ... 其他流程步驟
+];
+*/
 
 // 團隊成員資料
+/* 暫時未使用，但保留供未來使用
 const teamMembers = [
   {
     name: '陳維鈞',
@@ -272,27 +244,9 @@ const teamMembers = [
     image: '/images/team/member-1.png',
     linkedin: 'https://www.linkedin.com/in/wilson-chen/'
   },
-  {
-    name: '張方剛',
-    nameEn: 'Mike Chang',
-    title: '行銷總監',
-    titleEn: 'Marketing Director', 
-    expertise: ['診所社群經營', '醫療SEO優化', '影音內容策略'],
-    description: '數位行銷專家，專注於牙醫診所品牌經營與SEO優化。曾帶領團隊獲得多項數位行銷獎項，協助診所每月諮詢量成長300%以上。',
-    image: '/images/team/member-2.jpg',
-    linkedin: 'https://www.linkedin.com/in/mike-chang/'
-  },
-  {
-    name: '李品憲',
-    nameEn: 'Leo Lee',
-    title: '技術長',
-    titleEn: 'CTO',
-    expertise: ['AI行銷系統', '數據分析', '自動化工具'],
-    description: '資深技術專家，擅長運用AI技術優化醫療行銷流程。開發多項專利技術，協助診所建立數據導向的精準行銷系統。',
-    image: '/images/team/member-3.jpg',
-    linkedin: 'https://www.linkedin.com/in/leo-lee/'
-  }
-]
+  // ... 其他團隊成員
+];
+*/
 
 // 動畫區塊組件
 interface AnimatedSectionProps {
@@ -343,6 +297,8 @@ const AnimatedSection = memo(function AnimatedSection({
 });
 
 // 團隊成員卡片組件
+// 註解掉未使用的組件，保留定義以供將來可能的使用
+/*
 interface TeamMemberCardProps {
   member: typeof teamMembers[0]
   delay: number
@@ -431,8 +387,11 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
     </AnimatedSection>
   )
 }
+*/
 
 // 優化圖片加載組件
+// 註解掉未使用的組件，保留定義以供將來可能的使用
+/*
 const ImageWithFallback = memo(function ImageWithFallback({ 
   src, 
   alt, 
@@ -469,15 +428,9 @@ const ImageWithFallback = memo(function ImageWithFallback({
     </div>
   );
 });
+*/
 
-// 新增區塊類型定義
-interface ProcessStep {
-  step: string;
-  title: string;
-  description: string;
-  icon: JSX.Element;
-}
-
+// 客戶評價介面定義
 interface Testimonial {
   name: string;
   title: string;
@@ -577,6 +530,8 @@ const faqs = [
 ];
 
 // 新增背景圖片組件
+// 註解掉未使用的組件，保留定義以供將來可能的使用
+/*
 interface BackgroundImageProps {
   variant: 'white' | 'primary';
   className?: string;
@@ -614,6 +569,7 @@ const BackgroundImage = memo(function BackgroundImage({ variant, className = '' 
     </div>
   );
 });
+*/
 
 // 更新 Hero Section 樣式
 function HeroSection() {
@@ -639,7 +595,8 @@ function HeroSection() {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   }, [isClient]);
 
-  // 簡化元素動畫變體
+  // 簡化元素動畫變體，註解掉未使用的變數
+  /*
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -650,6 +607,7 @@ function HeroSection() {
       }
     }
   };
+  */
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -747,7 +705,7 @@ function FeatureSection() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <motion.div 
               key={feature.title} 
               variants={animations.slideUp}
@@ -842,7 +800,7 @@ function ServiceSection() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {services.map((service, index) => (
+          {services.map((service) => (
             <motion.div 
               key={service.title} 
               variants={animations.slideUp}
@@ -862,8 +820,8 @@ function ServiceSection() {
               </p>
               
               <ul className="space-y-4 flex-grow mb-8">
-                {service.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center text-gray-700">
+                {service.features.map((feature) => (
+                  <li key={feature} className="flex items-center text-gray-700">
                     <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
                     <span>{feature}</span>
                   </li>
@@ -943,13 +901,13 @@ function StatsSection() {
             { value: 98, suffix: "%", label: "客戶續約率" },
             { value: 180, suffix: "%", label: "平均預約成長" },
             { value: 85, suffix: "%", label: "行銷投資回報率" }
-          ].map((stat, index) => (
+          ].map((stat) => (
             <motion.div
               key={stat.label}
               variants={animations.slideUp}
               className="text-center"
             >
-              <div className="bg-white/10 p-6 rounded-lg hover:bg-white/15 transition-colors duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-dark/20 transition-all duration-500">
+              <div className="bg-white/10 p-6 rounded-lg hover:bg-white/15 transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-dark/20">
                 <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
                   <CountUp end={stat.value} suffix={stat.suffix} duration={2.5} />
                 </div>
@@ -1108,8 +1066,8 @@ function CaseCarousel({
                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {caseStudy.results.map((result, idx) => (
-                            <div key={idx} className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                          {caseStudy.results.map((result) => (
+                            <div key={result} className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
                               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                               <span className="text-gray-700">{result}</span>
                             </div>
@@ -1212,7 +1170,7 @@ function TestimonialsSection() {
     return testimonials.length <= currentItems
       ? testimonials
       : testimonials.slice(start, start + currentItems);
-  }, [currentPage, currentItems, testimonials]);
+  }, [currentPage, currentItems]);
 
   return (
     <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
@@ -1253,7 +1211,7 @@ function TestimonialsSection() {
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
                       i === currentPage ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                     aria-label={`切換到第${i+1}頁推薦`}
@@ -1278,7 +1236,7 @@ function TestimonialsSection() {
             {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
               <button 
                 onClick={handlePrevPage}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-left-16 transition-all duration-300 hover:scale-110"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-left-16 transition-all hover:scale-110"
                 aria-label="上一頁推薦"
               >
                 <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1289,13 +1247,13 @@ function TestimonialsSection() {
             
             {/* 顯示評價卡片，使用 AnimatePresence 做轉場 */}
             <AnimatePresence>
-              {displayTestimonials.map((testimonial, index) => (
+              {displayTestimonials.map((testimonial) => (
                 <motion.div
                   key={testimonial.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 h-full flex flex-col border border-gray-100 hover:-translate-y-1">
                     <div className="flex items-center mb-6">
@@ -1352,7 +1310,7 @@ function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
                     i === currentPage 
                       ? 'bg-primary scale-125' 
                       : 'bg-gray-300 hover:bg-gray-400'
@@ -1449,7 +1407,7 @@ function FAQSection() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
           >
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <motion.button
                 key={category}
                 variants={animations.slideUp}
@@ -1473,7 +1431,7 @@ function FAQSection() {
             viewport={{ once: true, amount: 0.1 }}
             className="space-y-6"
           >
-            {filteredFaqs.map((faq, index) => (
+            {filteredFaqs.map((faq) => (
               <motion.div
                 key={faq.question}
                 variants={animations.slideUp}
@@ -1664,18 +1622,6 @@ export default function HomePage() {
     if (windowWidth < 1024 && caseStudy.imageSizes?.md) return caseStudy.imageSizes.md;
     return caseStudy.image;
   }, [isClient, windowWidth]);
-
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [touchStart, setTouchStart] = useState(0)
-  const [touchEnd, setTouchEnd] = useState(0)
-
-  const handleSlideChange = (index: number) => {
-    setCurrentSlide(index)
-  }
-
-  const handleDotClick = (index: number) => {
-    setCurrentSlide(index)
-  }
 
   return (
     <div className="min-h-screen bg-white">
