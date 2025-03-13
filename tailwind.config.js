@@ -17,10 +17,10 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Century Gothic', 'GenYoGothicTW', 'sans-serif'],
+        sans: ['GenYoGothicTW', 'Century Gothic', 'sans-serif'],
         gothic: ['Century Gothic', 'sans-serif'],
         tw: ['GenYoGothicTW', 'sans-serif'],
-        display: ['Bageo', 'Century Gothic', 'GenYoGothicTW', 'sans-serif'],
+        display: ['Bageo', 'GenYoGothicTW', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

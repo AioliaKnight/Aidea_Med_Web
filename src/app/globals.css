@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 字體定義 */
+@font-face {
+  font-family: 'GenYoGothicTW';
+  src: url('/fonts/GenYoGothicTW-Regular-subset.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GenYoGothicTW';
+  src: url('/fonts/GenYoGothicTW-Bold-subset.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Century Gothic';
+  src: url('/fonts/Century Gothic 400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bageo';
+  src: url('/fonts/Bageo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer components {
   .container-custom {
     @apply container mx-auto px-4;

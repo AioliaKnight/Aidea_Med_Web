@@ -9,7 +9,8 @@ import Navbar from '@/components/layout/Navbar'
 import Loading from '@/components/common/Loading'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 
-import '@/styles/globals.css'
+import '@/app/globals.css'
+import '@/styles/fonts.css'
 
 export const metadata = homeMetadata
 
@@ -78,14 +79,14 @@ export default function RootLayout({
         {/* 預加載字體以避免CSP問題 */}
         <link 
           rel="preload" 
-          href="/fonts/lato-v24-latin-regular.woff2" 
+          href="/fonts/GenYoGothicTW-Regular-subset.woff2" 
           as="font" 
           type="font/woff2" 
           crossOrigin="anonymous" 
         />
         <link 
           rel="preload" 
-          href="/fonts/lato-v24-latin-700.woff2" 
+          href="/fonts/GenYoGothicTW-Bold-subset.woff2" 
           as="font" 
           type="font/woff2" 
           crossOrigin="anonymous" 
