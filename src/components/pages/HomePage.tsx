@@ -673,124 +673,49 @@ function HeroSection() {
       {/* 簡化的背景，使用漸變而非圖片 */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"/>
       
-      {/* 移除裝飾元素 */}
-      
       <div className="container-custom relative z-20">
-        <motion.div 
-          className="max-w-4xl"
-          initial={{ opacity: 1, y: 0 }} // 移除初始動畫延遲
-          animate={{ opacity: 1, y: 0 }}
-          variants={containerVariants}
-        >
-          <motion.h1 
-            variants={itemVariants}
+        <div className="max-w-4xl">
+          {/* 使用普通 h1 而非 motion.h1，避免首屏水合延遲 */}
+          <h1 
             className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold leading-tight"
-            style={{ willChange: 'transform, opacity' }} // 優化渲染性能
+            data-animate="false"
+            data-priority="high" // 使用 data 屬性標記高優先級
           >
             專業醫療行銷團隊<br/>
             為診所帶來<span className="underline decoration-4 decoration-white/30">突破性成長</span>
-          </motion.h1>
+          </h1>
           
-          {/* 將 LCP 內容直接渲染，不使用動畫 */}
+          {/* 直接渲染 LCP 內容，不使用動畫，確保快速顯示 */}
           <p 
             className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed mt-6"
+            data-animate="false"
           >
             深耕牙醫行銷領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
           </p>
           
-          {/* 按鈕動畫效果 */}
+          {/* 次要內容使用動畫效果，在 LCP 後加載 */}
           <motion.div 
+            className="mt-10 space-x-4 flex flex-wrap gap-4"
             variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 mt-8"
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.2 }} // 延遲次要內容的動畫
           >
-            <Link
-              href="/contact"
-              className="group inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+            <a 
+              href="#contact" 
+              className="btn-primary py-3 px-8 rounded-md text-white hover:bg-primary-dark transition-colors"
             >
-              免費諮詢
-              <motion.svg 
-                className="w-5 h-5 ml-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                initial={{ x: 0 }}
-                whileHover={{ x: 3 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </motion.svg>
-            </Link>
-            <Link
-              href="/service"
-              className="group inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary transition-all duration-300 font-medium"
+              諮詢服務
+            </a>
+            <button 
+              onClick={handleScroll}
+              className="btn-secondary bg-white/10 backdrop-blur-sm py-3 px-8 rounded-md text-white hover:bg-white/20 transition-colors"
             >
-              服務方案
-              <motion.svg 
-                className="w-5 h-5 ml-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                initial={{ x: 0 }}
-                whileHover={{ x: 3 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </motion.svg>
-            </Link>
+              了解更多
+            </button>
           </motion.div>
-
-          {/* 數據統計動畫效果 */}
-          <motion.div 
-            variants={itemVariants}
-            className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20"
-          >
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
-                <CountUp start={0} end={10} duration={2} suffix="+" delay={1.5} />
-              </div>
-              <div className="text-sm text-white/80">年醫療行銷經驗</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
-                <CountUp start={0} end={300} duration={2.5} suffix="+" delay={1.5} />
-              </div>
-              <div className="text-sm text-white/80">合作診所</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
-                <CountUp start={0} end={98} duration={2.2} suffix="%" delay={1.5} />
-              </div>
-              <div className="text-sm text-white/80">客戶續約率</div>
-            </div>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
-      
-      {/* 向下滾動提示 - 優化動畫 */}
-      <motion.div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 0.6 }}
-      >
-        <motion.div 
-          className="flex flex-col items-center cursor-pointer"
-          animate={{ y: [0, 8, 0] }} 
-          transition={{ 
-            repeat: Infinity, 
-            duration: 2,
-            ease: "easeInOut"
-          }}
-          onClick={handleScroll}
-        >
-          <span className="text-white/80 text-sm mb-2">探索更多</span>
-          <div className="w-8 h-8 flex items-center justify-center border-2 border-white/40 rounded-full">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </motion.div>
-      </motion.div>
     </section>
   );
 }

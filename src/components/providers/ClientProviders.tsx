@@ -3,6 +3,7 @@
 import { useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import toast from 'react-hot-toast'
+import PerformanceProvider from './PerformanceProvider'
 
 // 常量配置
 const TOAST_CONFIG = {
@@ -26,12 +27,14 @@ interface ClientProvidersProps {
 export default function ClientProviders({ children }: ClientProvidersProps) {
   const pathname = usePathname()
 
-  // 頁面切換時重置滾動位置
+  // 頁面切換時重置滾動位置，使用 RAF 避免阻塞渲染
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    });
   }, [pathname])
 
   // 網路狀態處理函數
@@ -58,9 +61,9 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
     }
   }, [handleOffline])
 
-  // 監聽網路狀態
+  // 監聽網路狀態 - 使用 deferTask 延遲執行
   useEffect(() => {
-    // 初始檢查網路狀態
+    // 預先檢查當前狀態
     checkNetworkStatus()
 
     // 監聽網路狀態變化
@@ -83,5 +86,9 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
     }
   }, [checkNetworkStatus, handleOnline, handleOffline])
 
-  return <>{children}</>
+  return (
+    <PerformanceProvider>
+      {children}
+    </PerformanceProvider>
+  )
 } 

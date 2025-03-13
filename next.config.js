@@ -7,12 +7,45 @@ const withPWA = require('next-pwa')({
   runtimeCaching: [
     {
       urlPattern: /^https?.*/,
-      handler: 'NetworkFirst',
+      handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'offlineCache',
         expiration: {
           maxEntries: 200,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
+          maxAgeSeconds: 24 * 60 * 60 * 7
+        }
+      }
+    },
+    {
+      urlPattern: /\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'images-cache',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60
+        }
+      }
+    },
+    {
+      urlPattern: /\.(js|css)$/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'static-resources',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 7 * 24 * 60 * 60
+        }
+      }
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 365 * 24 * 60 * 60
         }
       }
     }
@@ -43,30 +76,42 @@ const nextConfig = {
       }
     ],
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 增加到一週，提高緩存效率
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     dangerouslyAllowSVG: false,
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    deviceSizes: [320, 480, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     path: '/_next/image',
     loader: 'default',
+    unoptimized: false,
   },
   crossOrigin: 'anonymous',
   compress: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  // 優化編譯設定
-  swcMinify: true, // 使用 SWC 縮小代碼
+  swcMinify: true,
   compiler: {
-    // 移除 console 和 debugger 語句
-    removeConsole: process.env.NODE_ENV === 'production',
-    // 啟用 JIT 編譯
+    removeConsole: {
+      exclude: ['error', 'warn'],
+    },
     reactRemoveProperties: process.env.NODE_ENV === 'production',
   },
   experimental: {
-    // 啟用增量式靜態重新生成
-    optimizeCss: true,    // 優化 CSS
-    optimizeServerReact: true, // 優化服務器端 React
-    optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@radix-ui/react-slot'],  // 修改為陣列
+    optimizeCss: true,
+    optimizeServerReact: true,
+    optimizePackageImports: [
+      'react', 
+      'react-dom', 
+      'framer-motion', 
+      '@radix-ui/react-slot',
+      'tailwindcss',
+      'next',
+      'clsx',
+      'class-variance-authority',
+      'lucide-react'
+    ],
+    turbo: true,
+    serverMinification: true,
+    optimizeGraphqlDeepMerge: true,
   },
   env: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com',
@@ -131,12 +176,43 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin'
           },
-          // 添加快取控制，延長靜態資源快取時間
+        ]
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable'
           }
-        ]
+        ],
+      },
+      {
+        source: '/fonts/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ],
+      },
+      {
+        source: '/(.*)\\.(jpg|jpeg|png|webp|avif|svg|gif)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, stale-while-revalidate=86400'
+          }
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, stale-while-revalidate=30'
+          }
+        ],
       }
     ]
   },
@@ -146,16 +222,38 @@ const nextConfig = {
       use: ['@svgr/webpack']
     });
     
-    // 優化圖片處理
     config.module.rules.push({
       test: /\.(jpe?g|png|webp|avif)$/i,
       type: 'asset',
       parser: {
         dataUrlCondition: {
-          maxSize: 10 * 1024 // 10kb
+          maxSize: 10 * 1024
         }
       }
     });
+    
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            name: 'vendor',
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'all',
+            priority: 10
+          },
+          commons: {
+            name: 'commons',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 5,
+            reuseExistingChunk: true,
+            enforce: true
+          }
+        }
+      }
+    };
     
     return config;
   },
