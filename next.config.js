@@ -109,9 +109,7 @@ const nextConfig = {
       'class-variance-authority',
       'lucide-react'
     ],
-    turbo: true,
     serverMinification: true,
-    optimizeGraphqlDeepMerge: true,
   },
   env: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com',
@@ -232,28 +230,44 @@ const nextConfig = {
       }
     });
     
-    config.optimization = {
-      ...config.optimization,
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            name: 'vendor',
-            test: /[\\/]node_modules[\\/]/,
-            chunks: 'all',
-            priority: 10
-          },
-          commons: {
-            name: 'commons',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 5,
-            reuseExistingChunk: true,
-            enforce: true
+    if (config.name === 'server') {
+      config.externals = [...(config.externals || []), 'react-dom/client'];
+      
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+        splitChunks: false
+      };
+    } else {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            defaultVendors: {
+              test: /[\\/]node_modules[\\/]/,
+              name(module) {
+                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                if (packageName.includes('react') || packageName.includes('scheduler')) {
+                  return 'react-vendor';
+                }
+                if (['framer-motion', '@radix-ui'].some(lib => packageName.includes(lib))) {
+                  return packageName.replace('@', '');
+                }
+                return 'common-vendor';
+              },
+              priority: 20
+            },
+            common: {
+              name: 'commons',
+              minChunks: 2,
+              priority: 10,
+              reuseExistingChunk: true,
+            }
           }
         }
-      }
-    };
+      };
+    }
     
     return config;
   },

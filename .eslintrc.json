@@ -11,6 +11,12 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["src/lib/performance.ts", "src/components/providers/PerformanceProvider.tsx"],
+      "rules": {
+        "no-console": ["warn", { "allow": ["error", "warn"] }]
+      }
     }
   ]
 } 
