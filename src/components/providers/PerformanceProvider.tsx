@@ -89,7 +89,9 @@ export const PerformanceProvider: React.FC<PerformanceProviderProps> = ({ childr
         list.getEntries().forEach((entry) => {
           // 任務超過 50ms 記錄警告
           if (entry.duration > 50) {
-            console.warn(`檢測到長任務: ${Math.round(entry.duration)}ms`, entry);
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn(`檢測到長任務: ${Math.round(entry.duration)}ms`, entry);
+            }
           }
         });
       });

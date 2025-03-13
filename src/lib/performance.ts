@@ -60,14 +60,16 @@ export const optimizeFontLoading = (): void => {
       rules.forEach(rule => {
         if (rule instanceof CSSFontFaceRule) {
           const style = rule.style;
-          if (!style.fontDisplay) {
-            style.fontDisplay = 'swap';
+          if (!style.getPropertyValue('font-display')) {
+            style.setProperty('font-display', 'swap');
           }
         }
       });
     } catch (e) {
       // 跨域樣式表無法讀取 cssRules
-      console.warn('無法讀取樣式表規則', e);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('無法讀取樣式表規則', e);
+      }
     }
   });
 };
@@ -120,13 +122,15 @@ export const avoidLongTasks = <T>(
     const end = performance.now();
     
     // 如果任務執行時間超過 50ms，記錄警告
-    if (end - start > 50) {
+    if (end - start > 50 && process.env.NODE_ENV !== 'production') {
       console.warn(`長任務檢測: 任務執行時間為 ${Math.round(end - start)}ms，可能導致頁面不流暢`);
     }
     
     return result;
   } catch (error) {
-    console.error('任務執行失敗', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('任務執行失敗', error);
+    }
     return fallback;
   }
 }; 
