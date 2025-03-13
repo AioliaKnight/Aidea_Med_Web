@@ -49,8 +49,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     path: '/_next/image',
     loader: 'default',
-    // 提高圖片品質與效能平衡
-    quality: 80,
   },
   crossOrigin: 'anonymous',
   compress: true,
@@ -68,7 +66,7 @@ const nextConfig = {
     // 啟用增量式靜態重新生成
     optimizeCss: true,    // 優化 CSS
     optimizeServerReact: true, // 優化服務器端 React
-    optimizePackageImports: true,  // 優化套件導入
+    optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@radix-ui/react-slot'],  // 修改為陣列
   },
   env: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com',
