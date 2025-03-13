@@ -52,6 +52,10 @@ const withPWA = require('next-pwa')({
   ]
 })
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -88,7 +92,6 @@ const nextConfig = {
   compress: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  swcMinify: true,
   compiler: {
     removeConsole: {
       exclude: ['error', 'warn'],
@@ -215,18 +218,23 @@ const nextConfig = {
     ]
   },
   webpack(config) {
+    // SVG 處理
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack']
     });
     
+    // 圖片處理
     config.module.rules.push({
       test: /\.(jpe?g|png|webp|avif)$/i,
       type: 'asset',
       parser: {
         dataUrlCondition: {
-          maxSize: 10 * 1024
+          maxSize: 8 * 1024 // 8KB
         }
+      },
+      generator: {
+        filename: 'static/images/[hash][ext]'
       }
     });
     
@@ -273,4 +281,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withPWA(nextConfig) 
+module.exports = withBundleAnalyzer(withPWA(nextConfig)) 
