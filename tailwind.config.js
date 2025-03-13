@@ -31,9 +31,9 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          dark: "hsl(var(--primary-dark, calc(var(--primary-hue) calc(var(--primary-saturation) - 5%) calc(var(--primary-lightness) - 10%))))"
+          dark: "hsl(calc(var(--primary-hue)) calc(var(--primary-saturation) - 5%) calc(var(--primary-lightness) - 10%))"
         },
-        "primary-dark": "hsl(var(--primary-dark, calc(var(--primary-hue) calc(var(--primary-saturation) - 5%) calc(var(--primary-lightness) - 10%))))",
+        "primary-dark": "hsl(calc(var(--primary-hue)) calc(var(--primary-saturation) - 5%) calc(var(--primary-lightness) - 10%))",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
