@@ -678,49 +678,26 @@ function HeroSection() {
       <div className="container-custom relative z-20">
         <motion.div 
           className="max-w-4xl"
+          initial={{ opacity: 1, y: 0 }} // 移除初始動畫延遲
+          animate={{ opacity: 1, y: 0 }}
           variants={containerVariants}
-          initial="hidden"
-          animate={controls}
         >
-          {/* 標籤動畫效果 */}
-          <motion.div 
-            variants={itemVariants}
-            className="inline-flex items-center bg-white/10 px-4 py-2 rounded-lg text-white text-sm mb-6"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-            專業牙醫品牌行銷專家
-          </motion.div>
-
-          {/* 標題動畫效果 */}
           <motion.h1 
             variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight"
+            className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold leading-tight"
+            style={{ willChange: 'transform, opacity' }} // 優化渲染性能
           >
-            打造卓越
-            <span className="relative inline-block mx-2">
-              診所品牌
-              <motion.span 
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1, delay: 1, ease: "easeOut" }}
-                className="absolute -bottom-2 left-0 right-0 h-2 bg-white/30 rounded-full"
-              ></motion.span>
-            </span>
-            <span className="block mt-4 text-2xl sm:text-3xl md:text-4xl font-normal">
-              專業數位行銷策略，助您突破營收瓶頸
-            </span>
+            專業醫療行銷團隊<br/>
+            為診所帶來<span className="underline decoration-4 decoration-white/30">突破性成長</span>
           </motion.h1>
-
-          {/* 描述動畫效果 */}
-          <motion.p 
-            variants={itemVariants}
+          
+          {/* 將 LCP 內容直接渲染，不使用動畫 */}
+          <p 
             className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed mt-6"
           >
             深耕牙醫行銷領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
-          </motion.p>
-
+          </p>
+          
           {/* 按鈕動畫效果 */}
           <motion.div 
             variants={itemVariants}
