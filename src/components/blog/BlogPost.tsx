@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { PortableText } from '@portabletext/react'
 import { motion } from 'framer-motion'
-import { urlForImage } from '@/lib/sanity'
+import { urlForImage } from '@/lib/sanity/client'
 import { Post } from '@/types/blog'
 import { ImageViewer } from '@/components/common/blog/ImageViewer'
 import SanityImage from '@/components/common/blog/SanityImage'

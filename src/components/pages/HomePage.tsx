@@ -15,7 +15,7 @@ interface IconProps {
 
 const AIIcon = ({ className = "" }: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className} aria-label="AI 圖標">
-    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1v-1a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7H2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
+    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1v-1a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7H2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
     <path d="M10 17a2 2 0 1 1 4 0 2 2 0 0 1-4 0z" />
     <path d="M8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
     <path d="M16 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
@@ -64,25 +64,36 @@ const PatientIcon = ({ className = "" }: IconProps) => (
   </svg>
 );
 
-// 更新動畫配置
+// 更新動畫配置，使用統一的動畫系統
 const animations = {
   fadeIn: {
-    initial: { opacity: 0 },
-    animate: {
+    hidden: { opacity: 0 },
+    visible: {
       opacity: 1,
       transition: {
-        duration: 0.3
+        duration: 0.5,
+        ease: [0.6, 0.05, 0.01, 0.9]
       }
     }
   },
   slideUp: {
-    initial: { opacity: 0, y: 10 },
-    animate: { 
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
       opacity: 1, 
       y: 0,
       transition: {
-        duration: 0.3,
-        ease: "easeOut"
+        duration: 0.6,
+        ease: [0.6, 0.05, 0.01, 0.9]
+      }
+    }
+  },
+  staggerContainer: {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   }
@@ -478,24 +489,45 @@ interface Testimonial {
 // 新增客戶評價數據
 const testimonials: Testimonial[] = [
   {
-    name: '王醫師',
-    title: '雅德思牙醫診所 院長',
-    content: '透過專業的行銷策略與數位轉型服務，我們診所的預約率提升了150%，且新客戶持續增加。團隊的專業度與執行力令人印象深刻。',
+    name: '張文瑞醫師',
+    title: '長榮牙醫診所 院長',
+    content: '從沒想過牙醫也需要行銷，一開始還有點疑慮，但事實證明這個時代需要，而且有效。Aidea團隊提供的行銷策略讓我們的新客量在三個月內成長超過50%。',
     image: '/testimonials/doctor1.jpg',
     rating: 5
   },
   {
-    name: '李醫師',
-    title: '皓皓牙醫診所 執行長',
-    content: '數位化轉型後，診所營運效率大幅提升，病患服務品質也更好。系統化的管理讓我們能更專注在醫療服務上。',
+    name: '林佳欣醫師',
+    title: '微笑牙醫診所 負責人',
+    content: '提升了診所的曝光度，並且增加了患者的到診率，成果顯著。合作半年來，我們的Google搜尋排名提高了，社群互動也增加了3倍，實質帶來了業績成長。',
     image: '/testimonials/doctor2.jpg',
     rating: 5
   },
   {
-    name: '張醫師',
-    title: '雲天牙醫診所 創辦人',
-    content: '社群媒體經營的成效超乎預期，接觸到更多年輕族群，且品牌形象更加鮮明。感謝團隊的專業協助。',
+    name: '吳建志醫師',
+    title: '仁心齒科 創辦人',
+    content: '診所經營遇到的瓶頸得到有效解決，整體合作過程中沒有疏漏，令人放心。團隊專業度高，能夠針對牙醫特性提供客製化的行銷方案。',
     image: '/testimonials/doctor3.jpg',
+    rating: 5
+  },
+  {
+    name: '陳雅婷醫師',
+    title: '雅典娜美學牙醫 院長',
+    content: '不僅有行銷專業，還獲得很多清晰的診所流程建議，值得推薦。與Aidea合作後，不只是客戶增加，整個診所的運作效率和服務品質都提升了。',
+    image: '/testimonials/doctor4.jpg',
+    rating: 5
+  },
+  {
+    name: '黃明德醫師',
+    title: '德仁齒科 總院長',
+    content: '報告和建議方案都很細緻，團隊真的很用心。每月提供的數據分析讓我們能清楚掌握行銷效果，看到投資回報，非常專業的團隊。',
+    image: '/testimonials/doctor5.jpg',
+    rating: 5
+  },
+  {
+    name: '王思穎醫師',
+    title: '康德牙醫聯合診所 執行長',
+    content: '與其他行銷公司合作過，Aidea: Med 是裡面最懂醫療產業的，溝通順暢會繼續合作下去。他們了解醫療倫理的界線，行銷手法專業又不失專業形象。',
+    image: '/testimonials/doctor6.jpg',
     rating: 5
   }
 ];
@@ -585,78 +617,203 @@ const BackgroundImage = memo(function BackgroundImage({ variant, className = '' 
 
 // 更新 Hero Section 樣式
 function HeroSection() {
+  // 改進動畫效果
+  const controls = useAnimation();
+  const [heroRef, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    
+    if (inView) {
+      controls.start('visible');
+    }
+  }, [controls, inView]);
+
+  // 使用 useCallback 處理滾動
+  const handleScroll = useCallback(() => {
+    if (!isClient) return;
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+  }, [isClient]);
+
+  // 簡化元素動畫變體
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6,
+        ease: [0.6, 0.05, 0.01, 0.9]
+      }
+    }
+  };
+  
   return (
     <section 
+      ref={heroRef}
       className="relative min-h-[85vh] flex items-center bg-primary overflow-hidden"
       role="banner"
       aria-label="網站主要橫幅"
     >
-      <BackgroundImage variant="primary" />
-      <div className="container-custom relative z-20 px-4 sm:px-6">
-        <div className="max-w-4xl">
-          <AnimatedSection>
-            <motion.div
-              variants={animations.slideUp}
-              className="space-y-8"
+      {/* 簡化的背景，使用漸變而非圖片 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"/>
+      
+      {/* 移除裝飾元素 */}
+      
+      <div className="container-custom relative z-20">
+        <motion.div 
+          className="max-w-4xl"
+          variants={containerVariants}
+          initial="hidden"
+          animate={controls}
+        >
+          {/* 標籤動畫效果 */}
+          <motion.div 
+            variants={itemVariants}
+            className="inline-flex items-center bg-white/10 px-4 py-2 rounded-lg text-white text-sm mb-6"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            專業牙醫品牌行銷專家
+          </motion.div>
+
+          {/* 標題動畫效果 */}
+          <motion.h1 
+            variants={itemVariants}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight"
+          >
+            打造卓越
+            <span className="relative inline-block mx-2">
+              診所品牌
+              <motion.span 
+                initial={{ width: 0 }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1, delay: 1, ease: "easeOut" }}
+                className="absolute -bottom-2 left-0 right-0 h-2 bg-white/30 rounded-full"
+              ></motion.span>
+            </span>
+            <span className="block mt-4 text-2xl sm:text-3xl md:text-4xl font-normal">
+              專業數位行銷策略，助您突破營收瓶頸
+            </span>
+          </motion.h1>
+
+          {/* 描述動畫效果 */}
+          <motion.p 
+            variants={itemVariants}
+            className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed mt-6"
+          >
+            深耕牙醫行銷領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
+          </motion.p>
+
+          {/* 按鈕動畫效果 */}
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 mt-8"
+          >
+            <Link
+              href="/contact"
+              className="group inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
             >
-              <div className="inline-flex items-center bg-white/10 px-4 py-2 rounded-lg text-white text-sm mb-6">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                專業牙醫品牌行銷專家
+              免費諮詢
+              <motion.svg 
+                className="w-5 h-5 ml-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                whileHover={{ x: 3 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </motion.svg>
+            </Link>
+            <Link
+              href="/service"
+              className="group inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary transition-all duration-300 font-medium"
+            >
+              服務方案
+              <motion.svg 
+                className="w-5 h-5 ml-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                whileHover={{ x: 3 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </motion.svg>
+            </Link>
+          </motion.div>
+
+          {/* 數據統計動畫效果 */}
+          <motion.div 
+            variants={itemVariants}
+            className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20"
+          >
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                <CountUp start={0} end={10} duration={2} suffix="+" delay={1.5} />
               </div>
-
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
-                打造卓越
-                <span className="relative inline-block mx-2">診所品牌</span>
-                <span className="block mt-4 text-2xl sm:text-3xl md:text-4xl font-normal">
-                  專業數位行銷策略，助您突破營收瓶頸
-                </span>
-              </h1>
-
-              <p className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed">
-                深耕牙醫行銷領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <Link
-                  href="/contact"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-all duration-300 font-medium shadow-lg hover:shadow-xl"
-                >
-                  免費諮詢
-                  <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/service"
-                  className="group inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary transition-all duration-300 font-medium"
-                >
-                  服務方案
-                  <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+              <div className="text-sm text-white/80">年醫療行銷經驗</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                <CountUp start={0} end={300} duration={2.5} suffix="+" delay={1.5} />
               </div>
-
-              <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20">
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-white mb-2">10+</div>
-                  <div className="text-sm text-white/80">年醫療行銷經驗</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-white mb-2">300+</div>
-                  <div className="text-sm text-white/80">合作診所</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold text-white mb-2">98%</div>
-                  <div className="text-sm text-white/80">客戶續約率</div>
-                </div>
+              <div className="text-sm text-white/80">合作診所</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                <CountUp start={0} end={98} duration={2.2} suffix="%" delay={1.5} />
               </div>
-            </motion.div>
-          </AnimatedSection>
-        </div>
+              <div className="text-sm text-white/80">客戶續約率</div>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
+      
+      {/* 向下滾動提示 - 優化動畫 */}
+      <motion.div 
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2, duration: 0.6 }}
+      >
+        <motion.div 
+          className="flex flex-col items-center cursor-pointer"
+          animate={{ y: [0, 8, 0] }} 
+          transition={{ 
+            repeat: Infinity, 
+            duration: 2,
+            ease: "easeInOut"
+          }}
+          onClick={handleScroll}
+        >
+          <span className="text-white/80 text-sm mb-2">探索更多</span>
+          <div className="w-8 h-8 flex items-center justify-center border-2 border-white/40 rounded-full">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
@@ -664,41 +821,58 @@ function HeroSection() {
 // 更新服務特色區塊
 function FeatureSection() {
   return (
-    <section className="relative py-24 bg-white overflow-hidden" role="region" aria-label="服務特色">
-      <BackgroundImage variant="white" />
+    <section id="features" className="relative py-24 bg-white overflow-hidden" role="region" aria-label="服務特色">
+      {/* 使用簡化的背景裝飾 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"></div>
+      
+      {/* 移除裝飾元素 */}
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4">我們的優勢</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            為什麼選擇專業團隊
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">我們的優勢</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            為什麼選擇<span className="text-primary">專業團隊</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             深耕牙醫診所領域超過十年，以專業經驗與創新技術，協助診所突破成長瓶頸
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          variants={animations.staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {features.map((feature, index) => (
-            <AnimatedSection key={feature.title} delay={index * 0.1}>
-              <div className="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-all duration-300">
-                <div className="mb-8">
-                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
-                    <feature.icon 
-                      className="w-8 h-8 text-white" 
-                      aria-hidden="true"
-                    />
-                  </div>
+            <motion.div 
+              key={feature.title} 
+              variants={animations.slideUp}
+              className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500"
+            >
+              <div className="mb-8">
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
+                  <feature.icon 
+                    className="w-8 h-8 text-white" 
+                    aria-hidden="true"
+                  />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
               </div>
-            </AnimatedSection>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600">
+                {feature.description}
+              </p>
+              
+              {/* 新增微互動元素 */}
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <div className="w-8 h-0.5 bg-primary scale-0 group-hover:scale-100 transition-transform duration-500 origin-left"></div>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -745,59 +919,77 @@ const services = [
 function ServiceSection() {
   return (
     <section className="relative py-24 bg-gray-50 overflow-hidden" role="region" aria-label="服務內容">
-      <BackgroundImage variant="white" className="opacity-50" />
+      {/* 簡化的背景 */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-gray-50 to-white"></div>
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4">專業服務</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            全方位診所成長方案
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">專業服務</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            全方位<span className="text-primary">診所成長</span>方案
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             提供完整的牙醫診所行銷解決方案，協助您的診所突破現有業績
           </p>
         </AnimatedSection>
           
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={animations.staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {services.map((service, index) => (
-            <AnimatedSection key={service.title} delay={index * 0.1}>
-              <div className="bg-white p-8 rounded-2xl hover:shadow-lg transition-all duration-300">
-                <div className="mb-8">
-                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
-                    <service.icon className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600 mb-8">
-                  {service.description}
-                </p>
-                
-                <ul className="space-y-4">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-gray-700">
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <Link
-                    href={`/service#${service.title}`}
-                    className="inline-flex items-center text-primary font-medium group"
-                  >
-                    了解更多
-                    <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
+            <motion.div 
+              key={service.title} 
+              variants={animations.slideUp}
+              className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
+            >
+              <div className="mb-8">
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
+                  <service.icon className="w-8 h-8 text-white" />
                 </div>
               </div>
-            </AnimatedSection>
+              
+              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
+                {service.title}
+              </h3>
+              <p className="text-gray-600 mb-8">
+                {service.description}
+              </p>
+              
+              <ul className="space-y-4 flex-grow mb-8">
+                {service.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto pt-6 border-t border-gray-100">
+                <Link
+                  href={`/service#${service.title}`}
+                  className="inline-flex items-center text-primary font-medium group"
+                >
+                  了解更多
+                  <motion.svg 
+                    className="w-4 h-4 ml-2" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 3 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </motion.svg>
+                </Link>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -807,62 +999,63 @@ function ServiceSection() {
 function StatsSection() {
   return (
     <section className="relative py-24 bg-primary overflow-hidden">
-      <BackgroundImage variant="primary" />
+      {/* 簡化的背景 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"></div>
+      
+      {/* 移除裝飾元素 */}
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            實際成效數據
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-white font-medium mb-4 px-4 py-1.5 bg-white/10 rounded-full">成效數據</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+            實際<span className="relative inline-block mx-2">
+              成效
+              <motion.span 
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="absolute -bottom-2 left-0 right-0 h-1 bg-white/30 rounded-full"
+              ></motion.span>
+            </span>數據
           </h2>
-          <p className="text-lg text-white max-w-2xl mx-auto">
+          <p className="text-lg text-white/90 max-w-2xl mx-auto">
             以數據說明我們的專業與實力，為您的診所帶來實質的成長
           </p>
-        </AnimatedSection>
+        </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <AnimatedSection>
-            <div className="text-center">
-              <div className="bg-white/10 p-6 rounded-lg">
+        <motion.div 
+          className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          variants={animations.staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
+          {[
+            { value: 300, suffix: "+", label: "合作牙醫診所" },
+            { value: 98, suffix: "%", label: "客戶續約率" },
+            { value: 180, suffix: "%", label: "平均預約成長" },
+            { value: 85, suffix: "%", label: "行銷投資回報率" }
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              variants={animations.slideUp}
+              className="text-center"
+            >
+              <div className="bg-white/10 p-6 rounded-lg hover:bg-white/15 transition-colors duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-dark/20 transition-all duration-500">
                 <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                  <CountUp end={300} suffix="+" duration={2} />
+                  <CountUp end={stat.value} suffix={stat.suffix} duration={2.5} />
                 </div>
-                <p className="text-lg text-white">合作牙醫診所</p>
+                <p className="text-lg text-white/90">{stat.label}</p>
               </div>
-            </div>
-          </AnimatedSection>
-          
-          <AnimatedSection delay={0.1}>
-            <div className="text-center">
-              <div className="bg-white/10 p-6 rounded-lg">
-                <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                  <CountUp end={98} suffix="%" duration={2} />
-                </div>
-                <p className="text-lg text-white">客戶續約率</p>
-              </div>
-            </div>
-          </AnimatedSection>
-          
-          <AnimatedSection delay={0.2}>
-            <div className="text-center">
-              <div className="bg-white/10 p-6 rounded-lg">
-                <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                  <CountUp end={180} suffix="%" duration={2} />
-                </div>
-                <p className="text-lg text-white">平均預約成長</p>
-              </div>
-            </div>
-          </AnimatedSection>
-          
-          <AnimatedSection delay={0.3}>
-            <div className="text-center">
-              <div className="bg-white/10 p-6 rounded-lg">
-                <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                  <CountUp end={10} suffix="年" duration={2} />
-                </div>
-                <p className="text-lg text-white">醫療行銷經驗</p>
-              </div>
-            </div>
-          </AnimatedSection>
-        </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
@@ -906,68 +1099,105 @@ function CaseCarousel({
 
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      <BackgroundImage variant="white" />
+      {/* 簡化的背景 */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-white to-white"></div>
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4">成功案例</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            診所成功案例
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">成功案例</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            診所<span className="text-primary">成功案例</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             透過專業的品牌策略與數位行銷，協助牙醫診所突破經營瓶頸，實現持續成長
           </p>
-        </AnimatedSection>
+        </motion.div>
 
-        <div className="relative">
-              <AnimatePresence mode="wait">
-                {caseStudies.map((caseStudy, index) => (
-                  index === currentSlide && (
-                    <motion.div
-                      key={caseStudy.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-gray-50 rounded-lg overflow-hidden"
+        <div className="relative"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* 導航按鈕 */}
+          <div className="absolute top-1/2 -left-4 sm:-left-12 -translate-y-1/2 z-20">
+            <button
+              onClick={() => setCurrentSlide(prev => (prev - 1 + caseStudies.length) % caseStudies.length)}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              aria-label="上一個案例"
+            >
+              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
+          
+          <div className="absolute top-1/2 -right-4 sm:-right-12 -translate-y-1/2 z-20">
+            <button
+              onClick={() => setCurrentSlide(prev => (prev + 1) % caseStudies.length)}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              aria-label="下一個案例"
+            >
+              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {caseStudies.map((caseStudy, index) => (
+              index === currentSlide && (
+                <motion.div
+                  key={caseStudy.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-gray-50 rounded-2xl overflow-hidden shadow-md"
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
                     {/* 左側：案例圖片 */}
-                    <div className="relative aspect-[4/3] bg-white rounded-lg overflow-hidden">
-                              {imageLoadingStates[caseStudy.id] && !imageErrorStates[caseStudy.id] && (
+                    <div className="relative aspect-[4/3] bg-white rounded-lg overflow-hidden shadow-sm">
+                      {imageLoadingStates[caseStudy.id] && !imageErrorStates[caseStudy.id] && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                </div>
-                              )}
-                              
-                                  <Image
-                                    src={getResponsiveImageSrc(caseStudy)}
-                                    alt={caseStudy.title}
-                                    fill
-                        className={`object-cover ${
+                          <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
+                      
+                      <Image
+                        src={getResponsiveImageSrc(caseStudy)}
+                        alt={caseStudy.title}
+                        fill
+                        className={`object-cover transition-transform duration-700 hover:scale-105 ${
                           imageLoadingStates[caseStudy.id] ? 'opacity-0' : 'opacity-100'
                         }`}
                         sizes="(max-width: 768px) 100vw, 50vw"
-                                    onLoad={() => handleImageLoad(caseStudy.id)}
-                                    onError={() => handleImageError(caseStudy.id)}
+                        onLoad={() => handleImageLoad(caseStudy.id)}
+                        onError={() => handleImageError(caseStudy.id)}
                         priority={index === 0}
-                                  />
-                              </div>
-                              
+                      />
+                    </div>
+                    
                     {/* 右側：案例內容 */}
                     <div className="flex flex-col justify-center">
                       <div className="mb-8">
                         <span className="inline-flex items-center px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm font-medium mb-4">
-                              {caseStudy.category}
+                          {caseStudy.category}
                         </span>
                         <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                              {caseStudy.title}
+                          {caseStudy.title}
                         </h3>
                         <p className="text-gray-600 text-lg">
-                              {caseStudy.description}
+                          {caseStudy.description}
                         </p>
-                          </div>
-                          
-                      <div className="bg-white rounded-lg p-6 mb-8">
+                      </div>
+                      
+                      <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                           <span className="text-gray-600 font-medium">關鍵成效</span>
                           <div className="flex items-center bg-gray-50 px-4 py-2 rounded-lg">
@@ -976,108 +1206,301 @@ function CaseCarousel({
                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {caseStudy.results.map((result, idx) => (
+                          {caseStudy.results.map((result, idx) => (
                             <div key={idx} className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
                               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                               <span className="text-gray-700">{result}</span>
                             </div>
                           ))}
                         </div>
-                            </div>
-                            
-                      <div className="flex items-center justify-between">
-                                <Link
-                                  href={`/case/${caseStudy.id}`}
-                          className="inline-flex items-center text-primary font-medium"
-                                >
-                                  查看完整案例
-                          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        <Link
+                          href={`/case/${caseStudy.id}`}
+                          className="inline-flex items-center text-primary font-medium group"
+                        >
+                          查看完整案例
+                          <motion.svg 
+                            className="w-5 h-5 ml-2" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                            initial={{ x: 0 }}
+                            whileHover={{ x: 3 }}
+                            transition={{ duration: 0.2 }}
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                  </svg>
-                                </Link>
-                              
+                          </motion.svg>
+                        </Link>
+                        
                         <div className="flex gap-2">
-                          <button
-                                  onClick={() => setCurrentSlide(prev => (prev - 1 + caseStudies.length) % caseStudies.length)}
-                            className="p-2 rounded-lg bg-gray-100"
-                                  aria-label="上一個案例"
-                                >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                  </svg>
-                          </button>
-                          <button
-                                  onClick={() => setCurrentSlide(prev => (prev + 1) % caseStudies.length)}
-                            className="p-2 rounded-lg bg-gray-100"
-                                  aria-label="下一個案例"
-                                >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                  </svg>
-                          </button>
-                            </div>
-                          </div>
+                          {caseStudies.map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setCurrentSlide(idx)}
+                              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                                idx === currentSlide 
+                                  ? 'bg-primary scale-125' 
+                                  : 'bg-gray-300 hover:bg-gray-400'
+                              }`}
+                              aria-label={`切換到第${idx+1}個案例`}
+                            />
+                          ))}
                         </div>
                       </div>
-                    </motion.div>
-                  )
-                ))}
-              </AnimatePresence>
-          </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            ))}
+          </AnimatePresence>
         </div>
-      </section>
+      </div>
+    </section>
   );
 }
 
 // 新增客戶評價區塊
 function TestimonialsSection() {
+  // 添加滑動功能
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
+  const itemsPerPage = {
+    mobile: 1,  // 手機顯示1張
+    tablet: 2,  // 平板顯示2張
+    desktop: 3  // 桌面顯示3張
+  };
+  
+  // 使用 useEffect 處理客戶端邏輯
+  useEffect(() => {
+    setIsClient(true);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // 計算當前項目數和總頁數
+  const currentItems = isClient
+    ? (isMobile ? itemsPerPage.mobile : (isTablet ? itemsPerPage.tablet : itemsPerPage.desktop))
+    : itemsPerPage.desktop;
+    
+  const totalPages = Math.ceil(testimonials.length / currentItems);
+  
+  const handleNextPage = useCallback(() => {
+    setCurrentPage(prev => (prev + 1) % totalPages);
+  }, [totalPages]);
+  
+  const handlePrevPage = useCallback(() => {
+    setCurrentPage(prev => (prev - 1 + totalPages) % totalPages);
+  }, [totalPages]);
+
+  // 計算要顯示的評價
+  const displayTestimonials = useMemo(() => {
+    const start = currentPage * currentItems;
+    // 如果不夠一頁，則顯示全部
+    return testimonials.length <= currentItems
+      ? testimonials
+      : testimonials.slice(start, start + currentItems);
+  }, [currentPage, currentItems, testimonials]);
+
   return (
-    <section className="relative py-24 bg-gray-50 overflow-hidden">
-      <BackgroundImage variant="white" className="opacity-50" />
+    <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+      {/* 移除背景裝飾和引號裝飾 */}
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4">客戶評價</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            合作夥伴回饋
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">客戶評價</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            合作夥伴<span className="text-primary">真實心聲</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            聽聽我們的合作夥伴怎麼說
+            聽聽專業牙醫如何評價我們的服務
           </p>
-        </AnimatedSection>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <AnimatedSection key={testimonial.name} delay={index * 0.1}>
-              <div className="bg-white p-6 rounded-lg">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden relative mr-4">
-          <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-            fill
-            className="object-cover"
-                    />
-                </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-600">{testimonial.title}</p>
-                </div>
-                </div>
-                <div className="flex mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600">
-                  {testimonial.content}
-                </p>
+        <div className="relative">
+          {/* 在小螢幕顯示導航控制 */}
+          {isClient && isMobile && testimonials.length > itemsPerPage.mobile && (
+            <div className="flex justify-center items-center gap-2 mb-8 md:hidden">
+              <button 
+                onClick={handlePrevPage}
+                className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-300"
+                aria-label="上一頁推薦"
+              >
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      i === currentPage ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`切換到第${i+1}頁推薦`}
+                  />
+                ))}
               </div>
-            </AnimatedSection>
-          ))}
+              <button 
+                onClick={handleNextPage}
+                className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-300"
+                aria-label="下一頁推薦"
+              >
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {/* 證言卡片網格 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            {/* 大螢幕顯示左側導航控制 */}
+            {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
+              <button 
+                onClick={handlePrevPage}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-left-16 transition-all duration-300 hover:scale-110"
+                aria-label="上一頁推薦"
+              >
+                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            
+            {/* 顯示評價卡片，使用 AnimatePresence 做轉場 */}
+            <AnimatePresence>
+              {displayTestimonials.map((testimonial, index) => (
+                <motion.div
+                  key={testimonial.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 h-full flex flex-col border border-gray-100 hover:-translate-y-1">
+                    <div className="flex items-center mb-6">
+                      <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden relative mr-4 border-2 border-primary/10">
+                        <Image
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-lg">{testimonial.name}</h3>
+                        <p className="text-sm text-gray-600">{testimonial.title}</p>
+                      </div>
+                    </div>
+                    <div className="flex mb-4">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <svg key={i} className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-gray-600 italic relative">
+                        <span className="text-primary text-4xl absolute -top-4 -left-2 opacity-20">&ldquo;</span>
+                        {testimonial.content}
+                        <span className="text-primary text-4xl absolute -bottom-8 -right-2 opacity-20">&rdquo;</span>
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+            
+            {/* 大螢幕顯示右側導航控制 */}
+            {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
+              <button 
+                onClick={handleNextPage}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-right-16 transition-all duration-300 hover:scale-110"
+                aria-label="下一頁推薦"
+              >
+                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+          </div>
+          
+          {/* 下方導航指示器 - 在平板及以上顯示 */}
+          {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
+            <div className="hidden md:flex justify-center items-center mt-10 gap-3">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    i === currentPage 
+                      ? 'bg-primary scale-125' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  aria-label={`切換到第${i+1}頁推薦`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* 聯絡我們的CTA區塊 */}
+        <motion.div 
+          className="mt-20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 rounded-2xl text-center">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">想了解更多合作案例？</h3>
+            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+              我們有更多成功案例分享，歡迎聯繫我們獲取專屬於您診所的行銷策略建議
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-300 shadow-md hover:shadow-lg"
+            >
+              預約免費諮詢
+              <motion.svg 
+                className="w-5 h-5 ml-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                animate={{ x: [0, 3, 0] }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity, 
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                  repeatDelay: 1
+                }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </motion.svg>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -1095,62 +1518,133 @@ function FAQSection() {
 
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      <BackgroundImage variant="white" />
+      {/* 簡化的背景 */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white to-gray-50"></div>
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4">常見問題</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            專業服務說明
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">常見問題</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            專業<span className="text-primary">服務說明</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             了解我們如何協助診所突破成長瓶頸，實現持續發展
           </p>
-        </AnimatedSection>
+        </motion.div>
 
         <div className="max-w-4xl mx-auto">
           {/* 分類標籤 */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => (
-              <button
+          <motion.div 
+            className="flex flex-wrap justify-center gap-3 mb-12"
+            variants={animations.staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {categories.map((category, index) => (
+              <motion.button
                 key={category}
+                variants={animations.slideUp}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
                   selectedCategory === category
-                    ? 'bg-primary text-white shadow-lg scale-105'
-                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:scale-105'
+                    ? 'bg-primary text-white shadow-md scale-105'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 hover:scale-105'
                 }`}
               >
                 {category}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
 
-          {/* 問答列表 */}
-          <div className="space-y-8">
+          {/* FAQ 列表 */}
+          <motion.div
+            variants={animations.staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            className="space-y-6"
+          >
             {filteredFaqs.map((faq, index) => (
-              <AnimatedSection key={faq.question} delay={index * 0.1}>
-                <div className="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-all duration-300">
-                  <div className="flex items-start gap-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-6">
-                        <span className="px-4 py-1.5 bg-primary/10 text-primary text-sm rounded-lg font-medium">
-                          {faq.category}
-                        </span>
-                        <h3 className="text-xl font-bold text-gray-900">
-                          {faq.question}
-                        </h3>
-                      </div>
-                      <div className="prose prose-gray max-w-none">
-                        <p className="text-gray-600 whitespace-pre-line leading-relaxed">
-                          {faq.answer}
-                        </p>
-                      </div>
+              <motion.div
+                key={faq.question}
+                variants={animations.slideUp}
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+              >
+                <details className="group">
+                  <summary className="flex items-center justify-between p-6 cursor-pointer">
+                    <h3 className="text-lg font-medium text-gray-900 group-open:text-primary transition-colors duration-300">
+                      {faq.question}
+                    </h3>
+                    <span className="relative flex-shrink-0 ml-1.5 w-5 h-5">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="absolute inset-0 w-5 h-5 opacity-100 group-open:opacity-0 transition-opacity duration-300 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="absolute inset-0 w-5 h-5 opacity-0 group-open:opacity-100 transition-opacity duration-300 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M18 12H6"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+
+                  <div className="px-6 pb-6 pt-0">
+                    <div className="prose prose-sm max-w-none text-gray-600">
+                      {faq.answer.split('\n\n').map((paragraph, i) => (
+                        <div key={i} className="mb-4">
+                          {paragraph.startsWith('- ') ? (
+                            <ul className="list-disc list-inside space-y-1 ml-4">
+                              {paragraph.split('\n- ').map((item, j) => (
+                                <li key={j} className={j === 0 ? 'list-none -ml-4' : ''}>
+                                  {item.replace('- ', '')}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : paragraph.match(/^\d+\.\s/) ? (
+                            <ol className="list-decimal list-inside space-y-1 ml-4">
+                              {paragraph.split('\n').map((item, j) => (
+                                <li key={j} className={!item.match(/^\d+\.\s/) ? 'list-none -ml-4' : ''}>
+                                  {item.replace(/^\d+\.\s/, '')}
+                                </li>
+                              ))}
+                            </ol>
+                          ) : (
+                            <p>{paragraph}</p>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
-              </AnimatedSection>
+                </details>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -1161,34 +1655,70 @@ function FAQSection() {
 function ContactSection() {
   return (
     <section className="relative py-24 bg-primary overflow-hidden">
-      <BackgroundImage variant="primary" />
+      {/* 簡化的背景 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"></div>
+      
+      {/* 移除裝飾元素 */}
+      
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <AnimatedSection>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-              準備好開始提升您的診所營運了嗎？
-              </h2>
-            <p className="text-xl mb-8 text-white">
-              立即預約免費諮詢，讓我們為您打造專屬的成長方案
-            </p>
-            <div className="flex justify-center gap-4">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors duration-300 font-medium"
+        <motion.div 
+          className="max-w-4xl mx-auto text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+            準備好開始提升您的<span className="relative inline-block mx-2">
+              診所營運
+              <motion.span 
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="absolute -bottom-2 left-0 right-0 h-1 bg-white/30 rounded-full"
+              ></motion.span>
+            </span>了嗎？
+          </h2>
+          <p className="text-xl mb-10 text-white/90 max-w-2xl mx-auto">
+            立即預約免費諮詢，讓我們為您打造專屬的成長方案
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1"
+            >
+              <span>立即預約</span>
+              <motion.svg 
+                className="w-5 h-5 ml-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                initial={{ x: 0 }}
+                animate={{ x: [0, 3, 0] }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity, 
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                  repeatDelay: 1
+                }}
               >
-                立即預約
-              </Link>
-              <Link
-                href="/service"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary transition-colors duration-300 font-medium"
-              >
-                了解更多
-              </Link>
-            </div>
-          </AnimatedSection>
-        </div>
-        </div>
-      </section>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </motion.svg>
+            </Link>
+            <Link
+              href="/case"
+              className="inline-flex items-center justify-center px-8 py-4 bg-transparent text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 font-medium"
+            >
+              瀏覽成功案例
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
@@ -1201,6 +1731,20 @@ export default function HomePage() {
 
   const [imageLoadingStates, setImageLoadingStates] = useState(imageStates.loading);
   const [imageErrorStates, setImageErrorStates] = useState(imageStates.error);
+  const [windowWidth, setWindowWidth] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  // 使用 useEffect 處理窗口寬度
+  useEffect(() => {
+    setIsClient(true);
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleImageLoad = useCallback((id: string) => {
     setImageLoadingStates(prev => ({ ...prev, [id]: false }));
@@ -1212,12 +1756,12 @@ export default function HomePage() {
   }, []);
 
   const getResponsiveImageSrc = useCallback((caseStudy: CaseStudy) => {
-    if (typeof window === 'undefined') return caseStudy.image;
-    const width = window.innerWidth;
-    if (width < 640 && caseStudy.imageSizes?.sm) return caseStudy.imageSizes.sm;
-    if (width < 1024 && caseStudy.imageSizes?.md) return caseStudy.imageSizes.md;
+    if (!isClient) return caseStudy.image;
+    
+    if (windowWidth < 640 && caseStudy.imageSizes?.sm) return caseStudy.imageSizes.sm;
+    if (windowWidth < 1024 && caseStudy.imageSizes?.md) return caseStudy.imageSizes.md;
     return caseStudy.image;
-  }, []);
+  }, [isClient, windowWidth]);
 
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStart, setTouchStart] = useState(0)

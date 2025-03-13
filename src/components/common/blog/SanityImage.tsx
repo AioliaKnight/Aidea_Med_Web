@@ -133,14 +133,16 @@ export default function SanityImage({
   return (
     <div 
       className={`sanity-image-wrapper ${fade ? 'overflow-hidden' : ''}`}
-      style={{ position: 'relative' }}
+      style={{ position: 'relative', ...(fill ? { width: '100%', height: '100%' } : {}) }}
     >
       {imageUrl && (
         <Image
           src={imageUrl}
           alt={alt || image.alt || ''}
-          width={imageWidth}
-          height={imageHeight}
+          {...(!fill ? {
+            width: imageWidth,
+            height: imageHeight,
+          } : { fill: true })}
           sizes={sizes}
           priority={priority}
           quality={quality}
@@ -153,7 +155,6 @@ export default function SanityImage({
           onLoad={fade ? handleLoad : undefined}
           onError={handleError}
           onClick={onClick}
-          fill={fill}
         />
       )}
     </div>
