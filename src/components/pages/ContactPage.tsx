@@ -50,8 +50,8 @@ export default function ContactPage() {
               >
                 {!formSubmitted ? (
                   <>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-2">分享您的需求</h2>
-                    <p className="text-gray-600 mb-8">填寫以下表單，讓我們更了解您的診所與需求，我們將在24小時內與您聯繫</p>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">與我們分享您的醫療願景</h2>
+                    <p className="text-gray-600 mb-8">每位醫師與診所都有獨特的理念與挑戰，填寫以下表單，讓我們更了解您的需求與理想，我們將在24小時內與您聯繫，共同探索最適合的成長方案</p>
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -78,7 +78,7 @@ export default function ContactPage() {
                             value={formData.title}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                            placeholder="例如：院長、行政主任"
+                            placeholder="例如：院長、醫師、管理人員"
                           />
                         </div>
                       </div>
@@ -146,7 +146,7 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          您的需求與期望
+                          您的需求與願景
                         </label>
                         <textarea
                           name="message"
@@ -154,7 +154,7 @@ export default function ContactPage() {
                           onChange={handleChange}
                           className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                           rows={5}
-                          placeholder="請分享您的診所現況、面臨的挑戰或希望達成的目標，讓我們能更精準地為您提供協助"
+                          placeholder="請分享您的診所理念、面臨的挑戰或希望達成的目標，讓我們能更精準地為您提供協助..."
                         ></textarea>
                       </div>
                       <div className="flex items-center">
@@ -168,12 +168,14 @@ export default function ContactPage() {
                           我同意 Aidea:Med 根據<Link href="/privacy" className="text-primary hover:underline">隱私權政策</Link>處理我的個人資料
                         </label>
                       </div>
-                      <button
+                      <motion.button
                         type="submit"
                         className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         送出諮詢需求
-                      </button>
+                      </motion.button>
                     </form>
                   </>
                 ) : (
@@ -188,16 +190,18 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4">感謝您的提交！</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">感謝您的分享！</h2>
                     <p className="text-gray-600 mb-6">
-                      我們已收到您的諮詢需求，專屬顧問將在24小時內與您聯繫，一同探索適合您診所的行銷策略。
+                      我們已收到您的諮詢需求，專屬顧問將在24小時內與您聯繫，期待了解更多您診所的故事，一同探索最適合的行銷策略與成長方案。
                     </p>
-                    <button
+                    <motion.button
                       onClick={() => setFormSubmitted(false)}
                       className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       返回表單
-                    </button>
+                    </motion.button>
                   </motion.div>
                 )}
               </motion.div>
@@ -211,7 +215,7 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
-                <h3 className="text-xl font-bold mb-6">直接聯繫我們</h3>
+                <h3 className="text-xl font-bold mb-6">與我們直接對話</h3>
                 <div className="space-y-6">
                   <div className="flex items-start">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
@@ -222,7 +226,7 @@ export default function ContactPage() {
                     <div>
                       <h4 className="font-medium text-gray-900 mb-1">電話諮詢</h4>
                       <p className="text-gray-600 mb-1">週一至週五 9:00-18:00</p>
-                      <a href="tel:+886223219888" className="text-primary font-medium hover:underline">02-2321-9888</a>
+                      <a href="tel:+886227488919" className="text-primary font-medium hover:underline">02-2748-8919</a>
                     </div>
                   </div>
                   
@@ -235,7 +239,7 @@ export default function ContactPage() {
                     <div>
                       <h4 className="font-medium text-gray-900 mb-1">電子郵件</h4>
                       <p className="text-gray-600 mb-1">24小時內回覆</p>
-                      <a href="mailto:service@aidea-med.com.tw" className="text-primary font-medium hover:underline">service@aidea-med.com.tw</a>
+                      <a href="mailto:contact@aidea-med.com" className="text-primary font-medium hover:underline">contact@aidea-med.com</a>
                     </div>
                   </div>
                   
@@ -250,7 +254,7 @@ export default function ContactPage() {
                       <h4 className="font-medium text-gray-900 mb-1">公司地址</h4>
                       <p className="text-gray-600 mb-1">歡迎預約來訪</p>
                       <address className="text-gray-700 not-italic">
-                        台北市內湖區瑞光路513巷32號7樓
+                        台北市大安區敦化南路二段99號13樓
                       </address>
                     </div>
                   </div>
@@ -295,7 +299,7 @@ export default function ContactPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <h3 className="text-xl font-bold mb-6">醫療行銷顧問服務</h3>
+                <h3 className="text-xl font-bold mb-6">為何選擇我們？</h3>
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
@@ -303,7 +307,7 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-gray-700">針對醫療專業人士的客製化行銷策略</p>
+                    <p className="text-gray-700">深入了解台灣醫療環境與診所挑戰</p>
                   </div>
                   <div className="flex items-start">
                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
@@ -311,7 +315,7 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-gray-700">理解醫療產業特殊性與法規限制</p>
+                    <p className="text-gray-700">兼顧專業形象與溫度的行銷策略</p>
                   </div>
                   <div className="flex items-start">
                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
@@ -319,7 +323,7 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-gray-700">結合AI技術與人文關懷的雙重優勢</p>
+                    <p className="text-gray-700">結合AI數據分析與人文關懷的獨特優勢</p>
                   </div>
                   <div className="flex items-start">
                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
@@ -327,18 +331,18 @@ export default function ContactPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-gray-700">十年以上醫療行銷經驗與實績</p>
+                    <p className="text-gray-700">十年以上豐富醫療行銷經驗與實績</p>
                   </div>
                 </div>
                 <div className="mt-8 pt-6 border-t border-gray-200">
                   <blockquote className="italic text-gray-600 mb-4">
-                    "讓醫療專業的您專注於照顧病患，行銷交給我們。"
+                    "我們相信，真正好的醫療行銷應建立在對醫者初心的尊重與理解之上。"
                   </blockquote>
                   <Link 
                     href="/services" 
                     className="text-primary font-medium flex items-center hover:underline"
                   >
-                    了解我們的服務 
+                    了解我們的服務理念 
                     <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -355,43 +359,46 @@ export default function ContactPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">常見問題</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">常見問答集</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                對我們的服務有疑問？以下是客戶最常詢問的問題
+                對我們的服務有疑問？以下是診所夥伴們最常詢問的問題
               </p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8">
               <motion.div 
-                className="p-6 border border-gray-100 rounded-lg"
+                className="p-6 border border-gray-100 rounded-lg hover:border-primary/30 hover:shadow-md transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
+                whileHover={{ y: -5 }}
               >
-                <h3 className="font-bold text-lg mb-3">服務範圍包括哪些診所類型？</h3>
+                <h3 className="font-bold text-lg mb-3">服務範圍涵蓋哪些診所類型？</h3>
                 <p className="text-gray-600">
-                  我們專注於各類醫療診所的行銷需求，包括牙醫、皮膚科、眼科、家醫科、婦產科等各專科診所，並依據不同專科的特性客製化行銷策略。
+                  我們專注於台灣各類醫療診所的行銷需求，主要包括牙醫、皮膚科、眼科、泌尿科等專科診所。每種專科都有其獨特的病患需求與溝通方式，我們會依據不同專科特性，客製化最合適的行銷策略。
                 </p>
               </motion.div>
               <motion.div 
-                className="p-6 border border-gray-100 rounded-lg"
+                className="p-6 border border-gray-100 rounded-lg hover:border-primary/30 hover:shadow-md transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
+                whileHover={{ y: -5 }}
               >
                 <h3 className="font-bold text-lg mb-3">合作方式與收費標準如何？</h3>
                 <p className="text-gray-600">
-                  我們提供月費制的持續性服務與專案制的短期合作模式，收費標準根據診所規模、需求複雜度與服務內容客製化報價，歡迎預約免費諮詢討論。
+                  我們提供月費制的持續性合作與專案制的短期服務兩種模式。收費標準根據診所規模、需求複雜度與服務內容有所不同，我們重視透明溝通，會在初次諮詢後提供詳細報價與服務內容說明，歡迎預約免費諮詢。
                 </p>
               </motion.div>
               <motion.div 
-                className="p-6 border border-gray-100 rounded-lg"
+                className="p-6 border border-gray-100 rounded-lg hover:border-primary/30 hover:shadow-md transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
+                whileHover={{ y: -5 }}
               >
-                <h3 className="font-bold text-lg mb-3">有提供行銷效果的保證嗎？</h3>
+                <h3 className="font-bold text-lg mb-3">能保證行銷效果嗎？</h3>
                 <p className="text-gray-600">
-                  我們重視透明與誠信，提供明確的KPI設定與每月成效報告，但不提供不實際的保證。我們的成功案例與客戶推薦是最好的服務品質保證。
+                  我們重視誠信與實際成效，不提供不切實際的保證。我們會與您共同設定合理的KPI目標，提供每月詳細的成效報告與分析，讓您清楚掌握每項行銷活動的實際效果。我們的成功案例與客戶推薦是我們服務品質的最佳保證。
                 </p>
               </motion.div>
             </div>
