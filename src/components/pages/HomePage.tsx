@@ -706,7 +706,7 @@ function FeatureSection() {
             為什麼選擇<span className="text-primary">專業團隊</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            深耕牙醫診所領域超過十年，以專業經驗與創新技術，協助診所突破成長瓶頸
+            深耕醫療行銷領域超過十年，以專業經驗與創新技術，協助診所突破成長瓶頸
           </p>
         </AnimatedSection>
 
@@ -754,36 +754,36 @@ function FeatureSection() {
 const services = [
   {
     title: '品牌形象建立',
-    description: '每間診所都有獨特的故事與價值。我們深入了解您的專業理念，打造能真實傳達醫療溫度的品牌形象，讓病患能感受到您的用心與專業。',
+    description: '每間診所都有一段獨特的故事與信念。我們深入傾聽您的初心，打造能真實傳達醫療溫度的品牌形象，讓病患從踏入診所的第一刻，就能感受到您的專業與用心，建立起超越診療的情感連結。',
     features: [
-      '診所品牌識別設計',
-      '診所空間規劃與視覺系統',
-      '醫師個人品牌經營',
-      '診所品牌故事打造'
+      '診所品牌理念梳理與故事打造',
+      '診所空間溫度與療癒氛圍設計',
+      '醫師個人專業形象塑造',
+      '診所與病患情感連結建立'
     ],
     icon: BrandIcon,
     link: '/service#brand'
   },
   {
     title: '數位轉型優化',
-    description: '在這個數位時代，我們協助您的診所進行無縫轉型。從預約系統到病患溝通，打造既高效又不失溫度的數位化診所體驗，讓您的專業更容易觸及需要的人。',
+    description: '在數位時代，我們協助診所進行有溫度的轉型。在每個數位接觸點注入人性關懷，打造高效且溫暖的診所體驗。從預約流程到診後關懷，讓科技成為連結醫師專業與病患需求的橋樑，使醫療服務更便捷且更有溫度。',
     features: [
-      '診所網站建置與優化',
-      '線上預約系統導入',
-      '數位化病患管理',
-      '醫療資訊系統整合'
+      '智慧預約系統與醫病溝通平台',
+      '整合診所資訊與管理系統',
+      '數位化病患關懷機制',
+      '醫療專業數位化呈現'
     ],
     icon: ServiceIcon,
     link: '/service#digital'
   },
   {
     title: '行銷策略執行',
-    description: '讓專業的醫療行銷團隊為您打理一切。從內容創作到媒體投放，從社群經營到口碑管理，我們用專業的行銷策略，讓更多人看見您的專業。',
+    description: '讓專業的醫療行銷團隊成為您的成長夥伴。我們了解台灣診所的獨特環境與挑戰，運用專業且有溫度的行銷策略，從內容創作到口碑建立，讓真正需要幫助的病患能找到您，共同實現醫者對優質醫療的堅持與理想。',
     features: [
-      '社群媒體經營與管理',
-      '整合性廣告投放',
-      '內容行銷策劃',
-      'SEO 與 SEM 優化'
+      '真實社群互動與經營',
+      '精準在地廣告投放',
+      '有溫度的專業內容製作',
+      'SEO 優化與口碑建立'
     ],
     icon: MarketingIcon,
     link: '/service#marketing'
@@ -801,10 +801,10 @@ function ServiceSection() {
         <AnimatedSection className="text-center mb-16">
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">專業服務</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            讓您<span className="text-primary">專注醫療</span>，行銷交給我們
+            讓您<span className="text-primary">專注醫療初心</span>，行銷交給我們
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            每一位醫師都有自己的專業與堅持，我們深知您的熱忱。由我們扛起行銷重擔，讓您能全心投入於照護病患，提供最好的醫療服務
+            我們深知每位醫師背後都有對醫療的熱忱與堅持。由我們扛起行銷的重擔，讓您能全心投入於照護病患，實現醫者的價值與使命，為台灣醫療環境注入更多溫暖與專業
           </p>
         </AnimatedSection>
           
@@ -900,7 +900,7 @@ function StatsSection() {
           viewport={{ once: true, amount: 0.1 }}
         >
           {[
-            { value: 300, suffix: "+", label: "合作牙醫診所" },
+            { value: 300, suffix: "+", label: "合作醫療診所" },
             { value: 98, suffix: "%", label: "客戶續約率" },
             { value: 180, suffix: "%", label: "平均預約成長" },
             { value: 85, suffix: "%", label: "行銷投資回報率" }
@@ -978,7 +978,7 @@ function CaseCarousel({
             診所<span className="text-primary">成功案例</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            透過專業的品牌策略與數位行銷，協助牙醫診所突破經營瓶頸，實現持續成長
+            透過專業的品牌策略與數位行銷，協助醫療診所突破經營瓶頸，實現持續成長
           </p>
         </motion.div>
 
@@ -1522,12 +1522,12 @@ function ContactSection() {
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <AnimatedSection className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">免費諮詢</span>
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">預約諮詢</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             讓我們聆聽您的<span className="text-primary">故事</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            每間診所都有獨特的挑戰與願景。與我們分享您的困境與期待，我們將以專業與熱忱，為您量身打造最適合的診所成長方案
+            每間診所都有獨特的挑戰與願景。分享您的診所故事與期待，我們將以專業與熱忱，為您量身打造最合適的診所成長方案
           </p>
         </AnimatedSection>
         
