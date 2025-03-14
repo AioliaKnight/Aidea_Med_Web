@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 // 網站基本配置
 const siteConfig = {
-  name: 'Aidea:Med 牙醫診所行銷專家',
-  description: '專注於牙醫診所的數位行銷與品牌顧問，提供植牙、隱形矯正、美白等專業牙醫療程的整合行銷方案。運用 AI 技術，為您的診所打造量身訂製的行銷策略，提升品牌知名度與病患信任。',
+  name: 'Aidea:Med 醫療行銷顧問',
+  description: '讓專業的醫師專注於醫療品質，行銷交給我們。Aidea:Med 運用創新科技與人性化服務，協助診所打造溫暖而專業的品牌形象，建立長期且穩固的病患信任。',
   url: 'https://www.aidea-med.com',
   ogImage: 'https://www.aidea-med.com/og-image.jpg',
   keywords: [
@@ -11,45 +11,45 @@ const siteConfig = {
     '牙醫診所行銷',
     '植牙診所行銷',
     '牙醫品牌顧問',
-    '牙醫數位行銷',
-    '牙醫診所品牌',
-    '連鎖牙醫診所',
-    '家庭牙醫診所',
+    '醫療診所行銷',
+    '泌尿科診所行銷',
+    '眼科診所行銷',
+    '皮膚科診所行銷',
     
-    // 牙醫服務相關
-    '植牙行銷',
-    '隱形矯正行銷',
-    '牙齒美白行銷',
-    '牙周治療行銷',
-    '兒童牙科行銷',
-    '人工植牙推廣',
-    '全瓷冠行銷',
+    // 醫療服務相關
+    '自費診療行銷',
+    '醫療品質提升',
+    '醫師品牌經營',
+    '病患服務優化',
+    '醫病關係經營',
+    '醫療口碑行銷',
+    '診所數位轉型',
     
     // 行銷服務相關
-    '牙醫社群經營',
-    '診所品牌設計',
-    '牙醫網站製作',
-    '牙醫 SEO 優化',
+    '診所社群經營',
+    '醫療品牌設計',
+    '診所網站製作',
+    '醫療 SEO 優化',
     '診所 Google 廣告',
-    '牙醫 Facebook 行銷',
-    '診所 Instagram 行銷',
+    '醫療 Facebook 行銷',
+    '診所進客策略',
     
     // 地區相關
-    '台北牙醫行銷',
-    '新北牙醫行銷',
-    '桃園牙醫行銷',
-    '台中牙醫行銷',
-    '高雄牙醫行銷',
+    '台北診所行銷',
+    '新北診所行銷',
+    '桃園診所行銷',
+    '台中診所行銷',
+    '高雄診所行銷',
     
     // 其他相關
-    'AI行銷',
-    '醫療行銷',
-    '數位行銷',
-    '品牌策略',
+    'AI醫療行銷',
+    '醫療行銷顧問',
+    '診所營運規劃',
+    '醫療品牌策略',
   ],
   authors: [
     {
-      name: 'Aidea:Med 牙醫行銷團隊',
+      name: 'Aidea:Med 醫療行銷團隊',
       url: 'https://www.aidea-med.com/team',
     }
   ]
@@ -120,72 +120,72 @@ export const sharedMetadata: Metadata = {
 // 首頁 Metadata
 export const homeMetadata: Metadata = {
   ...sharedMetadata,
-  title: '牙醫診所行銷專家 | AI驅動的植牙與隱形矯正行銷方案',
-  description: '專業的牙醫診所行銷團隊，協助您打造診所品牌，提供植牙、隱形矯正、美白等牙科服務的整合行銷方案。運用 AI 技術，為診所制定精準的數位行銷策略，提升知名度與病患信任。',
+  title: '讓專業醫師專注醫療，行銷交給我們 | Aidea:Med',
+  description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，協助您打造溫暖而專業的診所品牌。運用創新科技與人性化服務，讓您能安心專注於診療品質，為病患提供最好的照護。',
   openGraph: {
     ...sharedOgConfig,
-    title: '牙醫診所行銷專家 | AI驅動的植牙與隱形矯正行銷方案',
-    description: '專業的牙醫診所行銷團隊，協助您打造診所品牌，提供植牙、隱形矯正、美白等牙科服務的整合行銷方案。運用 AI 技術，為診所制定精準的數位行銷策略，提升知名度與病患信任。',
+    title: '讓專業醫師專注醫療，行銷交給我們 | Aidea:Med',
+    description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，協助您打造溫暖而專業的診所品牌。運用創新科技與人性化服務，讓您能安心專注於診療品質，為病患提供最好的照護。',
   }
 }
 
 // 團隊頁面 Metadata
 export const teamMetadata: Metadata = {
   ...sharedMetadata,
-  title: '專業團隊 | 牙醫行銷專家與數位人才',
-  description: '由資深牙醫顧問、數位行銷專家與技術團隊組成，擁有豐富的植牙推廣、隱形矯正行銷經驗，為診所打造最專業的行銷服務。',
+  title: '用心的夥伴 | 醫療行銷專家與創新人才',
+  description: '我們不只是顧問，更是您診所成長的夥伴。結合醫療顧問、數位行銷專家與創新技術團隊，以同理心理解您的需求，用專業協助您實現理想。',
   openGraph: {
     ...sharedOgConfig,
-    title: '專業團隊 | 牙醫行銷專家與數位人才',
-    description: '由資深牙醫顧問、數位行銷專家與技術團隊組成，擁有豐富的植牙推廣、隱形矯正行銷經驗，為診所打造最專業的行銷服務。',
+    title: '用心的夥伴 | 醫療行銷專家與創新人才',
+    description: '我們不只是顧問，更是您診所成長的夥伴。結合醫療顧問、數位行銷專家與創新技術團隊，以同理心理解您的需求，用專業協助您實現理想。',
   }
 }
 
 // 案例頁面 Metadata
 export const caseMetadata: Metadata = {
   ...sharedMetadata,
-  title: '成功案例 | 牙醫診所品牌與行銷案例分享',
-  description: '探索我們如何協助牙醫診所提升品牌形象、增加植牙諮詢量、提高隱形矯正預約數，並建立長期的病患信任關係。包含品牌策略、社群經營、廣告投放等實際成功案例。',
+  title: '成功故事 | 診所品牌與行銷實例分享',
+  description: '每個診所都有獨特的故事。探索我們如何協助診所提升品牌形象、優化病患服務、建立信任關係，讓更多人感受到您的專業與用心。',
   openGraph: {
     ...sharedOgConfig,
-    title: '成功案例 | 牙醫診所品牌與行銷案例分享',
-    description: '探索我們如何協助牙醫診所提升品牌形象、增加植牙諮詢量、提高隱形矯正預約數，並建立長期的病患信任關係。包含品牌策略、社群經營、廣告投放等實際成功案例。',
+    title: '成功故事 | 診所品牌與行銷實例分享',
+    description: '每個診所都有獨特的故事。探索我們如何協助診所提升品牌形象、優化病患服務、建立信任關係，讓更多人感受到您的專業與用心。',
   }
 }
 
 // 服務頁面 Metadata
 export const serviceMetadata: Metadata = {
   ...sharedMetadata,
-  title: '服務項目 | 牙醫診所整合行銷方案',
-  description: '提供牙醫診所完整的行銷服務，包含：品牌定位、社群經營、網站建置、SEO優化、廣告投放等。專注於植牙、隱形矯正、美白等牙科服務的推廣，協助診所在數位時代脫穎而出。',
+  title: '全方位夥伴 | 診所整合行銷方案',
+  description: '從品牌定位到數位行銷，從空間設計到人員培訓，我們提供完整的診所成長方案。運用創新科技與溫暖服務，協助您在數位時代脫穎而出。',
   openGraph: {
     ...sharedOgConfig,
-    title: '服務項目 | 牙醫診所整合行銷方案',
-    description: '提供牙醫診所完整的行銷服務，包含：品牌定位、社群經營、網站建置、SEO優化、廣告投放等。專注於植牙、隱形矯正、美白等牙科服務的推廣，協助診所在數位時代脫穎而出。',
+    title: '全方位夥伴 | 診所整合行銷方案',
+    description: '從品牌定位到數位行銷，從空間設計到人員培訓，我們提供完整的診所成長方案。運用創新科技與溫暖服務，協助您在數位時代脫穎而出。',
   }
 }
 
 // 部落格頁面 Metadata
 export const blogMetadata: Metadata = {
   ...sharedMetadata,
-  title: '專業知識庫 | 牙醫診所經營與行銷趨勢',
-  description: '分享牙醫診所數位行銷、品牌經營、病患服務等專業知識。包含植牙推廣、隱形矯正行銷、診所經營管理、社群媒體經營等實用資訊，協助診所掌握產業趨勢。',
+  title: '專業分享 | 診所經營與創新趨勢',
+  description: '分享診所經營、品牌建立、病患服務等實用知識。從數位創新到人性化服務，協助您掌握產業趨勢，打造更好的醫療體驗。',
   openGraph: {
     ...sharedOgConfig,
-    title: '專業知識庫 | 牙醫診所經營與行銷趨勢',
-    description: '分享牙醫診所數位行銷、品牌經營、病患服務等專業知識。包含植牙推廣、隱形矯正行銷、診所經營管理、社群媒體經營等實用資訊，協助診所掌握產業趨勢。',
+    title: '專業分享 | 診所經營與創新趨勢',
+    description: '分享診所經營、品牌建立、病患服務等實用知識。從數位創新到人性化服務，協助您掌握產業趨勢，打造更好的醫療體驗。',
   }
 }
 
 // 聯絡頁面 Metadata
 export const contactMetadata: Metadata = {
   ...sharedMetadata,
-  title: '聯絡我們 | 預約免費行銷諮詢',
-  description: '立即與我們聯繫，了解如何為您的牙醫診所打造最適合的數位行銷策略。提供植牙、隱形矯正、美白等牙科服務的推廣建議，協助您提升診所競爭力。',
+  title: '與我們對話 | 預約免費諮詢',
+  description: '讓我們傾聽您的故事，了解您的願景與困境。我們將為您量身打造最適合的品牌策略與行銷方案，一起為台灣的醫療環境創造更多溫暖與專業。',
   openGraph: {
     ...sharedOgConfig,
-    title: '聯絡我們 | 預約免費行銷諮詢',
-    description: '立即與我們聯繫，了解如何為您的牙醫診所打造最適合的數位行銷策略。提供植牙、隱形矯正、美白等牙科服務的推廣建議，協助您提升診所競爭力。',
+    title: '與我們對話 | 預約免費諮詢',
+    description: '讓我們傾聽您的故事，了解您的願景與困境。我們將為您量身打造最適合的品牌策略與行銷方案，一起為台灣的醫療環境創造更多溫暖與專業。',
   }
 }
 
@@ -200,17 +200,17 @@ export const organizationSchema = {
   image: [siteConfig.ogImage],
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+886-2-2345-6789',
+    telephone: '+886-2-27488919',
     contactType: 'customer service',
     areaServed: ['TW'],
     availableLanguage: ['zh-TW', 'en'],
   },
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '信義路五段7號',
+    streetAddress: '敦化南路二段99號13樓',
     addressLocality: '台北市',
-    addressRegion: '信義區',
-    postalCode: '110',
+    addressRegion: '大安區',
+    postalCode: '106',
     addressCountry: 'TW'
   },
   sameAs: [
@@ -221,32 +221,73 @@ export const organizationSchema = {
   // 服務項目
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: '牙醫診所行銷服務',
+    name: '醫療診所行銷服務',
     itemListElement: [
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: '品牌策略服務',
-          description: '牙醫診所品牌定位與視覺設計'
+          name: '品牌形象建立',
+          description: '打造溫暖而專業的診所品牌形象，傳達醫療價值與理念'
         }
       },
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: '數位行銷服務',
-          description: '植牙、隱形矯正等牙科服務推廣'
+          name: '數位轉型優化',
+          description: '協助診所數位化轉型，提升營運效率與病患體驗'
         }
       },
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: '社群媒體經營',
-          description: '診所 Facebook、Instagram 內容經營'
+          name: '行銷策略執行',
+          description: '為診所量身打造全方位行銷策略，提升進客量與自費項目轉換率'
         }
       }
     ]
   }
+}
+
+// 本地商家結構化資料
+export const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://www.aidea-med.com',
+  name: siteConfig.name,
+  description: siteConfig.description,
+  url: siteConfig.url,
+  logo: `${siteConfig.url}/logo.png`,
+  image: [siteConfig.ogImage],
+  telephone: '+886-2-27488919',
+  email: 'contact@aidea-med.com',
+  priceRange: '$$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '敦化南路二段99號13樓',
+    addressLocality: '台北市',
+    addressRegion: '大安區',
+    postalCode: '106',
+    addressCountry: 'TW'
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: '25.0338',
+    longitude: '121.5466'
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00'
+    }
+  ],
+  sameAs: [
+    'https://www.facebook.com/aideamed',
+    'https://www.instagram.com/aideamed',
+    'https://www.linkedin.com/company/aideamed',
+  ]
 } 

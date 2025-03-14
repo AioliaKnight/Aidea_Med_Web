@@ -1,4 +1,4 @@
-import { homeMetadata } from './metadata'
+import { homeMetadata, organizationSchema, localBusinessSchema } from './metadata'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Suspense } from 'react'
@@ -79,17 +79,31 @@ export default function RootLayout({
         {/* 預加載字體以避免CSP問題 */}
         <link 
           rel="preload" 
-          href="/fonts/GenYoGothicTW-Regular-subset.woff2" 
+          href="/fonts/GenYoGothicTW-Regular.woff2" 
           as="font" 
           type="font/woff2" 
           crossOrigin="anonymous" 
         />
         <link 
           rel="preload" 
-          href="/fonts/GenYoGothicTW-Bold-subset.woff2" 
+          href="/fonts/GenYoGothicTW-Bold.woff2" 
           as="font" 
           type="font/woff2" 
           crossOrigin="anonymous" 
+        />
+        
+        {/* 結構化資料 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(organizationSchema) 
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(localBusinessSchema) 
+          }}
         />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">

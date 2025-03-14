@@ -101,23 +101,23 @@ const animations = {
 // 服務特色數據
 const features = [
   {
-    title: '專注牙醫行銷',
-    description: '深耕牙醫診所領域超過10年，了解診所經營痛點，提供最適合的行銷策略與解決方案',
+    title: '專注醫療，行銷交給我們',
+    description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，讓您能安心專注於診療品質，為病患提供最好的照護',
     icon: AIIcon
   },
   {
-    title: '完整數據分析',
-    description: '運用進階分析工具，追蹤診所關鍵績效指標，從預約率到回診率，協助診所做出精準決策',
+    title: '數據驅動成長',
+    description: '不只是數字，而是每位病患的信任。我們運用智慧分析工具，從預約率到回診率，協助您更了解病患需求，提供更貼心的服務',
     icon: DataIcon
   },
   {
-    title: '品牌口碑經營',
-    description: '建立診所專業形象與特色，透過社群媒體與在地行銷，打造深植人心的牙醫品牌',
+    title: '用心經營口碑',
+    description: '好的口碑來自於真誠。我們協助您建立診所獨特價值，透過真實故事與在地連結，讓更多人認識您的專業與用心',
     icon: TeamIcon
   },
   {
-    title: '全方位整合',
-    description: '從線上到線下，整合數位行銷、空間設計、人員訓練等服務，提供診所一站式成長方案',
+    title: '全方位夥伴',
+    description: '從線上到線下，我們不只是服務提供者，更是您的成長夥伴。整合數位行銷、空間設計到人員培訓，一起打造溫暖而專業的診所環境',
     icon: ServiceIcon
   }
 ]
@@ -146,8 +146,8 @@ interface CaseStudy {
 const caseStudies: CaseStudy[] = [
   {
     id: 'case-1',
-    title: '雅德思牙醫診所',
-    description: '透過品牌重塑與數位轉型，打造專業美學牙醫品牌形象，整合線上預約與社群經營，大幅提升診所效益',
+    title: '微笑牙醫診所',
+    description: '在競爭激烈的台北市，如何讓診所脫穎而出？我們從病患需求出發，重新打造診所的品牌形象，將原本冰冷的診所空間，轉變為溫暖舒適的療癒環境，讓每位病患都能安心就醫',
     image: '/Case_1.jpg',
     imageWebp: '/Case_1.webp',
     imagePlaceholder: '/Case_1_placeholder.jpg',
@@ -157,20 +157,20 @@ const caseStudies: CaseStudy[] = [
       lg: '/Case_1.jpg',
     },
     category: '品牌升級',
-    highlight: '200%',
-    highlightLabel: '諮詢轉化率',
+    highlight: '98%',
+    highlightLabel: '病患滿意度',
     results: [
-      '隱形矯正諮詢量增加156%',
-      '每月新客數提升85%',
-      '品牌知名度提升120%',
-      '線上預約率達65%'
+      '新病患推薦率達 85%',
+      '回診率提升 60%',
+      '線上評價 4.9 顆星',
+      '預約等候時間縮短 50%'
     ],
     color: 'from-white-600 to-primary'
   },
   {
     id: 'case-2',
-    title: '皓皓牙醫診所',
-    description: '導入完整的數位化系統與行銷策略，優化病患服務流程，建立口碑行銷體系，實現持續性成長',
+    title: '康德牙醫診所',
+    description: '30年老字號診所如何與時俱進？我們協助導入智慧預約系統，優化看診流程，同時保留溫暖的個人化服務，讓新舊病患都能感受到診所的用心與專業',
     image: '/Case_2.jpg',
     imageWebp: '/Case_2.webp',
     imagePlaceholder: '/Case_2_placeholder.jpg',
@@ -180,20 +180,20 @@ const caseStudies: CaseStudy[] = [
       lg: '/Case_2.jpg',
     },
     category: '數位轉型',
-    highlight: '95%',
-    highlightLabel: '病患滿意度',
+    highlight: '92%',
+    highlightLabel: '病患推薦率',
     results: [
-      '植牙諮詢量成長180%',
-      '回診率提升45%',
-      '營運效率提升75%',
-      'Google評分達4.9顆星'
+      '老病患回診率維持 95%',
+      '新病患成長 75%',
+      '行政作業時間減少 60%',
+      '醫師看診效率提升 40%'
     ],
     color: 'from-white-600 to-primary'
   },
   {
     id: 'case-3',
-    title: '雲天牙醫診所',
-    description: '針對年輕族群打造現代化牙醫品牌，透過社群媒體與影音行銷，成功建立差異化市場定位',
+    title: '恩典牙醫診所',
+    description: '位於新竹科學園區，如何吸引年輕族群？我們打造科技感與人性化並存的診所形象，運用社群媒體分享口腔保健知識，建立專業且親切的品牌形象',
     image: '/Case_3.png',
     imageWebp: '/Case_3.webp',
     imagePlaceholder: '/Case_3_placeholder.png',
@@ -203,33 +203,45 @@ const caseStudies: CaseStudy[] = [
       lg: '/Case_3.png',
     },
     category: '社群經營',
-    highlight: '300%',
-    highlightLabel: '社群互動率',
+    highlight: '200%',
+    highlightLabel: '年輕客群成長',
     results: [
-      '美白療程預約增加215%',
-      '25-35歲客群成長125%',
-      '社群追蹤者突破2萬',
-      '品牌影片觀看破百萬'
+      '25-35歲病患增加 150%',
+      '社群互動率達 35%',
+      '知識文章分享破萬次',
+      '員工滿意度提升 80%'
     ],
     color: 'from-white-600 to-primary'
   }
 ]
 
 // 服務流程數據
-// 註解掉未使用的變數，保留定義以供將來可能的使用
-/* 
 const serviceProcess = [
   {
     step: '01',
-    title: '需求診斷',
-    description: '深入了解診所現況、目標客群和發展方向，制定客製化行銷策略',
-    icon: (
-      // ...
-    )
+    title: '深入了解',
+    description: '傾聽您的故事與願景，了解診所的特色和困境，共同規劃最適合的成長方向',
+    icon: PatientIcon
   },
-  // ... 其他流程步驟
-];
-*/
+  {
+    step: '02',
+    title: '策略規劃',
+    description: '結合數據分析與在地特色，為您量身打造專屬的品牌策略與行銷計畫',
+    icon: BrandIcon
+  },
+  {
+    step: '03',
+    title: '執行優化',
+    description: '專業團隊全程陪伴，持續追蹤成效並即時調整，確保每一步都朝著目標前進',
+    icon: MarketingIcon
+  },
+  {
+    step: '04',
+    title: '成長茁壯',
+    description: '不只是短期成效，更要建立長期競爭力，讓診所能持續穩定成長',
+    icon: DataIcon
+  }
+]
 
 // 團隊成員資料
 /* 暫時未使用，但保留供未來使用
@@ -741,37 +753,40 @@ function FeatureSection() {
 // 更新服務內容區塊
 const services = [
   {
-    title: '診所品牌規劃',
-    description: '打造專業且溫暖的牙醫品牌形象，建立市場差異化優勢',
+    title: '品牌形象建立',
+    description: '每間診所都有獨特的故事與價值。我們深入了解您的專業理念，打造能真實傳達醫療溫度的品牌形象，讓病患能感受到您的用心與專業。',
     features: [
-      '診所品牌定位與特色規劃',
-      '診所空間與視覺設計',
-      '醫療團隊形象包裝',
-      '在地口碑行銷策略'
+      '診所品牌識別設計',
+      '診所空間規劃與視覺系統',
+      '醫師個人品牌經營',
+      '診所品牌故事打造'
     ],
-    icon: BrandIcon
+    icon: BrandIcon,
+    link: '/service#brand'
   },
   {
-    title: '數位行銷優化',
-    description: '全方位數位行銷策略，提升診所能見度與預約轉化率',
+    title: '數位轉型優化',
+    description: '在這個數位時代，我們協助您的診所進行無縫轉型。從預約系統到病患溝通，打造既高效又不失溫度的數位化診所體驗，讓您的專業更容易觸及需要的人。',
     features: [
-      'Google SEO 排名優化',
-      '社群媒體經營與互動',
-      '精準廣告投放策略',
-      '診所官網設計與優化'
+      '診所網站建置與優化',
+      '線上預約系統導入',
+      '數位化病患管理',
+      '醫療資訊系統整合'
     ],
-    icon: MarketingIcon
+    icon: ServiceIcon,
+    link: '/service#digital'
   },
   {
-    title: '病患服務提升',
-    description: '優化病患體驗，提高回診率與推薦率',
+    title: '行銷策略執行',
+    description: '讓專業的醫療行銷團隊為您打理一切。從內容創作到媒體投放，從社群經營到口碑管理，我們用專業的行銷策略，讓更多人看見您的專業。',
     features: [
-      '病患關係管理系統',
-      '自動預約提醒服務',
-      '回診追蹤與關懷',
-      '病患滿意度調查'
+      '社群媒體經營與管理',
+      '整合性廣告投放',
+      '內容行銷策劃',
+      'SEO 與 SEM 優化'
     ],
-    icon: PatientIcon
+    icon: MarketingIcon,
+    link: '/service#marketing'
   }
 ];
 
@@ -786,10 +801,10 @@ function ServiceSection() {
         <AnimatedSection className="text-center mb-16">
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">專業服務</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            全方位<span className="text-primary">診所成長</span>方案
+            讓您<span className="text-primary">專注醫療</span>，行銷交給我們
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            提供完整的牙醫診所行銷解決方案，協助您的診所突破現有業績
+            每一位醫師都有自己的專業與堅持，我們深知您的熱忱。由我們扛起行銷重擔，讓您能全心投入於照護病患，提供最好的醫療服務
           </p>
         </AnimatedSection>
           
@@ -812,44 +827,32 @@ function ServiceSection() {
                 </div>
               </div>
               
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
-                {service.title}
-              </h3>
-              <p className="text-gray-600 mb-8">
-                {service.description}
-              </p>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">{service.title}</h3>
+              <p className="text-gray-600 font-content mb-6 flex-grow">{service.description}</p>
               
-              <ul className="space-y-4 flex-grow mb-8">
-                {service.features.map((feature) => (
-                  <li key={feature} className="flex items-center text-gray-700">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-auto pt-6 border-t border-gray-100">
-                <Link
-                  href={`/service#${service.title}`}
-                  className="inline-flex items-center text-primary font-medium group"
+              <div className="mt-auto">
+                <Link 
+                  href={service.link || '/service'} 
+                  className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors"
                 >
                   了解更多
-                  <motion.svg 
-                    className="w-4 h-4 ml-2" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 3 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <svg className="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </motion.svg>
+                  </svg>
                 </Link>
               </div>
             </motion.div>
           ))}
         </motion.div>
+
+        <AnimatedSection className="mt-16 text-center">
+          <Link href="/service" className="btn-primary">
+            探索全部服務
+            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        </AnimatedSection>
       </div>
     </section>
   );
@@ -1514,69 +1517,175 @@ function FAQSection() {
 // 新增聯絡我們區塊
 function ContactSection() {
   return (
-    <section className="relative py-24 bg-primary overflow-hidden">
-      {/* 簡化的背景 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"></div>
-      
-      {/* 移除裝飾元素 */}
+    <section id="contact" className="py-24 bg-gray-50 relative overflow-hidden" role="region" aria-label="聯絡我們">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-50 to-white"></div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <motion.div 
-          className="max-w-4xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            準備好開始提升您的<span className="relative inline-block mx-2">
-              診所營運
-              <motion.span 
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="absolute -bottom-2 left-0 right-0 h-1 bg-white/30 rounded-full"
-              ></motion.span>
-            </span>了嗎？
+        <AnimatedSection className="text-center mb-16 max-w-3xl mx-auto">
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">免費諮詢</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            讓我們聆聽您的<span className="text-primary">故事</span>
           </h2>
-          <p className="text-xl mb-10 text-white/90 max-w-2xl mx-auto">
-            立即預約免費諮詢，讓我們為您打造專屬的成長方案
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            每間診所都有獨特的挑戰與願景。與我們分享您的困境與期待，我們將以專業與熱忱，為您量身打造最適合的診所成長方案
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1"
-            >
-              <span>立即預約</span>
-              <motion.svg 
-                className="w-5 h-5 ml-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                initial={{ x: 0 }}
-                animate={{ x: [0, 3, 0] }}
-                transition={{ 
-                  duration: 1.5, 
-                  repeat: Infinity, 
-                  repeatType: "loop",
-                  ease: "easeInOut",
-                  repeatDelay: 1
-                }}
+        </AnimatedSection>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-center">
+          <AnimatedSection className="rounded-lg bg-white p-8 lg:p-10 shadow-lg">
+            <form className="space-y-6">
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">您的姓名</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="請輸入您的姓名"
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">診所名稱</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="請輸入您的診所名稱"
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">聯絡電話</label>
+                <input
+                  type="tel"
+                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="請輸入您的聯絡電話"
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">電子郵件</label>
+                <input
+                  type="email"
+                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="請輸入您的電子郵件"
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">您想了解的服務</label>
+                <select className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                  <option value="">請選擇您感興趣的服務</option>
+                  <option value="brand">品牌形象建立</option>
+                  <option value="digital">數位轉型優化</option>
+                  <option value="marketing">行銷策略執行</option>
+                  <option value="all">全方位診所成長方案</option>
+                </select>
+              </div>
+              
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">您的需求描述</label>
+                <textarea
+                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent h-32"
+                  placeholder="請簡單描述您的診所目前面臨的挑戰或需求..."
+                ></textarea>
+              </div>
+              
+              <button
+                type="submit"
+                className="btn-primary w-full py-4"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </motion.svg>
-            </Link>
-            <Link
-              href="/case"
-              className="inline-flex items-center justify-center px-8 py-4 bg-transparent text-white border border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 font-medium"
-            >
-              瀏覽成功案例
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-        </motion.div>
+                送出諮詢需求
+              </button>
+              
+              <p className="text-sm text-gray-500 text-center mt-4">
+                我們將在收到您的資訊後，1-2 個工作天內與您聯繫
+              </p>
+            </form>
+          </AnimatedSection>
+          
+          <AnimatedSection className="flex flex-col space-y-8">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">直接聯繫我們</h3>
+              <p className="text-gray-600 mb-6">
+                若您有任何問題或想進一步了解我們的服務，歡迎透過以下方式聯繫我們
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
+                    <p className="text-gray-600 mb-1">週一至週五 9:00-18:00</p>
+                    <a href="tel:+886227488919" className="text-primary font-medium hover:text-primary-dark transition-colors">
+                      (02) 2748-8919
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 mb-1">電子郵件</h4>
+                    <p className="text-gray-600 mb-1">我們會在 24 小時內回覆</p>
+                    <a href="mailto:contact@aidea-med.com" className="text-primary font-medium hover:text-primary-dark transition-colors">
+                      contact@aidea-med.com
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
+                    <p className="text-gray-600 mb-1">歡迎預約參訪</p>
+                    <p className="text-gray-900">
+                      台北市大安區敦化南路二段99號13樓
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">關注我們</h3>
+              <p className="text-gray-600 mb-6">
+                追蹤我們的社群媒體，獲取最新醫療行銷趨勢與實用知識
+              </p>
+              
+              <div className="flex space-x-4">
+                <a href="https://www.facebook.com/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
+                  </svg>
+                </a>
+                
+                <a href="https://www.instagram.com/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  </svg>
+                </a>
+                
+                <a href="https://www.linkedin.com/company/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
       </div>
     </section>
   );
