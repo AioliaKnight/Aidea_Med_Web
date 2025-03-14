@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import PageHeader from '@/components/common/PageHeader'
 import Link from 'next/link'
-import { ErrorBoundary } from 'react-error-boundary'
 
 export default function ContactPage() {
   const [formSubmitted, setFormSubmitted] = useState(false)
@@ -26,7 +25,6 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // 這裡會處理表單提交邏輯，例如API呼叫
-    console.log('Form submitted:', formData)
     setFormSubmitted(true)
   }
 
@@ -336,7 +334,7 @@ export default function ContactPage() {
                 </div>
                 <div className="mt-8 pt-6 border-t border-gray-200">
                   <blockquote className="italic text-gray-600 mb-4">
-                    "我們相信，真正好的醫療行銷應建立在對醫者初心的尊重與理解之上。"
+                    &quot;我們相信，真正好的醫療行銷應建立在對醫者初心的尊重與理解之上。&quot;
                   </blockquote>
                   <Link 
                     href="/services" 
