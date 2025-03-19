@@ -1,19 +1,18 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import Logo from '@/components/common/Logo'
 
-// 導航項目定義
+// 導航項目定義（統一導航項配置）
 const navigation = [
   { name: '首頁', nameEn: 'HOME', href: '/' },
   { name: '服務項目', nameEn: 'SERVICES', href: '/service' },
   { name: '成功案例', nameEn: 'CASES', href: '/case' },
   { name: '專業團隊', nameEn: 'TEAM', href: '/team' },
-  { name: '知識庫', nameEn: 'BLOG', href: '/blog' },
   { name: '聯絡我們', nameEn: 'CONTACT', href: '/contact' }
 ]
 
@@ -78,18 +77,24 @@ export default function Navbar() {
   const pathname = usePathname()
   
   // 判斷頁面類型 - 統一詳情頁判斷邏輯
-  const isDetailPage = 
-    (pathname.startsWith('/case/') && pathname !== '/case') || 
-    (pathname.startsWith('/blog/') && pathname !== '/blog') ||
-    (pathname.startsWith('/team/') && pathname !== '/team') ||
-    (pathname.startsWith('/service/') && pathname !== '/service')
+  const isDetailPage = useMemo(() => {
+    return (
+      (pathname.startsWith('/case/') && pathname !== '/case') || 
+      (pathname.startsWith('/team/') && pathname !== '/team') ||
+      (pathname.startsWith('/service/') && pathname !== '/service')
+    )
+  }, [pathname])
 
   // 處理滾動
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
-    window.addEventListener('scroll', handleScroll)
+    
+    // 初始檢查滾動位置
+    handleScroll()
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -99,21 +104,26 @@ export default function Navbar() {
   }, [])
   
   // 獲取背景樣式
-  const getBackgroundStyle = () => {
+  const getBackgroundStyle = useCallback(() => {
     if (isScrolled) return navStyles.scrolled
     if (isDetailPage) return navStyles.detail
     return navStyles.default
-  }
+  }, [isScrolled, isDetailPage])
   
   // 獲取文字樣式集
-  const getTextStyles = () => {
+  const getTextStyles = useCallback(() => {
     return isScrolled ? textStyles.scrolled : textStyles.default
-  }
+  }, [isScrolled])
   
   // 獲取按鈕樣式
-  const getButtonStyle = () => {
+  const getButtonStyle = useCallback(() => {
     return isScrolled ? buttonStyles.scrolled : buttonStyles.default
-  }
+  }, [isScrolled])
+
+  // 優化: 路徑活動狀態檢查
+  const isPathActive = useCallback((href: string) => {
+    return pathname === href || (pathname.startsWith(href) && href !== '/')
+  }, [pathname])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 font-gothic">
@@ -139,10 +149,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center">
           <div className="flex space-x-6 mr-6">
             {navigation.map((item) => {
-              const isActive = 
-                pathname === item.href || 
-                (pathname.startsWith(item.href) && item.href !== '/');
-              
+              const isActive = isPathActive(item.href);
               const styles = getTextStyles();
               
               return (
@@ -189,14 +196,15 @@ export default function Navbar() {
           </div>
           
           {/* 諮詢按鈕 */}
-          <Link href="/contact">
-            <span className={cn(
+          <Link 
+            href="/contact"
+            className={cn(
               'inline-flex items-center px-6 py-2.5 font-medium text-sm tracking-wide transition-all duration-300',
               getButtonStyle()
-            )}>
-              CONSULT
-              <span className="ml-1 text-xs opacity-80">免費諮詢</span>
-            </span>
+            )}
+          >
+            CONSULT
+            <span className="ml-1 text-xs opacity-80">免費諮詢</span>
           </Link>
         </div>
         
@@ -237,9 +245,7 @@ export default function Navbar() {
             >
               <div className="container mx-auto px-6 py-3 flex flex-col">
                 {navigation.map((item, index) => {
-                  const isActive = 
-                    pathname === item.href || 
-                    (pathname.startsWith(item.href) && item.href !== '/');
+                  const isActive = isPathActive(item.href);
                   
                   return (
                     <motion.div 

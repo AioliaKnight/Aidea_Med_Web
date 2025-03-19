@@ -7,15 +7,9 @@
   },
   "overrides": [
     {
-      "files": ["src/app/studio-entry/page.tsx", "src/components/common/blog/SanityImage.tsx"],
+      "files": ["src/app/studio-entry/page.tsx"],
       "rules": {
         "no-console": "off"
-      }
-    },
-    {
-      "files": ["src/lib/performance.ts", "src/components/providers/PerformanceProvider.tsx"],
-      "rules": {
-        "no-console": ["warn", { "allow": ["error", "warn"] }]
       }
     }
   ]

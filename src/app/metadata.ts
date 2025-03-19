@@ -117,16 +117,21 @@ export const sharedMetadata: Metadata = {
   category: '醫療行銷',
 }
 
-// 首頁 Metadata
+// 初始頁面的 Metadata 配置
 export const homeMetadata: Metadata = {
   ...sharedMetadata,
-  title: '讓專業醫師專注醫療，行銷交給我們 | Aidea:Med',
-  description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，協助您打造溫暖而專業的診所品牌。運用創新科技與人性化服務，讓您能安心專注於診療品質，為病患提供最好的照護。',
+  title: `${siteConfig.name} | ${siteConfig.description}`,
   openGraph: {
     ...sharedOgConfig,
-    title: '讓專業醫師專注醫療，行銷交給我們 | Aidea:Med',
-    description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，協助您打造溫暖而專業的診所品牌。運用創新科技與人性化服務，讓您能安心專注於診療品質，為病患提供最好的照護。',
-  }
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: '/',
+  },
+  twitter: {
+    ...sharedTwitterConfig,
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
 }
 
 // 團隊頁面 Metadata
@@ -141,40 +146,30 @@ export const teamMetadata: Metadata = {
   }
 }
 
-// 案例頁面 Metadata
+// 案例頁面的 Metadata 配置
 export const caseMetadata: Metadata = {
   ...sharedMetadata,
-  title: '成功故事 | 診所品牌與行銷實例分享',
-  description: '每個診所都有獨特的故事。探索我們如何協助診所提升品牌形象、優化病患服務、建立信任關係，讓更多人感受到您的專業與用心。',
+  title: '醫療診所行銷案例集 | 實際成功案例與成果展示',
+  description: '精選醫療與牙醫診所的成功行銷案例，展示我們如何幫助客戶提升品牌形象、增加患者數量與自費項目轉換率。',
   openGraph: {
     ...sharedOgConfig,
-    title: '成功故事 | 診所品牌與行銷實例分享',
-    description: '每個診所都有獨特的故事。探索我們如何協助診所提升品牌形象、優化病患服務、建立信任關係，讓更多人感受到您的專業與用心。',
-  }
+    title: '醫療診所行銷案例集',
+    description: '精選醫療與牙醫診所的成功行銷案例，展示我們如何幫助客戶提升品牌形象、增加患者數量與自費項目轉換率。',
+    url: '/case',
+  },
 }
 
-// 服務頁面 Metadata
+// 服務頁面的 Metadata 配置
 export const serviceMetadata: Metadata = {
   ...sharedMetadata,
-  title: '全方位夥伴 | 診所整合行銷方案',
-  description: '從品牌定位到數位行銷，從空間設計到人員培訓，我們提供完整的診所成長方案。運用創新科技與溫暖服務，協助您在數位時代脫穎而出。',
+  title: '醫療行銷與牙醫診所行銷顧問服務 | 完整解決方案',
+  description: '為醫療機構與牙醫診所提供專業的整合行銷顧問服務，品牌建立、數位優化與轉型，提升自費項目轉換率。',
   openGraph: {
     ...sharedOgConfig,
-    title: '全方位夥伴 | 診所整合行銷方案',
-    description: '從品牌定位到數位行銷，從空間設計到人員培訓，我們提供完整的診所成長方案。運用創新科技與溫暖服務，協助您在數位時代脫穎而出。',
-  }
-}
-
-// 部落格頁面 Metadata
-export const blogMetadata: Metadata = {
-  ...sharedMetadata,
-  title: '專業分享 | 診所經營與創新趨勢',
-  description: '分享診所經營、品牌建立、病患服務等實用知識。從數位創新到人性化服務，協助您掌握產業趨勢，打造更好的醫療體驗。',
-  openGraph: {
-    ...sharedOgConfig,
-    title: '專業分享 | 診所經營與創新趨勢',
-    description: '分享診所經營、品牌建立、病患服務等實用知識。從數位創新到人性化服務，協助您掌握產業趨勢，打造更好的醫療體驗。',
-  }
+    title: '醫療行銷與牙醫診所行銷顧問服務',
+    description: '為醫療機構與牙醫診所提供專業的整合行銷顧問服務，品牌建立、數位優化與轉型，提升自費項目轉換率。',
+    url: '/service',
+  },
 }
 
 // 聯絡頁面 Metadata
@@ -202,8 +197,7 @@ export const organizationSchema = {
     '@type': 'ContactPoint',
     telephone: '+886-2-27488919',
     contactType: 'customer service',
-    areaServed: ['TW'],
-    availableLanguage: ['zh-TW', 'en'],
+    areaServed: ['TW']
   },
   address: {
     '@type': 'PostalAddress',

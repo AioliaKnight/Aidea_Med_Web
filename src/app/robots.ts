@@ -9,9 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          '/studio/',      // Sanity Studio 路徑
-          '/studio-entry/',// Studio 入口頁面
-          '/studio-redirect/', // Studio 重定向頁面
           '/api/',         // API 路徑
           '/dev-sw.js',    // 開發者服務工作者
           '/_next/',       // Next.js 內部路徑
@@ -27,7 +24,6 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Googlebot',
         allow: '/',
         disallow: [
-          '/studio/',
           '/api/',
         ],
       },
@@ -35,7 +31,6 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Bingbot',
         allow: '/',
         disallow: [
-          '/studio/',
           '/api/',
         ],
       },

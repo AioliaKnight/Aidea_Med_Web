@@ -1,16 +1,12 @@
 import { homeMetadata, organizationSchema, localBusinessSchema } from './metadata'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 
-import ClientProviders from '@/components/providers/ClientProviders'
 import Navbar from '@/components/layout/Navbar'
 import Loading from '@/components/common/Loading'
-import ErrorBoundary from '@/components/common/ErrorBoundary'
 
 import '@/app/globals.css'
-import '@/styles/fonts.css'
+import '@/app/fonts.css'
 
 export const metadata = homeMetadata
 
@@ -107,27 +103,25 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">
-        <ErrorBoundary>
-          <ClientProviders>
-            {/* 導航欄在 Suspense 外以避免不必要的重新渲染 */}
-            <Navbar />
-            <main className="min-h-screen pt-0">
-              <Suspense
-                fallback={
-                  <Loading
-                    fullscreen
-                    text="載入應用程式..."
-                    blur
-                    size="lg"
-                    theme="primary"
-                  />
-                }
-              >
-                {children}
-              </Suspense>
-            </main>
-          </ClientProviders>
-        </ErrorBoundary>
+        {/* 導航欄 */}
+        <Navbar />
+        
+        {/* 主要內容區域 */}
+        <main className="min-h-screen pt-0">
+          <Suspense
+            fallback={
+              <Loading
+                fullscreen
+                text="載入應用程式..."
+                blur
+                size="lg"
+                theme="primary"
+              />
+            }
+          >
+            {children}
+          </Suspense>
+        </main>
 
         {/* Portal Root */}
         <div id="portal-root" />
@@ -136,10 +130,16 @@ export default function RootLayout({
         <Toaster position="top-center" />
 
         {/* Analytics */}
-        <Analytics />
+        <script
+          defer
+          src="/_vercel/insights/script.js"
+        ></script>
         
         {/* Speed Insights */}
-        <SpeedInsights />
+        <script
+          defer
+          src="/_vercel/speed-insights/script.js"
+        ></script>
       </body>
     </html>
   )

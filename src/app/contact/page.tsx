@@ -1,209 +1,86 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { toast } from 'react-hot-toast'
-
-// 表單欄位類型
-interface FormData {
-  name: string
-  email: string
-  phone: string
-  company: string
-  message: string
-}
-
-// 初始表單數據
-const initialFormData: FormData = {
-  name: '',
-  email: '',
-  phone: '',
-  company: '',
-  message: ''
-}
+import ContactForm from '@/components/contact/ContactForm'
+import ContactInfo from '@/components/contact/ContactInfo'
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState<FormData>(initialFormData)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // 處理表單提交
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      // 這裡添加表單提交邏輯
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('感謝您的訊息，我們會盡快回覆！')
-      setFormData(initialFormData)
-    } catch (error) {
-      toast.error('發生錯誤，請稍後再試。')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  // 處理輸入變化
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-primary text-white py-20 md:py-28">
-        <div className="container-custom">
+    <main>
+      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="container px-4 mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto text-center mb-16"
           >
-            <h1 className="text-3xl md:text-4xl font-black mb-4">
-              聯絡我們
-            </h1>
-            <p className="text-lg text-white/90">
-              我們期待與您展開對話，為您的診所打造最適合的行銷策略
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">與醫療行銷專家對話</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              專注於您的醫療專業，讓我們處理行銷事務。Aidea:Med為牙醫、眼科、中醫、皮膚科等各類醫療診所提供專業且量身訂製的行銷解決方案。
             </p>
           </motion.div>
-        </div>
-      </section>
 
-      {/* 聯絡資訊 */}
-      <section className="py-16 md:py-20">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-            {/* 聯絡表單 */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white p-8"
-            >
-              <h2 className="text-2xl font-bold mb-6">免費諮詢</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    姓名
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 focus:border-primary focus:outline-none"
-                  />
+          <div className="grid md:grid-cols-12 gap-10">
+            <div className="md:col-span-7">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold mb-3">預約免費行銷諮詢</h2>
+                  <p className="text-gray-600">
+                    填寫以下表單，我們的醫療行銷顧問將與您聯繫，討論您診所的行銷需求和目標。
+                  </p>
                 </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    電子郵件
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 focus:border-primary focus:outline-none"
-                  />
+                <ContactForm showTitle={false} />
+              </motion.div>
+            </div>
+            
+            <div className="md:col-span-5">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 h-full"
+              >
+                <ContactInfo showTitle={false} showMap={true} />
+                
+                <div className="mt-10 pt-10 border-t border-gray-100">
+                  <h3 className="text-xl font-bold mb-4">為何選擇 Aidea:Med?</h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <svg className="w-5 h-5 text-primary mt-1 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-700"><strong>專業團隊</strong>：醫療行銷專家與專科醫師顧問組成的團隊</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg className="w-5 h-5 text-primary mt-1 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-700"><strong>AI技術整合</strong>：運用人工智能提升行銷效率與精準度</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg className="w-5 h-5 text-primary mt-1 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-700"><strong>數據分析</strong>：以數據為導向制定行銷策略，追蹤成效</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg className="w-5 h-5 text-primary mt-1 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-700"><strong>全方位服務</strong>：從品牌建立到數位行銷，一站式解決方案</span>
+                    </li>
+                  </ul>
                 </div>
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    聯絡電話
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-200 focus:border-primary focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                    診所名稱
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-200 focus:border-primary focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                    諮詢內容
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-200 focus:border-primary focus:outline-none resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-primary text-white py-3 font-medium hover:bg-primary/90 transition-colors duration-300 disabled:opacity-50"
-                >
-                  {isSubmitting ? '處理中...' : '送出諮詢'}
-                </button>
-              </form>
-            </motion.div>
-
-            {/* 聯絡資訊 */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-8"
-            >
-              <div>
-                <h2 className="text-2xl font-bold mb-6">聯絡資訊</h2>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">地址</h3>
-                    <p className="text-gray-600">台北市大安區敦化南路二段99號13樓</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">營業時間</h3>
-                    <p className="text-gray-600">週一至週五：09:00 - 18:00</p>
-                    <p className="text-gray-600">週六、週日：休息</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">聯絡方式</h3>
-                    <p className="text-gray-600">電話：(02) 2345-6789</p>
-                    <p className="text-gray-600">Email：contact@example.com</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Google 地圖嵌入 */}
-              <div className="aspect-video">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.0088590165146!2d121.54673731500854!3d25.033776983972203!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abd379a5ec97%3A0xedc006d25a9e35df!2zMTA25Y-w5YyX5biC5aSn5a6J5Y2A5pWm5YyW5Y2X6Lev5LqM5q61OTnomZ8!5e0!3m2!1szh-TW!2stw!4v1631234567890!5m2!1szh-TW!2stw"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   )
 } 

@@ -6,11 +6,8 @@
   "framework": "nextjs",
   "regions": ["hkg1"],
   "env": {
-    "NEXT_PUBLIC_SANITY_PROJECT_ID": "0xftlo5k",
-    "NEXT_PUBLIC_SANITY_DATASET": "production",
-    "NEXT_PUBLIC_SANITY_API_VERSION": "2024-02-25",
-    "NEXT_PUBLIC_GA_MEASUREMENT_ID": "G-XXXXXXXXXX",
-    "NEXT_PUBLIC_GTM_ID": "GTM-XXXXXXX",
+    "NEXT_PUBLIC_GA_MEASUREMENT_ID": "G-CCT5JDRZ8B",
+    "NEXT_PUBLIC_GTM_ID": "GTM-P5XLZB6F",
     "NEXT_PUBLIC_BASE_URL": "https://www.aideamed.com"
   },
   "headers": [
@@ -43,7 +40,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io https://placehold.co https://*.vivo.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://*.api.sanity.io;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://placehold.co https://*.vivo.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com;"
         }
       ]
     },

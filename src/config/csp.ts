@@ -1,6 +1,11 @@
 // 內容安全策略 (CSP) 配置
 // 參考: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
 
+// 定義 ContentSecurityPolicy 介面
+interface ContentSecurityPolicy {
+  [directive: string]: string[];
+}
+
 // 預設政策（開發環境較寬鬆，生產環境較嚴格）
 export const getDefaultDirectives = () => {
   const isDev = process.env.NODE_ENV === 'development'
@@ -29,8 +34,6 @@ export const getDefaultDirectives = () => {
     // 允許連接的來源
     'connect-src': [
       "'self'",
-      'https://*.sanity.io',
-      'https://*.apicdn.sanity.io',
       'https://vitals.vercel-insights.com',
       'https://*.googleapis.com',
       'https://*.google-analytics.com',
@@ -44,9 +47,6 @@ export const getDefaultDirectives = () => {
       "'self'",
       'data:',
       'blob:',
-      'https://*.sanity.io',
-      'https://*.apicdn.sanity.io',
-      'https://cdn.sanity.io',
       'https://source.unsplash.com',
       'https://placehold.co',
     ],
@@ -82,21 +82,31 @@ export const getDefaultDirectives = () => {
   }
 }
 
-// 建立CSP格式字串
-export const formatDirectives = (directives: Record<string, string[]>) => {
+// 將當前的指令格式化為標頭值格式
+function formatDirectives(directives: { [key: string]: string[] }): string {
   return Object.entries(directives)
-    .filter(([_key, value]) => value.length > 0)
-    .map(([key, value]) => {
-      if (key === 'upgrade-insecure-requests' && value.length === 0) {
-        return 'upgrade-insecure-requests'
-      }
-      return `${key} ${value.join(' ')}`
+    .map(([key, values]) => {
+      if (!values || !values.length) return '';
+      return `${key} ${values.join(' ')}`;
     })
-    .join('; ')
+    .filter(Boolean)
+    .join('; ');
 }
 
 // 獲取完整的CSP策略
 export const getContentSecurityPolicy = () => {
   const directives = getDefaultDirectives()
   return formatDirectives(directives)
+}
+
+// 將 CSP 轉換為標頭字符串
+export function cspToString(csp: ContentSecurityPolicy): string {
+  return Object.entries(csp)
+    .map(([key, values]) => {
+      if (!values || !values.length) return null;
+      
+      return `${key} ${values.join(' ')}`;
+    })
+    .filter(Boolean)
+    .join('; ');
 } 

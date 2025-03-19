@@ -36,17 +36,12 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const response = NextResponse.next()
   
-  // 應用安全標頭(不應用於Sanity Studio路徑)
-  if (!pathname.startsWith('/studio') && !pathname.startsWith('/api/')) {
+  // 應用安全標頭(不應用於API路徑)
+  if (!pathname.startsWith('/api/')) {
     const securityHeaders = constructSecurityHeaders()
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value)
     })
-  }
-
-  // 重定向 /studio (精確路徑) 到 /studio-entry
-  if (pathname === '/studio') {
-    return NextResponse.redirect(new URL('/studio-entry', request.url))
   }
 
   // 繼續正常的請求

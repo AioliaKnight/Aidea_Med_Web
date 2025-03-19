@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import Script from 'next/script'
 import { Metadata } from 'next'
-import Image from 'next/image'
+import { animations } from '@/utils/animations'
 import { CaseCard } from '@/components/case/CaseCard'
 
 // 定義案例資料類型
@@ -86,10 +86,10 @@ export interface ArticleStructuredData {
 // 案例資料模型
 export const caseStudies: CaseStudy[] = [
   {
-    id: 'smile-dental',
-    name: '微笑牙醫診所',
+    id: 'north-district-dental',
+    name: '北區牙醫診所A',
     category: '品牌重塑',
-    description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 6 個月內實現：',
+    description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 6 個月內實現顯著成長：',
     metrics: [
       { value: '200%', label: '新患預約成長' },
       { value: '5萬+', label: '社群追蹤者' },
@@ -103,143 +103,175 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: '數位行銷策略規劃',
-        description: '制定完整的數位行銷策略，包含社群媒體、內容行銷、SEO 優化等多元管道。'
+        description: '制定完整的數位行銷策略，包含社群媒體、內容行銷、SEO 優化等多元管道，提升線上能見度與病患互動。'
       },
       {
         title: '社群媒體經營優化',
-        description: '針對目標客群偏好，優化社群媒體策略，持續創建高品質的衛教內容，增強診所專業形象與患者互動。'
+        description: '針對目標客群偏好，優化社群媒體策略，持續創建高品質的專業口腔衛教內容，增強診所專業形象與患者信任感。'
       },
       {
         title: '顧客體驗流程改造',
-        description: '導入數位化管理系統，提升診所運營效率，優化患者就醫體驗，建立長期忠誠度與口碑推薦系統。'
+        description: '導入數位化管理系統，提升診所運營效率，優化從預約到回診的全流程體驗，建立長期忠誠度與口碑推薦系統。'
       }
     ],
     color: '#4A6CF7',
-    image: '/cases/smile-dental.jpg',
-    imageWebp: '/cases/smile-dental.webp',
-    imagePlaceholder: '/cases/smile-dental-placeholder.jpg',
+    image: '/Case_1.jpg',
+    imageWebp: '/Case_1.webp',
+    imagePlaceholder: '/Case_1_placeholder.jpg',
     imageSizes: {
-      sm: '/cases/smile-dental-sm.jpg',
-      md: '/cases/smile-dental-md.jpg',
-      lg: '/cases/smile-dental.jpg',
+      sm: '/Case_1_sm.jpg',
+      md: '/Case_1_md.jpg',
+      lg: '/Case_1.jpg',
     },
     featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
     updatedDate: '2023-11-20T00:00:00Z',
     testimonial: {
       content: '透過專業的品牌重塑服務，不僅提升了診所形象，更帶來實質的營收成長。團隊的執行力和專業度令人印象深刻。',
-      author: '王小明',
+      author: '王醫師',
       title: '診所院長'
     }
   },
   {
-    id: 'kongde-dental',
-    name: '康德牙醫診所',
-    category: '社群經營',
-    description: '透過專業的社群媒體經營與內容策略，3 個月內實現：',
+    id: 'east-district-dental',
+    name: '東區牙醫診所B',
+    category: '空間規劃',
+    description: '建立全新的診所空間設計，結合專業醫療環境與舒適療癒氛圍，提升診所差異化競爭力與病患體驗。',
     metrics: [
-      { value: '180%', label: '預約轉換率' },
-      { value: '3萬+', label: '社群互動' }
+      { value: '35%', label: '初診患者滿意度提升' },
+      { value: '60%', label: '轉診推薦率增長' },
+      { value: '23%', label: '平均診次營收成長' },
+      { value: '40%', label: '回診率提升' }
     ],
     solutions: [
       {
-        title: '建立專業醫療內容庫',
-        description: '規劃並建立完整的醫療知識內容庫，提供高品質的衛教資訊。'
+        title: '空間規劃重塑',
+        description: '依照診所特性與目標客群，重新規劃診療空間、候診區與服務櫃檯，建立療癒系專業風格，減輕患者就醫焦慮。'
       },
       {
-        title: '優化社群互動策略',
-        description: '設計互動式貼文和活動，提升粉絲參與度和互動率。'
+        title: '視覺形象優化',
+        description: '配合空間設計，整合品牌色彩、素材與視覺傳達系統，建立一致性的品牌體驗，增強品牌識別度。'
       },
       {
-        title: '提升品牌知名度',
-        description: '透過多元化的社群行銷策略，擴大品牌影響力和市場佔有率。'
+        title: '服務流程最佳化',
+        description: '根據新空間配置，優化就診流程與動線，提升醫師診療效率與患者體驗，縮短等候時間。'
+      },
+      {
+        title: '員工訓練計劃',
+        description: '為診所團隊提供專業服務訓練，確保軟硬體品質一致，打造從進門到離開的完美診所體驗。'
       }
     ],
-    color: '#FF7A50',
-    publishedDate: '2023-07-10T00:00:00Z',
-    updatedDate: '2023-10-05T00:00:00Z'
-  },
-  {
-    id: 'hengmei-dental',
-    name: '恆美牙醫診所',
-    category: '品牌策略',
-    description: '全方位品牌升級與數位轉型，6 個月內達成：',
-    metrics: [
-      { value: '250%', label: '營收成長' },
-      { value: '90%', label: '客戶滿意度' }
-    ],
-    solutions: [
-      {
-        title: '品牌識別系統重塑',
-        description: '重新設計品牌視覺識別系統，建立一致性的品牌形象。'
-      },
-      {
-        title: '服務流程優化',
-        description: '優化診所服務流程，提升患者就醫體驗和滿意度。'
-      },
-      {
-        title: '數位預約系統建置',
-        description: '導入智能預約系統，提升預約效率和管理便利性。'
-      }
-    ],
-    color: '#7E57C2',
-    publishedDate: '2023-06-20T00:00:00Z',
-    updatedDate: '2023-09-15T00:00:00Z'
-  },
-  {
-    id: 'yadesi-dental',
-    name: '雅德思牙醫診所',
-    category: '整合行銷',
-    description: '全方位的數位整合行銷策略，4 個月內達到：',
-    metrics: [
-      { value: '320%', label: '新患數量' },
-      { value: '210%', label: '品牌曝光' }
-    ],
-    solutions: [
-      {
-        title: '多平台數位廣告整合',
-        description: '整合各大數位廣告平台，精準投放目標客群。'
-      },
-      {
-        title: '專業形象重塑',
-        description: '建立專業醫療團隊形象，提升品牌公信力。'
-      },
-      {
-        title: '病患轉介計畫實施',
-        description: '建立完整的病患轉介系統，提高客戶忠誠度。'
-      }
-    ],
-    color: '#26A69A',
+    color: '#8D72E1',
+    image: '/Case_2.jpg',
+    imageWebp: '/Case_2.webp',
+    imagePlaceholder: '/Case_2_placeholder.jpg',
+    imageSizes: {
+      sm: '/Case_2_sm.jpg',
+      md: '/Case_2_md.jpg',
+      lg: '/Case_2.jpg',
+    },
     featured: true,
-    publishedDate: '2023-05-05T00:00:00Z',
-    updatedDate: '2023-08-30T00:00:00Z'
+    publishedDate: '2023-06-10T00:00:00Z',
+    updatedDate: '2023-09-15T00:00:00Z',
+    testimonial: {
+      content: '全新的診所空間不只讓患者感到舒適，也讓我們的工作效率提高。專業團隊從設計到執行都給予最佳支援。',
+      author: '林醫師',
+      title: '東區診所負責人'
+    }
   },
   {
-    id: 'yuntian-dental',
-    name: '雲天牙醫診所',
-    category: '數位轉型',
-    description: '完整的診所數位轉型與線上服務體驗提升，5 個月內達到：',
+    id: 'central-district-dental',
+    name: '中區牙醫診所C',
+    category: '社群經營',
+    description: '針對都會區年輕族群特性，打造科技感與人性化並存的診所形象，運用社群媒體分享專業口腔保健知識，建立專業且親切的品牌定位',
     metrics: [
-      { value: '280%', label: '線上預約率' },
-      { value: '45%', label: '營運成本降低' }
+      { value: '200%', label: '年輕客群成長' },
+      { value: '35%', label: '社群互動率' },
+      { value: '10K+', label: '知識文章分享數' },
+      { value: '45%', label: '有機流量增長' }
     ],
     solutions: [
       {
-        title: '智能預約系統導入',
-        description: '導入 AI 智能預約系統，提升預約效率和準確度。'
+        title: '社群內容策略',
+        description: '根據目標客群興趣與需求，規劃系列實用衛教內容，透過生動插圖與淺顯解說，提升互動與分享，建立診所專業形象。'
       },
       {
-        title: '線上客戶關係管理',
-        description: '建立完整的線上 CRM 系統，優化客戶服務體驗。'
+        title: '品牌聲音建立',
+        description: '建立統一的品牌語調與溝通風格，在各平台保持一致的專業親切形象，增強品牌識別與記憶點。'
       },
       {
-        title: '行動支付整合',
-        description: '整合多元支付方式，提供便利的付款體驗。'
+        title: '多平台經營優化',
+        description: '全面分析 Instagram、Facebook、LINE 等平台效益，針對不同族群調整內容策略，提升觸及與轉換率。'
+      },
+      {
+        title: '員工參與計畫',
+        description: '培訓診所人員共同參與社群經營，分享真實診所日常與專業知識，增加品牌真實性與親近感。'
       }
     ],
-    color: '#EC407A',
-    publishedDate: '2023-04-15T00:00:00Z',
-    updatedDate: '2023-07-10T00:00:00Z'
+    color: '#FF6C6C',
+    image: '/Case_3.png',
+    imageWebp: '/Case_3.webp',
+    imagePlaceholder: '/Case_3_placeholder.png',
+    imageSizes: {
+      sm: '/Case_3_sm.png',
+      md: '/Case_3_md.png',
+      lg: '/Case_3.png',
+    },
+    featured: false,
+    publishedDate: '2023-05-20T00:00:00Z',
+    updatedDate: '2023-08-10T00:00:00Z',
+    testimonial: {
+      content: '社群經營策略徹底改變了我們與患者的互動方式，年輕族群大幅增加，也提升了診所整體形象。',
+      author: '張醫師',
+      title: '中區診所創辦人'
+    }
+  },
+  {
+    id: 'south-district-dental',
+    name: '南區牙醫診所D',
+    category: '數位轉型',
+    description: '30年老字號診所導入數位化管理系統，優化看診流程，同時保留溫暖的個人化服務，實現傳統價值與現代效率的完美結合',
+    metrics: [
+      { value: '60%', label: '行政工作時間減少' },
+      { value: '95%', label: '老患者回診率' },
+      { value: '75%', label: '新患者成長率' },
+      { value: '30%', label: '營運成本降低' }
+    ],
+    solutions: [
+      {
+        title: '數位管理系統導入',
+        description: '客製化整合預約、病歷、收費、庫存等管理系統，提升診所營運效率，減少人為錯誤。'
+      },
+      {
+        title: '員工數位培訓',
+        description: '為診所團隊提供全面數位工具培訓，確保系統順利導入，並維持優質服務品質。'
+      },
+      {
+        title: '患者溝通系統建立',
+        description: '導入智慧化提醒與回饋系統，增強醫患溝通，提升診療過程透明度與患者滿意度。'
+      },
+      {
+        title: '傳統價值數位化',
+        description: '將診所長期累積的專業經驗與價值觀融入數位系統，確保轉型過程中不失原有的人情味與專業態度。'
+      }
+    ],
+    color: '#3498DB',
+    image: '/Case_4.jpg',
+    imageWebp: '/Case_4.webp',
+    imagePlaceholder: '/Case_4_placeholder.jpg',
+    imageSizes: {
+      sm: '/Case_4_sm.jpg',
+      md: '/Case_4_md.jpg',
+      lg: '/Case_4.jpg',
+    },
+    featured: true,
+    publishedDate: '2023-07-05T00:00:00Z',
+    updatedDate: '2023-10-18T00:00:00Z',
+    testimonial: {
+      content: '數位轉型讓我們從繁瑣的行政工作中解放，能更專注於病患照護。新系統不僅提升效率，老病患也感受到服務品質的提升。',
+      author: '陳醫師',
+      title: '南區診所第二代負責人'
+    }
   }
 ]
 
@@ -251,30 +283,8 @@ const brandColors = {
   lightGray: 'rgba(245, 245, 245, 1)' // 淺灰色用於背景
 };
 
-// 動畫變體定義
-export const animations = {
-  fadeIn: {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.4 }
-  },
-  staggerContainer: {
-    initial: {},
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  },
-  itemFadeIn: {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  }
-};
-
 // 載入狀態組件
-export const LoadingState = (): JSX.Element => {
+export const LoadingState = (): React.ReactElement => {
   return (
     <div className="py-20 flex flex-col items-center justify-center">
       <div className="w-12 h-12 rounded-full border-l-2 border-t-2 border-primary animate-spin mb-4"></div>
@@ -288,7 +298,7 @@ export interface EmptyStateProps {
   category: string;
 }
 
-export const EmptyState = ({ category }: EmptyStateProps): JSX.Element => {
+export const EmptyState = ({ category }: EmptyStateProps): React.ReactElement => {
   return (
     <div className="py-16 flex flex-col items-center justify-center">
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -310,7 +320,7 @@ export interface CaseFilterProps {
   categories: string[];
 }
 
-export const CaseFilter = ({ activeCategory, setActiveCategory, categories }: CaseFilterProps): JSX.Element => {
+export const CaseFilter = ({ activeCategory, setActiveCategory, categories }: CaseFilterProps): React.ReactElement => {
   return (
     <motion.nav 
       initial={{ opacity: 0, y: 20 }}
@@ -349,7 +359,7 @@ export interface AnimatedNumberProps {
   className?: string;
 }
 
-export const AnimatedNumber = ({ value, className }: AnimatedNumberProps): JSX.Element => {
+export const AnimatedNumber = ({ value, className }: AnimatedNumberProps): React.ReactElement => {
   // 過濾出數字部分，預處理加號和百分比
   const numericPart = value.replace(/[^0-9.]/g, '');
   const hasPlusSign = value.includes('+');
@@ -374,7 +384,7 @@ export interface FeaturedCaseProps {
   caseStudy: CaseStudy;
 }
 
-export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): JSX.Element => {
+export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): React.ReactElement => {
   return (
     <motion.article 
       initial={{ opacity: 0, y: 30 }}
@@ -466,13 +476,15 @@ export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): JSX.Element => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.8 }}
             >
-              <Link href={`/case/${caseStudy.id}`} aria-label={`查看${caseStudy.name}的完整案例細節`}>
-                <span className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium group transition-all duration-300 hover:bg-primary/90">
-                  查看完整案例
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </span>
+              <Link 
+                href={`/case/${caseStudy.id}`} 
+                aria-label={`查看${caseStudy.name}的完整案例細節`}
+                className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium group transition-all duration-300 hover:bg-primary/90"
+              >
+                查看完整案例
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </Link>
             </motion.div>
           </div>
@@ -483,7 +495,7 @@ export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): JSX.Element => {
 };
 
 // CTA 組件 - 提供可重用的行動呼籲區塊
-export const CTASection = (): JSX.Element => {
+export const CTASection = (): React.ReactElement => {
   return (
     <motion.section 
       initial={{ opacity: 0, y: 30 }}
@@ -497,15 +509,17 @@ export const CTASection = (): JSX.Element => {
         立即與我們聯繫，獲取專業諮詢與由 AI 技術支持的量身定制行銷方案，讓您的診所在數位時代脫穎而出。
       </p>
       <div className="flex flex-col md:flex-row justify-center gap-4">
-        <Link href="/contact">
-          <span className="inline-block bg-primary text-white px-8 py-4 text-lg font-medium transition-colors hover:bg-primary/90">
-            免費諮詢
-          </span>
+        <Link 
+          href="/contact"
+          className="inline-block bg-primary text-white px-8 py-4 text-lg font-medium transition-colors hover:bg-primary/90"
+        >
+          免費諮詢
         </Link>
-        <Link href="/service">
-          <span className="inline-block border border-white text-white px-8 py-4 text-lg font-medium hover:bg-white hover:text-black transition-colors">
-            了解服務方案
-          </span>
+        <Link 
+          href="/service"
+          className="inline-block border border-white text-white px-8 py-4 text-lg font-medium hover:bg-white hover:text-black transition-colors"
+        >
+          了解服務方案
         </Link>
       </div>
     </motion.section>
@@ -513,7 +527,7 @@ export const CTASection = (): JSX.Element => {
 };
 
 // 回到頂部按鈕組件
-export const BackToTopButton = (): JSX.Element => {
+export const BackToTopButton = (): React.ReactElement => {
   return (
     <motion.button
       initial={{ opacity: 0 }}
@@ -539,11 +553,11 @@ export const generateCasePageMetadata = (): Metadata => {
     openGraph: {
       title: '成功案例分享 | Aidea:Med 牙醫行銷專家',
       description: '透過專業的 AI 整合數位行銷策略，我們協助多家牙醫診所成功打造品牌形象、提升營收。瀏覽我們的成功案例，了解如何為您的診所帶來更多新患與營收。',
-      url: 'https://www.aidea-med.com/case',
+      url: 'https://www.aideamed.com/case',
       siteName: 'Aidea:Med 牙醫行銷專家',
       images: [
         {
-          url: 'https://www.aidea-med.com/images/case-og.jpg',
+          url: 'https://www.aideamed.com/images/case-og.jpg',
           width: 1200,
           height: 630,
           alt: '牙醫診所數位行銷成功案例'
@@ -570,7 +584,7 @@ export const generateCaseStudyMetadata = (caseStudy: CaseStudy): ArticleStructur
       name: 'Aidea:Med 牙醫行銷專家',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.aidea-med.com/logo.png'
+        url: 'https://www.aideamed.com/logo.png'
       }
     },
     publisher: {
@@ -578,12 +592,12 @@ export const generateCaseStudyMetadata = (caseStudy: CaseStudy): ArticleStructur
       name: 'Aidea:Med 牙醫行銷專家',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.aidea-med.com/logo.png'
+        url: 'https://www.aideamed.com/logo.png'
       }
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://www.aidea-med.com/case/${caseStudy.id}`
+      '@id': `https://www.aideamed.com/case/${caseStudy.id}`
     },
     about: {
       '@type': 'Thing',
@@ -604,11 +618,11 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
     openGraph: {
       title: `${caseStudy.name} - ${caseStudy.category} | Aidea:Med 牙醫行銷專家`,
       description: caseStudy.description,
-      url: `https://www.aidea-med.com/case/${caseStudy.id}`,
+      url: `https://www.aideamed.com/case/${caseStudy.id}`,
       siteName: 'Aidea:Med 牙醫行銷專家',
       images: [
         {
-          url: `https://www.aidea-med.com/images/cases/${caseStudy.id}.jpg`,
+          url: `https://www.aideamed.com/images/cases/${caseStudy.id}.jpg`,
           width: 1200,
           height: 630,
           alt: caseStudy.name
@@ -621,7 +635,7 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
       card: 'summary_large_image',
       title: `${caseStudy.name} - ${caseStudy.category} | Aidea:Med 牙醫行銷專家`,
       description: caseStudy.description,
-      images: [`https://www.aidea-med.com/images/cases/${caseStudy.id}.jpg`],
+      images: [`https://www.aideamed.com/images/cases/${caseStudy.id}.jpg`],
     },
     robots: {
       index: true,
@@ -634,16 +648,16 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
       },
     },
     alternates: {
-      canonical: `https://www.aidea-med.com/case/${caseStudy.id}`,
+      canonical: `https://www.aideamed.com/case/${caseStudy.id}`,
     },
-    authors: [{ name: 'Aidea:Med 牙醫行銷專家', url: 'https://www.aidea-med.com' }],
+    authors: [{ name: 'Aidea:Med 牙醫行銷專家', url: 'https://www.aideamed.com' }],
     publisher: 'Aidea:Med 牙醫行銷專家',
     category: '成功案例',
   };
 };
 
 // 更新主頁面組件
-export default function CasePage(): JSX.Element {
+export default function CasePage(): React.ReactElement {
   const [activeCategory, setActiveCategory] = useState('全部')
   const [filteredCases, setFilteredCases] = useState(caseStudies)
   const [isLoading, setIsLoading] = useState(true)

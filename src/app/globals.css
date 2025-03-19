@@ -94,6 +94,22 @@
   .btn-ghost {
     @apply inline-flex items-center justify-center px-6 py-3 bg-transparent text-gray-600 font-medium rounded-sm hover:bg-gray-100 transition-colors;
   }
+  
+  /* 淡入動畫，用於替代Framer Motion的SSR不一致問題 */
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-in-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 /* 自定義滾動條 */

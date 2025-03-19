@@ -6,7 +6,7 @@ import { memo } from 'react'
 
 // 從配置文件導入
 import { colors } from '@/config/theme'
-import { animations } from '@/config/animations'
+import { animations } from '@/utils/animations'
 
 // 定義資料類型
 interface ServiceItem {
@@ -442,6 +442,20 @@ function ServiceFeature() {
       </div>
     </section>
   )
+}
+
+// 列表項渲染函數，添加圓形
+function renderListItem(text: string, _idx: number) {
+  return (
+    <li key={_idx} className="flex items-center mb-2">
+      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+        <svg className="w-3 h-3 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <span className="text-gray-800">{text}</span>
+    </li>
+  );
 }
 
 export default function ServicePage() {

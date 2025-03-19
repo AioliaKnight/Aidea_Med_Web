@@ -1,33 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { caseStudies, CaseStudy, generateCaseStudyMetadata } from '@/components/pages/CasePage'
+import { caseStudies, CaseStudy, generateCaseStudyMetadata, generateCaseMetadata } from '@/components/pages/CasePage'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 import Script from 'next/script'
 import CountUp from 'react-countup'
-
-// 動畫配置
-const animations = {
-  fadeIn: {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5, ease: 'easeOut' }
-  },
-  slideIn: {
-    initial: { opacity: 0, x: -20 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.4, ease: 'easeOut' }
-  },
-  scaleIn: {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.4, ease: 'easeOut' }
-  }
-}
+import { Metadata, ResolvingMetadata } from 'next'
+import { siteConfig } from '@/config/site'
+import CasePage from '@/components/pages/CasePage'
 
 // 主要品牌色系
 const colors = {
@@ -86,21 +70,33 @@ function generateTimeline(caseStudy: CaseStudy): TimelineItem[] {
   ]
 }
 
-// 生成解決方案描述的輔助函數
+/**
+ * 生成解決方案描述（如果缺少描述）
+ */
 function generateSolutionDescription(index: number, clinicName: string): string {
-  const descriptions = [
-    `為${clinicName}建立清晰的品牌定位和一致的視覺識別系統，從診所空間設計到線上形象，創造專業且現代化的品牌體驗。`,
-    `針對目標客群偏好，優化社群媒體策略，持續創建高品質的衛教內容，增強診所專業形象與患者互動。`,
-    `導入數位化管理系統，提升診所運營效率，優化患者就醫體驗，建立長期忠誠度與口碑推薦系統。`
-  ]
+  const commonPhrases = [
+    `為${clinicName}量身打造的整合性解決方案，通過精準的目標市場分析和競爭對手研究，建立差異化的市場定位。`,
+    `針對${clinicName}的特殊需求，我們設計了全方位的客戶體驗優化方案，從預約到治療後的追蹤關懷，提升整體滿意度。`,
+    `結合${clinicName}的專業特色，開發獨特的數位行銷策略，精準觸及目標客群，大幅提升轉換率。`,
+    `重新規劃${clinicName}的品牌識別系統，包括視覺設計、溝通語調與服務流程，建立一致且專業的品牌形象。`
+  ];
   
-  return descriptions[index % descriptions.length]
+  return commonPhrases[index % commonPhrases.length];
 }
 
 // 解決方案介面定義
 interface Solution {
   title: string;
   description: string;
+}
+
+// 添加日期格式化函數
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
 }
 
 export default function CaseDetail() {
@@ -189,7 +185,9 @@ export default function CaseDetail() {
           <div className="container-custom relative z-10">
             {/* 返回按鈕 */}
             <motion.div 
-              {...animations.slideIn}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, ease: [0.6, 0.05, 0.01, 0.9] }}
               className="mb-12"
             >
               <Link href="/case">
@@ -202,69 +200,58 @@ export default function CaseDetail() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* 左側：內容 */}
-              <motion.div {...animations.fadeIn}>
-                <div className="inline-block px-4 py-1 bg-white text-primary text-sm font-medium mb-6">
-                  {caseStudy.category}
-                </div>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 font-display">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.6, 0.05, 0.01, 0.9] }}
+              >
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
                   {caseStudy.name}
                 </h1>
-                <p className="text-xl text-white mb-8">
+                <div className="flex gap-4 mb-8">
+                  <span className="px-3 py-1.5 bg-white/10 rounded-full font-medium">
+                    {caseStudy.category}
+                  </span>
+                  {caseStudy.publishedDate && (
+                    <span className="px-3 py-1.5 bg-white/10 rounded-full font-medium">
+                      發佈於 {formatDate(caseStudy.publishedDate)}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90">
                   {caseStudy.description}
-                </p>
-                {caseStudy.testimonial && (
-                  <motion.div 
-                    className="bg-white/10 p-6"
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <p className="text-white mb-4">&quot;{caseStudy.testimonial.content}&quot;</p>
-                    <div>
-                      <div className="font-medium">{caseStudy.testimonial.author}</div>
-                      <div className="text-white/70 text-sm">{caseStudy.testimonial.title}</div>
-                    </div>
-                  </motion.div>
-                )}
+                </div>
               </motion.div>
 
-              {/* 右側：主要成效 */}
+              {/* 右側：圖片 */}
               <motion.div 
-                {...animations.scaleIn}
-                className="bg-white text-primary p-8"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, ease: [0.6, 0.05, 0.01, 0.9] }}
+                className="relative aspect-video rounded-lg overflow-hidden shadow-xl"
               >
-                <div className="text-center mb-8">
-                  <div className="text-6xl sm:text-7xl font-black mb-2">
-                    <CountUp
-                      end={parseInt(caseStudy.metrics[0].value)}
-                      suffix="%"
-                      duration={2.5}
-                      separator=","
-                    />
+                {imageLoading && !imageError && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
                   </div>
-                  <div className="text-xl">{caseStudy.metrics[0].label}</div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  {caseStudy.metrics.slice(1, 3).map((metric, index) => (
-                    <motion.div 
-                      key={index} 
-                      className="text-center"
-                      whileHover={{ y: -5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="text-3xl font-bold mb-1">
-                        <CountUp
-                          end={parseInt(metric.value)}
-                          suffix={metric.value.replace(/[0-9]/g, '')}
-                          duration={2}
-                          separator=","
-                        />
-                      </div>
-                      <div className="text-sm text-primary/80">
-                        {metric.label}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                )}
+                {!imageError ? (
+                  <Image
+                    src={caseStudy.image || '/images/case-placeholder.jpg'}
+                    alt={caseStudy.name}
+                    fill
+                    className={`object-cover transition-opacity duration-500 ${
+                      imageLoading ? 'opacity-0' : 'opacity-100'
+                    }`}
+                    onLoad={() => setImageLoading(false)}
+                    onError={() => setImageError(true)}
+                    priority
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                    <span className="text-4xl">📷</span>
+                  </div>
+                )}
               </motion.div>
             </div>
           </div>

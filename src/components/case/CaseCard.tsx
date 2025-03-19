@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import React from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -11,12 +12,55 @@ export interface CaseCardProps {
   index: number;
 }
 
-export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
+export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElement => {
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
 
-  // 使用預設圖片或案例圖片
-  const imageSrc = caseStudy.image || '/images/case-placeholder.jpg'
+  // 改進圖片處理 - 確保使用存在的圖片
+  const defaultImage = '/cases/case-placeholder.jpg'
+  const [imageSrc, setImageSrc] = useState(defaultImage)
+  
+  // 使用 useEffect 來設置圖片路徑
+  useEffect(() => {
+    // 明確定義我們知道存在的有效ID列表
+    const validCaseIds = [
+      'north-district-dental', 
+      'east-district-dental', 
+      'central-district-dental', 
+      'south-district-dental',
+      'smile-dental' // 添加微笑牙醫診所的ID
+    ];
+    
+    // 處理圖片路徑的函數
+    const processImagePath = (path: string) => {
+      // 檢查圖片是否存在
+      fetch(path, { method: 'HEAD' })
+        .then(response => {
+          if (response.ok && parseInt(response.headers.get('content-length') || '0') > 100) {
+            setImageSrc(path);
+          } else {
+            console.warn(`Image at ${path} is invalid or too small, using default image instead`);
+            setImageSrc(defaultImage);
+          }
+        })
+        .catch(() => {
+          console.warn(`Failed to verify image at ${path}, using default image instead`);
+          setImageSrc(defaultImage);
+        });
+    };
+    
+    if (caseStudy.image) {
+      // 優先使用案例自帶的圖片路徑
+      processImagePath(caseStudy.image);
+    } else if (caseStudy.id && validCaseIds.includes(caseStudy.id)) {
+      // 只有當ID在有效列表中才使用基於ID的圖片路徑
+      const imgPath = `/cases/${caseStudy.id}.jpg`;
+      processImagePath(imgPath);
+    } else {
+      // 其他情況使用預設圖片
+      setImageSrc(defaultImage);
+    }
+  }, [caseStudy, defaultImage])
 
   return (
     <motion.div
@@ -24,7 +68,7 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+      className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col"
     >
       {/* 圖片區域 */}
       <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
@@ -43,7 +87,13 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
             }`}
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             onLoad={() => setImageLoading(false)}
-            onError={() => setImageError(true)}
+            onError={() => {
+              console.warn(`Failed to load image for case ${caseStudy.id}`);
+              setImageError(true);
+              setImageLoading(false);
+              // 如果圖片加載失敗，設置預設圖片
+              setImageSrc(defaultImage);
+            }}
             priority={index < 2}
           />
         ) : (
@@ -55,7 +105,7 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
       </div>
 
       {/* 內容區域 */}
-      <div className="p-6">
+      <div className="p-5 sm:p-6 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <span className="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-full">
             {caseStudy.category}
@@ -96,25 +146,27 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): JSX.Element => {
           <div className="space-y-2 mb-6">
             {caseStudy.solutions.slice(0, 3).map((solution, idx) => (
               <div key={idx} className="flex items-center text-sm text-gray-600">
-                <svg className="w-4 h-4 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-primary mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {solution.title}
+                <span className="line-clamp-1">{solution.title}</span>
               </div>
             ))}
           </div>
         )}
 
         {/* 查看詳情按鈕 */}
-        <Link
-          href={`/case/${caseStudy.id}`}
-          className="inline-flex items-center justify-center w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-        >
-          查看詳細案例
-          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
+        <div className="mt-auto pt-3">
+          <Link
+            href={`/case/${caseStudy.id}`}
+            className="inline-flex items-center justify-center w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+          >
+            查看詳細案例
+            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </motion.div>
   )

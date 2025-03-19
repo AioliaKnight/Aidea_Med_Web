@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { client } from '@/lib/sanity';
-import { groq } from 'next-sanity';
+import { caseStudies } from '@/components/pages/CasePage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 每小時重新驗證一次
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://aidea-med.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://aideamed.com';
   
   try {
     // 靜態頁面
@@ -49,40 +48,34 @@ export async function GET() {
       },
     ];
 
-    // 從 Sanity 獲取部落格文章
-    const blogQuery = groq`
-      *[_type == "post"] {
-        "slug": slug.current,
-        publishedAt,
-        _updatedAt
-      }
-    `;
-    
-    const blogPosts = await client.fetch(blogQuery);
-    
-    // 從 Sanity 獲取案例
-    const caseQuery = groq`
-      *[_type == "case"] {
-        "slug": slug.current,
-        publishedAt,
-        _updatedAt
-      }
-    `;
-    
-    const cases = await client.fetch(caseQuery);
-    
-    // 將部落格文章添加到 sitemap
-    const blogSitemap = blogPosts.map((post: any) => ({
-      loc: `${baseUrl}/blog/${post.slug}`,
-      lastmod: new Date(post._updatedAt || post.publishedAt).toISOString(),
+    // 處理案例頁面
+    const caseSitemap = caseStudies.map(caseItem => ({
+      loc: `${baseUrl}/case/${caseItem.id}`,
+      lastmod: caseItem.updatedDate || new Date().toISOString(),
       changefreq: 'monthly',
       priority: '0.7',
     }));
     
-    // 將案例添加到 sitemap
-    const caseSitemap = cases.map((caseItem: any) => ({
-      loc: `${baseUrl}/case/${caseItem.slug}`,
-      lastmod: new Date(caseItem._updatedAt || caseItem.publishedAt).toISOString(),
+    // 靜態部落格文章 (之後可以從實際資料源動態獲取)
+    const blogArticles = [
+      {
+        slug: 'digital-marketing-for-dental-clinics',
+        updatedAt: '2024-03-01T00:00:00Z',
+      },
+      {
+        slug: 'social-media-strategies-for-doctors',
+        updatedAt: '2024-03-15T00:00:00Z',
+      },
+      {
+        slug: 'website-optimization-for-medical-practices',
+        updatedAt: '2024-03-20T00:00:00Z',
+      }
+    ];
+    
+    // 將部落格文章添加到 sitemap
+    const blogSitemap = blogArticles.map(post => ({
+      loc: `${baseUrl}/blog/${post.slug}`,
+      lastmod: post.updatedAt,
       changefreq: 'monthly',
       priority: '0.7',
     }));

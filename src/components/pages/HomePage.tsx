@@ -1,447 +1,116 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo, memo } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
 import Link from 'next/link'
-import Image from 'next/image'
+import ContactForm from '@/components/contact/ContactForm'
+import ContactInfo from '@/components/contact/ContactInfo'
+import { caseStudies as casesData } from '@/components/pages/CasePage'
+import { CaseCard } from '@/components/case/CaseCard'
+import { animations } from '@/utils/animations'
+// 引入 Lucide React 圖標
+import { 
+  Stethoscope, 
+  BarChart2, 
+  Users, 
+  Handshake,
+  ClipboardEdit,
+  MonitorSmartphone,
+  UserCog
+} from 'lucide-react'
 
-// SVG圖標組件
-interface IconProps {
-  className?: string;
-}
-
-const AIIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className} aria-label="AI 圖標">
-    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1v-1a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7H2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
-    <path d="M10 17a2 2 0 1 1 4 0 2 2 0 0 1-4 0z" />
-    <path d="M8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-    <path d="M16 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-  </svg>
-);
-
-const TeamIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className} aria-label="團隊圖標">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-    <circle cx="9" cy="7" r="4"></circle>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-  </svg>
-);
-
-const DataIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className}>
-    <path d="M21 4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V4zM21 16a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4z" />
-    <circle cx="6" cy="6" r="1" />
-    <circle cx="6" cy="18" r="1" />
-  </svg>
-);
-
-const ServiceIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className}>
-    <path d="M20.2 7.8l-7.7 7.7-4-4-5.7 5.7"></path>
-    <path d="M15 7h6v6"></path>
-  </svg>
-);
-
-const BrandIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className}>
-    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-  </svg>
-);
-
-const MarketingIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className}>
-    <path d="M3 13h18M5 17h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z" />
-  </svg>
-);
-
-const PatientIcon = ({ className = "" }: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" strokeWidth="0" className={className}>
-    <path d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-  </svg>
-);
-
-// 更新動畫配置，使用統一的動畫系統
-const animations = {
-  fadeIn: {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.6, 0.05, 0.01, 0.9]
-      }
-    }
-  },
-  slideUp: {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.6, 0.05, 0.01, 0.9]
-      }
-    }
-  },
-  staggerContainer: {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  }
-};
-
-// 服務特色數據
+// 服務特色數據 - 替換 emoji 為圖標組件
 const features = [
   {
     title: '專注醫療，行銷交給我們',
     description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，讓您能安心專注於診療品質，為病患提供最好的照護',
-    icon: AIIcon
+    icon: Stethoscope
   },
   {
     title: '數據驅動成長',
     description: '不只是數字，而是每位病患的信任。我們運用智慧分析工具，從預約率到回診率，協助您更了解病患需求，提供更貼心的服務',
-    icon: DataIcon
+    icon: BarChart2
   },
   {
     title: '用心經營口碑',
     description: '好的口碑來自於真誠。我們協助您建立診所獨特價值，透過真實故事與在地連結，讓更多人認識您的專業與用心',
-    icon: TeamIcon
+    icon: Users
   },
   {
     title: '全方位夥伴',
     description: '從線上到線下，我們不只是服務提供者，更是您的成長夥伴。整合數位行銷、空間設計到人員培訓，一起打造溫暖而專業的診所環境',
-    icon: ServiceIcon
-  }
-]
-
-// 案例數據的類型定義
-interface CaseStudy {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  imageWebp?: string;
-  imagePlaceholder?: string;
-  imageSizes?: {
-    sm: string;
-    md: string;
-    lg: string;
-  };
-  category: string;
-  highlight: string;
-  highlightLabel: string;
-  results: string[];
-  color: string;
-}
-
-// 更新案例數據
-const caseStudies: CaseStudy[] = [
-  {
-    id: 'case-1',
-    title: '微笑牙醫診所',
-    description: '在競爭激烈的台北市，如何讓診所脫穎而出？我們從病患需求出發，重新打造診所的品牌形象，將原本冰冷的診所空間，轉變為溫暖舒適的療癒環境，讓每位病患都能安心就醫',
-    image: '/Case_1.jpg',
-    imageWebp: '/Case_1.webp',
-    imagePlaceholder: '/Case_1_placeholder.jpg',
-    imageSizes: {
-      sm: '/Case_1_sm.jpg',
-      md: '/Case_1_md.jpg',
-      lg: '/Case_1.jpg',
-    },
-    category: '品牌升級',
-    highlight: '98%',
-    highlightLabel: '病患滿意度',
-    results: [
-      '新病患推薦率達 85%',
-      '回診率提升 60%',
-      '線上評價 4.9 顆星',
-      '預約等候時間縮短 50%'
-    ],
-    color: 'from-white-600 to-primary'
-  },
-  {
-    id: 'case-2',
-    title: '康德牙醫診所',
-    description: '30年老字號診所如何與時俱進？我們協助導入智慧預約系統，優化看診流程，同時保留溫暖的個人化服務，讓新舊病患都能感受到診所的用心與專業',
-    image: '/Case_2.jpg',
-    imageWebp: '/Case_2.webp',
-    imagePlaceholder: '/Case_2_placeholder.jpg',
-    imageSizes: {
-      sm: '/Case_2_sm.jpg',
-      md: '/Case_2_md.jpg',
-      lg: '/Case_2.jpg',
-    },
-    category: '數位轉型',
-    highlight: '92%',
-    highlightLabel: '病患推薦率',
-    results: [
-      '老病患回診率維持 95%',
-      '新病患成長 75%',
-      '行政作業時間減少 60%',
-      '醫師看診效率提升 40%'
-    ],
-    color: 'from-white-600 to-primary'
-  },
-  {
-    id: 'case-3',
-    title: '恩典牙醫診所',
-    description: '位於新竹科學園區，如何吸引年輕族群？我們打造科技感與人性化並存的診所形象，運用社群媒體分享口腔保健知識，建立專業且親切的品牌形象',
-    image: '/Case_3.png',
-    imageWebp: '/Case_3.webp',
-    imagePlaceholder: '/Case_3_placeholder.png',
-    imageSizes: {
-      sm: '/Case_3_sm.png',
-      md: '/Case_3_md.png',
-      lg: '/Case_3.png',
-    },
-    category: '社群經營',
-    highlight: '200%',
-    highlightLabel: '年輕客群成長',
-    results: [
-      '25-35歲病患增加 150%',
-      '社群互動率達 35%',
-      '知識文章分享破萬次',
-      '員工滿意度提升 80%'
-    ],
-    color: 'from-white-600 to-primary'
+    icon: Handshake
   }
 ]
 
 // 服務流程數據
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const serviceProcess = [
   {
     step: '01',
     title: '深入了解',
     description: '傾聽您的故事與願景，了解診所的特色和困境，共同規劃最適合的成長方向',
-    icon: PatientIcon
+    emoji: '👂'
   },
   {
     step: '02',
     title: '策略規劃',
     description: '結合數據分析與在地特色，為您量身打造專屬的品牌策略與行銷計畫',
-    icon: BrandIcon
+    emoji: '📋'
   },
   {
     step: '03',
     title: '執行優化',
     description: '專業團隊全程陪伴，持續追蹤成效並即時調整，確保每一步都朝著目標前進',
-    icon: MarketingIcon
+    emoji: '🚀'
   },
   {
     step: '04',
     title: '成長茁壯',
     description: '不只是短期成效，更要建立長期競爭力，讓診所能持續穩定成長',
-    icon: DataIcon
+    emoji: '📈'
   }
 ]
-
-// 團隊成員資料
-/* 暫時未使用，但保留供未來使用
-const teamMembers = [
-  {
-    name: '陳維鈞',
-    nameEn: 'Wilson Chen',
-    title: '創辦人暨執行長',
-    titleEn: 'Founder & CEO',
-    expertise: ['醫療品牌策略', '診所數位轉型', '整合行銷規劃'],
-    description: '擁有超過15年醫療行銷經驗，協助百家診所成功打造品牌。專精於整合數位策略與品牌發展，為診所制定精準的成長方案。曾獲選台灣醫療創新百大。',
-    image: '/images/team/member-1.png',
-    linkedin: 'https://www.linkedin.com/in/wilson-chen/'
-  },
-  // ... 其他團隊成員
-];
-*/
 
 // 動畫區塊組件
 interface AnimatedSectionProps {
   children: React.ReactNode
   className?: string
   delay?: number
+  suppressHydrationWarning?: boolean
 }
 
-const AnimatedSection = memo(function AnimatedSection({ 
-  children, 
-  className = '', 
-  delay = 0 
-}: AnimatedSectionProps) {
-  const controls = useAnimation();
+// 動畫Section組件
+const AnimatedSection = ({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
+  const controls = useAnimation()
   const [ref, inView] = useInView({
-    threshold: 0.1,
     triggerOnce: true,
-    rootMargin: '50px'
-  });
+    threshold: 0.1
+  })
 
   useEffect(() => {
     if (inView) {
-      controls.start('animate');
+      controls.start({ 
+        opacity: 1, 
+        y: 0,
+        transition: { duration: 0.6, delay: delay * 0.2 }
+      })
     }
-  }, [controls, inView]);
+  }, [controls, inView, delay])
 
   return (
     <motion.div
       ref={ref}
-      initial="initial"
+      initial={{ opacity: 0, y: 30 }}
       animate={controls}
-      variants={{
-        initial: { opacity: 0, y: 10 },
-        animate: {
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.3,
-            delay
-          }
-        }
-      }}
       className={className}
+      suppressHydrationWarning={suppressHydrationWarning}
     >
       {children}
     </motion.div>
-  );
-});
-
-// 團隊成員卡片組件
-// 註解掉未使用的組件，保留定義以供將來可能的使用
-/*
-interface TeamMemberCardProps {
-  member: typeof teamMembers[0]
-  delay: number
-}
-
-const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
-  const [imageLoading, setImageLoading] = useState(true)
-  const [imageError, setImageError] = useState(false)
-
-  return (
-    <AnimatedSection delay={delay}>
-      <div className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-        <div className="aspect-[4/5] relative overflow-hidden bg-gray-100">
-          {imageLoading && !imageError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-              <Spinner />
-            </div>
-          )}
-          {!imageError ? (
-            <Image
-              src={member.image}
-              alt={member.name}
-              fill
-              className={`object-cover transform group-hover:scale-105 transition-transform duration-300 ${
-                imageLoading ? 'opacity-0' : 'opacity-100'
-              }`}
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onLoad={() => setImageLoading(false)}
-              onError={() => setImageError(true)}
-              priority
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-              <span className="text-4xl">👤</span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </div>
-        <div className="p-4 sm:p-6">
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-xl sm:text-2xl font-bold text-primary mb-1">
-                  {member.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {member.nameEn}
-                </p>
-              </div>
-              {member.linkedin && (
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-primary transition-colors"
-                  aria-label={`${member.name}的LinkedIn個人檔案`}
-                >
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                  </svg>
-                </a>
-              )}
-            </div>
-            <p className="text-primary/80 font-medium">
-              {member.title}
-            </p>
-            <p className="text-sm text-gray-500">
-              {member.titleEn}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {member.expertise.map((skill) => (
-              <span
-                key={skill}
-                className="px-2 sm:px-3 py-1 bg-primary/5 text-primary rounded-full text-xs sm:text-sm"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">
-            {member.description}
-          </p>
-        </div>
-      </div>
-    </AnimatedSection>
   )
 }
-*/
-
-// 優化圖片加載組件
-// 註解掉未使用的組件，保留定義以供將來可能的使用
-/*
-const ImageWithFallback = memo(function ImageWithFallback({ 
-  src, 
-  alt, 
-  className = "",
-  priority = false,
-  sizes = "100vw",
-  quality = 75,
-  onLoad,
-  onError
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-  priority?: boolean;
-  sizes?: string;
-  quality?: number;
-  onLoad?: () => void;
-  onError?: () => void;
-}) {
-  return (
-    <div className="relative w-full h-full bg-gray-100">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className={`object-cover transition-opacity duration-300 ${className}`}
-        priority={priority}
-        quality={quality}
-        sizes={sizes}
-        onLoad={onLoad}
-        onError={onError}
-        loading={priority ? "eager" : "lazy"}
-      />
-    </div>
-  );
-});
-*/
 
 // 客戶評價介面定義
 interface Testimonial {
@@ -542,48 +211,6 @@ const faqs = [
   }
 ];
 
-// 新增背景圖片組件
-// 註解掉未使用的組件，保留定義以供將來可能的使用
-/*
-interface BackgroundImageProps {
-  variant: 'white' | 'primary';
-  className?: string;
-}
-
-const BackgroundImage = memo(function BackgroundImage({ variant, className = '' }: BackgroundImageProps) {
-  const baseUrl = variant === 'primary' ? '/images/bgline-w' : '/images/bgline-r';
-  
-  return (
-    <div className={`absolute inset-0 pointer-events-none ${className}`}>
-      <picture>
-        <source
-          media="(min-width: 1024px)"
-          srcSet={`${baseUrl}.webp`}
-          type="image/webp"
-        />
-        <source
-          media="(min-width: 768px)"
-          srcSet={`${baseUrl}_md.webp`}
-          type="image/webp"
-        />
-        <source
-          srcSet={`${baseUrl}_sm.webp`}
-          type="image/webp"
-        />
-        <Image
-          src={`${baseUrl}_sm.png`}
-          alt=""
-          fill
-          className="object-cover opacity-100"
-          priority={variant === 'primary'}
-          sizes="100vw"
-        />
-      </picture>
-    </div>
-  );
-});
-*/
-
 // 更新 Hero Section 樣式
 function HeroSection() {
   // 改進動畫效果
@@ -608,20 +235,7 @@ function HeroSection() {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   }, [isClient]);
 
-  // 簡化元素動畫變體，註解掉未使用的變數
-  /*
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1
-      }
-    }
-  };
-  */
-
+  // 簡化元素動畫變體
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -646,22 +260,22 @@ function HeroSection() {
       
       <div className="container-custom relative z-20">
         <div className="max-w-4xl">
-          {/* 使用普通 h1 而非 motion.h1，避免首屏水合延遲 */}
           <h1 
-            className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold leading-tight"
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight"
             data-animate="false"
-            data-priority="high" // 使用 data 屬性標記高優先級
+            data-priority="high"
+            suppressHydrationWarning
           >
             專業醫療行銷團隊<br/>
             為診所帶來<span className="underline decoration-4 decoration-white/30">突破性成長</span>
           </h1>
           
-          {/* 直接渲染 LCP 內容，不使用動畫，確保快速顯示 */}
           <p 
             className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed mt-6"
             data-animate="false"
+            suppressHydrationWarning
           >
-            深耕牙醫行銷領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
+            深耕牙醫診所領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
           </p>
           
           {/* 次要內容使用動畫效果，在 LCP 後加載 */}
@@ -694,16 +308,11 @@ function HeroSection() {
 // 更新服務特色區塊
 function FeatureSection() {
   return (
-    <section id="features" className="relative py-24 bg-white overflow-hidden" role="region" aria-label="服務特色">
-      {/* 使用簡化的背景裝飾 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"></div>
-      
-      {/* 移除裝飾元素 */}
-      
+    <section id="features" className="py-20 bg-gray-50 overflow-hidden" suppressHydrationWarning>
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-center mb-16" suppressHydrationWarning>
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">我們的優勢</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6" suppressHydrationWarning>
             為什麼選擇<span className="text-primary">專業團隊</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -718,18 +327,16 @@ function FeatureSection() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {features.map((feature) => (
+          {features.map((feature, index) => (
             <motion.div 
               key={feature.title} 
               variants={animations.slideUp}
-              className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500"
+              className="group bg-white p-8 rounded-lg border border-gray-100 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-500"
             >
-              <div className="mb-8">
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
-                  <feature.icon 
-                    className="w-8 h-8 text-white" 
-                    aria-hidden="true"
-                  />
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center transform group-hover:bg-primary group-hover:scale-105 transition-all duration-500">
+                  {/* 使用 Lucide 圖標替代 emoji */}
+                  <feature.icon size={28} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors duration-500" />
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
@@ -739,9 +346,14 @@ function FeatureSection() {
                 {feature.description}
               </p>
               
-              {/* 新增微互動元素 */}
+              {/* 改進的微互動元素 */}
               <div className="mt-6 pt-4 border-t border-gray-100">
-                <div className="w-8 h-0.5 bg-primary scale-0 group-hover:scale-100 transition-transform duration-500 origin-left"></div>
+                <motion.div 
+                  className="w-8 h-0.5 bg-primary scale-0 group-hover:scale-100 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                />
               </div>
             </motion.div>
           ))}
@@ -751,42 +363,42 @@ function FeatureSection() {
   );
 }
 
-// 更新服務內容區塊
+// 更新服務內容區塊 - 使用 Lucide 圖標
 const services = [
   {
-    title: '品牌形象建立',
-    description: '每間診所都有一段獨特的故事與信念。我們深入傾聽您的初心，打造能真實傳達醫療溫度的品牌形象，讓病患從踏入診所的第一刻，就能感受到您的專業與用心，建立起超越診療的情感連結。',
+    title: '品牌策略規劃',
+    description: '從市場分析到競爭者研究，協助您建立診所獨特的品牌定位與價值主張',
     features: [
-      '診所品牌理念梳理與故事打造',
-      '診所空間溫度與療癒氛圍設計',
-      '醫師個人專業形象塑造',
-      '診所與病患情感連結建立'
+      '品牌定位與價值主張',
+      '目標患者族群分析',
+      '品牌視覺與聲音規劃',
+      '差異化競爭策略'
     ],
-    icon: BrandIcon,
+    icon: ClipboardEdit,
     link: '/service#brand'
   },
   {
-    title: '數位轉型優化',
-    description: '在數位時代，我們協助診所進行有溫度的轉型。在每個數位接觸點注入人性關懷，打造高效且溫暖的診所體驗。從預約流程到診後關懷，讓科技成為連結醫師專業與病患需求的橋樑，使醫療服務更便捷且更有溫度。',
+    title: '數位行銷整合',
+    description: '結合搜尋引擎優化、社群經營與線上廣告，提升診所數位能見度與患者轉化率',
     features: [
-      '智慧預約系統與醫病溝通平台',
-      '整合診所資訊與管理系統',
-      '數位化病患關懷機制',
-      '醫療專業數位化呈現'
+      '搜尋引擎優化 (SEO)',
+      '社群媒體策略與經營',
+      '精準投放網路廣告',
+      '患者轉化率優化'
     ],
-    icon: ServiceIcon,
+    icon: MonitorSmartphone,
     link: '/service#digital'
   },
   {
-    title: '行銷策略執行',
-    description: '讓專業的醫療行銷團隊成為您的成長夥伴。我們了解台灣診所的獨特環境與挑戰，運用專業且有溫度的行銷策略，從內容創作到口碑建立，讓真正需要幫助的病患能找到您，共同實現醫者對優質醫療的堅持與理想。',
+    title: '患者體驗優化',
+    description: '全面審視並改善患者與診所的每一個接觸點，提升整體滿意度與回診率',
     features: [
-      '真實社群互動與經營',
-      '精準在地廣告投放',
-      '有溫度的專業內容製作',
-      'SEO 優化與口碑建立'
+      '患者旅程地圖分析',
+      '前台服務流程優化',
+      '空間與視覺設計',
+      '患者關係管理系統'
     ],
-    icon: MarketingIcon,
+    icon: UserCog,
     link: '/service#marketing'
   }
 ];
@@ -802,58 +414,71 @@ function ServiceSection() {
         <AnimatedSection className="text-center mb-16">
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">專業服務</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            讓您<span className="text-primary">專注醫療初心</span>，行銷交給我們
+            為您提供的<span className="text-primary">整合服務</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            我們深知每位醫師背後都有對醫療的熱忱與堅持。由我們扛起行銷的重擔，讓您能全心投入於照護病患，實現醫者的價值與使命，為台灣醫療環境注入更多溫暖與專業
+            從品牌策略到數位行銷，我們提供全方位診所成長方案，系統性解決經營痛點
           </p>
         </AnimatedSection>
-          
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          variants={animations.staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          {services.map((service) => (
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {services.map((service, index) => (
             <motion.div 
-              key={service.title} 
-              variants={animations.slideUp}
-              className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
+              key={service.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ 
+                duration: 0.5,
+                delay: index * 0.1 
+              }}
+              whileHover={{ 
+                y: -5,
+                transition: { duration: 0.2 }
+              }}
+              className="bg-white rounded-lg border border-gray-100 hover:border-primary/20 p-8 shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="mb-8">
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
-                  <service.icon className="w-8 h-8 text-white" />
-                </div>
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary">
+                {/* 使用 Lucide 圖標替代 emoji */}
+                <service.icon size={28} strokeWidth={1.5} className="text-primary" />
               </div>
               
-              <h3 className="text-xl font-bold mb-4 text-gray-900">{service.title}</h3>
-              <p className="text-gray-600 font-content mb-6 flex-grow">{service.description}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {service.title}
+              </h3>
+              <p className="text-gray-600 mb-8">
+                {service.description}
+              </p>
               
-              <div className="mt-auto">
-                <Link 
-                  href={service.link || '/service'} 
-                  className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors"
-                >
-                  了解更多
-                  <svg className="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <ul className="space-y-3 mb-8">
+                {service.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start">
+                    <span className="text-primary mr-2 text-lg">✓</span>
+                    <span className="text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              
+              <div className="pt-4 mt-auto">
+                <Link href={service.link} className="inline-flex items-center text-primary font-medium group">
+                  了解更多服務細節
+                  <motion.svg 
+                    className="w-5 h-5 ml-2" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    animate={{ x: 0 }}
+                    whileHover={{ x: 3 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  </motion.svg>
                 </Link>
               </div>
             </motion.div>
           ))}
-        </motion.div>
-
-        <AnimatedSection className="mt-16 text-center">
-          <Link href="/service" className="btn-primary">
-            探索全部服務
-            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </Link>
-        </AnimatedSection>
+        </div>
       </div>
     </section>
   );
@@ -926,47 +551,55 @@ function StatsSection() {
 }
 
 // 更新案例展示區塊
-function CaseCarousel({
-  imageLoadingStates,
-  imageErrorStates,
-  handleImageLoad,
-  handleImageError,
-  getResponsiveImageSrc
-}: {
-  imageLoadingStates: Record<string, boolean>;
-  imageErrorStates: Record<string, boolean>;
-  handleImageLoad: (id: string) => void;
-  handleImageError: (id: string) => void;
-  getResponsiveImageSrc: (caseStudy: CaseStudy) => string;
-}) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
+function CaseStudiesSection() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  
+  // 只使用具有完整數據且確認存在的案例，明確列出已知有效的ID
+  const validCases = useMemo(() => {
+    // 明確定義我們知道存在的有效ID列表
+    const validCaseIds = ['north-district-dental', 'east-district-dental', 'central-district-dental', 'south-district-dental'];
+    
+    // 只使用我們明確知道有效的案例ID
+    return casesData.filter(cs => 
+      // 檢查ID是否在我們的有效列表中 或 檢查案例是否有明確的圖片路徑
+      (validCaseIds.includes(cs.id) || cs.image) &&
+      // 確保有必要的基本數據
+      cs.name && 
+      cs.description && 
+      Array.isArray(cs.metrics) && 
+      cs.metrics.length > 0
+    );
+  }, []);
+  
+  // 選擇一個精選案例
+  const featuredCase = useMemo(() => {
+    const featured = validCases.find(cs => cs.featured);
+    return featured || validCases[0]; // 如果沒有標記為精選的，使用第一個
+  }, [validCases]);
+  
+  // 選擇非精選的其他案例
+  const regularCases = useMemo(() => {
+    if (!featuredCase) return [];
+    return validCases
+      .filter(cs => cs.id !== featuredCase.id)
+      .slice(0, 3); // 只顯示最多3個案例
+  }, [validCases, featuredCase]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 75) {
-      setCurrentSlide(prev => (prev + 1) % caseStudies.length);
-    }
-
-    if (touchStart - touchEnd < -75) {
-      setCurrentSlide(prev => (prev - 1 + caseStudies.length) % caseStudies.length);
-    }
-  };
+  // 建立從路由到案例詳情頁的函數
+  const getValidCaseUrl = useCallback((caseId: string) => {
+    return `/case/${caseId}`;
+  }, []);
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
-      {/* 簡化的背景 */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-white to-white"></div>
+    <section ref={ref} className="relative py-20 md:py-28 bg-white">
+      {/* 裝飾元素 */}
+      <div className="absolute left-0 top-0 h-40 w-px bg-gray-100"></div>
+      <div className="absolute right-0 bottom-0 h-40 w-px bg-gray-100"></div>
       
-      <div className="container-custom relative z-10 px-4 sm:px-6">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -975,151 +608,103 @@ function CaseCarousel({
           transition={{ duration: 0.6 }}
         >
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">成功案例</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             診所<span className="text-primary">成功案例</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            透過專業的品牌策略與數位行銷，協助醫療診所突破經營瓶頸，實現持續成長
+          <div className="w-12 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            探索我們如何幫助診所提升品牌價值、增加營業額，打造專屬數位行銷策略
           </p>
         </motion.div>
 
-        <div className="relative"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* 導航按鈕 */}
-          <div className="absolute top-1/2 -left-4 sm:-left-12 -translate-y-1/2 z-20">
-            <button
-              onClick={() => setCurrentSlide(prev => (prev - 1 + caseStudies.length) % caseStudies.length)}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="上一個案例"
-            >
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          </div>
-          
-          <div className="absolute top-1/2 -right-4 sm:-right-12 -translate-y-1/2 z-20">
-            <button
-              onClick={() => setCurrentSlide(prev => (prev + 1) % caseStudies.length)}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="下一個案例"
-            >
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {caseStudies.map((caseStudy, index) => (
-              index === currentSlide && (
+        <AnimatePresence>
+          {inView && (
+            <>
+              {/* 精選案例 */}
+              {featuredCase && (
                 <motion.div
-                  key={caseStudy.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-gray-50 rounded-2xl overflow-hidden shadow-md"
+                  transition={{ duration: 0.6 }}
+                  className="mb-16"
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-                    {/* 左側：案例圖片 */}
-                    <div className="relative aspect-[4/3] bg-white rounded-lg overflow-hidden shadow-sm">
-                      {imageLoadingStates[caseStudy.id] && !imageErrorStates[caseStudy.id] && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                          <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        </div>
-                      )}
-                      
-                      <Image
-                        src={getResponsiveImageSrc(caseStudy)}
-                        alt={caseStudy.title}
-                        fill
-                        className={`object-cover transition-transform duration-700 hover:scale-105 ${
-                          imageLoadingStates[caseStudy.id] ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        onLoad={() => handleImageLoad(caseStudy.id)}
-                        onError={() => handleImageError(caseStudy.id)}
-                        priority={index === 0}
-                      />
-                    </div>
-                    
-                    {/* 右側：案例內容 */}
-                    <div className="flex flex-col justify-center">
-                      <div className="mb-8">
-                        <span className="inline-flex items-center px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm font-medium mb-4">
-                          {caseStudy.category}
-                        </span>
-                        <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                          {caseStudy.title}
-                        </h3>
-                        <p className="text-gray-600 text-lg">
-                          {caseStudy.description}
-                        </p>
-                      </div>
-                      
-                      <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
-                          <span className="text-gray-600 font-medium">關鍵成效</span>
-                          <div className="flex items-center bg-gray-50 px-4 py-2 rounded-lg">
-                            <span className="text-3xl font-bold text-primary">{caseStudy.highlight}</span>
-                            <span className="text-sm text-gray-500 ml-2">{caseStudy.highlightLabel}</span>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          {caseStudy.results.map((result) => (
-                            <div key={result} className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                              <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                              <span className="text-gray-700">{result}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center">
-                        <Link
-                          href={`/case/${caseStudy.id}`}
-                          className="inline-flex items-center text-primary font-medium group"
-                        >
-                          查看完整案例
-                          <motion.svg 
-                            className="w-5 h-5 ml-2" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                            initial={{ x: 0 }}
-                            whileHover={{ x: 3 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </motion.svg>
-                        </Link>
-                        
-                        <div className="flex gap-2">
-                          {caseStudies.map((_, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => setCurrentSlide(idx)}
-                              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                                idx === currentSlide 
-                                  ? 'bg-primary scale-125' 
-                                  : 'bg-gray-300 hover:bg-gray-400'
-                              }`}
-                              aria-label={`切換到第${idx+1}個案例`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  <div className="p-1 mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center mb-6">
+                      <span className="block w-4 h-px bg-primary mr-3"></span>
+                      精選案例
+                    </h3>
+                  </div>
+                  
+                  {/* 移除外層的 Link 包裹，由 FeaturedCase 組件內部處理連結 */}
+                  <div className="col-span-12 lg:col-span-8">
+                    <CaseCard
+                      caseStudy={featuredCase}
+                      index={0}
+                    />
                   </div>
                 </motion.div>
-              )
-            ))}
-          </AnimatePresence>
-        </div>
+              )}
+              
+              {/* 一般案例 */}
+              {regularCases.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="mb-16"
+                >
+                  <div className="flex items-center justify-between mb-10">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                      <span className="block w-4 h-px bg-primary mr-3"></span>
+                      更多成功案例
+                    </h3>
+                    <Link href="/case" className="text-primary text-sm font-medium hover:underline">
+                      查看全部
+                    </Link>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    {regularCases.map((caseStudy, index) => (
+                      // 移除外層 Link，改用 div，讓 CaseCard 內部處理導航
+                      <div 
+                        key={caseStudy.id} 
+                        className="block h-full"
+                      >
+                        <CaseCard
+                          caseStudy={caseStudy}
+                          index={index}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+              
+              {/* CTA 區塊 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="text-center"
+              >
+                <div className="border-t border-gray-100 pt-12 pb-4">
+                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    我們擁有豐富的成功案例，展示如何協助不同類型的診所提升營運績效
+                  </p>
+                  <Link 
+                    href="/case"
+                    className="inline-flex items-center px-6 py-2 border-2 border-primary text-primary font-medium hover:bg-primary hover:text-white transition-colors duration-300"
+                  >
+                    探索所有成功案例
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
@@ -1159,6 +744,17 @@ function TestimonialsSection() {
     
   const totalPages = Math.ceil(testimonials.length / currentItems);
   
+  // 自動播放功能
+  useEffect(() => {
+    if (totalPages <= 1) return;
+    
+    const autoplayInterval = setInterval(() => {
+      setCurrentPage(prev => (prev + 1) % totalPages);
+    }, 5000);
+    
+    return () => clearInterval(autoplayInterval);
+  }, [totalPages]);
+  
   const handleNextPage = useCallback(() => {
     setCurrentPage(prev => (prev + 1) % totalPages);
   }, [totalPages]);
@@ -1176,9 +772,36 @@ function TestimonialsSection() {
       : testimonials.slice(start, start + currentItems);
   }, [currentPage, currentItems]);
 
+  // 動畫變體
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -50,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
-    <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
-      {/* 移除背景裝飾和引號裝飾 */}
+    <section className="relative py-24 bg-white overflow-hidden">
+      {/* 簡約背景元素 */}
+      <div className="absolute top-0 left-0 w-1/3 h-px bg-primary/20"></div>
+      <div className="absolute bottom-0 right-0 w-1/3 h-px bg-primary/20"></div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <motion.div 
@@ -1188,145 +811,106 @@ function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">客戶評價</span>
+          <span className="inline-block text-primary font-medium mb-4 text-sm tracking-wide">客戶評價</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             合作夥伴<span className="text-primary">真實心聲</span>
           </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             聽聽專業牙醫如何評價我們的服務
           </p>
         </motion.div>
 
-        <div className="relative">
-          {/* 在小螢幕顯示導航控制 */}
-          {isClient && isMobile && testimonials.length > itemsPerPage.mobile && (
-            <div className="flex justify-center items-center gap-2 mb-8 md:hidden">
-              <button 
-                onClick={handlePrevPage}
-                className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-300"
-                aria-label="上一頁推薦"
-              >
-                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div className="flex gap-2">
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
-                      i === currentPage ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                    aria-label={`切換到第${i+1}頁推薦`}
-                  />
-                ))}
-              </div>
-              <button 
-                onClick={handleNextPage}
-                className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-300"
-                aria-label="下一頁推薦"
-              >
-                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          )}
-
-          {/* 證言卡片網格 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
-            {/* 大螢幕顯示左側導航控制 */}
-            {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
-              <button 
-                onClick={handlePrevPage}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-left-16 transition-all hover:scale-110"
-                aria-label="上一頁推薦"
-              >
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-            )}
-            
-            {/* 顯示評價卡片，使用 AnimatePresence 做轉場 */}
-            <AnimatePresence>
-              {displayTestimonials.map((testimonial) => (
-                <motion.div
-                  key={testimonial.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 h-full flex flex-col border border-gray-100 hover:-translate-y-1">
-                    <div className="flex items-center mb-6">
-                      <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden relative mr-4 border-2 border-primary/10">
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-lg">{testimonial.name}</h3>
-                        <p className="text-sm text-gray-600">{testimonial.title}</p>
-                      </div>
-                    </div>
-                    <div className="flex mb-4">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <svg key={i} className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-gray-600 italic relative">
-                        <span className="text-primary text-4xl absolute -top-4 -left-2 opacity-20">&ldquo;</span>
-                        {testimonial.content}
-                        <span className="text-primary text-4xl absolute -bottom-8 -right-2 opacity-20">&rdquo;</span>
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-            
-            {/* 大螢幕顯示右側導航控制 */}
-            {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
-              <button 
-                onClick={handleNextPage}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 justify-center items-center z-20 lg:translate-x-0 lg:-right-16 transition-all duration-300 hover:scale-110"
-                aria-label="下一頁推薦"
-              >
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-          </div>
-          
-          {/* 下方導航指示器 - 在平板及以上顯示 */}
-          {isClient && !isMobile && testimonials.length > itemsPerPage.tablet && (
-            <div className="hidden md:flex justify-center items-center mt-10 gap-3">
+        <div className="relative py-8">
+          {/* 輪播指示器 - 頂部置中 */}
+          {isClient && testimonials.length > currentItems && (
+            <div className="flex justify-center items-center gap-2 mb-10">
               {Array.from({ length: totalPages }).map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${
-                    i === currentPage 
-                      ? 'bg-primary scale-125' 
-                      : 'bg-gray-300 hover:bg-gray-400'
+                  className={`w-8 h-1 transition-all duration-300 ${
+                    i === currentPage ? 'bg-primary' : 'bg-gray-200 hover:bg-gray-300'
                   }`}
                   aria-label={`切換到第${i+1}頁推薦`}
                 />
               ))}
             </div>
           )}
+
+          {/* 評價卡片容器 */}
+          <div className="relative overflow-hidden">
+            {/* 導航按鈕 - 絕對定位在兩側 */}
+            {isClient && !isMobile && testimonials.length > currentItems && (
+              <>
+                <button 
+                  onClick={handlePrevPage}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex justify-center items-center bg-white border border-gray-100 text-primary hover:bg-gray-50 transition-colors"
+                  aria-label="上一頁推薦"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button 
+                  onClick={handleNextPage}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex justify-center items-center bg-white border border-gray-100 text-primary hover:bg-gray-50 transition-colors"
+                  aria-label="下一頁推薦"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* 評價卡片 */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"
+            >
+              <AnimatePresence mode="wait">
+                {displayTestimonials.map((testimonial) => (
+                  <motion.div
+                    key={testimonial.name}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    layout
+                  >
+                    <div className="bg-white border border-gray-100 p-6 h-full flex flex-col">
+                      {/* 評價頂部 - 引號裝飾 */}
+                      <div className="text-primary text-4xl font-serif mb-4">&ldquo;</div>
+                      
+                      {/* 評價內容 */}
+                      <div className="flex-1 mb-6">
+                        <p className="text-gray-700 leading-relaxed">
+                          {testimonial.content}
+                        </p>
+                      </div>
+                      
+                      {/* 評價底部 - 作者資訊 */}
+                      <div className="flex items-center mt-auto pt-4 border-t border-gray-100">
+                        <div className="w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-bold rounded-sm mr-4">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-gray-900">{testimonial.name}</h3>
+                          <p className="text-sm text-gray-500">{testimonial.title}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </div>
         
-        {/* 聯絡我們的CTA區塊 */}
+        {/* 聯絡我們CTA區塊 */}
         <motion.div 
           className="mt-20"
           initial={{ opacity: 0, y: 20 }}
@@ -1334,33 +918,20 @@ function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 rounded-2xl text-center">
+          <div className="border border-primary/10 bg-white p-8 text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">想了解更多合作案例？</h3>
-            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+            <div className="w-12 h-1 bg-primary/30 mx-auto mb-6"></div>
+            <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
               我們有更多成功案例分享，歡迎聯繫我們獲取專屬於您診所的行銷策略建議
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-300 shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-primary text-white hover:bg-primary/90 transition-colors duration-300"
             >
               預約免費諮詢
-              <motion.svg 
-                className="w-5 h-5 ml-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                initial={{ x: 0 }}
-                animate={{ x: [0, 3, 0] }}
-                transition={{ 
-                  duration: 1.5, 
-                  repeat: Infinity, 
-                  repeatType: "loop",
-                  ease: "easeInOut",
-                  repeatDelay: 1
-                }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </motion.svg>
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
             </Link>
           </div>
         </motion.div>
@@ -1515,224 +1086,40 @@ function FAQSection() {
   );
 }
 
-// 新增聯絡我們區塊
-function ContactSection() {
+// 聯絡區塊
+const ContactSection = () => {
   return (
-    <section id="contact" className="py-24 bg-gray-50 relative overflow-hidden" role="region" aria-label="聯絡我們">
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-50 to-white"></div>
-      
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">預約諮詢</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            讓我們聆聽您的<span className="text-primary">故事</span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            每間診所都有獨特的挑戰與願景。分享您的診所故事與期待，我們將以專業與熱忱，為您量身打造最合適的診所成長方案
+    <section id="contact" className="py-20 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">立即獲得專屬診所行銷解決方案</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            填寫下方表單，我們將為您提供免費診所行銷策略諮詢，為您的診所找到最合適的解決方案
           </p>
-        </AnimatedSection>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-center">
-          <AnimatedSection className="rounded-lg bg-white p-8 lg:p-10 shadow-lg">
-            <form className="space-y-6">
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">您的姓名</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="請輸入您的姓名"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">診所名稱</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="請輸入您的診所名稱"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">聯絡電話</label>
-                <input
-                  type="tel"
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="請輸入您的聯絡電話"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">電子郵件</label>
-                <input
-                  type="email"
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="請輸入您的電子郵件"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">您想了解的服務</label>
-                <select className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
-                  <option value="">請選擇您感興趣的服務</option>
-                  <option value="brand">品牌形象建立</option>
-                  <option value="digital">數位轉型優化</option>
-                  <option value="marketing">行銷策略執行</option>
-                  <option value="all">全方位診所成長方案</option>
-                </select>
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">您的需求描述</label>
-                <textarea
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent h-32"
-                  placeholder="請簡單描述您的診所目前面臨的挑戰或需求..."
-                ></textarea>
-              </div>
-              
-              <button
-                type="submit"
-                className="btn-primary w-full py-4"
-              >
-                送出諮詢需求
-              </button>
-              
-              <p className="text-sm text-gray-500 text-center mt-4">
-                我們將在收到您的資訊後，1-2 個工作天內與您聯繫
-              </p>
-            </form>
-          </AnimatedSection>
-          
-          <AnimatedSection className="flex flex-col space-y-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">直接聯繫我們</h3>
-              <p className="text-gray-600 mb-6">
-                若您有任何問題或想進一步了解我們的服務，歡迎透過以下方式聯繫我們
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
-                    <p className="text-gray-600 mb-1">週一至週五 9:00-18:00</p>
-                    <a href="tel:+886227488919" className="text-primary font-medium hover:text-primary-dark transition-colors">
-                      (02) 2748-8919
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 mb-1">電子郵件</h4>
-                    <p className="text-gray-600 mb-1">我們會在 24 小時內回覆</p>
-                    <a href="mailto:contact@aidea-med.com" className="text-primary font-medium hover:text-primary-dark transition-colors">
-                      contact@aidea-med.com
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full text-primary mr-4">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
-                    <p className="text-gray-600 mb-1">歡迎預約參訪</p>
-                    <p className="text-gray-900">
-                      台北市大安區敦化南路二段99號13樓
-                    </p>
-                  </div>
-                </div>
-              </div>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3">
+              <ContactForm animation={true} />
             </div>
             
-            <div className="mt-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">關注我們</h3>
-              <p className="text-gray-600 mb-6">
-                追蹤我們的社群媒體，獲取最新醫療行銷趨勢與實用知識
-              </p>
-              
-              <div className="flex space-x-4">
-                <a href="https://www.facebook.com/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
-                  </svg>
-                </a>
-                
-                <a href="https://www.instagram.com/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-                  </svg>
-                </a>
-                
-                <a href="https://www.linkedin.com/company/aideamed" target="_blank" rel="noopener noreferrer" className="bg-primary/10 p-3 rounded-full text-primary hover:bg-primary hover:text-white transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-                  </svg>
-                </a>
-              </div>
+            <div className="lg:col-span-2">
+              <ContactInfo animation={true} />
             </div>
-          </AnimatedSection>
+          </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 優化首頁組件
 export default function HomePage() {
-  const imageStates = useMemo(() => ({
-    loading: caseStudies.reduce((acc, study) => ({ ...acc, [study.id]: true }), {}),
-    error: caseStudies.reduce((acc, study) => ({ ...acc, [study.id]: false }), {})
-  }), []);
-
-  const [imageLoadingStates, setImageLoadingStates] = useState(imageStates.loading);
-  const [imageErrorStates, setImageErrorStates] = useState(imageStates.error);
-  const [windowWidth, setWindowWidth] = useState(0);
-  const [isClient, setIsClient] = useState(false);
-
-  // 使用 useEffect 處理窗口寬度
   useEffect(() => {
-    setIsClient(true);
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const handleImageLoad = useCallback((id: string) => {
-    setImageLoadingStates(prev => ({ ...prev, [id]: false }));
-  }, []);
-
-  const handleImageError = useCallback((id: string) => {
-    setImageLoadingStates(prev => ({ ...prev, [id]: false }));
-    setImageErrorStates(prev => ({ ...prev, [id]: true }));
-  }, []);
-
-  const getResponsiveImageSrc = useCallback((caseStudy: CaseStudy) => {
-    if (!isClient) return caseStudy.image;
-    
-    if (windowWidth < 640 && caseStudy.imageSizes?.sm) return caseStudy.imageSizes.sm;
-    if (windowWidth < 1024 && caseStudy.imageSizes?.md) return caseStudy.imageSizes.md;
-    return caseStudy.image;
-  }, [isClient, windowWidth]);
-
+    // ... existing code ...
+  }, [])
+  
   return (
     <div className="min-h-screen bg-white">
       <section id="hero" className="min-h-[85vh]">
@@ -1752,13 +1139,7 @@ export default function HomePage() {
       </section>
 
       <section id="cases" className="min-h-[800px]">
-        <CaseCarousel
-          imageLoadingStates={imageLoadingStates}
-          imageErrorStates={imageErrorStates}
-          handleImageLoad={handleImageLoad}
-          handleImageError={handleImageError}
-          getResponsiveImageSrc={getResponsiveImageSrc}
-        />
+        <CaseStudiesSection />
       </section>
 
       <section id="testimonials" className="min-h-[600px]">

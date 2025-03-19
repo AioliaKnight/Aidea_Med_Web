@@ -40,22 +40,22 @@ const LOGO_SIZES = {
 // 顏色主題
 const COLOR_THEMES = {
   slate: {
-    ring: 'border-slate-200 dark:border-slate-800',
-    spinner: 'border-slate-950 dark:border-slate-200',
-    dots: 'bg-slate-950 dark:bg-slate-200',
-    text: 'text-slate-600 dark:text-slate-400'
+    ring: 'border-slate-200',
+    spinner: 'border-slate-950',
+    dots: 'bg-slate-950',
+    text: 'text-slate-600'
   },
   zinc: {
-    ring: 'border-zinc-200 dark:border-zinc-800',
-    spinner: 'border-zinc-950 dark:border-zinc-200',
-    dots: 'bg-zinc-950 dark:bg-zinc-200',
-    text: 'text-zinc-600 dark:text-zinc-400'
+    ring: 'border-zinc-200',
+    spinner: 'border-zinc-950',
+    dots: 'bg-zinc-950',
+    text: 'text-zinc-600'
   },
   neutral: {
-    ring: 'border-neutral-200 dark:border-neutral-800',
-    spinner: 'border-neutral-950 dark:border-neutral-200',
-    dots: 'bg-neutral-950 dark:bg-neutral-200',
-    text: 'text-neutral-600 dark:text-neutral-400'
+    ring: 'border-neutral-200',
+    spinner: 'border-neutral-950',
+    dots: 'bg-neutral-950',
+    text: 'text-neutral-600'
   },
   primary: {
     ring: 'border-primary/20',
@@ -134,21 +134,39 @@ const textVariants = {
   }
 }
 
-interface LoadingProps {
-  /** 是否全螢幕顯示 */
-  fullscreen?: boolean
-  /** 載入文字 */
-  text?: string
-  /** 是否模糊背景 */
-  blur?: boolean
-  /** 自定義類名 */
-  className?: string
-  /** 尺寸 */
-  size?: keyof typeof CONTAINER_SIZES
-  /** 顏色主題 */
-  theme?: keyof typeof COLOR_THEMES
-  /** 背景顏色 */
-  background?: string
+export interface LoadingProps {
+  /**
+   * 顯示加載中文字
+   */
+  text?: string;
+  /**
+   * 是否全屏顯示
+   */
+  fullscreen?: boolean;
+  /**
+   * 容器尺寸
+   */
+  size?: keyof typeof CONTAINER_SIZES;
+  /**
+   * 是否應用背景模糊
+   */
+  blur?: boolean;
+  /**
+   * 顏色主題
+   */
+  theme?: keyof typeof COLOR_THEMES;
+  /**
+   * 加載器類型
+   */
+  type?: 'ring' | 'spinner' | 'dots' | 'logo';
+  /**
+   * 自定義類名
+   */
+  className?: string;
+  /**
+   * 背景顏色
+   */
+  background?: string;
 }
 
 export default function Loading({
