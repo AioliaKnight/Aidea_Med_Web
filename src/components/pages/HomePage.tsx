@@ -172,44 +172,54 @@ const testimonials: Testimonial[] = [
 // 更新常見問題數據
 const faqs = [
   {
-    question: '如何評估診所的行銷需求？',
-    answer: '我們提供完整的專業評估流程：\n\n1. 診所現況分析\n- 營運數據評估（包含預約率、轉換率等）\n- 目標客群分析與定位\n- 競爭環境與市場機會評估\n\n2. 數位資產診斷\n- 官網與社群媒體表現\n- 搜尋引擎排名分析\n- 廣告投放效益評估\n\n3. 品牌定位分析\n- 診所特色與優勢盤點\n- 服務項目與價格策略\n- 目標市場區隔定位\n\n完整評估後，我們會提供詳細的分析報告與建議方案。',
-    category: '前期評估'
+    question: '為什麼專科診所需要專業的行銷顧問？',
+    answer: '在充滿競爭的醫療環境中，專業與信任是吸引患者的關鍵。\n\n許多優秀的醫師專注於提供卓越的診療服務，卻往往忽略了如何有效地傳達自身的專業價值。我們理解，您的時間應該專注在為患者提供最好的照護，而非鑽研數位行銷的複雜策略。\n\n專業醫療行銷顧問能彌補這個落差，我們不只是行銷團隊，更是您診所成長的合作夥伴。透過深入了解您的診療理念和特色，我們幫助您的專業被更多需要的患者看見，建立長遠的診所品牌價值，讓優質的醫療服務能觸及更廣泛的社群。',
+    category: '行銷基礎'
   },
   {
-    question: '專業品牌行銷方案包含哪些服務？',
-    answer: '我們提供全方位的品牌行銷解決方案：\n\n1. 品牌策略規劃\n- 品牌識別系統設計\n- 診所空間視覺規劃\n- 醫療團隊形象包裝\n\n2. 數位行銷服務\n- 官網設計與開發\n- SEO 優化與關鍵字排名\n- 社群媒體經營管理\n- 精準廣告投放策略\n\n3. 內容行銷製作\n- 專業影片拍攝製作\n- 圖文內容企劃設計\n- 衛教文章撰寫\n\n4. 系統化管理工具\n- 客戶關係管理系統\n- 線上預約系統\n- 數據分析儀表板',
-    category: '服務內容'
-  },
-  {
-    question: '專業品牌行銷方案的投資成本與預期效益？',
-    answer: '我們的專業品牌行銷方案起始投資為每月 10 萬起：\n\n1. 預期效益\n- 新客數提升：平均成長 150-200%\n- 諮詢轉換率：提升至 60-80%\n- 品牌知名度：提升 3-5 倍\n- 營業額：年成長 100-200%\n\n2. 投資報酬分析\n- 平均投資報酬率(ROI)：300-500%\n- 客戶回收成本降低：40-60%\n- 複診率提升：30-50%\n\n3. 服務保證\n- 提供明確的 KPI 目標\n- 每月績效檢討與調整\n- 未達標準提供免費優化',
-    category: '成本效益'
-  },
-  {
-    question: '如何確保行銷方案的執行成效？',
-    answer: '我們採用數據導向的專業管理方式：\n\n1. 即時監控系統\n- 24小時數據監測\n- 即時成效分析\n- 自動異常警示\n\n2. 定期績效報告\n- 每週成效報表\n- 每月策略會議\n- 季度成長分析\n\n3. 持續優化機制\n- A/B測試最佳化\n- 競品分析比較\n- 客戶回饋追蹤\n\n4. 專業顧問團隊\n- 專屬客戶經理\n- 技術支援團隊\n- 緊急處理機制',
-    category: '成效管理'
-  },
-  {
-    question: '開始合作前需要準備哪些資料？',
-    answer: '為確保專案順利啟動，建議準備以下資料：\n\n1. 基本資料\n- 診所營業資訊\n- 醫療團隊簡介\n- 重點服務項目\n\n2. 現有行銷素材\n- 診所環境照片\n- 過往行銷文案\n- 案例照片與資料\n\n3. 營運相關資訊\n- 目標客群定義\n- 價格策略說明\n- 競爭對手資訊\n\n4. 發展規劃\n- 短期營運目標\n- 中長期發展規劃\n- 預期投資預算',
-    category: '合作準備'
-  },
-  {
-    question: '合作流程與時程規劃為何？',
-    answer: '標準合作流程與時程如下：\n\n1. 前期評估（1-2週）\n- 首次免費諮詢\n- 需求訪談與分析\n- 提案簡報與討論\n\n2. 策略規劃（2-3週）\n- 品牌定位規劃\n- 行銷策略制定\n- 執行方案確認\n\n3. 系統建置（2-4週）\n- 官網與系統開發\n- 追蹤工具設置\n- 帳號權限設定\n\n4. 正式執行（3-6個月）\n- 內容持續產出\n- 成效即時優化\n- 定期檢討調整',
+    question: '您們如何理解我診所的特殊需求和市場定位？',
+    answer: '每一間診所都有獨特的靈魂和故事，我們的首要任務就是傾聽和理解這個故事。\n\n我們的合作始於深度診斷階段，包含：\n\n1. 院長願景訪談\n- 透過一對一深度對談，了解您對診所的願景、醫療理念與價值觀\n- 挖掘您最想幫助的患者類型及其需求\n\n2. 診所差異化分析\n- 實地參訪您的診所環境與工作流程\n- 與醫療團隊互動，了解內部文化與專長\n\n3. 市場定位研究\n- 分析地區競爭環境與機會\n- 確認目標患者群體的真實需求與痛點\n\n這個過程不只是資料收集，而是真正融入您的診所文化，感受您對醫療的熱忱與理念。唯有真正理解，才能打造出真實反映診所靈魂的行銷策略。',
     category: '合作流程'
   },
   {
-    question: '如何確保診所的品牌特色？',
-    answer: '我們透過系統化的品牌建立流程：\n\n1. 品牌定位研究\n- 深度訪談診所團隊\n- 競爭市場分析\n- 目標客群研究\n\n2. 特色發展策略\n- 醫療專業特色規劃\n- 服務體驗設計\n- 差異化優勢建立\n\n3. 視覺識別系統\n- 品牌識別設計\n- 空間視覺規劃\n- 行銷物料設計\n\n4. 品牌故事建立\n- 核心理念發展\n- 品牌故事架構\n- 溝通主軸設定',
+    question: '醫療行銷有什麼特殊的法規限制需要注意？',
+    answer: '醫療行銷需要在專業、真實與合規之間取得平衡，我們深知這道平衡的重要性。\n\n醫療廣告受《醫療法》第85條與《醫療廣告管理辦法》嚴格規範，我們的專業團隊會確保所有行銷內容完全合規：\n\n1. 內容審核機制\n- 由具醫療背景的專業審稿團隊把關\n- 每項內容皆遵循醫療廣告法規標準審核\n\n2. 避免常見法律陷阱\n- 不使用明確療效保證或誇大宣傳\n- 不進行不當價格比較或促銷手法\n- 患者見證遵循合規處理方式\n\n3. 專業表達技巧\n- 運用合規的敘事方式傳達專業價值\n- 以衛教資訊取代直接療效宣傳\n\n我們的行銷策略不僅是合規的，更是能有效傳達您專業價值的。在我們的合作過程中，您也將了解如何在法規框架內，最大化地展現診所的專業與特色。',
+    category: '行銷基礎'
+  },
+  {
+    question: 'AI技術如何應用在診所的數位行銷中？',
+    answer: 'AI不只是流行詞彙，而是能為診所帶來實際價值的強大工具。\n\n我們整合前沿AI技術與醫療行銷專業，為您的診所創造智慧化的成長策略：\n\n1. 患者洞察與分析\n- AI驅動的數據分析，精準了解患者行為模式\n- 預測性分析協助識別潛在高價值患者群體\n\n2. 個人化內容策略\n- 智能內容系統根據不同患者需求自動調整訊息\n- AI輔助創作系統產生引人共鳴的專業內容\n\n3. 智慧化行銷優化\n- 實時投放效益分析與自動調整\n- 多管道協同最佳化，提升整體轉換率\n\n4. 診所運營智能化\n- 智能預約系統改善患者體驗\n- 自動化跟進機制提升回診率\n\n我們的AI技術不是為了取代人性化服務，而是讓您能更專注於與患者建立真誠連結。透過數據洞察和流程優化，您將能提供更貼心、更個人化的醫療體驗。',
+    category: 'AI應用'
+  },
+  {
+    question: '如何評估行銷投資的實際回報？',
+    answer: '醫療行銷不應是模糊的開支，而是能清楚衡量成效的策略性投資。\n\n我們建立全方位的ROI追蹤系統，讓每一分投資都能量化評估：\n\n1. 診所關鍵績效指標\n- 新患成長率：追蹤不同管道帶來的新患數量與品質\n- 預約轉換率：評估從諮詢到實際就診的轉換效率\n- 患者生命週期價值：分析長期患者價值而非單次就診\n\n2. 即時監控儀表板\n- 專屬數據中心，隨時查看行銷成效\n- 自動化報表，每週更新關鍵指標\n\n3. 投資報酬計算\n- 透明的成本效益分析\n- 不同行銷管道的投資回報比較\n\n我們的合作不是基於空泛的承諾，而是建立在實際績效上。平均而言，我們的客戶在6個月後能看到3-5倍的行銷投資回報，更重要的是，這些成長是可持續的，為診所建立長期競爭優勢。',
+    category: '成效評估'
+  },
+  {
+    question: '診所沒有大量預算，有適合的行銷方案嗎？',
+    answer: '我們相信優質的醫療行銷不應該只是大型診所的專利，每一位認真執業的醫師都值得被更多患者看見。\n\n我們針對不同規模的診所設計了彈性的成長方案：\n\n1. 階段式成長模型\n- 從核心基礎建設開始，逐步擴展行銷範疇\n- 優先投資高回報管道，確保資源最大化運用\n\n2. 精準小預算策略\n- 聚焦區域性目標患者，不浪費預算在無效觸及\n- 善用免費或低成本管道，如Google商家檔案優化、社群自然成長策略\n\n3. 合作共贏模式\n- 彈性付費機制，部分報酬與實際成效連結\n- 成長顧問角色，教導診所團隊逐步建立自主行銷能力\n\n我們深信：重要的不是行銷預算的大小，而是策略的精準度。許多我們最成功的案例，都是從小規模合作開始，隨著初期成效顯現，再逐步擴大投資範圍。',
+    category: '成本效益'
+  },
+  {
+    question: '如何確保行銷內容同時專業又具吸引力？',
+    answer: '醫療內容的挑戰在於：如何在保持專業的同時，創造具有溫度且易於理解的訊息。\n\n我們的醫療內容創作流程特別設計來平衡這兩個面向：\n\n1. 醫療知識轉譯\n- 與診所專業團隊深度訪談，掌握核心醫療知識\n- 將複雜醫療概念轉化為患者易懂的說明，不失真也不過度簡化\n\n2. 故事性內容架構\n- 透過真實案例與敘事手法，增加內容的共鳴性\n- 運用視覺化圖解，幫助患者理解專業概念\n\n3. 多層次內容策略\n- 針對不同知識需求的患者，提供深淺不同的內容\n- 從基礎衛教到專業解析，滿足不同患者的資訊需求\n\n4. 專業審核機制\n- 所有內容經過醫療專業人員審核，確保準確性\n- 同時經過行銷專家評估，確保傳播效果\n\n我們創作的內容不只是訊息的傳遞，更是建立您與患者之間的信任橋樑。當患者能真正理解您提供的專業價值，信任與選擇就自然形成了。',
+    category: '內容策略'
+  },
+  {
+    question: '需要多久才能看到行銷成效？',
+    answer: '醫療行銷是建立長期信任的過程，而非速效方案。但這不代表您需要等待很久才能看到成果。\n\n我們的行銷策略設計結合短期成效與長期建設：\n\n1. 階段性成效時程\n- 初期(1-2個月)：完成基礎建設，數據追蹤系統上線\n- 中期(3-4個月)：開始看到預約諮詢增加，品牌聲量提升\n- 成熟期(6個月後)：穩定的新患成長，回診率提升，品牌影響力擴大\n\n2. 策略性資源分配\n- 短期：優化已有管道效能，提升即時轉換\n- 中期：拓展內容資產，增加自然流量\n- 長期：建立品牌權威，發展忠誠患者社群\n\n每間診所的起點不同，成效展現的時程也會有所差異。我們會在合作初期，根據您的具體情況設定合理的期望值，並透過定期進度檢視，確保策略持續朝目標前進。\n\n重要的是，一旦正向循環建立，成效會呈指數型成長 - 這是我們所有成功案例的共同特點。',
+    category: '成效評估'
+  },
+  {
+    question: '如何讓我的診所在眾多競爭中脫穎而出？',
+    answer: '在競爭激烈的醫療市場中，真正的差異化來自於診所獨特價值的精準傳達，而非單純的促銷或價格戰。\n\n我們協助診所建立真實而獨特的品牌定位：\n\n1. 價值主張梳理\n- 挖掘您診所的獨特優勢與專業特色\n- 定義最能幫助的理想患者群體\n- 明確表達為何患者應選擇您而非其他診所\n\n2. 真實差異化策略\n- 強調專業醫療團隊的獨特背景與專長\n- 突顯診所獨有的診療方法或設備優勢\n- 展現您對患者關懷的獨特方式\n\n3. 一致性品牌體驗\n- 從線上到線下，建立統一的品牌感受\n- 患者旅程中每個接觸點都傳達核心價值\n- 培訓團隊成員成為品牌理念的實踐者\n\n我們相信，每間認真經營的診所都有其獨特的靈魂與價值。我們的使命，就是幫助這份價值被真正需要的患者看見並感受到。在這個過程中，您不需要做最大的診所，只需要成為最適合您目標患者的那一個。',
     category: '品牌策略'
   },
   {
-    question: '如何評估行銷方案的投資報酬率？',
-    answer: '我們採用全方位的 ROI 評估系統：\n\n1. 收入面向\n- 新增病患收益\n- 複診率提升效益\n- 客單價成長分析\n\n2. 成本面向\n- 行銷投資成本\n- 客戶取得成本\n- 營運優化效益\n\n3. 品牌價值\n- 品牌知名度提升\n- 市場口碑建立\n- 長期競爭優勢\n\n4. 營運效率\n- 預約率提升\n- 諮詢轉換率\n- 人力運用效率',
-    category: '成本效益'
+    question: '如何整合線上行銷與診所實際營運？',
+    answer: '最有效的醫療行銷不是獨立運作的，而是與診所日常營運緊密結合的有機整體。\n\n我們的整合式行銷方案確保線上策略能無縫連接到實際診所體驗：\n\n1. 全流程患者體驗設計\n- 從線上初次接觸到診所實際就診的完整旅程規劃\n- 確保患者在每個階段都能感受一致的專業與關懷\n\n2. 數位工具與診所系統整合\n- 線上預約系統與診所排程無縫對接\n- 患者溝通平台與CRM系統整合，確保訊息一致\n\n3. 診所團隊參與\n- 提供前台人員溝通技巧培訓，延續線上建立的關係\n- 與醫療團隊協作，確保行銷承諾與實際服務一致\n\n4. 雙向回饋機制\n- 收集患者就診體驗回饋，持續優化服務流程\n- 從實際診所情況調整行銷策略，確保真實可執行\n\n我們不只是您的行銷團隊，更是診所運營的策略夥伴。透過整合線上策略與實際營運，創造從吸引患者到留住患者的完整生態系統，實現診所的永續成長。',
+    category: '綜合策略'
   }
 ];
 
@@ -1258,147 +1268,142 @@ function TestimonialsSection() {
 function FAQSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>('全部');
   
+  // 從FAQ資料中提取所有類別
   const categories = ['全部', ...Array.from(new Set(faqs.map(faq => faq.category)))];
   
-  const filteredFaqs = useMemo(() => {
-    if (selectedCategory === '全部') return faqs;
-    return faqs.filter(faq => faq.category === selectedCategory);
-  }, [selectedCategory]);
+  // 根據選定的類別過濾FAQ
+  const filteredFaqs = selectedCategory === '全部' 
+    ? faqs 
+    : faqs.filter(faq => faq.category === selectedCategory);
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
-      {/* 簡化的背景 */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white to-gray-50"></div>
+    <section id="faq" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      <div className="absolute w-full h-full top-0 left-0 opacity-5">
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <pattern id="grid-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+        </svg>
+      </div>
       
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">常見問題</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            專業<span className="text-primary">服務說明</span>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 relative inline-block">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">常見問題</span>
+            <div className="absolute -bottom-3 left-0 right-0 h-1 bg-gradient-to-r from-red-600 to-red-800 rounded-full transform scale-50 transition-transform duration-300 opacity-75"></div>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            了解我們如何協助診所突破成長瓶頸，實現持續發展
+          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+            專業的醫療行銷顧問，解答您最關心的問題，協助您的診所在數位時代脫穎而出
           </p>
-        </motion.div>
-
+        </div>
+        
+        {/* 分類標籤列 */}
+        <div className="flex flex-wrap justify-center mb-12 gap-3">
+          {categories.map((category, index) => (
+            <motion.button
+              key={index}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                selectedCategory === category
+                  ? 'bg-red-600 text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {category}
+            </motion.button>
+          ))}
+        </div>
+        
+        {/* FAQ列表 */}
         <div className="max-w-4xl mx-auto">
-          {/* 分類標籤 */}
-          <motion.div 
-            className="flex flex-wrap justify-center gap-3 mb-12"
-            variants={animations.staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            {categories.map((category) => (
-              <motion.button
-                key={category}
-                variants={animations.slideUp}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  selectedCategory === category
-                    ? 'bg-primary text-white shadow-md scale-105'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 hover:scale-105'
-                }`}
-              >
-                {category}
-              </motion.button>
+          <AnimatePresence>
+            {filteredFaqs.map((faq, index) => (
+              <FaqItem key={faq.question} faq={faq} index={index} />
             ))}
-          </motion.div>
-
-          {/* FAQ 列表 */}
-          <motion.div
-            variants={animations.staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            className="space-y-6"
-          >
-            {filteredFaqs.map((faq) => (
-              <motion.div
-                key={faq.question}
-                variants={animations.slideUp}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
-              >
-                <details className="group">
-                  <summary className="flex items-center justify-between p-6 cursor-pointer">
-                    <h3 className="text-lg font-medium text-gray-900 group-open:text-primary transition-colors duration-300">
-                      {faq.question}
-                    </h3>
-                    <span className="relative flex-shrink-0 ml-1.5 w-5 h-5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="absolute inset-0 w-5 h-5 opacity-100 group-open:opacity-0 transition-opacity duration-300 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="absolute inset-0 w-5 h-5 opacity-0 group-open:opacity-100 transition-opacity duration-300 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M18 12H6"
-                        />
-                      </svg>
-                    </span>
-                  </summary>
-
-                  <div className="px-6 pb-6 pt-0">
-                    <div className="prose prose-sm max-w-none text-gray-600">
-                      {faq.answer.split('\n\n').map((paragraph, i) => (
-                        <div key={i} className="mb-4">
-                          {paragraph.startsWith('- ') ? (
-                            <ul className="list-disc list-inside space-y-1 ml-4">
-                              {paragraph.split('\n- ').map((item, j) => (
-                                <li key={j} className={j === 0 ? 'list-none -ml-4' : ''}>
-                                  {item.replace('- ', '')}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : paragraph.match(/^\d+\.\s/) ? (
-                            <ol className="list-decimal list-inside space-y-1 ml-4">
-                              {paragraph.split('\n').map((item, j) => (
-                                <li key={j} className={!item.match(/^\d+\.\s/) ? 'list-none -ml-4' : ''}>
-                                  {item.replace(/^\d+\.\s/, '')}
-                                </li>
-                              ))}
-                            </ol>
-                          ) : (
-                            <p>{paragraph}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </details>
-              </motion.div>
-            ))}
-          </motion.div>
+          </AnimatePresence>
+          
+          {filteredFaqs.length === 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center p-10 bg-white rounded-lg shadow-sm"
+            >
+              <p className="text-gray-500">此分類下暫無常見問題</p>
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
   );
 }
+
+interface FaqItemProps {
+  faq: {
+    question: string;
+    answer: string;
+    category: string;
+  };
+  index: number;
+}
+
+const FaqItem = ({ faq, index }: FaqItemProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0, transition: { delay: index * 0.1 } }}
+      exit={{ opacity: 0, y: -20 }}
+      className="mb-5"
+    >
+      <motion.div 
+        className={`bg-white rounded-xl shadow-sm border-l-4 ${
+          isOpen ? 'border-red-600' : 'border-gray-200'
+        } transition-all duration-300`}
+      >
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none group"
+        >
+          <h3 className="font-medium text-lg pr-8">
+            {faq.question}
+            <span className="text-xs ml-3 text-gray-500 border border-gray-200 px-2 py-1 rounded-full">
+              {faq.category}
+            </span>
+          </h3>
+          <div className={`text-gray-400 transition-transform duration-300 transform ${isOpen ? 'rotate-180' : ''}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </button>
+        
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="px-6 pb-5 pt-0 text-gray-600">
+                {faq.answer.split('\n\n').map((paragraph, i) => (
+                  <p key={i} className={`${i > 0 ? 'mt-4' : ''}`}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 // 聯絡區塊
 const ContactSection = () => {
