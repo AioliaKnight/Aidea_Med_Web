@@ -62,16 +62,16 @@ const PageHeader = memo(function PageHeader({
     return alignment === 'center' ? 'text-center mx-auto' : 'text-left ml-0'
   }
 
-  // 設定標題大小
+  // 設定標題大小 - 使用自適應標題樣式
   const getTitleClass = () => {
     switch (size) {
       case 'sm':
-        return 'text-2xl md:text-3xl lg:text-4xl'
+        return 'text-adaptive-heading-sm'
       case 'lg':
-        return 'text-4xl md:text-5xl lg:text-6xl'
+        return 'text-adaptive-heading-lg'
       case 'md':
       default:
-        return 'text-3xl md:text-4xl lg:text-5xl'
+        return 'text-adaptive-heading'
     }
   }
 
@@ -105,7 +105,7 @@ const PageHeader = memo(function PageHeader({
           className={`max-w-4xl ${getAlignmentClass()}`}
         >
           <motion.h1 
-            className={`${getTitleClass()} font-bold mb-4`}
+            className={`${getTitleClass()} font-bold mb-4 whitespace-nowrap overflow-hidden text-ellipsis`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}

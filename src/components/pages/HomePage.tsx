@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Logo from '@/components/common/Logo'
+import CTASection from '@/components/common/CTASection'
 
 // 服務特色數據 - 替換 emoji 為圖標組件
 const features = [
@@ -469,7 +470,7 @@ function MarketingStatement() {
   return (
     <section 
       id="marketing-statement" 
-      className="relative py-16 md:py-20 bg-primary overflow-hidden"
+      className="relative py-12 md:py-16 bg-primary overflow-hidden"
       ref={ref}
     >
       {/* 背景線條裝飾 */}
@@ -489,7 +490,7 @@ function MarketingStatement() {
           {contentBlocks.map((block, index) => (
             <motion.div
               key={index}
-              className={`${block.className} mb-10 md:mb-16 text-selection-inverted`}
+              className={`${block.className} mb-8 md:mb-14 text-selection-inverted`}
               initial={{ opacity: 0, x: -50 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ 
@@ -498,7 +499,7 @@ function MarketingStatement() {
                 ease: [0.25, 0.46, 0.45, 0.94]
               }}
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
                 <motion.div 
                   className="w-full md:w-5/12"
                   initial={{ opacity: 0, x: -30 }}
@@ -508,18 +509,18 @@ function MarketingStatement() {
                     delay: block.delay + 0.1
                   }}
                 >
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty">
                     {block.en.title}
                   </h2>
                   {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 md:mt-3 leading-tight tracking-tight">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-1 md:mt-2 leading-tight tracking-tight text-pretty">
                       {block.en.subtitle}
                     </h3>
                   )}
                 </motion.div>
                 
                 <motion.div 
-                  className="mt-4 md:mt-0 w-full md:w-6/12"
+                  className="mt-3 md:mt-0 w-full md:w-6/12"
                   initial={{ opacity: 0, x: 30 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ 
@@ -528,13 +529,29 @@ function MarketingStatement() {
                   }}
                 >
                   <div className="border-l-4 md:border-l-4 border-white/40 pl-4 md:pl-6">
-                    <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
+                    <motion.p 
+                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={inView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ 
+                        duration: 0.4, 
+                        delay: block.delay + 0.3
+                      }}
+                    >
                       {block.zh.title}
-                    </p>
+                    </motion.p>
                     {block.zh.subtitle && (
-                      <p className="text-lg md:text-xl text-white/80 mt-2 font-medium leading-tight">
+                      <motion.p 
+                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={inView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ 
+                          duration: 0.4, 
+                          delay: block.delay + 0.4
+                        }}
+                      >
                         {block.zh.subtitle}
-                      </p>
+                      </motion.p>
                     )}
                   </div>
                 </motion.div>
@@ -543,12 +560,12 @@ function MarketingStatement() {
               {/* 分隔線 - 只在區塊之間顯示 */}
               {index < contentBlocks.length - 1 && (
                 <motion.div 
-                  className="w-full h-px bg-white/20 mt-10 md:mt-16"
+                  className="w-full h-px bg-white/20 mt-6 md:mt-12"
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={inView ? { scaleX: 1, opacity: 0.2 } : {}}
                   transition={{ 
                     duration: 0.8, 
-                    delay: block.delay + 0.3
+                    delay: block.delay + 0.5
                   }}
                 />
               )}
@@ -558,13 +575,13 @@ function MarketingStatement() {
         
         {/* 底部箭頭指示 */}
         <motion.div 
-          className="mt-10 flex justify-center"
+          className="mt-6 flex justify-center"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 1.3 }}
         >
           <motion.div
-            className="text-white"
+            className="text-white cursor-pointer hover:opacity-80 transition-opacity"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
@@ -1466,40 +1483,23 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
-          >
-            <h2 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 heading-accent"
-            >
-              開始您的品牌成長之旅
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto text-shadow-light">
-              立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-colors duration-300 text-sm sm:text-base"
-              >
-                預約諮詢
-              </Link>
-              <Link
-                href="/case"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white/10 transition-colors duration-300 text-sm sm:text-base"
-              >
-                查看案例
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <CTASection
+        title="開始您的品牌成長之旅"
+        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
+        titleClassName="tracking-tight"
+        descriptionClassName="text-shadow-light"
+        buttonsContainerClassName="animate-fade-in delay-200"
+        primaryButton={{
+          href: "/contact",
+          text: "預約諮詢",
+          variant: "primary"
+        }}
+        secondaryButton={{
+          href: "/case",
+          text: "查看案例",
+          variant: "secondary"
+        }}
+      />
     </div>
   );
 } 

@@ -95,30 +95,33 @@
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     color: var(--color-black);
+    /* 移除文字不換行與溢出處理，讓英文文字可自然換行 */
+    white-space: normal;
+    overflow: visible;
   }
   
   h1 {
-    font-size: var(--text-4xl);
-  }
-  
-  h2 {
     font-size: var(--text-3xl);
   }
   
-  h3 {
+  h2 {
     font-size: var(--text-2xl);
   }
   
-  h4 {
+  h3 {
     font-size: var(--text-xl);
   }
   
-  h5 {
+  h4 {
     font-size: var(--text-lg);
   }
   
-  h6 {
+  h5 {
     font-size: var(--text-base);
+  }
+  
+  h6 {
+    font-size: var(--text-sm);
     text-transform: uppercase;
   }
   
@@ -147,16 +150,35 @@
     margin: 1.5rem 0;
   }
   
+  /* 更精細的響應式標題尺寸調整 */
+  @media (min-width: 480px) {
+    h1 { font-size: var(--text-4xl); }
+    h2 { font-size: var(--text-3xl); }
+    h3 { font-size: var(--text-2xl); }
+    h4 { font-size: var(--text-xl); }
+    h5 { font-size: var(--text-lg); }
+    h6 { font-size: var(--text-base); }
+  }
+  
   @media (min-width: 640px) {
     h1 { font-size: var(--text-5xl); }
     h2 { font-size: var(--text-4xl); }
     h3 { font-size: var(--text-3xl); }
     h4 { font-size: var(--text-2xl); }
     h5 { font-size: var(--text-xl); }
+    h6 { font-size: var(--text-lg); }
+  }
+  
+  @media (min-width: 768px) {
+    h1 { font-size: var(--text-5xl); }
+    h2 { font-size: var(--text-4xl); }
+    h3 { font-size: var(--text-3xl); }
   }
   
   @media (min-width: 1024px) {
     h1 { font-size: var(--text-6xl); }
+    h2 { font-size: var(--text-5xl); }
+    h3 { font-size: var(--text-4xl); }
   }
 }
 
@@ -206,21 +228,37 @@
 }
 
 /* 2. 黑底紅字 */
-.bg-black {
+.bg-black,
+.bg-[#111111],
+[class*="bg-black"] {
   background-color: var(--color-black);
-  color: var(--color-white);
+  color: var(--color-white) !important;
+}
+
+.bg-black *:not(.text-primary):not([class*="bg-white"]):not([class*="bg-primary"]),
+.bg-[#111111] *:not(.text-primary):not([class*="bg-white"]):not([class*="bg-primary"]),
+[class*="bg-black"] *:not(.text-primary):not([class*="bg-white"]):not([class*="bg-primary"]) {
+  color: var(--color-white) !important;
 }
 
 .bg-black h1, .bg-black h2, .bg-black h3,
-.bg-black h4, .bg-black h5, .bg-black h6 {
+.bg-black h4, .bg-black h5, .bg-black h6,
+.bg-[#111111] h1, .bg-[#111111] h2, .bg-[#111111] h3,
+.bg-[#111111] h4, .bg-[#111111] h5, .bg-[#111111] h6,
+[class*="bg-black"] h1, [class*="bg-black"] h2, [class*="bg-black"] h3,
+[class*="bg-black"] h4, [class*="bg-black"] h5, [class*="bg-black"] h6 {
+  color: var(--color-white) !important;
+}
+
+.bg-black a:not(.text-primary),
+.bg-[#111111] a:not(.text-primary),
+[class*="bg-black"] a:not(.text-primary) {
   color: var(--color-white);
 }
 
-.bg-black a {
-  color: var(--color-red);
-}
-
-.bg-black a:hover {
+.bg-black a:hover:not(.text-primary),
+.bg-[#111111] a:hover:not(.text-primary),
+[class*="bg-black"] a:hover:not(.text-primary) {
   color: var(--color-red-light);
 }
 
@@ -780,4 +818,148 @@
 /* 文本選擇樣式 - 黑底 */
 .text-selection-dark::selection {
   @apply bg-primary/20 text-white;
+}
+
+/* 標題文字自適應類別 - 用於特定情況下的標題大小調整 */
+.text-adaptive-heading {
+  /* 移除文字不換行限制，讓英文文字可以自然換行 */
+  white-space: normal;
+  overflow: visible;
+  font-size: var(--text-xl);
+}
+
+@media (min-width: 480px) {
+  .text-adaptive-heading {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (min-width: 640px) {
+  .text-adaptive-heading {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .text-adaptive-heading {
+    font-size: var(--text-4xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-adaptive-heading {
+    font-size: var(--text-5xl);
+  }
+}
+
+/* 特殊自適應標題變體 */
+.text-adaptive-heading-lg {
+  /* 移除文字不換行限制，讓英文文字可以自然換行 */
+  white-space: normal;
+  overflow: visible;
+  font-size: var(--text-2xl);
+}
+
+@media (min-width: 480px) {
+  .text-adaptive-heading-lg {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 640px) {
+  .text-adaptive-heading-lg {
+    font-size: var(--text-4xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .text-adaptive-heading-lg {
+    font-size: var(--text-5xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-adaptive-heading-lg {
+    font-size: var(--text-6xl);
+  }
+}
+
+.text-adaptive-heading-sm {
+  /* 移除文字不換行限制，讓英文文字可以自然換行 */
+  white-space: normal;
+  overflow: visible;
+  font-size: var(--text-lg);
+}
+
+@media (min-width: 480px) {
+  .text-adaptive-heading-sm {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (min-width: 640px) {
+  .text-adaptive-heading-sm {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .text-adaptive-heading-sm {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-adaptive-heading-sm {
+    font-size: var(--text-4xl);
+  }
+}
+
+/* 用於較小標題的自適應類別 */
+.text-adaptive-subtitle {
+  /* 移除文字不換行限制，讓英文文字可以自然換行 */
+  white-space: normal;
+  overflow: visible;
+  font-size: var(--text-base);
+}
+
+@media (min-width: 480px) {
+  .text-adaptive-subtitle {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (min-width: 640px) {
+  .text-adaptive-subtitle {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .text-adaptive-subtitle {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-adaptive-subtitle {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* 添加輕微文字陰影類 */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-white-sm {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 } 

@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { memo } from 'react'
 import Image from 'next/image'
 import PageHeader from '@/components/common/PageHeader'
+import { Heading } from '@/components/ui'
+import CTASection from '@/components/common/CTASection'
 
 // 從配置文件導入
 import { animations } from '@/utils/animations'
@@ -134,7 +136,7 @@ const pricingPlans: PricingPlan[] = [
     period: '/月',
     features: [
       '診所品牌定位與故事梳理',
-      '每月12篇專業內容創作',
+      '每月4篇專業內容創作',
       '社群媒體經營與互動',
       '基礎在地SEO優化',
       '每週診所數據健檢報告',
@@ -150,7 +152,7 @@ const pricingPlans: PricingPlan[] = [
     period: '/月',
     features: [
       '全方位品牌策略與執行',
-      '每月20篇深度專業內容',
+      '每月6篇深度專業內容',
       'Google/Meta精準廣告投放',
       '專業診所環境攝影',
       '每週成效報告與策略調整',
@@ -163,14 +165,14 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     title: '卓越突破方案',
-    price: '$ 258,000',
+    price: '$ 380,000',
     period: '/月',
     features: [
       '頂級品牌戰略全面規劃',
-      '無限量專業內容創作',
+      '專業內容創作',
       '多平台整合行銷策略',
-      '專業影音團隊駐點拍攝',
-      '創始人級顧問一對一服務',
+      '專業影音團隊拍攝',
+      '產業實戰級顧問一對一服務',
       '獨家AI病患分析系統',
       '策略長季度診所發展規劃',
       '醫療產業資源整合對接'
@@ -215,7 +217,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       </div>
       <h3 
         id={`service-title-${service.id}`}
-        className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-brand-textDark"
+        className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-3 md:mb-4 text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis"
       >
         {service.title}
       </h3>
@@ -267,7 +269,7 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
         >
           {step.step}
         </div>
-        <h3 className="text-base md:text-lg font-bold mb-2 text-brand-textDark">
+        <h3 className="text-xs xs:text-sm sm:text-base md:text-lg font-bold mb-2 text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis">
           {step.title}
         </h3>
         <p className="text-sm md:text-base text-gray-600">{step.description}</p>
@@ -316,7 +318,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       )}
       <h3 
         id={`plan-title-${index}`}
-        className="text-xl md:text-2xl font-bold mb-3 md:mb-4"
+        className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold mb-3 md:mb-4 whitespace-nowrap overflow-hidden text-ellipsis"
       >
         {plan.title}
       </h3>
@@ -375,12 +377,17 @@ function ServiceFeature() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
+          <span className="inline-block text-xs xs:text-sm md:text-base font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
             我們的優勢
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <Heading 
+            level="h2" 
+            size="lg" 
+            className="mb-6" 
+            animate
+          >
             專注於醫療行銷的<span className="text-primary">專業團隊</span>
-          </h2>
+          </Heading>
           <p className="text-lg text-gray-600">
             我們深知醫療行業的獨特性與挑戰。十年以上的醫療行銷經驗，讓我們能精準理解診所與病患的需求，提供真正有效的解決方案。
           </p>
@@ -398,7 +405,7 @@ function ServiceFeature() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-4">深刻理解醫療產業</h3>
+            <Heading level="h3" size="xs" className="mb-4">深刻理解醫療產業</Heading>
             <p className="text-gray-600">
               我們不只是行銷團隊，更是醫療產業的深度觀察者與參與者。我們了解各類診所的運作邏輯、醫病關係的建立、診療項目的特色，能從醫師與病患雙方視角提供最適切的建議。
             </p>
@@ -415,7 +422,7 @@ function ServiceFeature() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-4">兼顧專業與溫度</h3>
+            <Heading level="h3" size="xs" className="mb-4">兼顧專業與溫度</Heading>
             <p className="text-gray-600">
               醫療行銷最大的挑戰是如何在傳達專業的同時保持溫度。我們精通如何將艱澀的醫療知識轉化為溫暖易懂的內容，既能展現醫師專業，又能拉近與病患的距離，建立信任關係。
             </p>
@@ -432,7 +439,7 @@ function ServiceFeature() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-4">數據驅動成效</h3>
+            <Heading level="h3" size="xs" className="mb-4">數據驅動成效</Heading>
             <p className="text-gray-600">
               我們不只是執行行銷活動，更重視實際成效與投資回報。透過專業的數據分析工具與方法，持續追蹤並優化每個行銷環節，確保每一分行銷預算都能發揮最大效益，為診所帶來實質成長。
             </p>
@@ -459,38 +466,137 @@ function renderListItem(text: string, _idx: number) {
 
 export default function ServicePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <PageHeader
-        title="專業的醫療行銷服務"
-        description="為您的診所打造最適合的品牌成長策略，提供全方位的行銷解決方案"
-        variant="red"
-        size="lg"
-        alignment="center"
-        backgroundImage="/images/bgline-r.png"
-        overlayOpacity={0.8}
-      />
-      
-      <div className="bg-gradient-to-r from-primary to-primary/70 py-6">
-        <div className="container-custom">
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - 平面化扁平現代簡約設計 */}
+      <div className="relative bg-black overflow-hidden">
+        {/* 背景組件 */}
+        <div className="relative">
+          <PageHeader
+            title="懂你的醫療行銷專家"
+            description="全方位行銷顧問級服務，提供客製化的行銷成長方案"
+            variant="red"
+            size="lg"
+            alignment="left"
+            backgroundImage="/images/bgline-r.png"
+            overlayOpacity={0.95}
+          />
+          {/* 簡約平面漸層 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black to-black pointer-events-none z-[5]"></div>
+        </div>
+        
+        {/* Hero Content - 扁平化現代設計 */}
+        <div className="container-custom relative z-10 pt-20 sm:pt-24 md:pt-32 lg:pt-40 pb-20 md:pb-28">
+          <div className="max-w-2xl text-white">
+            <Heading 
+              level="h1"
+              size="xl"
+              variant="white"
+              className="mb-6 tracking-tight"
+              animate
+              withDivider
+              dividerPosition="left"
+              noWrap={false}
+              onDark={true}
+            >
+              <span className="text-white">打造</span><span className="text-primary bg-white px-2 mx-1">診所品牌</span><br />
+              <span className="text-white">贏得</span><span className="text-primary bg-white px-2 mx-1">患者信任</span>
+            </Heading>
+            
+            <Heading
+              level="h2"
+              size="sm"
+              variant="white"
+              className="mb-10 font-normal leading-relaxed text-shadow-sm"
+              animate
+              noWrap={false}
+              onDark={true}
+            >
+              <span className="text-white">
+              專業醫療行銷團隊，協助您在競爭激烈的市場中脫穎而出，<br className="hidden md:block" />
+              建立獨特品牌定位，打造持續成長的診所生態系統。
+              </span>
+            </Heading>
+            
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-medium hover:bg-red-700 transition-all duration-300 text-base shadow-none"
+              >
+                <span>免費品牌診斷</span>
+                <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <Link
+                href="#pricing"
+                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white bg-black text-white font-medium hover:bg-white hover:text-black transition-all duration-300 text-base"
+              >
+                查看服務方案
+              </Link>
+            </motion.div>
+            
+            {/* Hero Stats - 扁平化統計區塊 */}
+            <motion.div 
+              className="mt-16 grid grid-cols-3 gap-8 max-w-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              <div className="bg-black p-4 text-center border-t-4 border-primary">
+                <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>10+</Heading>
+                <div className="text-sm font-medium text-white">年產業經驗</div>
+              </div>
+              <div className="bg-black p-4 text-center border-t-4 border-primary">
+                <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>200+</Heading>
+                <div className="text-sm font-medium text-white">成功案例</div>
+              </div>
+              <div className="bg-black p-4 text-center border-t-4 border-primary">
+                <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>98%</Heading>
+                <div className="text-sm font-medium text-white">客戶滿意度</div>
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Right Side Floating Element - 扁平化數據面板 */}
+          <motion.div
+            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-white p-6 w-72 z-10 border-l-4 border-primary"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
           >
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
-            >
-              免費諮詢
-            </Link>
-            <Link
-              href="#pricing"
-              className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
-            >
-              查看服務方案
-            </Link>
+            <Heading level="h3" size="xs" className="mb-3">讓數據說話</Heading>
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-1">
+                <span>診所知名度提升</span>
+                <span className="font-bold">76%</span>
+              </div>
+              <div className="h-2 bg-gray-200 w-full">
+                <div className="h-full bg-primary" style={{ width: '76%' }}></div>
+              </div>
+            </div>
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-1">
+                <span>新患者轉換率</span>
+                <span className="font-bold">64%</span>
+              </div>
+              <div className="h-2 bg-gray-200 w-full">
+                <div className="h-full bg-primary" style={{ width: '64%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>患者回診率提升</span>
+                <span className="font-bold">89%</span>
+              </div>
+              <div className="h-2 bg-gray-200 w-full">
+                <div className="h-full bg-primary" style={{ width: '89%' }}></div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -505,12 +611,24 @@ export default function ServicePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
+            <Heading 
+              level="h2" 
+              size="lg" 
+              variant="primary" 
+              className="mb-4"
+              animate
+            >
               面對醫療市場的更迭速度
-            </h2>
-            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-8">
+            </Heading>
+            <Heading 
+              level="h2" 
+              size="lg" 
+              variant="primary" 
+              className="mb-8"
+              animate
+            >
               你準備好了嗎？
-            </h2>
+            </Heading>
             <motion.div
               className="w-24 h-1 bg-primary mx-auto mb-10"
               initial={{ width: 0 }}
@@ -518,9 +636,13 @@ export default function ServicePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             ></motion.div>
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">
+            <Heading 
+              level="h3" 
+              size="md" 
+              className="mb-8 text-gray-800"
+            >
               市場競爭加劇 - 供給持續增長 - 診所差異減少
-            </h3>
+            </Heading>
             <p className="text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
               根據衛生福利部統計調查，近年來台灣牙醫診所與牙醫師數量呈現<span className="font-bold">快速增長</span>趨勢，
               而高達<span className="font-bold text-primary">80.81%</span>的牙醫師集中在六都地區，市場競爭日趨白熱化。
@@ -536,7 +658,7 @@ export default function ServicePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">台灣牙醫診所數量</h3>
+              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">台灣牙醫診所數量</h3>
               <div className="flex flex-col space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="bg-black text-white py-2 px-3 text-sm">2021年</div>
@@ -561,7 +683,7 @@ export default function ServicePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">台灣牙醫師人數</h3>
+              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">台灣牙醫師人數</h3>
               <div className="flex flex-col space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="bg-black text-white py-2 px-3 text-sm">2020年</div>
@@ -586,7 +708,7 @@ export default function ServicePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">牙醫師分布情況</h3>
+              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">牙醫師分布情況</h3>
               <div className="flex justify-between items-center mb-4">
                 <div className="text-lg">六都地區</div>
                 <div className="text-4xl font-bold text-primary">80.81%</div>
@@ -608,7 +730,7 @@ export default function ServicePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">市場趨勢分析</h3>
+              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">市場趨勢分析</h3>
               <ul className="space-y-3 text-sm md:text-base">
                 <li className="flex items-start">
                   <span className="text-primary font-bold mr-2">→</span>
@@ -637,8 +759,22 @@ export default function ServicePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">患者沒變、牙醫卻越來越多！</h3>
-            <h4 className="text-xl md:text-2xl font-medium mb-6">為什麼患者要選擇你的診所？</h4>
+            <Heading 
+              level="h3" 
+              size="md" 
+              variant="white"
+              className="mb-4"
+            >
+              患者沒變、牙醫卻越來越多！
+            </Heading>
+            <Heading 
+              level="h4" 
+              size="sm" 
+              variant="white"
+              className="mb-6 font-medium"
+            >
+              為什麼患者要選擇你的診所？
+            </Heading>
             <p className="text-lg mb-8 max-w-3xl mx-auto">
               在供過於求的市場中，如何建立獨特品牌定位，提升診所競爭力，成為患者的首選，是每家診所必須面對的挑戰。
             </p>
@@ -651,7 +787,7 @@ export default function ServicePage() {
           </motion.div>
         </div>
       </section>
-      
+
       {/* 核心服務 */}
       <section 
         className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
@@ -666,12 +802,17 @@ export default function ServicePage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12 sm:mb-16"
           >
-            <h2 
+            <Heading 
+              level="h2"
+              size="lg"
               id="core-services-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
+              className="mb-4 sm:mb-6 font-display text-brand-textDark"
+              animate
+              withDivider
+              dividerPosition="center"
             >
               我們的核心服務
-            </h2>
+            </Heading>
             <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
               提供完整的醫療行銷解決方案，幫助診所建立品牌形象、提升市場競爭力
             </p>
@@ -704,7 +845,7 @@ export default function ServicePage() {
           >
             <h2 
               id="service-process-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis"
             >
               專業服務流程
             </h2>
@@ -738,7 +879,7 @@ export default function ServicePage() {
           >
             <h2 
               id="pricing-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis"
             >
               選擇適合的方案
             </h2>
@@ -756,45 +897,21 @@ export default function ServicePage() {
       </section>
 
       {/* CTA Section */}
-      <section 
-        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white"
-        role="region"
-        aria-labelledby="cta-title"
-      >
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
-          >
-            <h2 
-              id="cta-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6"
-            >
-              開始您的品牌成長之旅
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
-              立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
-              >
-                預約諮詢
-              </Link>
-              <Link
-                href="/case"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white/10 transition-all duration-300 text-sm sm:text-base rounded-lg"
-              >
-                查看案例
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <CTASection
+        title="開始您的品牌成長之旅"
+        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
+        sectionId="cta-title"
+        primaryButton={{
+          href: "/contact",
+          text: "預約諮詢",
+          variant: "primary"
+        }}
+        secondaryButton={{
+          href: "/case",
+          text: "查看案例",
+          variant: "secondary"
+        }}
+      />
 
       {/* Service Feature Section */}
       <ServiceFeature />
