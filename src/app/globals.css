@@ -3,38 +3,43 @@
 @tailwind utilities;
 
 :root {
+  /* 主要顏色設定 - 紅白黑三色基礎 */
+  --color-red: #e62733;
+  --color-white: #ffffff;
+  --color-black: #111111;
+  
+  /* 紅色不同明度 */
+  --color-red-light: #ff3b45;
+  --color-red-dark: #cc1f2a;
+  
+  /* 黑色不同明度 */
+  --color-black-light: #333333;
+  --color-black-dark: #000000;
+  
+  /* 系統顏色變數 */
   --primary: 0 84% 60%;
   --primary-foreground: 0 0% 100%;
-  --primary-hue: 0;
-  --primary-saturation: 84%;
-  --primary-lightness: 60%;
   
-  --secondary: 220 14% 96%;
-  --secondary-foreground: 220 9% 46%;
+  --secondary: 0 0% 7%;
+  --secondary-foreground: 0 0% 100%;
   
   --background: 0 0% 100%;
-  --foreground: 220 9% 46%;
+  --foreground: 0 0% 7%;
   
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 9% 46%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
   
-  --accent: 220 14% 96%;
-  --accent-foreground: 220 9% 46%;
+  --accent: 0 84% 60%;
+  --accent-foreground: 0 0% 100%;
   
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
+  --border: 0 0% 89%;
+  --input: 0 0% 89%;
   --ring: 0 84% 60%;
   
-  --card: 0 0% 100%;
-  --card-foreground: 220 9% 46%;
-  
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 9% 46%;
-  
-  --radius: 0.5rem;
+  --radius: 0;
   
   /* 文字系統變數 */
   --font-base: 'GenYoGothicTW', sans-serif;
@@ -58,13 +63,6 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
   --leading-loose: 2;
-  
-  --tracking-tighter: -0.05em;
-  --tracking-tight: -0.025em;
-  --tracking-normal: 0em;
-  --tracking-wide: 0.025em;
-  --tracking-wider: 0.05em;
-  --tracking-widest: 0.1em;
 }
 
 /* 基本文字設定 */
@@ -72,7 +70,7 @@
   html {
     font-family: var(--font-base);
     line-height: var(--leading-normal);
-    color: #333333;
+    color: var(--color-black);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -84,17 +82,15 @@
     line-height: var(--leading-tight);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-    color: #111827;
+    color: var(--color-black);
   }
   
   h1 {
     font-size: var(--text-4xl);
-    letter-spacing: var(--tracking-tight);
   }
   
   h2 {
     font-size: var(--text-3xl);
-    letter-spacing: var(--tracking-tight);
   }
   
   h3 {
@@ -112,7 +108,6 @@
   h6 {
     font-size: var(--text-base);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
   }
   
   p {
@@ -121,13 +116,13 @@
   }
   
   a {
-    color: hsl(var(--primary));
+    color: var(--color-red);
     text-decoration: none;
-    transition: color 0.2s, text-decoration 0.2s;
+    transition: color 0.2s;
   }
   
   a:hover {
-    text-decoration: underline;
+    color: var(--color-red-dark);
   }
   
   small {
@@ -135,13 +130,9 @@
   }
   
   blockquote {
-    font-style: italic;
-    border-left: 3px solid hsl(var(--primary));
+    border-left: 2px solid var(--color-red);
     padding-left: 1rem;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin: 1.5rem 0;
   }
   
   @media (min-width: 640px) {
@@ -159,137 +150,93 @@
 
 /* 自定義文字選取樣式 */
 ::selection {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-red);
+  color: var(--color-white);
 }
 
 ::-moz-selection {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-red);
+  color: var(--color-white);
 }
 
-/* 紅色背景下特殊文字選取樣式 */
-.bg-primary ::selection,
-.bg-[#e62733] ::selection,
-[class*="bg-primary"] ::selection,
-[class*="bg-red"] ::selection {
-  background-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
+/* 三種主要配色方案: 紅底白字、黑底紅字、白底黑字 */
 
-.bg-primary ::-moz-selection,
-.bg-[#e62733] ::-moz-selection,
-[class*="bg-primary"] ::-moz-selection,
-[class*="bg-red"] ::-moz-selection {
-  background-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* 紅色背景文字優化 */
+/* 1. 紅底白字 */
+.bg-red,
 .bg-primary,
-.bg-[#e62733],
-[class*="bg-primary"],
-[class*="bg-red"] {
-  color: #ffffff;
+.bg-[#e62733] {
+  background-color: var(--color-red);
+  color: var(--color-white) !important;
 }
 
+.bg-red h1, .bg-red h2, .bg-red h3, 
+.bg-red h4, .bg-red h5, .bg-red h6,
 .bg-primary h1, .bg-primary h2, .bg-primary h3, 
 .bg-primary h4, .bg-primary h5, .bg-primary h6,
-.bg-[#e62733] h1, .bg-[#e62733] h2, .bg-[#e62733] h3, 
-.bg-[#e62733] h4, .bg-[#e62733] h5, .bg-[#e62733] h6,
-[class*="bg-primary"] h1, [class*="bg-primary"] h2, [class*="bg-primary"] h3,
-[class*="bg-primary"] h4, [class*="bg-primary"] h5, [class*="bg-primary"] h6,
-[class*="bg-red"] h1, [class*="bg-red"] h2, [class*="bg-red"] h3,
-[class*="bg-red"] h4, [class*="bg-red"] h5, [class*="bg-red"] h6 {
-  color: #ffffff;
+.bg-[#e62733] h1, .bg-[#e62733] h2, .bg-[#e62733] h3,
+.bg-[#e62733] h4, .bg-[#e62733] h5, .bg-[#e62733] h6 {
+  color: var(--color-white) !important;
 }
 
+.bg-red a,
 .bg-primary a,
-.bg-[#e62733] a,
-[class*="bg-primary"] a,
-[class*="bg-red"] a {
-  color: #ffffff;
+.bg-[#e62733] a {
+  color: var(--color-white);
   text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.5);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
+.bg-red a:hover,
 .bg-primary a:hover,
-.bg-[#e62733] a:hover,
-[class*="bg-primary"] a:hover,
-[class*="bg-red"] a:hover {
-  text-decoration-color: #ffffff;
+.bg-[#e62733] a:hover {
   text-decoration-thickness: 2px;
 }
 
-/* 紅色背景下的特殊文字樣式 */
-.bg-primary .text-highlight::after,
-.bg-[#e62733] .text-highlight::after,
-[class*="bg-primary"] .text-highlight::after,
-[class*="bg-red"] .text-highlight::after {
-  background-color: rgba(255, 255, 255, 0.25);
+/* 2. 黑底紅字 */
+.bg-black {
+  background-color: var(--color-black);
+  color: var(--color-white);
 }
 
-.bg-primary .heading-accent::before,
-.bg-[#e62733] .heading-accent::before,
-[class*="bg-primary"] .heading-accent::before,
-[class*="bg-red"] .heading-accent::before {
-  background-color: #ffffff;
+.bg-black h1, .bg-black h2, .bg-black h3,
+.bg-black h4, .bg-black h5, .bg-black h6 {
+  color: var(--color-white);
 }
 
-.bg-primary .heading-underline::after,
-.bg-[#e62733] .heading-underline::after,
-[class*="bg-primary"] .heading-underline::after,
-[class*="bg-red"] .heading-underline::after {
-  background-color: #ffffff;
+.bg-black a {
+  color: var(--color-red);
 }
 
-.bg-primary .text-lead,
-.bg-[#e62733] .text-lead,
-[class*="bg-primary"] .text-lead,
-[class*="bg-red"] .text-lead {
-  color: rgba(255, 255, 255, 0.9);
+.bg-black a:hover {
+  color: var(--color-red-light);
 }
 
-.bg-primary .text-caption,
-.bg-[#e62733] .text-caption,
-[class*="bg-primary"] .text-caption,
-[class*="bg-red"] .text-caption {
-  color: rgba(255, 255, 255, 0.8);
+.bg-black .accent {
+  color: var(--color-red);
 }
 
-/* 紅色背景下的白色漸變文字 */
-.text-gradient-white {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.85) 100%);
+/* 3. 白底黑字 */
+.bg-white {
+  background-color: var(--color-white);
+  color: var(--color-black);
 }
 
-/* 紅色背景下增強文字清晰度 */
-.text-shadow-sm {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.bg-white h1, .bg-white h2, .bg-white h3,
+.bg-white h4, .bg-white h5, .bg-white h6 {
+  color: var(--color-black);
 }
 
-.text-shadow-md {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+.bg-white a {
+  color: var(--color-red);
 }
 
-.text-shadow-lg {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+.bg-white a:hover {
+  color: var(--color-red-dark);
 }
 
-/* 白色按鈕在紅色背景上的特殊樣式 */
-.bg-primary .btn-white,
-.bg-[#e62733] .btn-white,
-[class*="bg-primary"] .btn-white,
-[class*="bg-red"] .btn-white {
-  @apply bg-white text-[#e62733] hover:bg-white/90;
+.bg-white .accent {
+  color: var(--color-red);
 }
 
 /* 字體定義 */
@@ -326,47 +273,45 @@
 }
 
 @layer components {
+  /* 容器 */
   .container-custom {
-    @apply container mx-auto px-4;
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
   
+  /* 按鈕系統 - 扁平化設計 */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 font-medium transition-colors;
+  }
+  
+  /* 紅色按鈕 - 白色文字 */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-sm hover:bg-primary/90 transition-colors;
+    @apply bg-[#e62733] text-white hover:bg-[#cc1f2a];
   }
   
+  /* 白色按鈕 - 紅色文字 */
   .btn-white {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-white font-medium rounded-sm;
+    @apply bg-white text-[#e62733] hover:bg-gray-50;
   }
   
-  .btn-outline {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-white text-white font-medium rounded-sm;
+  /* 黑色按鈕 - 白色文字 */
+  .btn-black {
+    @apply bg-[#111111] text-white hover:bg-[#333333];
   }
   
-  .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-gray-800 text-white font-medium rounded-sm hover:bg-gray-700 transition-colors;
+  /* 輪廓按鈕 */
+  .btn-outline-white {
+    @apply border-2 border-white text-white hover:bg-white hover:text-[#e62733];
   }
   
-  .btn-ghost {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-transparent text-gray-600 font-medium rounded-sm hover:bg-gray-100 transition-colors;
+  .btn-outline-red {
+    @apply border-2 border-[#e62733] text-[#e62733] hover:bg-[#e62733] hover:text-white;
   }
   
-  /* 淡入動畫，用於替代Framer Motion的SSR不一致問題 */
-  .animate-fadeIn {
-    animation: fadeIn 0.4s ease-in-out forwards;
+  .btn-outline-black {
+    @apply border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white;
   }
   
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  /* 擴充文字樣式 */
+  /* 文字樣式 */
   .text-balance {
     text-wrap: balance;
   }
@@ -375,216 +320,348 @@
     text-wrap: pretty;
   }
   
-  .text-highlight {
-    position: relative;
-    display: inline-block;
-    z-index: 1;
+  /* 標籤設計 */
+  .tag {
+    @apply inline-block px-3 py-1 text-sm font-medium;
   }
   
-  .text-highlight::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 0.4em;
-    background-color: hsla(var(--primary), 0.2);
-    z-index: -1;
-    transition: height 0.2s;
+  .tag-red {
+    @apply bg-[#e62733] text-white;
   }
   
-  .text-highlight:hover::after {
-    height: 0.6em;
+  .tag-black {
+    @apply bg-[#111111] text-white;
   }
   
-  .text-gradient-primary {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(135deg, #E61E25 0%, #FF4D4D 100%);
+  .tag-white {
+    @apply bg-white text-[#111111] border border-gray-200;
   }
   
-  .text-gradient-dark {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+  /* 卡片元素 - 扁平化設計 */
+  .card {
+    @apply bg-white border border-gray-100;
   }
   
+  .card-hover {
+    @apply transition-colors hover:border-[#e62733];
+  }
+  
+  /* 頁面區塊標準間距 */
+  .section {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+  
+  /* 強調文字 */
+  .accent {
+    @apply text-[#e62733];
+  }
+  
+  /* 標題設計 */
   .heading-accent {
-    position: relative;
-    padding-left: 1rem;
-  }
-  
-  .heading-accent::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.3em;
-    bottom: 0.3em;
-    width: 4px;
-    background-color: hsl(var(--primary));
-    border-radius: 2px;
+    @apply border-l-4 border-[#e62733] pl-4;
   }
   
   .heading-underline {
-    position: relative;
-    display: inline-block;
-    padding-bottom: 0.5rem;
+    @apply relative pb-3;
   }
   
   .heading-underline::after {
     content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 3rem;
-    height: 3px;
-    background-color: hsl(var(--primary));
-    transition: width 0.3s;
+    @apply absolute left-0 bottom-0 w-12 h-1 bg-[#e62733];
   }
   
-  .heading-underline:hover::after {
-    width: 100%;
+  /* 表單元素 - 扁平化設計 */
+  .input {
+    @apply w-full px-4 py-3 border border-gray-200 focus:border-[#e62733] focus:ring-0 transition-colors;
   }
   
-  .text-lead {
-    font-size: var(--text-xl);
-    line-height: var(--leading-relaxed);
-    font-weight: 400;
-    color: #4B5563;
-  }
-  
-  .text-caption {
-    font-size: var(--text-sm);
-    letter-spacing: 0.05em;
-    color: #6B7280;
-  }
-  
-  .text-uppercase {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .label {
+    @apply block text-sm font-medium text-[#111111] mb-2;
   }
 }
 
-/* 自定義滾動條 */
-.styled-scrollbar::-webkit-scrollbar {
-  width: 4px;
+/* 文字動畫效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.styled-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.styled-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 10px;
+@keyframes slideInLeft {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-.styled-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-/* 漸變背景 */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #E61E25 0%, #FF4D4D 100%);
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
-.bg-gradient-dark {
-  background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-/* 文字漸變 */
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #E61E25 0%, #FF4D4D 100%);
+/* 文字動畫類別 */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
-/* 動畫效果 */
-.hover-scale {
-  @apply transition-transform duration-300 hover:scale-105;
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
 }
 
-.hover-lift {
-  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+.animate-slide-left {
+  animation: slideInLeft 0.8s ease-out forwards;
 }
 
-/* 卡片樣式 */
-.card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+.animate-slide-right {
+  animation: slideInRight 0.8s ease-out forwards;
 }
 
-.card-basic {
-  @apply bg-white rounded-sm shadow-sm border border-gray-100;
+.animate-expand {
+  animation: expandWidth 0.8s ease-out forwards;
 }
 
-/* 響應式容器 */
-.container-custom {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
 }
 
-/* 標題字體 */
-.font-display {
-  @apply font-bold tracking-tight;
+/* 延遲類別 */
+.delay-100 {
+  animation-delay: 0.1s;
 }
 
-/* 內容字體 */
-.font-content {
-  @apply leading-relaxed text-gray-600;
+.delay-200 {
+  animation-delay: 0.2s;
 }
 
-/* 文字尺寸系統 */
-.text-2xs {
-  font-size: 0.625rem;
+.delay-300 {
+  animation-delay: 0.3s;
 }
 
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+/* 提升文字可讀性 */
+.text-shadow-light {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.text-shadow-medium {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.text-shadow-strong {
+  text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* 紅色背景上的文字特殊處理 */
+.bg-red h1, .bg-red h2, .bg-red h3, 
+.bg-red h4, .bg-red h5, .bg-red h6,
+.bg-primary h1, .bg-primary h2, .bg-primary h3, 
+.bg-primary h4, .bg-primary h5, .bg-primary h6 {
+  color: var(--color-white);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* 強調標題 */
+.heading-accent {
+  font-family: var(--font-accent);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/* 標題底線效果 */
+.heading-underline {
+  position: relative;
+  padding-bottom: 0.5em;
+}
+
+.heading-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-red);
+  transition: width 0.3s ease;
+}
+
+.heading-underline:hover::after {
+  width: 100px;
+}
+
+/* 超大標題 */
+.heading-hero {
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* 響應式文字類別 */
 .text-responsive-title {
-  font-size: clamp(1.75rem, 5vw, 3.5rem);
-  line-height: 1.2;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .text-responsive-subtitle {
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  line-height: 1.3;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .text-responsive-body {
-  font-size: clamp(0.875rem, 2vw, 1.125rem);
-  line-height: 1.5;
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  line-height: 1.6;
 }
 
-/* 文字動畫類 */
-.animate-typing {
-  overflow: hidden;
-  white-space: nowrap;
-  animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
-  border-right: 2px solid;
+/* 標題字體樣式 */
+.font-display {
+  @apply font-bold;
 }
 
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
+/* 內容文字樣式 */
+.font-content {
+  @apply text-[#333333];
 }
 
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: currentColor }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out both;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* 添加全局覆蓋樣式，確保扁平化設計 */
+@layer utilities {
+  /* 移除所有圓角 */
+  .rounded,
+  .rounded-sm,
+  .rounded-md,
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-full {
+    border-radius: 0 !important;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  /* 移除所有陰影 */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-inner {
+    box-shadow: none !important;
   }
+  
+  /* 確保按鈕和互動元素保持扁平 */
+  button,
+  .btn,
+  [role="button"] {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s !important;
+  }
+  
+  /* 確保輸入框和表單元素扁平化 */
+  input,
+  select,
+  textarea {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  /* 確保卡片和容器扁平化 */
+  .card,
+  .container,
+  [class*="bg-"] {
+    border-radius: 0 !important;
+  }
+  
+  /* 確保圖片保持方形 */
+  img {
+    border-radius: 0 !important;
+  }
+  
+  /* 強制使用標準過渡效果 */
+  .transition-all {
+    transition-property: background-color, color, border-color !important;
+  }
+  
+  /* 移除不必要的變形效果 */
+  .transform:not(.rotate),
+  .translate-x-*,
+  .translate-y-*,
+  .scale-* {
+    transform: none !important;
+  }
+  
+  /* 移除模糊和漸變效果 */
+  [class*="backdrop-blur"],
+  [class*="gradient"] {
+    backdrop-filter: none !important;
+    background-image: none !important;
+  }
+}
+
+/* 強制紅白黑三色方案 */
+.text-primary {
+  color: var(--color-red) !important;
+}
+
+.bg-primary {
+  background-color: var(--color-red) !important;
+  color: var(--color-white) !important;
+}
+
+/* 標籤風格 - 線條裝飾 */
+.tag-outline {
+  display: inline-block;
+  background-color: transparent;
+  border: 1px solid currentColor;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.tag-outline-white {
+  color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.tag-outline-white:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tag-outline-red {
+  color: var(--color-red);
+  border-color: var(--color-red);
+}
+
+.tag-outline-red:hover {
+  background-color: rgba(230, 39, 51, 0.1);
+}
+
+.tag-outline-black {
+  color: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.tag-outline-black:hover {
+  background-color: rgba(17, 17, 17, 0.1);
 } 

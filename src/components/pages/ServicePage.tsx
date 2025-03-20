@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { memo } from 'react'
+import Image from 'next/image'
+import { colors } from '@/config/theme'
+import PageHeader from '@/components/common/PageHeader'
 
 // 從配置文件導入
-import { colors } from '@/config/theme'
 import { animations } from '@/utils/animations'
 
 // 定義資料類型
@@ -462,55 +464,39 @@ export default function ServicePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section 
-        className="relative bg-primary text-white py-16 sm:py-20 md:py-24 lg:py-32"
-        role="banner"
-      >
-        <div className="container-custom relative z-10">
-          <motion.div
+      <PageHeader
+        title="專業的醫療行銷服務"
+        description="為您的診所打造最適合的品牌成長策略，提供全方位的行銷解決方案"
+        variant="gradient"
+        size="lg"
+        alignment="center"
+        backgroundImage="/images/bgline-r.png"
+        withBottomGradient={true}
+      />
+      
+      <div className="bg-gradient-to-r from-primary to-primary/70 py-6">
+        <div className="container-custom">
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
+            transition={{ delay: 0.4 }}
           >
-            <motion.h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 font-display"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
             >
-              專業的醫療行銷服務
-            </motion.h1>
-            <motion.p 
-              className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              免費諮詢
+            </Link>
+            <Link
+              href="#pricing"
+              className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
             >
-              為您的診所打造最適合的品牌成長策略，提供全方位的行銷解決方案
-            </motion.p>
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base rounded-lg"
-              >
-                免費諮詢
-              </Link>
-              <Link
-                href="#pricing"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
-              >
-                查看方案
-              </Link>
-            </motion.div>
+              查看方案
+            </Link>
           </motion.div>
         </div>
-      </section>
+      </div>
 
       {/* 核心服務 */}
       <section 

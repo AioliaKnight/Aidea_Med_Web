@@ -6,6 +6,7 @@ import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
 import { OptimizedImage, Spinner } from '@/components/common'
+import PageHeader from '@/components/common/PageHeader'
 import {
   LightBulbIcon,
   ChartBarIcon,
@@ -193,7 +194,7 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
 
   return (
     <AnimatedSection delay={delay}>
-      <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="group bg-white border border-gray-100 hover:border-red overflow-hidden transition-colors duration-300">
         <div className="relative overflow-hidden aspect-[3/4]">
           {imageLoading && !imageError && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
@@ -205,7 +206,7 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               src={member.image}
               alt={member.name}
               fill
-              className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+              className="object-cover"
               sizes="(max-width: 480px) 45vw, (max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
               onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
@@ -216,7 +217,7 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               <span className="text-4xl">👤</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
         <div className="p-3 sm:p-4 md:p-6">
           <div className="mb-3 sm:mb-4">
@@ -251,240 +252,184 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
                 </a>
               ))}
             </div>
-            <p className="text-primary/80 font-medium text-sm sm:text-base">
-              {member.quote}
-            </p>
           </div>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-            {member.expertise.map((skill: string, i) => (
-              <span
-                key={i}
-                className="px-2 py-0.5 sm:px-3 sm:py-1 bg-primary/5 text-primary rounded-full text-xs"
+          <p className="text-gray-600 line-clamp-3 text-sm sm:text-base mb-3">{member.description}</p>
+          
+          <div className="flex flex-wrap gap-2 mt-4">
+            {member.expertise.slice(0, 2).map((skill, i) => (
+              <span 
+                key={i} 
+                className="px-2 py-0.5 sm:px-3 sm:py-1 bg-primary text-white text-xs"
               >
                 {skill}
               </span>
             ))}
           </div>
-          <p className="text-gray-600 text-xs leading-relaxed line-clamp-2 sm:text-sm sm:line-clamp-3 md:line-clamp-none">
-            {showDetails ? member.description : `${member.description.substring(0, 100)}...`}
-          </p>
-          <button 
-            onClick={() => setShowDetails(!showDetails)}
-            className="text-primary font-medium hover:underline focus:outline-none"
-          >
-            {showDetails ? '收起' : '了解更多'}
-          </button>
-          
-          {showDetails && (
-            <motion.div 
-              className="mt-4 space-y-4 pt-4 border-t border-gray-100"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}
-            >
-              <div>
-                <h4 className="font-bold text-sm uppercase text-gray-500 mb-2">學歷背景</h4>
-                <p className="text-gray-700">{member.education}</p>
-              </div>
-              <div>
-                <h4 className="font-bold text-sm uppercase text-gray-500 mb-2">專業領域</h4>
-                <div className="flex flex-wrap gap-2">
-                  {member.expertise.map((skill: string, i) => (
-                    <span 
-                      key={i}
-                      className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
         </div>
       </div>
     </AnimatedSection>
   )
 }
 
-function TeamIntroSection() {
+// 團隊介紹區塊
+const TeamIntroSection = () => {
   return (
-    <section className="py-24 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <motion.div 
-          className="grid md:grid-cols-2 gap-12 items-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div>
-            <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
-              為何選擇我們
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              一個理解醫療<span className="text-primary">與行銷</span>的專業團隊
-            </h2>
-            <p className="text-lg text-gray-600 mb-6">
-              我們不僅是行銷專家，更深入理解醫療產業的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為醫療專業人士創造真正有價值的行銷解決方案。
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+    <div>
+      <PageHeader
+        title="認識我們的專業團隊"
+        description="每一位成員都致力於為診所客戶創造最有溫度、最能打動人心的品牌體驗"
+        variant="black"
+        size="lg"
+        alignment="center"
+        backgroundImage="/images/bgline-w.png"
+        overlayOpacity={0.9}
+      />
+      
+      <section className="py-24 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="grid md:grid-cols-2 gap-12 items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div>
+              <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
+                為何選擇我們
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                一個理解醫療<span className="text-primary">與行銷</span>的專業團隊
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                我們不僅是行銷專家，更深入理解醫療產業的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為醫療專業人士創造真正有價值的行銷解決方案。
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="ml-4 text-gray-600">我們的團隊成員平均擁有8年以上的醫療行銷經驗</p>
                 </div>
-                <p className="ml-4 text-gray-600">我們的團隊成員平均擁有8年以上的醫療行銷經驗</p>
-              </div>
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="ml-4 text-gray-600">我們與超過100家醫療診所合作，深知各類專科的獨特需求</p>
                 </div>
-                <p className="ml-4 text-gray-600">我們與超過100家醫療診所合作，深知各類專科的獨特需求</p>
-              </div>
-              <div className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="ml-4 text-gray-600">我們的客戶平均實現40%以上的新病患增長</p>
                 </div>
-                <p className="ml-4 text-gray-600">我們的客戶平均實現40%以上的新病患增長</p>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <motion.div 
-              className="rounded-lg overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Image 
-                src="/images/team/office-1.jpg" 
-                alt="Our Office" 
-                width={800}
-                height={600}
-                className="w-full h-auto"
-                priority
-              />
-            </motion.div>
-            <motion.div 
-              className="rounded-lg overflow-hidden mt-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <Image 
-                src="/images/team/office-2.jpg" 
-                alt="Our Team" 
-                width={800}
-                height={600}
-                className="w-full h-auto"
-              />
-            </motion.div>
-            <motion.div 
-              className="rounded-lg overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Image 
-                src="/images/team/office-3.jpg" 
-                alt="Team Collaboration" 
-                width={800}
-                height={600}
-                className="w-full h-auto"
-              />
-            </motion.div>
-            <motion.div 
-              className="rounded-lg overflow-hidden mt-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <Image 
-                src="/images/team/office-4.jpg" 
-                alt="Our Meeting" 
-                width={800}
-                height={600}
-                className="w-full h-auto"
-              />
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+            <div className="grid grid-cols-2 gap-4">
+              <motion.div 
+                className="rounded-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <Image 
+                  src="/images/team/office-1.jpg" 
+                  alt="Our Office" 
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                  priority
+                />
+              </motion.div>
+              <motion.div 
+                className="rounded-lg overflow-hidden mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <Image 
+                  src="/images/team/office-2.jpg" 
+                  alt="Our Team" 
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
+              </motion.div>
+              <motion.div 
+                className="rounded-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <Image 
+                  src="/images/team/office-3.jpg" 
+                  alt="Team Collaboration" 
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
+              </motion.div>
+              <motion.div 
+                className="rounded-lg overflow-hidden mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                <Image 
+                  src="/images/team/office-4.jpg" 
+                  alt="Our Meeting" 
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
   )
 }
 
-function TeamValues() {
-  const values = [
-    {
-      icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
-      title: '以人為本',
-      description: '我們相信醫療的核心價值在於人與人之間的連結與關懷。每一項行銷策略都以建立醫師與病患間的信任為根本，讓醫療回歸最溫暖的初衷。'
-    },
-    {
-      icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-      title: '專業誠信',
-      description: '我們承諾只提供真正有效的策略與服務，清晰透明地提供數據與結果，成為醫療專業人士可長期信賴的行銷夥伴。'
-    },
-    {
-      icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-      title: '創新突破',
-      description: '醫療行銷不應止步於傳統模式。我們持續探索新技術與方法，為診所客戶開創差異化的品牌形象與行銷策略，在競爭中脫穎而出。'
-    },
-    {
-      icon: 'M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9',
-      title: '持續成長',
-      description: '我們與診所客戶共同成長，提供持續優化的服務與策略，確保長期穩定的發展，而非短期的行銷效應。'
-    }
-  ]
-
+// 團隊價值觀組件
+const TeamValues = () => {
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4">
-        <motion.div 
-          className="text-center max-w-3xl mx-auto mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
-            我們的價值觀
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            指引我們每一步的<span className="text-primary">核心理念</span>
+    <section className="py-16 sm:py-20 md:py-24 bg-white">
+      <div className="container mx-auto px-4 sm:px-6">
+        <AnimatedSection className="text-center mb-10 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-primary mb-3 sm:mb-4">
+            團隊價值觀
           </h2>
-          <p className="text-lg text-gray-600">
-            這些價值觀不只是掛在牆上的標語，而是深植於我們每一位團隊成員的心中，指引我們在每個專案中的決策與行動。
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            秉持專業與創新精神，為客戶提供最優質的服務
           </p>
-        </motion.div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
           {values.map((value, index) => (
-            <motion.div 
-              key={index}
-              className="bg-gray-50 p-8 rounded-lg"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-            >
-              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={value.icon} />
-                </svg>
+            <AnimatedSection key={value.title} delay={index * 0.1}>
+              <div className="group bg-gray-50 p-4 sm:p-6 md:p-8 text-center hover:bg-white hover:border hover:border-red transition-colors duration-300">
+                <div className="mb-4 sm:mb-6 flex justify-center">
+                  <value.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary/80 group-hover:text-primary transition-colors duration-300" />
+                </div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-2 sm:mb-3">
+                  {value.title}
+                </h3>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-3 sm:line-clamp-none">
+                  {value.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold mb-4">{value.title}</h3>
-              <p className="text-gray-600">{value.description}</p>
-            </motion.div>
+            </AnimatedSection>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default function TeamPage() {
@@ -560,7 +505,7 @@ export default function TeamPage() {
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
             {values.map((value, index) => (
               <AnimatedSection key={value.title} delay={index * 0.1}>
-                <div className="group bg-gray-50 p-4 sm:p-6 md:p-8 rounded-lg text-center hover:bg-white hover:shadow-md transition-all duration-300">
+                <div className="group bg-gray-50 p-4 sm:p-6 md:p-8 text-center hover:bg-white hover:border hover:border-red transition-colors duration-300">
                   <div className="mb-4 sm:mb-6 flex justify-center">
                     <value.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary/80 group-hover:text-primary transition-colors duration-300" />
                   </div>
@@ -585,19 +530,19 @@ export default function TeamPage() {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 sm:mb-6">
                 準備好開始合作了嗎？
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-white mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
                 讓我們的專業團隊，為您的診所打造最適合的品牌成長策略
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center bg-white text-primary px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-semibold hover:bg-white/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-white text-primary px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold hover:bg-white/90 transition-colors"
                 >
                   立即預約諮詢
                 </Link>
                 <Link
                   href="/service"
-                  className="inline-flex items-center justify-center border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-semibold hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center justify-center border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold hover:bg-white/10 transition-colors"
                 >
                   了解服務內容
                 </Link>

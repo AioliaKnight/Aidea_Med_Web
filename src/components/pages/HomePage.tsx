@@ -257,22 +257,16 @@ function HeroSection() {
     { id: 'insight', name: '#Insight' }
   ];
   
-  // 數據統計
-  const stats = [
-    { value: '500', label: '累積服務醫療院所', unit: '間↑' },
-    { value: '150', label: '為診所提升自費患者', unit: '位↑' }
-  ];
-  
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[95vh] flex items-center bg-primary overflow-hidden"
+      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center bg-primary overflow-hidden"
       role="banner"
       aria-label="網站主要橫幅"
     >
       {/* 波浪背景 */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#e62733] opacity-100"></div>
+        <div className="absolute inset-0 bg-primary opacity-100"></div>
         <div className="absolute inset-0 opacity-20">
           <Image
             src="/images/bgline-w.png"
@@ -286,82 +280,65 @@ function HeroSection() {
         </div>
       </div>
       
-      <div className="container-custom relative z-20 py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+      <div className="container-custom relative z-20 py-12 md:py-20 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="text-center"
+          >
+            <h1 
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 heading-hero animate-slide-up"
+              suppressHydrationWarning
             >
-              <h1 
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
-                suppressHydrationWarning
-              >
-                數位精準驅動<br/>
-                <span className="font-bold relative">專為真實醫療服務</span>
-              </h1>
-              
-              <p 
-                className="text-xl sm:text-2xl text-white/90 max-w-3xl mt-6 mb-8"
-                suppressHydrationWarning
-              >
-                Digital precision-driven,<br/>
-                tailored for authentic healthcare services.
-              </p>
-              
-              {/* 標籤列 */}
-              <div className="flex flex-wrap gap-4 mt-10 mb-12">
-                {tags.map((tag) => (
-                  <motion.div
-                    key={tag.id}
-                    className="text-white text-sm md:text-base px-4 py-2 border-t border-l border-r border-b border-white/30"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                  >
-                    {tag.name}
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+              數位精準驅動<br/>
+              <span className="font-bold text-white">專為真實醫療服務</span>
+            </h1>
             
-            {/* 預約按鈕 */}
-            <motion.div
-              className="mt-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
+            <p 
+              className="text-lg sm:text-xl md:text-2xl text-white max-w-2xl mx-auto mt-4 mb-8 animate-slide-up delay-200"
+              suppressHydrationWarning
             >
-              <Link href="/contact">
-                <span className="inline-flex items-center bg-black text-white px-8 py-3 text-lg font-medium">
-                  <span className="mr-2 text-2xl font-bold">A:</span>
-                  預約線上諮詢
-                </span>
-              </Link>
-            </motion.div>
-          </div>
-          
-          {/* 右側數據統計 */}
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 gap-8">
-              {stats.map((stat, index) => (
+              Digital precision-driven,<br/>
+              tailored for authentic healthcare services.
+            </p>
+            
+            {/* 扁平化標籤設計 - 透明背景線條裝飾 */}
+            <div className="flex flex-wrap justify-center gap-3 my-10">
+              {tags.map((tag, index) => (
                 <motion.div
-                  key={stat.label}
-                  className="relative"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.2, duration: 0.6 }}
+                  key={tag.id}
+                  className="tag-outline tag-outline-white text-sm md:text-base"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                  whileHover={{
+                    scale: 1.05,
+                    borderWidth: '2px',
+                    transition: { duration: 0.2 }
+                  }}
                 >
-                  <div className="mb-2 text-white/80 text-lg">{stat.label}</div>
-                  <div className="flex items-baseline">
-                    <span className="text-6xl md:text-7xl font-bold text-white mr-2">{stat.value}</span>
-                    <span className="text-2xl md:text-3xl font-medium text-white">{stat.unit}</span>
-                  </div>
+                  {tag.name}
                 </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
+          
+          {/* 預約按鈕 - 純扁平設計 */}
+          <motion.div
+            className="mt-10 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Link href="/contact">
+              <span className="inline-flex items-center bg-white text-[#e62733] px-8 py-4 text-lg font-medium">
+                <span className="mr-2 text-2xl font-bold">A:</span>
+                預約線上諮詢
+              </span>
+            </Link>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -1215,6 +1192,42 @@ export default function HomePage() {
 
       <section id="contact" className="min-h-[400px]">
         <ContactSection />
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto px-4 sm:px-6"
+          >
+            <h2 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 heading-accent"
+            >
+              開始您的品牌成長之旅
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto text-shadow-light">
+              立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-colors duration-300 text-sm sm:text-base"
+              >
+                預約諮詢
+              </Link>
+              <Link
+                href="/case"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white/10 transition-colors duration-300 text-sm sm:text-base"
+              >
+                查看案例
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </section>
     </div>
   );

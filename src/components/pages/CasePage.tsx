@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Metadata } from 'next'
 import { animations } from '@/utils/animations'
 import { CaseCard } from '@/components/case/CaseCard'
+import PageHeader from '@/components/common/PageHeader'
 
 // 定義案例資料類型
 export interface CaseMetric {
@@ -689,40 +690,14 @@ export default function CasePage(): React.ReactElement {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 頁面標題區 */}
-      <section className="relative py-20 bg-primary text-white overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.1 }}
-          transition={{ duration: 1 }}
-        >
-          <Image
-            src="/images/bgline-w.png"
-            alt="背景線條"
-            fill
-            className="object-cover mix-blend-soft-light"
-            quality={90}
-            sizes="100vw"
-          />
-        </motion.div>
-
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 font-display">
-              成功案例展示
-            </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
-              探索我們如何幫助診所提升品牌價值、增加營業額，
-              打造專屬的品牌成長策略
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHeader
+        title="成功案例展示"
+        description="探索我們如何幫助診所提升品牌價值、增加營業額，打造專屬的品牌成長策略"
+        variant="red"
+        size="lg"
+        backgroundImage="/images/bgline-w.png"
+        overlayOpacity={0.9}
+      />
 
       {/* 案例篩選與展示區 */}
       <section className="py-20">

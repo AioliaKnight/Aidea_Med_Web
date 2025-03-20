@@ -3,6 +3,52 @@ import { Variants } from 'framer-motion'
 // 基本動畫變體定義
 const defaultEasing = [0.6, 0.05, 0.01, 0.9]
 
+// CSS 動畫持續時間常數
+export const DURATIONS = {
+  fast: 0.3,
+  normal: 0.5,
+  slow: 0.8,
+  extraSlow: 1.2
+}
+
+// CSS 動畫延遲常數
+export const DELAYS = {
+  none: 0,
+  tiny: 0.1,
+  small: 0.2, 
+  medium: 0.3,
+  large: 0.5
+}
+
+// CSS 類動畫對應表
+export const CSS_ANIMATIONS = {
+  fadeIn: 'animate-fade-in',
+  slideUp: 'animate-slide-up',
+  slideLeft: 'animate-slide-left',
+  slideRight: 'animate-slide-right',
+  expand: 'animate-expand',
+  pulse: 'animate-pulse'
+}
+
+// CSS 延遲類對應表
+export const CSS_DELAYS = {
+  100: 'delay-100',
+  200: 'delay-200',
+  300: 'delay-300',
+  400: 'delay-400',
+  500: 'delay-500'
+}
+
+// 設置CSS動畫樣式的輔助函數
+export const getCssAnimation = (
+  animation: keyof typeof CSS_ANIMATIONS, 
+  delay?: keyof typeof CSS_DELAYS
+) => {
+  return delay 
+    ? `${CSS_ANIMATIONS[animation]} ${CSS_DELAYS[delay]}` 
+    : CSS_ANIMATIONS[animation]
+}
+
 // 淡入上升動畫
 export const fadeInUp: Variants = {
   hidden: { 
@@ -141,6 +187,41 @@ export const slideUp: Variants = {
   }
 }
 
+// 標籤懸停動畫
+export const tagHover: Variants = {
+  initial: { 
+    scale: 1,
+    borderWidth: '1px'
+  },
+  hover: { 
+    scale: 1.05, 
+    borderWidth: '2px',
+    transition: { 
+      duration: 0.2,
+      ease: defaultEasing
+    }
+  }
+}
+
+// 底線展開動畫
+export const underlineExpand: Variants = {
+  initial: { width: '60px' },
+  hover: { 
+    width: '100px',
+    transition: { 
+      duration: 0.3,
+      ease: defaultEasing 
+    }
+  }
+}
+
+// 文字陰影效果
+export const TEXT_SHADOWS = {
+  light: 'text-shadow-light',
+  medium: 'text-shadow-medium',
+  strong: 'text-shadow-strong'
+}
+
 // 頁面轉場動畫
 export const pageTransition = {
   initial: { opacity: 0, y: 20 },
@@ -155,6 +236,51 @@ export const scrollAnimation = {
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
   transition: { duration: 0.6, ease: defaultEasing }
+}
+
+// 根據陣列項目順序生成依序出現動畫
+export const createStaggeredEntrance = (
+  items: any[], 
+  baseDelay: number = 0.3, 
+  increment: number = 0.1
+) => {
+  return items.map((_, index) => ({
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { 
+      delay: baseDelay + (index * increment),
+      duration: 0.5
+    }
+  }))
+}
+
+// 動畫輔助工具：根據條件自動添加動畫類
+export const getAnimationClasses = (options: {
+  type?: keyof typeof CSS_ANIMATIONS,
+  delay?: keyof typeof CSS_DELAYS,
+  textShadow?: keyof typeof TEXT_SHADOWS,
+  additionalClasses?: string
+}) => {
+  const { type, delay, textShadow, additionalClasses = '' } = options
+  const classes = []
+  
+  if (type) {
+    classes.push(CSS_ANIMATIONS[type])
+  }
+  
+  if (delay) {
+    classes.push(CSS_DELAYS[delay])
+  }
+  
+  if (textShadow) {
+    classes.push(TEXT_SHADOWS[textShadow])
+  }
+  
+  if (additionalClasses) {
+    classes.push(additionalClasses)
+  }
+  
+  return classes.join(' ')
 }
 
 // 整合兼容性配置（與現有代碼兼容）
@@ -216,5 +342,14 @@ export const animations = {
     // 兼容舊格式
     initial: {},
     animate: { transition: { staggerChildren: 0.1 } }
-  }
-} as const; 
+  },
+  // 新增標籤動畫
+  tagHover,
+  underlineExpand,
+  // 添加 CSS 動畫辭典
+  css: CSS_ANIMATIONS,
+  delays: CSS_DELAYS,
+  textShadows: TEXT_SHADOWS,
+  getClasses: getAnimationClasses,
+  getCssAnimation
+}; 
