@@ -20,6 +20,7 @@ import {
   MonitorSmartphone,
   UserCog
 } from 'lucide-react'
+import Image from 'next/image'
 
 // 服務特色數據 - 替換 emoji 為圖標組件
 const features = [
@@ -248,57 +249,119 @@ function HeroSection() {
     }
   };
   
+  // 標籤數據
+  const tags = [
+    { id: 'ai', name: '#AI' },
+    { id: 'creativity', name: '#Creativity' },
+    { id: 'design', name: '#Design Thinking' },
+    { id: 'insight', name: '#Insight' }
+  ];
+  
+  // 數據統計
+  const stats = [
+    { value: '500', label: '累積服務醫療院所', unit: '間↑' },
+    { value: '150', label: '為診所提升自費患者', unit: '位↑' }
+  ];
+  
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[85vh] flex items-center bg-primary overflow-hidden"
+      className="relative min-h-[95vh] flex items-center bg-primary overflow-hidden"
       role="banner"
       aria-label="網站主要橫幅"
     >
-      {/* 簡化的背景，使用漸變而非圖片 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"/>
+      {/* 波浪背景 */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[#e62733] opacity-100"></div>
+        <div className="absolute inset-0 opacity-20">
+          <Image
+            src="/images/bgline-w.png"
+            alt="背景波浪線條"
+            fill
+            className="object-cover mix-blend-soft-light"
+            quality={90}
+            sizes="100vw"
+            priority
+          />
+        </div>
+      </div>
       
-      <div className="container-custom relative z-20">
-        <div className="max-w-4xl">
-          <h1 
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight"
-            data-animate="false"
-            data-priority="high"
-            suppressHydrationWarning
-          >
-            專業醫療行銷團隊<br/>
-            為診所帶來<span className="underline decoration-4 decoration-white/30">突破性成長</span>
-          </h1>
-          
-          <p 
-            className="text-lg sm:text-xl text-white/90 max-w-2xl leading-relaxed mt-6"
-            data-animate="false"
-            suppressHydrationWarning
-          >
-            深耕牙醫診所領域十年，以數據分析為基礎，為您打造完整的診所成長方案。從品牌定位、數位行銷到客戶經營，提供一站式解決方案。
-          </p>
-          
-          {/* 次要內容使用動畫效果，在 LCP 後加載 */}
-          <motion.div 
-            className="mt-10 space-x-4 flex flex-wrap gap-4"
-            variants={itemVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.2 }} // 延遲次要內容的動畫
-          >
-            <a 
-              href="#contact" 
-              className="btn-primary py-3 px-8 rounded-md text-white hover:bg-primary-dark transition-colors"
+      <div className="container-custom relative z-20 py-16 md:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              諮詢服務
-            </a>
-            <button 
-              onClick={handleScroll}
-              className="btn-secondary bg-white/10 backdrop-blur-sm py-3 px-8 rounded-md text-white hover:bg-white/20 transition-colors"
+              <h1 
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
+                suppressHydrationWarning
+              >
+                數位精準驅動<br/>
+                <span className="font-bold relative">專為真實醫療服務</span>
+              </h1>
+              
+              <p 
+                className="text-xl sm:text-2xl text-white/90 max-w-3xl mt-6 mb-8"
+                suppressHydrationWarning
+              >
+                Digital precision-driven,<br/>
+                tailored for authentic healthcare services.
+              </p>
+              
+              {/* 標籤列 */}
+              <div className="flex flex-wrap gap-4 mt-10 mb-12">
+                {tags.map((tag) => (
+                  <motion.div
+                    key={tag.id}
+                    className="text-white text-sm md:text-base px-4 py-2 border-t border-l border-r border-b border-white/30"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                    {tag.name}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+            
+            {/* 預約按鈕 */}
+            <motion.div
+              className="mt-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
             >
-              了解更多
-            </button>
-          </motion.div>
+              <Link href="/contact">
+                <span className="inline-flex items-center bg-black text-white px-8 py-3 text-lg font-medium">
+                  <span className="mr-2 text-2xl font-bold">A:</span>
+                  預約線上諮詢
+                </span>
+              </Link>
+            </motion.div>
+          </div>
+          
+          {/* 右側數據統計 */}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 gap-8">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  className="relative"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.2, duration: 0.6 }}
+                >
+                  <div className="mb-2 text-white/80 text-lg">{stat.label}</div>
+                  <div className="flex items-baseline">
+                    <span className="text-6xl md:text-7xl font-bold text-white mr-2">{stat.value}</span>
+                    <span className="text-2xl md:text-3xl font-medium text-white">{stat.unit}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
