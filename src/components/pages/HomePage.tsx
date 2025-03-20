@@ -1277,48 +1277,35 @@ function FAQSection() {
     : faqs.filter(faq => faq.category === selectedCategory);
 
   return (
-    <section id="faq" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-      <div className="absolute w-full h-full top-0 left-0 opacity-5">
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <pattern id="grid-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-        </svg>
-      </div>
-      
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 relative inline-block">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">常見問題</span>
-            <div className="absolute -bottom-3 left-0 right-0 h-1 bg-gradient-to-r from-red-600 to-red-800 rounded-full transform scale-50 transition-transform duration-300 opacity-75"></div>
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+    <section id="faq" className="py-16 md:py-24 bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">常見問題</h2>
+          <div className="h-1 w-16 bg-red-600 mx-auto mb-6"></div>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             專業的醫療行銷顧問，解答您最關心的問題，協助您的診所在數位時代脫穎而出
           </p>
         </div>
         
         {/* 分類標籤列 */}
-        <div className="flex flex-wrap justify-center mb-12 gap-3">
+        <div className="flex flex-wrap justify-center mb-10 gap-2 md:gap-3">
           {categories.map((category, index) => (
-            <motion.button
+            <button
               key={index}
               onClick={() => setSelectedCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 selectedCategory === category
-                  ? 'bg-red-600 text-white shadow-md'
+                  ? 'bg-red-600 text-white'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               {category}
-            </motion.button>
+            </button>
           ))}
         </div>
         
         {/* FAQ列表 */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <AnimatePresence>
             {filteredFaqs.map((faq, index) => (
               <FaqItem key={faq.question} faq={faq} index={index} />
@@ -1329,7 +1316,7 @@ function FAQSection() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center p-10 bg-white rounded-lg shadow-sm"
+              className="text-center p-8 bg-white rounded-md shadow-sm"
             >
               <p className="text-gray-500">此分類下暫無常見問題</p>
             </motion.div>
@@ -1354,29 +1341,28 @@ const FaqItem = ({ faq, index }: FaqItemProps) => {
   
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0, transition: { delay: index * 0.1 } }}
-      exit={{ opacity: 0, y: -20 }}
-      className="mb-5"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { delay: index * 0.05 } }}
+      exit={{ opacity: 0 }}
+      className="mb-4"
     >
-      <motion.div 
-        className={`bg-white rounded-xl shadow-sm border-l-4 ${
+      <div 
+        className={`bg-white rounded-md shadow-sm border-l-4 ${
           isOpen ? 'border-red-600' : 'border-gray-200'
-        } transition-all duration-300`}
+        } transition-colors duration-200`}
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none group"
+          className="w-full px-5 py-4 text-left flex items-center justify-between focus:outline-none"
         >
-          <h3 className="font-medium text-lg pr-8">
-            {faq.question}
-            <span className="text-xs ml-3 text-gray-500 border border-gray-200 px-2 py-1 rounded-full">
+          <div className="flex flex-col sm:flex-row sm:items-center">
+            <h3 className="font-medium text-base md:text-lg">{faq.question}</h3>
+            <span className="text-xs text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full mt-2 sm:mt-0 sm:ml-3 inline-block w-fit">
               {faq.category}
             </span>
-          </h3>
-          <div className={`text-gray-400 transition-transform duration-300 transform ${isOpen ? 'rotate-180' : ''}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          </div>
+          <div className={`text-gray-400 transition-transform duration-200 transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
@@ -1385,14 +1371,15 @@ const FaqItem = ({ faq, index }: FaqItemProps) => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-5 pt-0 text-gray-600">
+              <div className="px-5 pb-4 pt-0 text-gray-600">
                 {faq.answer.split('\n\n').map((paragraph, i) => (
-                  <p key={i} className={`${i > 0 ? 'mt-4' : ''}`}>
+                  <p key={i} className={`${i > 0 ? 'mt-3' : ''} text-sm md:text-base`}>
                     {paragraph}
                   </p>
                 ))}
@@ -1400,7 +1387,7 @@ const FaqItem = ({ faq, index }: FaqItemProps) => {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
