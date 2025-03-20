@@ -603,10 +603,52 @@ function FeatureSection() {
               className="group bg-white p-8 rounded-lg border border-gray-100 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-500"
             >
               <div className="mb-6">
-                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center transform group-hover:bg-primary group-hover:scale-105 transition-all duration-500">
-                  {/* 使用 Lucide 圖標替代 emoji */}
-                  <feature.icon size={28} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors duration-500" />
-                </div>
+                <motion.div 
+                  className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center relative overflow-hidden"
+                  initial={{ borderRadius: "0.5rem" }}
+                  whileHover={{ 
+                    scale: 1.05, 
+                    backgroundColor: "var(--color-primary)",
+                    borderRadius: "1rem"
+                  }}
+                  transition={{ 
+                    duration: 0.4, 
+                    ease: [0.4, 0, 0.2, 1] 
+                  }}
+                >
+                  {/* 背景動畫效果 */}
+                  <motion.div
+                    className="absolute inset-0 bg-primary opacity-0"
+                    initial={{ scale: 0, opacity: 0 }}
+                    whileHover={{ 
+                      scale: 1, 
+                      opacity: 1 
+                    }}
+                    transition={{ 
+                      duration: 0.3, 
+                      ease: "easeOut" 
+                    }}
+                  />
+                  
+                  {/* 主要圖標 */}
+                  <motion.div
+                    initial={{ y: 0, rotate: 0 }}
+                    whileHover={{ 
+                      y: [0, -5, 0], 
+                      rotate: [0, -5, 0, 5, 0] 
+                    }}
+                    transition={{ 
+                      duration: 0.6, 
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <feature.icon 
+                      size={30} 
+                      strokeWidth={1.5} 
+                      className="text-primary group-hover:text-white transition-colors duration-500 relative z-10" 
+                    />
+                  </motion.div>
+                </motion.div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
                 {feature.title}
@@ -707,10 +749,52 @@ function ServiceSection() {
               }}
               className="bg-white rounded-lg border border-gray-100 hover:border-primary/20 p-8 shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary">
-                {/* 使用 Lucide 圖標替代 emoji */}
-                <service.icon size={28} strokeWidth={1.5} className="text-primary" />
-              </div>
+              <motion.div
+                className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 relative overflow-hidden"
+                initial={{ scale: 1, rotate: 0 }}
+                whileInView={{ 
+                  rotate: [0, 10, 0],
+                  transition: { 
+                    duration: 0.8, 
+                    delay: index * 0.1 + 0.2,
+                    ease: "easeInOut" 
+                  }
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  boxShadow: "0 0 0 4px rgba(230, 39, 51, 0.15)"
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeOut"
+                }}
+              >
+                {/* 背景動畫效果 */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-tr from-primary to-primary-light opacity-0"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+                
+                {/* 圖標容器 */}
+                <motion.div
+                  className="relative z-10"
+                  whileHover={{ 
+                    scale: [1, 1.2, 1],
+                    transition: { 
+                      duration: 0.6,
+                      repeat: 0
+                    }
+                  }}
+                >
+                  <service.icon 
+                    size={28} 
+                    strokeWidth={1.5} 
+                    className="text-primary group-hover:text-white transition-colors duration-300" 
+                  />
+                </motion.div>
+              </motion.div>
               
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 {service.title}
