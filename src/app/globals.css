@@ -647,8 +647,24 @@
   display: inline-block;
   background-color: transparent;
   border: 1px solid currentColor;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   transition: all 0.3s ease;
+  margin: 0 0.15rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .tag-outline {
+    padding: 0.45rem 0.85rem;
+    margin: 0 0.2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .tag-outline {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+  }
 }
 
 .tag-outline-white {
@@ -676,4 +692,14 @@
 
 .tag-outline-black:hover {
   background-color: rgba(17, 17, 17, 0.1);
+}
+
+/* 隱藏滾動條但保留滾動功能 */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 } 

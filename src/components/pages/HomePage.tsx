@@ -305,24 +305,26 @@ function HeroSection() {
               tailored for authentic healthcare services.
             </p>
             
-            {/* 扁平化標籤設計 - 透明背景線條裝飾 */}
-            <div className="flex flex-wrap justify-center gap-3 my-10">
-              {tags.map((tag, index) => (
-                <motion.div
-                  key={tag.id}
-                  className="tag-outline tag-outline-white text-sm md:text-base"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                  whileHover={{
-                    scale: 1.05,
-                    borderWidth: '2px',
-                    transition: { duration: 0.2 }
-                  }}
-                >
-                  {tag.name}
-                </motion.div>
-              ))}
+            {/* 扁平化標籤設計 - 一行顯示版本 */}
+            <div className="flex flex-nowrap justify-center overflow-x-auto scrollbar-hide gap-2 sm:gap-3 my-10 px-2 py-1 max-w-full mx-auto">
+              <div className="flex items-center space-x-2 sm:space-x-3 min-w-max mx-auto">
+                {tags.map((tag, index) => (
+                  <motion.div
+                    key={tag.id}
+                    className="tag-outline tag-outline-white text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                    whileHover={{
+                      scale: 1.05,
+                      borderWidth: '2px',
+                      transition: { duration: 0.2 }
+                    }}
+                  >
+                    {tag.name}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
           
