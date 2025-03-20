@@ -569,10 +569,10 @@ function MarketingStatement() {
 // 更新服務特色區塊
 function FeatureSection() {
   return (
-    <section id="features" className="py-20 bg-gray-50 overflow-hidden" suppressHydrationWarning>
+    <section id="features" className="py-16 sm:py-20 bg-gray-50 overflow-hidden" suppressHydrationWarning>
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16" suppressHydrationWarning>
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">我們的優勢</span>
+        <AnimatedSection className="text-center mb-10 sm:mb-16" suppressHydrationWarning>
+          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10">我們的優勢</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 flex items-center justify-center flex-wrap" suppressHydrationWarning>
             為什麼選擇
             <span className="inline-flex items-center mx-2 transform scale-75 sm:scale-90 md:scale-100">
@@ -590,7 +590,7 @@ function FeatureSection() {
         </AnimatedSection>
 
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
           variants={animations.staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -600,70 +600,29 @@ function FeatureSection() {
             <motion.div 
               key={feature.title} 
               variants={animations.slideUp}
-              className="group bg-white p-8 rounded-lg border border-gray-100 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-500"
+              className="group bg-white p-4 sm:p-6 lg:p-8 border border-gray-100 hover:border-primary transition-all duration-300"
             >
-              <div className="mb-6">
-                <motion.div 
-                  className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center relative overflow-hidden"
-                  initial={{ borderRadius: "0.5rem" }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    backgroundColor: "var(--color-primary)",
-                    borderRadius: "1rem"
-                  }}
-                  transition={{ 
-                    duration: 0.4, 
-                    ease: [0.4, 0, 0.2, 1] 
-                  }}
+              <div className="mb-4 sm:mb-6">
+                <div 
+                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-50 flex items-center justify-center group-hover:bg-primary transition-colors duration-300"
                 >
-                  {/* 背景動畫效果 */}
-                  <motion.div
-                    className="absolute inset-0 bg-primary opacity-0"
-                    initial={{ scale: 0, opacity: 0 }}
-                    whileHover={{ 
-                      scale: 1, 
-                      opacity: 1 
-                    }}
-                    transition={{ 
-                      duration: 0.3, 
-                      ease: "easeOut" 
-                    }}
+                  <feature.icon 
+                    size={24} 
+                    strokeWidth={1.5} 
+                    className="text-primary group-hover:text-white transition-colors duration-300" 
                   />
-                  
-                  {/* 主要圖標 */}
-                  <motion.div
-                    initial={{ y: 0, rotate: 0 }}
-                    whileHover={{ 
-                      y: [0, -5, 0], 
-                      rotate: [0, -5, 0, 5, 0] 
-                    }}
-                    transition={{ 
-                      duration: 0.6, 
-                      ease: "easeInOut" 
-                    }}
-                  >
-                    <feature.icon 
-                      size={30} 
-                      strokeWidth={1.5} 
-                      className="text-primary group-hover:text-white transition-colors duration-500 relative z-10" 
-                    />
-                  </motion.div>
-                </motion.div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-4 group-hover:text-primary transition-colors duration-300">
                 {feature.title}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 line-clamp-3 sm:line-clamp-none">
                 {feature.description}
               </p>
               
-              {/* 改進的微互動元素 */}
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <motion.div 
-                  className="w-8 h-0.5 bg-primary scale-0 group-hover:scale-100 origin-left"
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+              <div className="mt-4 pt-2 border-t border-gray-100">
+                <div 
+                  className="w-6 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"
                 />
               </div>
             </motion.div>
