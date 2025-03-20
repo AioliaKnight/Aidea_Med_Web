@@ -1,16 +1,22 @@
 'use client'
 
+import { memo } from 'react'
+
 interface SpinnerProps {
   className?: string;
 }
 
-export function Spinner({ className = 'h-6 w-6 text-primary' }: SpinnerProps) {
+/**
+ * 通用加載指示器組件
+ */
+const Spinner = memo(function Spinner({ className = 'h-6 w-6 text-primary' }: SpinnerProps) {
   return (
     <svg
       className={`animate-spin ${className}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      aria-label="載入中..."
     >
       <circle
         className="opacity-25"
@@ -27,4 +33,8 @@ export function Spinner({ className = 'h-6 w-6 text-primary' }: SpinnerProps) {
       ></path>
     </svg>
   );
-} 
+});
+
+Spinner.displayName = 'Spinner';
+
+export default Spinner; 

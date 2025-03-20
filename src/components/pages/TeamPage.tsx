@@ -5,7 +5,7 @@ import { motion, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Spinner } from '@/components/common/Spinner'
+import { OptimizedImage, Spinner } from '@/components/common'
 import {
   LightBulbIcon,
   ChartBarIcon,
@@ -194,24 +194,22 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
   return (
     <AnimatedSection delay={delay}>
       <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden aspect-[3/4]">
           {imageLoading && !imageError && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
               <Spinner />
             </div>
           )}
           {!imageError ? (
-            <Image
+            <OptimizedImage
               src={member.image}
               alt={member.name}
               fill
-              className={`object-cover transform group-hover:scale-105 transition-transform duration-300 ${
-                imageLoading ? 'opacity-0' : 'opacity-100'
-              }`}
+              className="object-cover transform group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 480px) 45vw, (max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
-              onLoad={() => setImageLoading(false)}
+              onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
-              priority
+              priority={true}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200">

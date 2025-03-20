@@ -3,8 +3,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { OptimizedImage, Spinner } from '@/components/common'
 import { CaseStudy } from '@/components/pages/CasePage'
 
 export interface CaseCardProps {
@@ -69,19 +69,17 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElemen
       <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
         {imageLoading && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <Spinner className="w-10 h-10 text-primary" />
           </div>
         )}
         {!imageError ? (
-          <Image
+          <OptimizedImage
             src={imageSrc}
             alt={caseStudy.name}
             fill
-            className={`object-cover transform group-hover:scale-105 transition-transform duration-500 ${
-              imageLoading ? 'opacity-0' : 'opacity-100'
-            }`}
+            className="object-cover transform group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            onLoad={() => setImageLoading(false)}
+            onLoadComplete={() => setImageLoading(false)}
             onError={() => {
               setImageError(true);
               setImageLoading(false);

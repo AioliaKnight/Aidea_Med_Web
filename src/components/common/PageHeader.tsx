@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 
 interface PageHeaderProps {
@@ -9,7 +9,10 @@ interface PageHeaderProps {
   className?: string
 }
 
-export default function PageHeader({ 
+/**
+ * 頁面標題組件 - 在每個主要頁面頂部顯示標題和描述
+ */
+const PageHeader = memo(function PageHeader({ 
   title, 
   description, 
   className = ''
@@ -36,4 +39,8 @@ export default function PageHeader({
       <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
     </div>
   )
-} 
+});
+
+PageHeader.displayName = 'PageHeader';
+
+export default PageHeader; 
