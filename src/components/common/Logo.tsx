@@ -1,10 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { memo } from 'react'
+import { memo, useState, useEffect } from 'react'
 
 // 支援的Logo變體
 type LogoVariant = 'white' | 'black' | 'primary'
@@ -42,11 +41,6 @@ interface LogoProps {
    * 自訂高度 (覆蓋尺寸預設)
    */
   height?: number
-  /**
-   * 是否顯示載入動畫
-   * @default true
-   */
-  showAnimation?: boolean
 }
 
 // 尺寸預設，使用完美的寬高比
@@ -57,26 +51,33 @@ const logoSizes = {
   lg: { width: 200, height: 67 },
   xl: { width: 240, height: 80 },
   responsive: { width: 160, height: 53 } // 響應式的基本尺寸
-}
+} as const
 
 // Logo變體對應的圖片路徑
-const logoVariants: Record<LogoVariant, string> = {
-  white: '/logo-w.webp',
-  black: '/logo-b.webp',
-  primary: '/logo-r.webp'
-}
+const logoVariants = {
+  white: {
+    webp: '/logo-w.webp',
+    png: '/logo-w.png',
+    placeholder: '/logo-w_placeholder.webp'
+  },
+  black: {
+    webp: '/logo-b.webp',
+    png: '/logo-b.png',
+    placeholder: '/logo-b_placeholder.webp'
+  },
+  primary: {
+    webp: '/logo-r.webp',
+    png: '/logo-r.png',
+    placeholder: '/logo-r_placeholder.webp'
+  }
+} as const
 
-// 備選PNG格式的Logo圖片路徑
-const logoPngVariants: Record<LogoVariant, string> = {
-  white: '/logo-w.png',
-  black: '/logo-b.png',
-  primary: '/logo-r.png'
-}
-
-// 動畫變體 - 只用於hover效果
-const logoAnimation = {
-  hover: { scale: 1.02, transition: { duration: 0.2 } }
-}
+// 響應式尺寸樣式
+const responsiveStyles = {
+  base: 'w-[120px] sm:w-[160px] lg:w-[200px] h-auto',
+  container: 'inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm',
+  image: 'object-contain transition-opacity duration-200 hover:opacity-90'
+} as const
 
 function Logo({ 
   variant = 'black',
@@ -86,8 +87,14 @@ function Logo({
   priority = false,
   width,
   height,
-  showAnimation = true
 }: LogoProps) {
+  const [isMounted, setIsMounted] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   // 從預設值或自訂值取得尺寸
   const dimensions = width && height 
     ? { width, height }
@@ -97,50 +104,39 @@ function Logo({
 
   // 根據變體取得logo來源
   const logoSrc = logoVariants[variant]
-  const fallbackSrc = logoPngVariants[variant]
 
-  // 基本圖片組件，加上動畫效果
+  // 處理圖片載入錯誤
+  const handleImageError = () => {
+    if (!imageError) {
+      setImageError(true)
+    }
+  }
+
+  // 基本圖片組件
   const logoImage = (
-    <motion.div
-      whileHover={logoAnimation.hover}
-      className={cn(
-        'relative transition-opacity duration-200',
-        'hover:opacity-90',
-        showAnimation ? 'animate-fadeIn' : '',
-        className
-      )}
-    >
+    <div className={cn(responsiveStyles.image, className)}>
       <Image
-        src={logoSrc}
+        src={imageError ? logoSrc.png : logoSrc.webp}
         alt="Aidea:Med Logo"
         width={dimensions.width}
         height={dimensions.height}
-        className="object-contain"
+        className={responsiveStyles.image}
         priority={priority}
         quality={90}
+        placeholder="blur"
+        blurDataURL={logoSrc.placeholder}
         aria-label="Aidea:Med - 醫療行銷顧問公司"
-        onError={(e) => {
-          // 如果webp載入失敗，嘗試載入PNG格式
-          const imgElement = e.currentTarget as HTMLImageElement;
-          if (imgElement.src !== fallbackSrc) {
-            imgElement.src = fallbackSrc;
-          }
-        }}
+        onError={handleImageError}
       />
-    </motion.div>
+    </div>
   )
-
-  // 響應式樣式，適應不同屏幕尺寸
-  const responsiveStyles = size === 'responsive' 
-    ? 'w-[120px] sm:w-[160px] lg:w-[200px] h-auto' 
-    : ''
 
   // 根據是否有href返回帶連結或不帶連結的版本
   if (href) {
     return (
       <Link 
         href={href} 
-        className={cn("inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm", responsiveStyles)}
+        className={cn(responsiveStyles.container, size === 'responsive' && responsiveStyles.base)}
         aria-label="回到首頁"
       >
         {logoImage}
@@ -149,7 +145,7 @@ function Logo({
   }
 
   return (
-    <div className={responsiveStyles}>
+    <div className={size === 'responsive' ? responsiveStyles.base : ''}>
       {logoImage}
     </div>
   )

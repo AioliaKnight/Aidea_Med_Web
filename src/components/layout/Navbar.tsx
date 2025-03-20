@@ -74,6 +74,7 @@ const menuItemVariants = {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const pathname = usePathname()
   
   // 判斷頁面類型 - 統一詳情頁判斷邏輯
@@ -84,6 +85,11 @@ export default function Navbar() {
       (pathname.startsWith('/service/') && pathname !== '/service')
     )
   }, [pathname])
+
+  // 處理初始掛載
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // 處理滾動
   useEffect(() => {
@@ -124,6 +130,22 @@ export default function Navbar() {
   const isPathActive = useCallback((href: string) => {
     return pathname === href || (pathname.startsWith(href) && href !== '/')
   }, [pathname])
+
+  if (!isMounted) {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 font-gothic">
+        <div className={cn('absolute inset-0', navStyles.default)} />
+        <nav className="container relative h-16 md:h-20 mx-auto px-4 md:px-6 flex items-center justify-between">
+          <Logo
+            href="/"
+            variant="white"
+            size="responsive"
+            priority
+          />
+        </nav>
+      </header>
+    )
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 font-gothic">
