@@ -325,18 +325,53 @@ function HeroSection() {
             </div>
           </motion.div>
           
-          {/* 預約按鈕 - 純扁平設計 */}
+          {/* 預約按鈕 - 黑底白字扁平化設計 */}
           <motion.div
             className="mt-10 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
             <Link href="/contact">
-              <span className="inline-flex items-center bg-white text-[#e62733] px-8 py-4 text-lg font-medium">
-                <span className="mr-2 text-2xl font-bold">A:</span>
+              <motion.span 
+                className="inline-flex items-center bg-black text-white px-8 py-4 text-lg font-medium border border-transparent"
+                initial={{ y: 0 }}
+                whileHover={{ 
+                  y: -3,
+                  boxShadow: '0 3px 0 rgba(255,255,255,0.2)',
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ 
+                  y: 0,
+                  boxShadow: '0 0px 0 rgba(255,255,255,0.2)',
+                  transition: { duration: 0.1 }
+                }}
+              >
+                <motion.span 
+                  className="mr-2 text-2xl font-bold"
+                  animate={{ 
+                    opacity: [0.7, 1, 0.7],
+                    transition: { duration: 2, repeat: Infinity }
+                  }}
+                >
+                  A:
+                </motion.span>
                 預約線上諮詢
-              </span>
+                <motion.span
+                  className="ml-2"
+                  initial={{ x: 0 }}
+                  whileHover={{ 
+                    x: 5,
+                    transition: { 
+                      repeat: Infinity, 
+                      repeatType: "reverse", 
+                      duration: 0.3 
+                    }
+                  }}
+                >
+                  →
+                </motion.span>
+              </motion.span>
             </Link>
           </motion.div>
         </div>

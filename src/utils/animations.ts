@@ -283,6 +283,69 @@ export const getAnimationClasses = (options: {
   return classes.join(' ')
 }
 
+// 添加按鈕動畫效果
+export const buttonAnimations = {
+  // 基本按鈕懸停效果
+  basic: {
+    initial: { scale: 1 },
+    hover: { 
+      scale: 1.03,
+      transition: { duration: 0.2, ease: defaultEasing }
+    },
+    tap: { 
+      scale: 0.97,
+      transition: { duration: 0.1, ease: defaultEasing }
+    }
+  },
+  
+  // 扁平按鈕懸停效果 - 無縮放但有邊框變化
+  flat: {
+    initial: { 
+      borderWidth: '1px',
+      y: 0
+    },
+    hover: { 
+      y: -2,
+      boxShadow: '0 2px 0 rgba(0,0,0,0.1)',
+      transition: { duration: 0.2, ease: defaultEasing }
+    },
+    tap: { 
+      y: 0,
+      boxShadow: '0 0px 0 rgba(0,0,0,0.1)',
+      transition: { duration: 0.1, ease: defaultEasing }
+    }
+  },
+  
+  // 邊框閃爍效果
+  pulse: {
+    initial: { 
+      borderColor: 'rgba(255,255,255,0.8)'
+    },
+    animate: {
+      borderColor: ['rgba(255,255,255,0.8)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.8)'],
+      transition: { 
+        duration: 1.5, 
+        repeat: Infinity,
+        ease: defaultEasing 
+      }
+    }
+  },
+  
+  // 箭頭動畫效果
+  arrow: {
+    initial: { x: 0 },
+    hover: { 
+      x: 5,
+      transition: { 
+        duration: 0.3, 
+        ease: defaultEasing,
+        repeat: Infinity,
+        repeatType: 'reverse'
+      }
+    }
+  }
+};
+
 // 整合兼容性配置（與現有代碼兼容）
 export const animations = {
   fadeIn: {
@@ -351,5 +414,51 @@ export const animations = {
   delays: CSS_DELAYS,
   textShadows: TEXT_SHADOWS,
   getClasses: getAnimationClasses,
-  getCssAnimation
+  getCssAnimation,
+  // 新增按鈕動畫
+  button: buttonAnimations,
+  // 文字漸顯動畫 - 逐字母/逐詞顯示效果
+  textReveal: {
+    hidden: { 
+      opacity: 0,
+      y: 20 
+    },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.4,
+        ease: defaultEasing
+      }
+    })
+  },
+  // 邊框展開動畫
+  borderExpand: {
+    hidden: { 
+      width: '0%',
+      opacity: 0 
+    },
+    visible: { 
+      width: '100%',
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: defaultEasing
+      }
+    }
+  },
+  // 交互反饋動畫
+  feedback: {
+    success: { 
+      scale: [1, 1.1, 1],
+      backgroundColor: ['transparent', 'rgba(34, 197, 94, 0.2)', 'transparent'],
+      transition: { duration: 0.6 }
+    },
+    error: { 
+      x: [0, -10, 10, -10, 10, 0],
+      backgroundColor: ['transparent', 'rgba(239, 68, 68, 0.2)', 'transparent'],
+      transition: { duration: 0.6 }
+    }
+  }
 }; 
