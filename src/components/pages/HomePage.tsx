@@ -376,6 +376,191 @@ function HeroSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* 向下滾動指示器 */}
+      <motion.div 
+        className="absolute bottom-8 left-0 right-0 flex justify-center"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+      >
+        <motion.div 
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => document.getElementById('marketing-statement')?.scrollIntoView({ behavior: 'smooth' })}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <span className="text-white text-sm mb-2">探索更多</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-8 h-8 flex items-center justify-center text-white"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+// 新增階梯式行銷文案區塊
+function MarketingStatement() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
+  // 重新組織文案，按照語義分段
+  const contentBlocks = [
+    {
+      en: {
+        title: "THE MARKETING PARTNER",
+        subtitle: "THAT UNDERSTANDS HEALTHCARE BEST."
+      },
+      zh: {
+        title: "專業醫療行銷夥伴",
+        subtitle: "最了解醫療產業的最佳選擇"
+      },
+      delay: 0.1,
+      className: "ml-0"
+    },
+    {
+      en: {
+        title: "COMPREHENSIVE BRAND INTEGRATION",
+        subtitle: "START THE CONVERSATION"
+      },
+      zh: {
+        title: "全方位品牌整合策略",
+        subtitle: "啟動專業對話"
+      },
+      delay: 0.5,
+      className: "ml-[5%]"
+    },
+    {
+      en: {
+        title: "WITH YOUR POTENTIAL PATIENTS.",
+        subtitle: ""
+      },
+      zh: {
+        title: "與您的潛在患者創造連結",
+        subtitle: "打造醫療品牌價值"
+      },
+      delay: 0.9,
+      className: "ml-[10%]"
+    }
+  ];
+
+  return (
+    <section 
+      id="marketing-statement" 
+      className="relative py-16 md:py-20 bg-primary overflow-hidden"
+      ref={ref}
+    >
+      {/* 背景線條裝飾 */}
+      <div className="absolute inset-0 opacity-20">
+        <Image
+          src="/images/bgline-w.png"
+          alt="背景線條"
+          fill
+          className="object-cover mix-blend-soft-light"
+          quality={90}
+          sizes="100vw"
+        />
+      </div>
+      
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          {contentBlocks.map((block, index) => (
+            <motion.div
+              key={index}
+              className={`${block.className} mb-10 md:mb-16 text-selection-inverted`}
+              initial={{ opacity: 0, x: -50 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ 
+                duration: 0.7, 
+                delay: block.delay,
+                ease: [0.25, 0.46, 0.45, 0.94]
+              }}
+            >
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                <motion.div 
+                  className="w-full md:w-5/12"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: block.delay + 0.1
+                  }}
+                >
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight">
+                    {block.en.title}
+                  </h2>
+                  {block.en.subtitle && (
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 md:mt-3 leading-tight tracking-tight">
+                      {block.en.subtitle}
+                    </h3>
+                  )}
+                </motion.div>
+                
+                <motion.div 
+                  className="mt-4 md:mt-0 w-full md:w-6/12"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: block.delay + 0.2
+                  }}
+                >
+                  <div className="border-l-4 md:border-l-4 border-white/40 pl-4 md:pl-6">
+                    <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
+                      {block.zh.title}
+                    </p>
+                    {block.zh.subtitle && (
+                      <p className="text-lg md:text-xl text-white/80 mt-2 font-medium leading-tight">
+                        {block.zh.subtitle}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+              
+              {/* 分隔線 - 只在區塊之間顯示 */}
+              {index < contentBlocks.length - 1 && (
+                <motion.div 
+                  className="w-full h-px bg-white/20 mt-10 md:mt-16"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={inView ? { scaleX: 1, opacity: 0.2 } : {}}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: block.delay + 0.3
+                  }}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+        
+        {/* 底部箭頭指示 */}
+        <motion.div 
+          className="mt-10 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 1.3 }}
+        >
+          <motion.div
+            className="text-white"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </motion.div>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -772,7 +957,7 @@ function CaseStudiesSection() {
                   >
                     探索所有成功案例
                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7-7 7" />
                     </svg>
                   </Link>
                 </div>
@@ -1199,6 +1384,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <section id="hero" className="min-h-[85vh]">
         <HeroSection />
+      </section>
+
+      {/* 新增行銷文案區塊 */}
+      <section id="marketing-statement" className="min-h-[600px]">
+        <MarketingStatement />
       </section>
 
       <section id="features" className="min-h-[600px]">
