@@ -502,23 +502,23 @@ export const CTASection = (): React.ReactElement => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay: 0.2 }}
-      className="mb-20 bg-black text-white p-8 md:p-12 text-center"
+      className="mb-20 section-dark-centered text-selection-dark"
     >
-      <h2 className="text-2xl md:text-3xl font-bold mb-4 font-gothic">想為您的診所打造 AI 驅動的專屬數位行銷策略？</h2>
-      <div className="w-20 h-0.5 bg-primary mx-auto mb-8"></div>
-      <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+      <h2 className="font-gothic">想為您的診所打造 AI 驅動的專屬數位行銷策略？</h2>
+      <div className="divider divider-primary"></div>
+      <p className="max-w-2xl mx-auto">
         立即與我們聯繫，獲取專業諮詢與由 AI 技術支持的量身定制行銷方案，讓您的診所在數位時代脫穎而出。
       </p>
-      <div className="flex flex-col md:flex-row justify-center gap-4">
+      <div className="cta-buttons">
         <Link 
           href="/contact"
-          className="inline-block bg-primary text-white px-8 py-4 text-lg font-medium transition-colors hover:bg-primary/90"
+          className="btn-on-dark-primary"
         >
           免費諮詢
         </Link>
         <Link 
           href="/service"
-          className="inline-block border border-white text-white px-8 py-4 text-lg font-medium hover:bg-white hover:text-black transition-colors"
+          className="btn-on-dark-outline"
         >
           了解服務方案
         </Link>
