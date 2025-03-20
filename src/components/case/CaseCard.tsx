@@ -39,25 +39,20 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElemen
           if (response.ok && parseInt(response.headers.get('content-length') || '0') > 100) {
             setImageSrc(path);
           } else {
-            console.warn(`Image at ${path} is invalid or too small, using default image instead`);
             setImageSrc(defaultImage);
           }
         })
         .catch(() => {
-          console.warn(`Failed to verify image at ${path}, using default image instead`);
           setImageSrc(defaultImage);
         });
     };
     
     if (caseStudy.image) {
-      // 優先使用案例自帶的圖片路徑
       processImagePath(caseStudy.image);
     } else if (caseStudy.id && validCaseIds.includes(caseStudy.id)) {
-      // 只有當ID在有效列表中才使用基於ID的圖片路徑
       const imgPath = `/cases/${caseStudy.id}.jpg`;
       processImagePath(imgPath);
     } else {
-      // 其他情況使用預設圖片
       setImageSrc(defaultImage);
     }
   }, [caseStudy, defaultImage])
@@ -88,10 +83,8 @@ export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElemen
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             onLoad={() => setImageLoading(false)}
             onError={() => {
-              console.warn(`Failed to load image for case ${caseStudy.id}`);
               setImageError(true);
               setImageLoading(false);
-              // 如果圖片加載失敗，設置預設圖片
               setImageSrc(defaultImage);
             }}
             priority={index < 2}

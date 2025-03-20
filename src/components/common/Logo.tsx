@@ -88,12 +88,7 @@ function Logo({
   width,
   height,
 }: LogoProps) {
-  const [isMounted, setIsMounted] = useState(false)
   const [imageError, setImageError] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   // 從預設值或自訂值取得尺寸
   const dimensions = width && height 

@@ -363,7 +363,14 @@ function TeamIntroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <img src="/images/team/office-1.jpg" alt="Our Office" className="w-full h-auto" />
+              <Image 
+                src="/images/team/office-1.jpg" 
+                alt="Our Office" 
+                width={800}
+                height={600}
+                className="w-full h-auto"
+                priority
+              />
             </motion.div>
             <motion.div 
               className="rounded-lg overflow-hidden mt-8"
@@ -371,7 +378,13 @@ function TeamIntroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <img src="/images/team/office-2.jpg" alt="Our Team" className="w-full h-auto" />
+              <Image 
+                src="/images/team/office-2.jpg" 
+                alt="Our Team" 
+                width={800}
+                height={600}
+                className="w-full h-auto"
+              />
             </motion.div>
             <motion.div 
               className="rounded-lg overflow-hidden"
@@ -379,7 +392,13 @@ function TeamIntroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <img src="/images/team/office-3.jpg" alt="Team Collaboration" className="w-full h-auto" />
+              <Image 
+                src="/images/team/office-3.jpg" 
+                alt="Team Collaboration" 
+                width={800}
+                height={600}
+                className="w-full h-auto"
+              />
             </motion.div>
             <motion.div 
               className="rounded-lg overflow-hidden mt-8"
@@ -387,7 +406,13 @@ function TeamIntroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <img src="/images/team/office-4.jpg" alt="Our Meeting" className="w-full h-auto" />
+              <Image 
+                src="/images/team/office-4.jpg" 
+                alt="Our Meeting" 
+                width={800}
+                height={600}
+                className="w-full h-auto"
+              />
             </motion.div>
           </div>
         </motion.div>

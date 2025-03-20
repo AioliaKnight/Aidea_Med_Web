@@ -231,7 +231,6 @@ export default function Loading({
             <Logo 
               size={LOGO_SIZES[size]}
               variant="black"
-              showAnimation={false}
             />
           </motion.div>
         </div>
