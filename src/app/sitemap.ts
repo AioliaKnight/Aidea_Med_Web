@@ -1,19 +1,31 @@
 import { MetadataRoute } from 'next'
+import { caseStudies } from '@/components/pages/CasePage'
 
 /**
  * 提供給搜尋引擎的網站地圖
  * 包含所有重要的頁面與動態路由
  */
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aideamed.com'
+  
   // 基本靜態路由
-  const routes = ['', '/service', '/team', '/case', '/contact'].map(
+  const staticRoutes = ['', '/service', '/team', '/case', '/contact'].map(
     (route) => ({
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}${route}`,
+      url: `${baseUrl}${route}`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: route === '' ? 1 : 0.8,
     })
   )
-
-  return routes
+  
+  // 動態案例頁面
+  const caseRoutes = caseStudies.map((caseStudy) => ({
+    url: `${baseUrl}/case/${caseStudy.id}`,
+    lastModified: caseStudy.updatedDate ? new Date(caseStudy.updatedDate) : new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+  
+  // 組合所有路由
+  return [...staticRoutes, ...caseRoutes]
 } 
