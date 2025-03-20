@@ -467,11 +467,11 @@ export default function ServicePage() {
       <PageHeader
         title="專業的醫療行銷服務"
         description="為您的診所打造最適合的品牌成長策略，提供全方位的行銷解決方案"
-        variant="gradient"
+        variant="red"
         size="lg"
         alignment="center"
         backgroundImage="/images/bgline-r.png"
-        withBottomGradient={true}
+        overlayOpacity={0.8}
       />
       
       <div className="bg-gradient-to-r from-primary to-primary/70 py-6">
