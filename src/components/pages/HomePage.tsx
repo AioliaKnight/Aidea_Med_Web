@@ -21,6 +21,7 @@ import {
   UserCog
 } from 'lucide-react'
 import Image from 'next/image'
+import Logo from '@/components/common/Logo'
 
 // 服務特色數據 - 替換 emoji 為圖標組件
 const features = [
@@ -572,8 +573,16 @@ function FeatureSection() {
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <AnimatedSection className="text-center mb-16" suppressHydrationWarning>
           <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">我們的優勢</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6" suppressHydrationWarning>
-            為什麼選擇<span className="text-primary">專業團隊</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 flex items-center justify-center flex-wrap" suppressHydrationWarning>
+            為什麼選擇
+            <span className="inline-flex items-center mx-2 transform scale-75 sm:scale-90 md:scale-100">
+              <Logo 
+                variant="primary" 
+                size="responsive" 
+                className="ml-1 sm:ml-2" 
+                priority={true}
+              />
+            </span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             深耕醫療行銷領域超過十年，以專業經驗與創新技術，協助診所突破成長瓶頸
