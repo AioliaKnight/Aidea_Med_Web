@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { memo } from 'react'
 import Image from 'next/image'
-import { colors } from '@/config/theme'
 import PageHeader from '@/components/common/PageHeader'
 
 // 從配置文件導入
@@ -200,8 +199,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       aria-labelledby={`service-title-${service.id}`}
     >
       <div 
-        className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center mb-6 text-white rounded-none"
-        style={{ background: colors.primary }}
+        className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center mb-6 text-white rounded-none bg-brand-primary"
         role="img"
         aria-label={`${service.title} 圖標`}
       >
@@ -217,8 +215,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }: ServiceCardPro
       </div>
       <h3 
         id={`service-title-${service.id}`}
-        className="text-lg md:text-xl font-bold mb-3 md:mb-4" 
-        style={{ color: colors.textDark }}
+        className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-brand-textDark"
       >
         {service.title}
       </h3>
@@ -270,7 +267,7 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
         >
           {step.step}
         </div>
-        <h3 className="text-base md:text-lg font-bold mb-2" style={{ color: colors.textDark }}>
+        <h3 className="text-base md:text-lg font-bold mb-2 text-brand-textDark">
           {step.title}
         </h3>
         <p className="text-sm md:text-base text-gray-600">{step.description}</p>
@@ -492,12 +489,169 @@ export default function ServicePage() {
               href="#pricing"
               className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-sm sm:text-base rounded-lg"
             >
-              查看方案
+              查看服務方案
             </Link>
           </motion.div>
         </div>
       </div>
+      
+      {/* 醫療市場統計數據區 */}
+      <section className="py-20 bg-white">
+        <div className="container-custom max-w-5xl">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
+              面對醫療市場的更迭速度
+            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-8">
+              你準備好了嗎？
+            </h2>
+            <motion.div
+              className="w-24 h-1 bg-primary mx-auto mb-10"
+              initial={{ width: 0 }}
+              whileInView={{ width: 96 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            ></motion.div>
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">
+              市場競爭加劇 - 供給持續增長 - 診所差異減少
+            </h3>
+            <p className="text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
+              根據衛生福利部統計調查，近年來台灣牙醫診所與牙醫師數量呈現<span className="font-bold">快速增長</span>趨勢，
+              而高達<span className="font-bold text-primary">80.81%</span>的牙醫師集中在六都地區，市場競爭日趨白熱化。
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {/* 診所數量統計卡片 */}
+            <motion.div 
+              className="bg-white p-6 border border-gray-200 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">台灣牙醫診所數量</h3>
+              <div className="flex flex-col space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="bg-black text-white py-2 px-3 text-sm">2021年</div>
+                  <div className="text-3xl font-bold">6,922<span className="text-lg ml-1">間</span></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="bg-black text-white py-2 px-3 text-sm">2022年</div>
+                  <div className="text-3xl font-bold">6,969<span className="text-lg ml-1">間</span></div>
+                </div>
+                <div className="flex justify-between items-center bg-gray-50 p-2">
+                  <div className="font-medium text-sm">年度增長率</div>
+                  <div className="text-xl font-bold text-primary">0.68%</div>
+                </div>
+              </div>
+            </motion.div>
 
+            {/* 牙醫師數量統計卡片 */}
+            <motion.div 
+              className="bg-white p-6 border border-gray-200 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">台灣牙醫師人數</h3>
+              <div className="flex flex-col space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="bg-black text-white py-2 px-3 text-sm">2020年</div>
+                  <div className="text-3xl font-bold">15,429<span className="text-lg ml-1">位</span></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="bg-black text-white py-2 px-3 text-sm">2022年</div>
+                  <div className="text-3xl font-bold">16,668<span className="text-lg ml-1">位</span></div>
+                </div>
+                <div className="flex justify-between items-center bg-gray-50 p-2">
+                  <div className="font-medium text-sm">年度增長率</div>
+                  <div className="text-xl font-bold text-primary">5.11%</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* 牙醫師分布統計卡片 */}
+            <motion.div 
+              className="bg-white p-6 border border-gray-200 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">牙醫師分布情況</h3>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-lg">六都地區</div>
+                <div className="text-4xl font-bold text-primary">80.81%</div>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="text-lg">每十萬人口牙醫師數</div>
+                <div className="text-4xl font-bold">71.1<span className="text-lg ml-1">位</span></div>
+              </div>
+              <div className="mt-4 text-sm text-gray-600">
+                <p>地區分布嚴重不均，都會區牙醫資源過剩，競爭激烈</p>
+              </div>
+            </motion.div>
+
+            {/* 市場趨勢分析卡片 */}
+            <motion.div 
+              className="bg-white p-6 border border-gray-200 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <h3 className="text-xl font-bold mb-5 text-primary border-b pb-2">市場趨勢分析</h3>
+              <ul className="space-y-3 text-sm md:text-base">
+                <li className="flex items-start">
+                  <span className="text-primary font-bold mr-2">→</span>
+                  <span>牙醫師成長率遠高於診所成長率</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary font-bold mr-2">→</span>
+                  <span>預計2030年牙醫師供給將超過需求</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary font-bold mr-2">→</span>
+                  <span>診所經營成本上升，利潤空間受擠壓</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary font-bold mr-2">→</span>
+                  <span>品牌差異化將成為關鍵競爭因素</span>
+                </li>
+              </ul>
+            </motion.div>
+          </div>
+          
+          <motion.div 
+            className="bg-primary text-white p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <h3 className="text-2xl md:text-3xl font-bold mb-4">患者沒變、牙醫卻越來越多！</h3>
+            <h4 className="text-xl md:text-2xl font-medium mb-6">為什麼患者要選擇你的診所？</h4>
+            <p className="text-lg mb-8 max-w-3xl mx-auto">
+              在供過於求的市場中，如何建立獨特品牌定位，提升診所競爭力，成為患者的首選，是每家診所必須面對的挑戰。
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-10 py-4 bg-white text-primary font-bold hover:bg-gray-100 transition-all duration-300 text-lg"
+            >
+              立即預約免費診所競爭力評估
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+      
       {/* 核心服務 */}
       <section 
         className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
@@ -514,12 +668,11 @@ export default function ServicePage() {
           >
             <h2 
               id="core-services-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
-              style={{ color: colors.textDark }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
             >
               我們的核心服務
             </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
               提供完整的醫療行銷解決方案，幫助診所建立品牌形象、提升市場競爭力
             </p>
           </motion.div>
@@ -551,12 +704,11 @@ export default function ServicePage() {
           >
             <h2 
               id="service-process-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
-              style={{ color: colors.textDark }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
             >
               專業服務流程
             </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
               系統化的服務流程，確保每個環節都能達到最佳效果
             </p>
           </motion.div>
@@ -586,12 +738,11 @@ export default function ServicePage() {
           >
             <h2 
               id="pricing-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display" 
-              style={{ color: colors.textDark }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark"
             >
               選擇適合的方案
             </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6" style={{ color: colors.textLight }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
               根據診所需求提供彈性的服務方案，協助您達成行銷目標
             </p>
           </motion.div>

@@ -4,8 +4,8 @@ import type { Metadata } from 'next'
 const siteConfig = {
   name: 'Aidea:Med 醫療行銷顧問',
   description: '讓專業的醫師專注於醫療品質，行銷交給我們。Aidea:Med 運用創新科技與人性化服務，協助診所打造溫暖而專業的品牌形象，建立長期且穩固的病患信任。',
-  url: 'https://www.aidea-med.com',
-  ogImage: 'https://www.aidea-med.com/og-image.jpg',
+  url: 'https://www.aideamed.com',
+  ogImage: 'https://www.aideamed.com/og-image.jpg',
   keywords: [
     // 診所類型相關
     '牙醫診所行銷',
@@ -50,7 +50,7 @@ const siteConfig = {
   authors: [
     {
       name: 'Aidea:Med 醫療行銷團隊',
-      url: 'https://www.aidea-med.com/team',
+      url: 'https://www.aideamed.com/team',
     }
   ]
 }
@@ -249,7 +249,7 @@ export const organizationSchema = {
 export const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://www.aidea-med.com',
+  '@id': 'https://www.aideamed.com',
   name: siteConfig.name,
   description: siteConfig.description,
   url: siteConfig.url,

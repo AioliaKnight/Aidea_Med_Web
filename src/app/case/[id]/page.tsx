@@ -13,19 +13,6 @@ import { Metadata, ResolvingMetadata } from 'next'
 import { siteConfig } from '@/config/site'
 import CasePage from '@/components/pages/CasePage'
 
-// 主要品牌色系
-const colors = {
-  primary: '#E61E25', // 品牌紅色
-  primaryDark: '#CC1A20', // 深紅色
-  secondary: '#1A1A1A', // 深黑色
-  light: '#FFFFFF', // 白色
-  gray: '#F5F5F5', // 淺灰色背景
-  grayDark: '#E0E0E0', // 深灰色
-  textDark: '#2A2A2A', // 深色文字
-  textLight: '#666666', // 淺色文字
-  accent: '#FFD700', // 強調色（金色）
-}
-
 // 時間軸項目介面
 interface TimelineItem {
   title: string;
@@ -173,8 +160,8 @@ export default function CaseDetail() {
     return (
       <div className="min-h-screen py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl font-bold mb-6 font-display" style={{ color: colors.textDark }}>案例不存在</h1>
-          <p className="mb-8" style={{ color: colors.textLight }}>抱歉，您尋找的案例不存在或已被移除。</p>
+          <h1 className="text-3xl font-bold mb-6 font-display text-brand-textDark">案例不存在</h1>
+          <p className="mb-8 text-brand-textLight">抱歉，您尋找的案例不存在或已被移除。</p>
           <Link href="/case">
             <span className="inline-flex items-center bg-primary text-white px-6 py-3 hover:bg-primaryDark transition-colors">
               <ArrowLeftIcon className="h-4 w-4 mr-2" />
@@ -381,11 +368,11 @@ export default function CaseDetail() {
                         <div className="w-10 h-10 bg-primary text-white flex items-center justify-center mr-4">
                           <span className="text-xl font-bold">{index + 1}</span>
                         </div>
-                        <h3 className="text-xl font-bold" style={{ color: colors.textDark }}>{solution.title}</h3>
+                        <div className="flex-grow">
+                          <h3 className="text-xl font-bold text-brand-textDark">{solution.title}</h3>
+                          <p className="mt-2">{solution.description}</p>
+                        </div>
                       </div>
-                      <p className="text-gray-600 ml-14">
-                        {solution.description}
-                      </p>
                     </motion.div>
                   ))}
                 </motion.div>
@@ -421,7 +408,7 @@ export default function CaseDetail() {
                           <div className="text-sm text-primary font-medium mb-2">
                             {item.date}
                           </div>
-                          <h3 className="text-xl font-bold mb-2" style={{ color: colors.textDark }}>
+                          <h3 className="text-xl font-bold mb-2 text-brand-textDark">
                             {item.title}
                           </h3>
                           <p className="text-gray-600">
@@ -442,11 +429,10 @@ export default function CaseDetail() {
           <section className="py-32 bg-white">
             <div className="container-custom">
               <motion.h2 
-                className="text-4xl font-bold text-center mb-12 font-display"
+                className="text-4xl font-bold text-center mb-12 font-display text-brand-textDark"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                style={{ color: colors.textDark }}
               >
                 相關案例
               </motion.h2>
@@ -464,7 +450,7 @@ export default function CaseDetail() {
                       <div className="text-sm text-primary font-medium mb-2">
                         {relatedCase.category}
                       </div>
-                      <h3 className="text-xl font-bold mb-2" style={{ color: colors.textDark }}>
+                      <h3 className="text-xl font-bold mb-2 text-brand-textDark">
                         {relatedCase.name}
                       </h3>
                       <p className="text-gray-600 line-clamp-2">

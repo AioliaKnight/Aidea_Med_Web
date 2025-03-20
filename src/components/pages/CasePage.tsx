@@ -275,14 +275,6 @@ export const caseStudies: CaseStudy[] = [
   }
 ]
 
-// 使用品牌主要配色系統
-const brandColors = {
-  primary: 'rgba(255, 0, 0, 0.9)', // 品牌紅色
-  secondary: 'rgba(0, 0, 0, 0.9)', // 品牌黑色
-  light: 'rgba(255, 255, 255, 1)', // 品牌白色
-  lightGray: 'rgba(245, 245, 245, 1)' // 淺灰色用於背景
-};
-
 // 載入狀態組件
 export const LoadingState = (): React.ReactElement => {
   return (
@@ -419,8 +411,7 @@ export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): React.ReactEleme
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative aspect-video lg:aspect-auto lg:h-full overflow-hidden lg:col-span-7"
-            style={{ background: brandColors.primary }}
+            className="relative aspect-video lg:aspect-auto lg:h-full overflow-hidden lg:col-span-7 bg-brand-primary"
           >
             {/* 扁平設計風格的幾何圖形背景 */}
             <div className="absolute inset-0">
