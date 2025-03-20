@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { OptimizedImage, Spinner } from '@/components/common'
@@ -12,79 +12,86 @@ export interface CaseCardProps {
   index: number;
 }
 
-export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElement => {
-  const [imageLoading, setImageLoading] = useState(true)
-  const [imageError, setImageError] = useState(false)
+// 有效案例 ID 列表作為常量避免重複創建
+const VALID_CASE_IDS = [
+  'north-district-dental', 
+  'east-district-dental', 
+  'central-district-dental', 
+  'south-district-dental',
+  'smile-dental'
+];
 
-  // 改進圖片處理 - 確保使用存在的圖片
-  const defaultImage = '/cases/case-placeholder.jpg'
-  const [imageSrc, setImageSrc] = useState(defaultImage)
+export const CaseCard = ({ caseStudy, index }: CaseCardProps): React.ReactElement => {
+  // 合併相關的圖片狀態為一個狀態對象
+  const [imageState, setImageState] = useState({
+    loading: true,
+    error: false,
+    src: '/cases/case-placeholder.jpg' // 默認圖片
+  });
   
-  // 使用 useEffect 來設置圖片路徑
+  // 使用 useMemo 計算動畫延遲，避免過長延遲
+  const animationDelay = useMemo(() => Math.min(index * 0.1, 0.5), [index]);
+  
+  // 優化圖片處理邏輯
   useEffect(() => {
-    // 明確定義我們知道存在的有效ID列表
-    const validCaseIds = [
-      'north-district-dental', 
-      'east-district-dental', 
-      'central-district-dental', 
-      'south-district-dental',
-      'smile-dental' // 添加微笑牙醫診所的ID
-    ];
+    let isUnmounted = false;
+    let imgSrc = imageState.src;
     
-    // 處理圖片路徑的函數
-    const processImagePath = (path: string) => {
-      // 檢查圖片是否存在
-      fetch(path, { method: 'HEAD' })
-        .then(response => {
-          if (response.ok && parseInt(response.headers.get('content-length') || '0') > 100) {
-            setImageSrc(path);
-          } else {
-            setImageSrc(defaultImage);
-          }
-        })
-        .catch(() => {
-          setImageSrc(defaultImage);
-        });
-    };
-    
+    // 確定圖片來源
     if (caseStudy.image) {
-      processImagePath(caseStudy.image);
-    } else if (caseStudy.id && validCaseIds.includes(caseStudy.id)) {
-      const imgPath = `/cases/${caseStudy.id}.jpg`;
-      processImagePath(imgPath);
-    } else {
-      setImageSrc(defaultImage);
+      imgSrc = caseStudy.image;
+    } else if (caseStudy.id && VALID_CASE_IDS.includes(caseStudy.id)) {
+      imgSrc = `/cases/${caseStudy.id}.jpg`;
     }
-  }, [caseStudy, defaultImage])
+    
+    // 只有當源圖片變更時才更新
+    if (imgSrc !== imageState.src) {
+      setImageState(prev => ({ ...prev, loading: true, src: imgSrc }));
+      
+      // 僅在開發環境下進行圖片存在性檢查
+      if (process.env.NODE_ENV === 'development') {
+        const checkImage = new Image();
+        checkImage.onload = () => {
+          if (!isUnmounted) {
+            setImageState(prev => ({ ...prev, loading: false, error: false }));
+          }
+        };
+        checkImage.onerror = () => {
+          if (!isUnmounted) {
+            setImageState({ loading: false, error: true, src: '/cases/case-placeholder.jpg' });
+          }
+        };
+        checkImage.src = imgSrc;
+      }
+    }
+
+    return () => { isUnmounted = true; };
+  }, [caseStudy.id, caseStudy.image, imageState.src]);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.5, delay: animationDelay }}
       viewport={{ once: true }}
       className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col"
     >
       {/* 圖片區域 */}
       <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
-        {imageLoading && !imageError && (
+        {imageState.loading && !imageState.error && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <Spinner className="w-10 h-10 text-primary" />
           </div>
         )}
-        {!imageError ? (
+        {!imageState.error ? (
           <OptimizedImage
-            src={imageSrc}
+            src={imageState.src}
             alt={caseStudy.name}
             fill
             className="object-cover transform group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            onLoadComplete={() => setImageLoading(false)}
-            onError={() => {
-              setImageError(true);
-              setImageLoading(false);
-              setImageSrc(defaultImage);
-            }}
+            sizes="(max-width: 480px) 95vw, (max-width: 640px) 45vw, (max-width: 768px) 30vw, (max-width: 1024px) 30vw, 300px"
+            onLoadComplete={() => setImageState(prev => ({ ...prev, loading: false }))}
+            onError={() => setImageState({ loading: false, error: true, src: '/cases/case-placeholder.jpg' })}
             priority={index < 2}
           />
         ) : (

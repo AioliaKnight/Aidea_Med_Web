@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -146,6 +146,20 @@ export default function CaseDetail() {
     }
     setLoading(false)
   }, [params.id])
+
+  // 使用 useMemo 緩存時間軸數據
+  const timelineItems = useMemo(() => {
+    if (!caseStudy) return [];
+    return generateTimeline(caseStudy);
+  }, [caseStudy]);
+  
+  // 使用 useMemo 緩存相關案例
+  const relatedCasesMemo = useMemo(() => {
+    if (!caseStudy) return [];
+    return caseStudies
+      .filter(c => c.id !== caseStudy.id && c.category === caseStudy.category)
+      .slice(0, 3);
+  }, [caseStudy]);
 
   if (loading) {
     return (
@@ -386,7 +400,7 @@ export default function CaseDetail() {
                   transition={{ duration: 0.5 }}
                 >
                   <div className="max-w-4xl mx-auto">
-                    {generateTimeline(caseStudy).map((item, index) => (
+                    {timelineItems.map((item, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
@@ -424,7 +438,7 @@ export default function CaseDetail() {
         </section>
 
         {/* 相關案例 */}
-        {relatedCases.length > 0 && (
+        {relatedCasesMemo.length > 0 && (
           <section className="py-32 bg-white">
             <div className="container-custom">
               <motion.h2 
@@ -437,12 +451,12 @@ export default function CaseDetail() {
                 相關案例
               </motion.h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedCases.map((relatedCase, index) => (
+                {relatedCasesMemo.map((relatedCase, index) => (
                   <motion.div
                     key={relatedCase.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.3) }}
                     whileHover={{ y: -5 }}
                     className="bg-gray-50 shadow-md hover:shadow-lg transition-all duration-300"
                   >

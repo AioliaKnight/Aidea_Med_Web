@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useState, useEffect, memo, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Metadata } from 'next'
@@ -294,25 +293,44 @@ export const LoadingState = (): React.ReactElement => {
   );
 };
 
-// 空結果組件
+// 更新 EmptyState 組件
 export interface EmptyStateProps {
-  category: string;
+  category?: string;
+  message?: string;
 }
 
-export const EmptyState = ({ category }: EmptyStateProps): React.ReactElement => {
+function EmptyState({ category, message }: EmptyStateProps) {
+  const displayMessage = message || `暫無${category !== '全部' ? category + '類別的' : ''}案例`;
+  
   return (
-    <div className="py-16 flex flex-col items-center justify-center">
-      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M12 14a3 3 0 100-6 3 3 0 000 6z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 12a8 8 0 11-16 0 8 8 0 0116 0z" />
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full">
+        <svg
+          className="mx-auto h-16 w-16 text-gray-400 mb-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">沒有找到案例</h3>
+        <p className="text-gray-500 mb-6">{displayMessage}</p>
+        <button
+          onClick={() => document.querySelector('button[data-category="全部"]')?.dispatchEvent(new Event('click', { bubbles: true }))}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/60"
+        >
+          查看所有案例
+        </button>
       </div>
-      <h3 className="text-xl font-bold text-gray-700 mb-2">尚無{category}案例</h3>
-      <p className="text-gray-500 max-w-md text-center">目前沒有符合此類別的案例，請選擇其他類別或稍後再查看。</p>
     </div>
   );
-};
+}
 
 // 篩選組件 - 改進導覽與無障礙體驗
 export interface CaseFilterProps {
@@ -657,36 +675,80 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
   };
 };
 
-// 更新主頁面組件
-export default function CasePage(): React.ReactElement {
+// 在 MainContent 組件之前添加 FilteredCasesList 組件
+// 使用 memo 避免不必要的重新渲染
+const FilteredCasesList = memo(({ cases, selectedCategory }: { cases: CaseStudy[], selectedCategory: string }) => {
+  // 使用 useMemo 緩存過濾後的案例列表
+  const filteredCases = useMemo(() => {
+    return selectedCategory === '全部' 
+      ? cases 
+      : cases.filter(c => c.category === selectedCategory);
+  }, [cases, selectedCategory]);
+
+  if (filteredCases.length === 0) {
+    return <EmptyState category={selectedCategory} />;
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      {filteredCases.map((caseStudy, index) => (
+        <CaseCard 
+          key={caseStudy.id} 
+          caseStudy={caseStudy} 
+          index={index} 
+        />
+      ))}
+    </div>
+  );
+});
+
+FilteredCasesList.displayName = 'FilteredCasesList';
+
+// 在 MainContent 組件中替換案例列表渲染邏輯
+function MainContent() {
   const [activeCategory, setActiveCategory] = useState('全部')
-  const [filteredCases, setFilteredCases] = useState(caseStudies)
   const [isLoading, setIsLoading] = useState(true)
+  
+  // 使用 useMemo 緩存唯一的案例類別
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(new Set(caseStudies.map(c => c.category)));
+    return ['全部', ...uniqueCategories];
+  }, []);
 
-  // 獲取所有案例類別
-  const categories = ['全部', ...Array.from(new Set(caseStudies.map(cs => cs.category)))]
-
+  // 模擬異步加載過程
   useEffect(() => {
+    // 模擬數據加載延遲
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 1000)
-
+    }, 500)
+    
     return () => clearTimeout(timer)
   }, [])
 
-  // 處理類別篩選
-  useEffect(() => {
-    if (activeCategory === '全部') {
-      setFilteredCases(caseStudies)
-    } else {
-      setFilteredCases(caseStudies.filter(cs => cs.category === activeCategory))
-    }
-  }, [activeCategory])
-
   if (isLoading) {
-    return <LoadingState />
+    return (
+      <div className="flex justify-center items-center min-h-[300px]">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )
   }
 
+  return (
+    <div className="container mx-auto px-4 py-12 md:py-16">
+      <CaseFilter
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        categories={categories}
+      />
+      <div className="mt-8 md:mt-12">
+        <FilteredCasesList cases={caseStudies} selectedCategory={activeCategory} />
+      </div>
+    </div>
+  )
+}
+
+// 更新主頁面組件
+export default function CasePage(): React.ReactElement {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 頁面標題區 */}
@@ -702,32 +764,7 @@ export default function CasePage(): React.ReactElement {
       {/* 案例篩選與展示區 */}
       <section className="py-20">
         <div className="container-custom">
-          {/* 篩選器 */}
-          <CaseFilter
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-            categories={categories}
-          />
-
-          {/* 案例列表 */}
-          {filteredCases.length === 0 ? (
-            <EmptyState category={activeCategory} />
-          ) : (
-            <motion.div
-              variants={animations.staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {filteredCases.map((caseStudy, index) => (
-                <CaseCard
-                  key={caseStudy.id}
-                  caseStudy={caseStudy}
-                  index={index}
-                />
-              ))}
-            </motion.div>
-          )}
+          <MainContent />
         </div>
       </section>
 
