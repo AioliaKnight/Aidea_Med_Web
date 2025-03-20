@@ -134,8 +134,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
           withBlur && !isLoaded && blurDataURL && 'blur-sm scale-[1.02]',
           isLoaded && 'blur-0'
         )}
-        fetchPriority={isLCP ? 'high' : 'auto'}
-        loading={isLCP ? 'eager' : 'lazy'}
+        fetchPriority={isLCP || props.priority ? 'high' : 'auto'}
+        loading={isLCP || props.priority ? 'eager' : 'lazy'}
         quality={quality}
         sizes={sizes}
         placeholder={withBlur && blurDataURL ? 'blur' : 'empty'}
@@ -143,6 +143,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
         onLoad={handleLoad}
         onError={handleError}
         {...props}
+        priority={undefined}
       />
       
       {/* 載入動畫指示器 */}
