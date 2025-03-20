@@ -37,6 +37,38 @@
   --radius: 0.5rem;
 }
 
+/* 自定義文字選取樣式 */
+::selection {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+::-moz-selection {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* 紅色背景下特殊文字選取樣式 */
+.bg-primary ::selection,
+.bg-[#e62733] ::selection,
+[class*="bg-primary"] ::selection,
+[class*="bg-red"] ::selection {
+  background-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bg-primary ::-moz-selection,
+.bg-[#e62733] ::-moz-selection,
+[class*="bg-primary"] ::-moz-selection,
+[class*="bg-red"] ::-moz-selection {
+  background-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 /* 字體定義 */
 @font-face {
   font-family: 'GenYoGothicTW';
