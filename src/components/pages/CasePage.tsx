@@ -536,24 +536,6 @@ export const CTASection = (): React.ReactElement => {
   );
 };
 
-// 回到頂部按鈕組件
-export const BackToTopButton = (): React.ReactElement => {
-  return (
-    <motion.button
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1 }}
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      className="fixed bottom-8 right-8 bg-primary text-white w-10 h-10 flex items-center justify-center shadow-sm hover:bg-primary/90"
-      aria-label="回到頂部"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-      </svg>
-    </motion.button>
-  );
-};
-
 // 生成頁面 Metadata - 與 Next.js metadata 檔案保持一致
 export const generateCasePageMetadata = (): Metadata => {
   return {
@@ -760,9 +742,6 @@ export default function CasePage(): React.ReactElement {
 
       {/* CTA 區域 */}
       <CTASection />
-
-      {/* 回到頂部按鈕 */}
-      <BackToTopButton />
     </div>
   )
 } 

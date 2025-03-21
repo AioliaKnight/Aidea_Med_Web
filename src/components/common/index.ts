@@ -21,6 +21,9 @@ export { default as SubmitButton } from './SubmitButton';
 // 呼籲行動區塊
 export { default as CTASection } from './CTASection';
 
+// 回到頂部按鈕
+export { default as BackToTopButton } from './BackToTopButton';
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

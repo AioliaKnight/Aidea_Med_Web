@@ -10,7 +10,7 @@ import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Navbar from '@/components/layout/Navbar'
-import { Loading } from '@/components/common'
+import { Loading, BackToTopButton } from '@/components/common'
 
 import '@/app/globals.css'
 import '@/app/fonts.css'
@@ -143,6 +143,12 @@ export default function RootLayout({
             {children}
           </Suspense>
         </main>
+
+        {/* 全局回到頂部按鈕 */}
+        <BackToTopButton 
+          threshold={400}
+          rounded={true}
+        />
 
         {/* Portal Root */}
         <div id="portal-root" />
