@@ -578,12 +578,9 @@ export default function ServicePage() {
             description="全方位行銷顧問級服務，提供客製化的行銷成長方案"
             variant="red"
             size="lg"
-            alignment="left"
-            backgroundImage="/images/bgline-r.png"
-            overlayOpacity={0.95}
+            alignment="center"
+            backgroundImage="/images/bgline-w.png"
           />
-          {/* 簡約平面漸層 */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black to-black pointer-events-none z-[5]"></div>
         </div>
         
         {/* Hero Content - 扁平化現代設計 */}

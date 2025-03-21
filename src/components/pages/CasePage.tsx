@@ -749,7 +749,6 @@ export default function CasePage(): React.ReactElement {
         variant="red"
         size="lg"
         backgroundImage="/images/bgline-w.png"
-        overlayOpacity={0.9}
       />
 
       {/* 案例篩選與展示區 */}
