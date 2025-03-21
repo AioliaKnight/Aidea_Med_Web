@@ -832,29 +832,25 @@ function StatsSection() {
       value: 300,
       suffix: "+",
       label: "合作醫療診所",
-      description: "遍布全台的合作診所網絡",
-      color: "primary"
+      description: "遍布全台的合作診所網絡"
     },
     {
       value: 98,
       suffix: "%",
       label: "客戶續約率",
-      description: "高滿意度的專業服務品質",
-      color: "primary-light"
+      description: "高滿意度的專業服務品質"
     },
     {
       value: 180,
       suffix: "%",
       label: "平均預約成長",
-      description: "有效提升診所預約轉換率",
-      color: "accent"
+      description: "有效提升診所預約轉換率"
     },
     {
       value: 85,
       suffix: "%",
       label: "行銷投資回報率",
-      description: "精準行銷帶來顯著成效",
-      color: "primary-dark"
+      description: "精準行銷帶來顯著成效"
     }
   ];
 
@@ -863,9 +859,6 @@ function StatsSection() {
       {/* 簡化的背景 */}
       <div className="absolute inset-0 bg-primary z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-100"></div>
-        {/* 簡約裝飾元素 */}
-        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-white/5 rounded-bl-full transform -translate-y-1/4 translate-x-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-white/5 rounded-tr-full transform translate-y-1/4 -translate-x-1/4"></div>
       </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
@@ -886,108 +879,101 @@ function StatsSection() {
             成效數據
           </motion.span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            <motion.span
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-block"
-            >
-              實際
-            </motion.span>
-            <motion.span className="relative inline-block mx-2">
+            實際
+            <span className="relative inline-block mx-2">
               成效
               <motion.span 
                 initial={{ width: "0%" }}
                 whileInView={{ width: "100%" }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="absolute -bottom-2 left-0 right-0 h-1.5 bg-white/30 rounded-full"
               ></motion.span>
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-block"
-            >
-              數據
-            </motion.span>
+            </span>
+            數據
           </h2>
-          <motion.p 
-            className="text-lg text-white/90 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
+          <p className="text-lg text-white/90 max-w-2xl mx-auto">
             以數據說明我們的專業與實力，為您的診所帶來實質的成長
-          </motion.p>
+          </p>
         </motion.div>
 
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
-          variants={animations.staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              variants={animations.slideUp}
-              custom={index}
-              className="text-center"
-            >
-              <motion.div 
-                className="bg-white/10 p-6 md:p-8 rounded-xl backdrop-blur-sm hover:bg-white/15 transition-all duration-300 h-full flex flex-col justify-center items-center"
-                whileHover={{ 
-                  y: -8, 
-                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-                  backgroundColor: "rgba(255, 255, 255, 0.15)"
-                }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300, 
-                  damping: 15 
-                }}
-              >
-                <div className="relative mb-2">
+        {/* 單行水平滾動統計數據 */}
+        <div className="relative -mx-4 px-4 sm:-mx-6 sm:px-6">
+          <motion.div 
+            className="flex overflow-x-auto pb-8 hide-scrollbar"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
+            <div className="flex gap-6 md:gap-8 min-w-max mx-auto">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        duration: 0.5,
+                        ease: [0.6, 0.05, 0.01, 0.9]
+                      }
+                    }
+                  }}
+                  className="flex-none w-[260px] sm:w-[280px]"
+                >
                   <motion.div 
-                    className="text-4xl sm:text-5xl xl:text-6xl font-bold text-white"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: 0.2 + index * 0.1,
-                      ease: [0.34, 1.56, 0.64, 1]
+                    className="bg-white/10 p-6 md:p-8 rounded-xl h-full flex flex-col justify-center items-center"
+                    whileHover={{ 
+                      y: -5, 
+                      backgroundColor: "rgba(255, 255, 255, 0.15)"
                     }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   >
-                    <CountUp 
-                      end={stat.value} 
-                      suffix={stat.suffix} 
-                      duration={2.5} 
-                      delay={0.5}
-                      enableScrollSpy
-                      scrollSpyOnce
-                    />
+                    <div className="relative mb-3">
+                      <div className="text-4xl sm:text-5xl font-bold text-white">
+                        <CountUp 
+                          end={stat.value} 
+                          suffix={stat.suffix} 
+                          duration={2.5} 
+                          enableScrollSpy
+                          scrollSpyOnce
+                        />
+                      </div>
+                      <motion.div 
+                        className="absolute -bottom-1 left-0 right-0 h-1 bg-white/20 rounded-full" 
+                        initial={{ width: "0%" }}
+                        whileInView={{ width: "100%" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                      ></motion.div>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">{stat.label}</h3>
+                    <p className="text-white/70 text-sm text-center">{stat.description}</p>
                   </motion.div>
-                  <motion.div 
-                    className="absolute -bottom-1 left-0 right-0 h-1 bg-white/20 rounded-full" 
-                    initial={{ width: "0%" }}
-                    whileInView={{ width: "100%" }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.5, delay: 0.8 + index * 0.1 }}
-                  ></motion.div>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">{stat.label}</h3>
-                <p className="text-white/70 text-sm">{stat.description}</p>
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+          
+          {/* 滾動指示器 */}
+          <div className="mt-4 flex justify-center gap-2">
+            {stats.map((_, index) => (
+              <div 
+                key={index} 
+                className={`h-1.5 rounded-full bg-white/30 transition-all duration-300 ${index === 0 ? 'w-8' : 'w-2'}`}
+              ></div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
