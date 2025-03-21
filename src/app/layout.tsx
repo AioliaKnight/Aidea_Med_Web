@@ -10,7 +10,7 @@ import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Navbar from '@/components/layout/Navbar'
-import { Loading, BackToTopButton } from '@/components/common'
+import { Loading, BackToTopButton, WebsiteChat } from '@/components/common'
 
 import '@/app/globals.css'
 import '@/app/fonts.css'
@@ -183,6 +183,9 @@ export default function RootLayout({
         {/* 分析工具 */}
         <Analytics />
         <SpeedInsights />
+        
+        {/* 客服聊天功能 */}
+        <WebsiteChat />
       </body>
     </html>
   )

@@ -24,6 +24,9 @@ export { default as CTASection } from './CTASection';
 // 回到頂部按鈕
 export { default as BackToTopButton } from './BackToTopButton';
 
+// 網站客服聊天組件
+export { default as WebsiteChat } from './WebsiteChat';
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common
