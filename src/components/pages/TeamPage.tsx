@@ -524,6 +524,41 @@ export default function TeamPage() {
           </AnimatedSection>
         </div>
       </section>
+
+      <TeamIntroSection />
+      
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center max-w-3xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
+              專業團隊
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              每位成員都是各自領域的<span className="text-primary">專家</span>
+            </h2>
+            <p className="text-lg text-gray-600">
+              我們的團隊由來自行銷、設計、技術與醫療背景的專業人才組成，共同為診所客戶創造最有溫度、最能打動人心的品牌體驗。
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {teamMembers.map((member, index) => (
+              <TeamMemberCard 
+                key={index} 
+                member={member}
+                delay={index * 0.1}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      <TeamValues />
     </div>
   )
 } 
