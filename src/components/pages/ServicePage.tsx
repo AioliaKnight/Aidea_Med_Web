@@ -389,16 +389,16 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       </ul>
       <Link
         href={`/contact?plan=${encodeURIComponent(plan.title)}&source=pricing`}
-        className={`w-full py-3 px-4 text-sm font-medium inline-flex justify-center items-center group transition-all duration-300 ${
+        className={`w-full py-3 px-4 text-sm font-medium inline-flex justify-center items-center transition-all duration-300 ${
           plan.isPopular 
-            ? 'bg-white text-primary hover:bg-gray-50' 
-            : 'bg-primary text-white hover:bg-primary/90'
+            ? 'bg-white text-primary' 
+            : 'bg-primary text-white'
         }`}
         aria-label={`選擇${plan.title}方案`}
       >
         <span>{plan.btnText}</span>
         <svg 
-          className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" 
+          className="w-4 h-4 ml-2" 
           fill="none" 
           viewBox="0 0 24 24" 
           stroke="currentColor"
@@ -650,17 +650,17 @@ export default function ServicePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.8 }}
             >
-              <div className="bg-black p-4 text-center border-t-4 border-primary">
+              <div className="bg-gradient-to-br from-gray-900 to-black p-4 text-center border-t-4 border-primary rounded-md shadow-md">
                 <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>10+</Heading>
-                <div className="text-sm font-medium text-white">年產業經驗</div>
+                <div className="text-sm font-medium text-gray-100">年產業經驗</div>
               </div>
-              <div className="bg-black p-4 text-center border-t-4 border-primary">
+              <div className="bg-gradient-to-br from-gray-900 to-black p-4 text-center border-t-4 border-primary rounded-md shadow-md">
                 <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>200+</Heading>
-                <div className="text-sm font-medium text-white">成功案例</div>
+                <div className="text-sm font-medium text-gray-100">成功案例</div>
               </div>
-              <div className="bg-black p-4 text-center border-t-4 border-primary">
+              <div className="bg-gradient-to-br from-gray-900 to-black p-4 text-center border-t-4 border-primary rounded-md shadow-md">
                 <Heading level="h4" variant="primary" className="text-3xl md:text-4xl mb-2" onDark={true}>98%</Heading>
-                <div className="text-sm font-medium text-white">客戶滿意度</div>
+                <div className="text-sm font-medium text-gray-100">客戶滿意度</div>
               </div>
             </motion.div>
           </div>
@@ -669,16 +669,16 @@ export default function ServicePage() {
           {/* 數據面板 - 響應式優化設計 */}
           {/* 桌面版面板 */}
           <motion.div
-            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-black p-6 w-80 z-10 border-l-4 border-primary shadow-lg rounded-tr-none rounded-br-none"
+            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-gradient-to-br from-gray-800 to-black p-6 w-80 z-10 border-l-4 border-primary shadow-lg rounded-md"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
             whileHover={{ x: -5 }}
           >
-            <Heading level="h3" size="xs" className="mb-5 text-primary border-b border-gray-800 pb-2 font-bold">讓數據說話</Heading>
+            <Heading level="h3" size="xs" className="mb-5 text-primary border-b border-gray-700 pb-2 font-bold">讓數據說話</Heading>
             <div className="mb-6">
               <div className="flex justify-between items-center text-sm mb-3">
-                <span className="text-gray-300 font-medium">診所知名度提升</span>
+                <span className="text-gray-100 font-medium">診所知名度提升</span>
                 <div className="flex items-center">
                   <span className="font-bold text-lg text-primary mr-1">76%</span>
                   <svg 
@@ -691,7 +691,7 @@ export default function ServicePage() {
                   </svg>
                 </div>
               </div>
-              <div className="h-2 bg-gray-800 w-full overflow-hidden">
+              <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                 <motion.div 
                   className="h-full bg-primary"
                   initial={{ width: 0 }}
@@ -702,7 +702,7 @@ export default function ServicePage() {
             </div>
             <div className="mb-6">
               <div className="flex justify-between items-center text-sm mb-3">
-                <span className="text-gray-300 font-medium">新患者轉換率</span>
+                <span className="text-gray-100 font-medium">新患者轉換率</span>
                 <div className="flex items-center">
                   <span className="font-bold text-lg text-primary mr-1">64%</span>
                   <svg 
@@ -715,7 +715,7 @@ export default function ServicePage() {
                   </svg>
                 </div>
               </div>
-              <div className="h-2 bg-gray-800 w-full overflow-hidden">
+              <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                 <motion.div 
                   className="h-full bg-primary"
                   initial={{ width: 0 }}
@@ -726,7 +726,7 @@ export default function ServicePage() {
             </div>
             <div>
               <div className="flex justify-between items-center text-sm mb-3">
-                <span className="text-gray-300 font-medium">患者回診率提升</span>
+                <span className="text-gray-100 font-medium">患者回診率提升</span>
                 <div className="flex items-center">
                   <span className="font-bold text-lg text-primary mr-1">89%</span>
                   <svg 
@@ -739,7 +739,7 @@ export default function ServicePage() {
                   </svg>
                 </div>
               </div>
-              <div className="h-2 bg-gray-800 w-full overflow-hidden">
+              <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                 <motion.div 
                   className="h-full bg-primary"
                   initial={{ width: 0 }}
@@ -752,16 +752,16 @@ export default function ServicePage() {
           
           {/* 平板/手機版數據面板 - 扁平化設計 */}
           <motion.div
-            className="lg:hidden relative w-full bg-black p-6 my-8 z-10 border-l-4 border-primary"
+            className="lg:hidden relative w-full bg-gradient-to-r from-gray-900 to-black p-6 my-8 z-10 border-l-4 border-primary rounded-r-md shadow-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <Heading level="h3" size="xs" className="mb-5 text-primary text-center border-b border-gray-800 pb-2 font-bold">診所數位行銷成效</Heading>
+            <Heading level="h3" size="xs" className="mb-5 text-primary text-center border-b border-gray-700 pb-2 font-bold">診所數位行銷成效</Heading>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gray-900 p-4">
+              <div className="bg-gradient-to-br from-gray-800 to-black p-4 rounded-md shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-gray-300 font-medium text-sm">診所知名度提升</span>
+                  <span className="text-gray-100 font-medium text-sm">診所知名度提升</span>
                   <span className="font-bold text-lg text-primary flex items-center">
                     76%
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -769,7 +769,7 @@ export default function ServicePage() {
                     </svg>
                   </span>
                 </div>
-                <div className="h-2 bg-gray-800 w-full overflow-hidden">
+                <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                   <motion.div 
                     className="h-full bg-primary"
                     initial={{ width: 0 }}
@@ -779,9 +779,9 @@ export default function ServicePage() {
                 </div>
               </div>
               
-              <div className="bg-gray-900 p-4">
+              <div className="bg-gradient-to-br from-gray-800 to-black p-4 rounded-md shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-gray-300 font-medium text-sm">新患者轉換率</span>
+                  <span className="text-gray-100 font-medium text-sm">新患者轉換率</span>
                   <span className="font-bold text-lg text-primary flex items-center">
                     64%
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -789,7 +789,7 @@ export default function ServicePage() {
                     </svg>
                   </span>
                 </div>
-                <div className="h-2 bg-gray-800 w-full overflow-hidden">
+                <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                   <motion.div 
                     className="h-full bg-primary"
                     initial={{ width: 0 }}
@@ -799,9 +799,9 @@ export default function ServicePage() {
                 </div>
               </div>
               
-              <div className="bg-gray-900 p-4">
+              <div className="bg-gradient-to-br from-gray-800 to-black p-4 rounded-md shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-gray-300 font-medium text-sm">患者回診率提升</span>
+                  <span className="text-gray-100 font-medium text-sm">患者回診率提升</span>
                   <span className="font-bold text-lg text-primary flex items-center">
                     89%
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -809,7 +809,7 @@ export default function ServicePage() {
                     </svg>
                   </span>
                 </div>
-                <div className="h-2 bg-gray-800 w-full overflow-hidden">
+                <div className="h-2 bg-gray-700 w-full overflow-hidden rounded-full">
                   <motion.div 
                     className="h-full bg-primary"
                     initial={{ width: 0 }}
@@ -824,7 +824,7 @@ export default function ServicePage() {
       </div>
       
       {/* 醫療市場統計數據區 */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="container-custom max-w-5xl">
           <motion.div 
             className="text-center mb-16"
@@ -1195,10 +1195,10 @@ export default function ServicePage() {
             </p>
             <Link 
               href="/contact?source=custom_pricing" 
-              className="inline-flex items-center justify-center px-6 py-3 bg-white border border-primary text-primary font-medium hover:bg-primary hover:text-white transition-all duration-300 rounded-md group shadow-sm"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white border border-primary text-primary font-medium transition-all duration-300 rounded-md shadow-sm"
             >
               <span>聯繫我們討論客製方案</span>
-              <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
