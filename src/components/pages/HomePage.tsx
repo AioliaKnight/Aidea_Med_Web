@@ -831,28 +831,98 @@ function StatsSection() {
     {
       value: 300,
       suffix: "+",
-      label: "合作醫療診所",
-      description: "遍布全台的合作診所網絡"
+      label: "合作診所",
+      description: "全台醫療網絡覆蓋",
+      icon: <Stethoscope className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     },
     {
       value: 98,
       suffix: "%",
-      label: "客戶續約率",
-      description: "高滿意度的專業服務品質"
+      label: "客戶滿意度",
+      description: "專業團隊品質保證",
+      icon: <Handshake className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     },
     {
       value: 180,
       suffix: "%",
-      label: "平均預約成長",
-      description: "有效提升診所預約轉換率"
+      label: "預約成長",
+      description: "顯著提升診所轉換率",
+      icon: <BarChart2 className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     },
     {
       value: 85,
       suffix: "%",
-      label: "行銷投資回報率",
-      description: "精準行銷帶來顯著成效"
+      label: "投資回報率",
+      description: "精準行銷高效投資",
+      icon: <MonitorSmartphone className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     }
   ];
+
+  // 參考以追蹤滾動容器
+  const scrollRef = useCallback((node: HTMLDivElement) => {
+    if (node !== null) {
+      // 設定初始位置使第一個項目置中
+      setTimeout(() => {
+        const firstItem = node.querySelector('.stats-item');
+        if (firstItem) {
+          const container = node.parentElement;
+          if (container) {
+            const containerWidth = container.clientWidth;
+            const itemWidth = firstItem.clientWidth;
+            const scrollLeft = (itemWidth / 2) - (containerWidth / 2);
+            node.scrollLeft = Math.max(0, scrollLeft);
+          }
+        }
+      }, 100);
+    }
+  }, []);
+
+  // 控制當前活動項目索引
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // 滾動到特定項目
+  const scrollToItem = useCallback((index: number) => {
+    const container = document.querySelector('.stats-scroll-container');
+    const item = document.querySelectorAll('.stats-item')[index];
+    if (container && item) {
+      const containerWidth = container.clientWidth;
+      const itemRect = item.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const scrollLeft = (item as HTMLElement).offsetLeft - containerRect.left + container.scrollLeft - (containerWidth / 2) + (itemRect.width / 2);
+      
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+      
+      setActiveIndex(index);
+    }
+  }, []);
+
+  // 監聽滾動事件
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const items = container.querySelectorAll('.stats-item');
+    const containerWidth = container.clientWidth;
+    const containerRect = container.getBoundingClientRect();
+    
+    let minDistance = Infinity;
+    let closestIndex = 0;
+    
+    items.forEach((item, index) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.left + (itemRect.width / 2);
+      const containerCenter = containerRect.left + (containerWidth / 2);
+      const distance = Math.abs(itemCenter - containerCenter);
+      
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+    
+    setActiveIndex(closestIndex);
+  }, []);
 
   return (
     <section className="relative py-16 md:py-24 bg-primary overflow-hidden">
@@ -863,118 +933,234 @@ function StatsSection() {
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <motion.div 
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <motion.span 
-            className="inline-block text-white font-medium mb-4 px-5 py-2 bg-white/10 rounded-full"
+          <motion.div 
+            className="inline-block text-white font-medium mb-5 px-5 py-2 bg-white/10 rounded-full"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
           >
-            成效數據
-          </motion.span>
+            <BarChart2 className="w-4 h-4 inline-block mr-2 -mt-0.5" /> 成效數據
+          </motion.div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            實際
-            <span className="relative inline-block mx-2">
-              成效
-              <motion.span 
-                initial={{ width: "0%" }}
-                whileInView={{ width: "100%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="absolute -bottom-2 left-0 right-0 h-1.5 bg-white/30 rounded-full"
-              ></motion.span>
+            <span className="relative">
+              <span className="inline-block mr-2">實際</span>
+              <span className="relative inline-block mx-2">
+                成效
+                <motion.span 
+                  initial={{ width: "0%" }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="absolute -bottom-2 left-0 right-0 h-1.5 bg-white/30 rounded-full"
+                ></motion.span>
+              </span>
+              <span className="inline-block">數據</span>
             </span>
-            數據
           </h2>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            以數據說明我們的專業與實力，為您的診所帶來實質的成長
-          </p>
+          <motion.p 
+            className="text-lg text-white/80 max-w-2xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            實證數據驅動診所業務增長，提供可量化的成功案例
+          </motion.p>
         </motion.div>
 
-        {/* 單行水平滾動統計數據 */}
-        <div className="relative -mx-4 px-4 sm:-mx-6 sm:px-6">
-          <motion.div 
-            className="flex overflow-x-auto pb-8 hide-scrollbar"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={{
-              hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.1
-                }
-              }
-            }}
+        {/* 改良的單行水平滾動統計數據 */}
+        <div className="relative overflow-hidden px-4 md:px-8">
+          {/* 滾動箭頭 - 左 */}
+          <motion.button
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm hidden md:flex items-center justify-center shadow-lg"
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => scrollToItem(Math.max(0, activeIndex - 1))}
           >
-            <div className="flex gap-6 md:gap-8 min-w-max mx-auto">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.5,
-                        ease: [0.6, 0.05, 0.01, 0.9]
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </motion.button>
+
+          {/* 水平滾動容器 */}
+          <div className="relative mx-auto overflow-hidden">
+            <motion.div
+              ref={scrollRef}
+              className="stats-scroll-container flex overflow-x-auto pb-8 md:pb-10 scrollbar-custom snap-x snap-mandatory"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              onScroll={handleScroll}
+            >
+              {/* 內容容器 - 確保卡片居中顯示 */}
+              <div className="flex gap-5 px-12 md:px-16 items-stretch mx-auto">
+                {stats.map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: {
+                          duration: 0.5,
+                          ease: [0.6, 0.05, 0.01, 0.9]
+                        }
                       }
-                    }
-                  }}
-                  className="flex-none w-[260px] sm:w-[280px]"
-                >
-                  <motion.div 
-                    className="bg-white/10 p-6 md:p-8 rounded-xl h-full flex flex-col justify-center items-center"
-                    whileHover={{ 
-                      y: -5, 
-                      backgroundColor: "rgba(255, 255, 255, 0.15)"
                     }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    className={`stats-item flex-none w-[260px] sm:w-[280px] md:w-[300px] snap-center ${index === activeIndex ? 'scale-100' : 'scale-95'}`}
+                    style={{ transition: 'transform 0.3s ease' }}
                   >
-                    <div className="relative mb-3">
-                      <div className="text-4xl sm:text-5xl font-bold text-white">
-                        <CountUp 
-                          end={stat.value} 
-                          suffix={stat.suffix} 
-                          duration={2.5} 
-                          enableScrollSpy
-                          scrollSpyOnce
-                        />
+                    <motion.div 
+                      className={`bg-white/8 p-6 md:p-8 rounded-xl h-full flex flex-col items-center border border-white/10 backdrop-blur-sm
+                                ${index === activeIndex ? 'ring-2 ring-white/20 shadow-xl' : ''}`}
+                      whileHover={{ 
+                        y: -6, 
+                        backgroundColor: "rgba(255, 255, 255, 0.12)",
+                        borderColor: "rgba(255, 255, 255, 0.2)"
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <div className={`mb-5 p-3 bg-white/10 rounded-full ${index === activeIndex ? 'bg-white/15' : ''}`}>
+                        {stat.icon}
                       </div>
-                      <motion.div 
-                        className="absolute -bottom-1 left-0 right-0 h-1 bg-white/20 rounded-full" 
-                        initial={{ width: "0%" }}
-                        whileInView={{ width: "100%" }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                      ></motion.div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{stat.label}</h3>
-                    <p className="text-white/70 text-sm text-center">{stat.description}</p>
+                      <div className="relative mb-5">
+                        <div className="text-5xl sm:text-6xl font-bold text-white">
+                          <CountUp 
+                            end={stat.value} 
+                            suffix={stat.suffix} 
+                            duration={2.5} 
+                            enableScrollSpy
+                            scrollSpyOnce
+                            useEasing
+                          />
+                        </div>
+                        <motion.div 
+                          className="absolute -bottom-3 left-1/4 right-1/4 h-0.5 bg-white/20 rounded-full" 
+                          initial={{ width: "0%", left: "50%", right: "50%" }}
+                          whileInView={{ width: "50%", left: "25%", right: "25%" }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1, delay: 0.5 }}
+                        ></motion.div>
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-3">{stat.label}</h3>
+                      <p className="text-white/70 text-center text-sm">{stat.description}</p>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
           
-          {/* 滾動指示器 */}
-          <div className="mt-4 flex justify-center gap-2">
+          {/* 滾動箭頭 - 右 */}
+          <motion.button
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm hidden md:flex items-center justify-center shadow-lg"
+            initial={{ opacity: 0, x: 10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => scrollToItem(Math.min(stats.length - 1, activeIndex + 1))}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </motion.button>
+          
+          {/* 改進的滾動指示器 */}
+          <div className="mt-4 flex justify-center gap-3 items-center">
             {stats.map((_, index) => (
-              <div 
-                key={index} 
-                className={`h-1.5 rounded-full bg-white/30 transition-all duration-300 ${index === 0 ? 'w-8' : 'w-2'}`}
-              ></div>
+              <motion.button
+                key={index}
+                initial={{ opacity: 0.5, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => scrollToItem(index)}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer
+                  ${index === activeIndex 
+                      ? 'w-8 bg-white shadow-glow' 
+                      : 'w-2.5 bg-white/30 hover:bg-white/50'}`}
+                aria-label={`滾動到數據 ${index + 1}`}
+              ></motion.button>
             ))}
           </div>
+          
+          {/* 手機版滾動提示 */}
+          <motion.div 
+            className="mt-4 text-center text-white/60 text-sm flex items-center justify-center md:hidden"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1 }}
+          >
+            <span className="inline-flex items-center">
+              <motion.div 
+                animate={{ x: [-5, 0, -5] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                className="mr-1.5"
+              >
+                ←
+              </motion.div>
+              左右滑動查看更多
+              <motion.div 
+                animate={{ x: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut", delay: 0.5 }}
+                className="ml-1.5"
+              >
+                →
+              </motion.div>
+            </span>
+          </motion.div>
         </div>
       </div>
+      
+      {/* 自定義滾動條樣式 */}
+      <style jsx global>{`
+        .scrollbar-custom::-webkit-scrollbar {
+          height: 4px;
+          background: transparent;
+        }
+        
+        .scrollbar-custom::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+        
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+          cursor: pointer;
+        }
+        
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .shadow-glow {
+          box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+      `}</style>
     </section>
   );
 }
