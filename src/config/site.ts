@@ -52,21 +52,21 @@ export const siteConfig: SiteConfig = {
   contact: {
     email: 'contact@aideamed.com',
     phone: '(02) 2748-8919',
-    address: '台北市大安區敦化南路二段99號13樓,
+    address: '台北市大安區敦化南路二段99號13樓'
   },
   
   // 社交媒體
   social: {
     facebook: 'https://www.facebook.com/aideamed',
     instagram: 'https://www.instagram.com/aidea_med',
-    line: 'https://line.me/ti/p/@aideamed',
+    line: 'https://line.me/ti/p/@aideamed'
   },
   
   // 圖片資源
   images: {
     logo: '/logo-w.png',
     favicon: '/favicon.ico',
-    ogImage: '/og-image.jpg',
+    ogImage: '/og-image.jpg'
   },
   
   // 共用SEO配置
@@ -80,9 +80,9 @@ export const siteConfig: SiteConfig = {
         index: true,
         follow: true,
         'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
+        'max-snippet': -1
+      }
+    }
   },
   
   // 核心服務
@@ -92,7 +92,7 @@ export const siteConfig: SiteConfig = {
     '社群經營管理',
     '數位轉型諮詢',
     '空間設計規劃',
-    'AI整合行銷',
+    'AI整合行銷'
   ],
   
   // 主要客戶類型
@@ -101,6 +101,6 @@ export const siteConfig: SiteConfig = {
     '皮膚科診所',
     '眼科診所',
     '家醫科診所',
-    '中醫診所',
-  ],
+    '中醫診所'
+  ]
 }; 
