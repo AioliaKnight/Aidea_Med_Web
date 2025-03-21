@@ -149,11 +149,11 @@ export default function RootLayout({
           {/* 全局回到頂部按鈕 - 調整出現閾值，提升動畫效果 */}
           <BackToTopButton 
             threshold={600} /* 增加閾值，使按鈕不會過早出現 */
-            position="bottom-24 right-8" /* 調整為有效的Tailwind類值 */
+            position="bottom-20 right-8" /* 調整為有效的Tailwind類值 */
             rounded={true}
-            size="w-11 h-11" /* 增大按鈕尺寸提高可見性 */
+            size="w-12 h-12" /* 增大按鈕尺寸提高可見性 */
             iconSize="h-6 w-6"
-            autoHideDelay={3000} /* 停止滾動4秒後自動隱藏 */
+            autoHideDelay={4000} /* 停止滾動4秒後自動隱藏 */
           />
 
           {/* 客服聊天功能 - 添加到固定UI控制區塊中 */}

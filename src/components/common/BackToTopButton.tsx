@@ -23,7 +23,7 @@ export default function BackToTopButton({
   rounded?: boolean
   autoHideDelay?: number
 }): React.ReactElement | null {
-  // 檢查是否顯示按鈕
+  // 檢查是否滾動超過閾值
   const [isVisible, setIsVisible] = useState(false)
   // 追蹤滾動方向
   const [isScrollingDown, setIsScrollingDown] = useState(false)
@@ -31,10 +31,10 @@ export default function BackToTopButton({
   const [isRapidScrolling, setIsRapidScrolling] = useState(false)
   // 上一次滾動位置
   const [lastScrollY, setLastScrollY] = useState(0)
-  // 是否應該顯示（包含自動隱藏邏輯）
+  // 是否顯示按鈕 (控制渲染)
   const [shouldDisplay, setShouldDisplay] = useState(false)
-  // 是否正在滾動
-  const [isScrolling, setIsScrolling] = useState(false)
+  // 上次互動時間戳
+  const [lastInteractionTime, setLastInteractionTime] = useState(0)
 
   // 回到頂部的處理函數
   const scrollToTop = useCallback(() => {
@@ -68,91 +68,115 @@ export default function BackToTopButton({
     }, 800)
   }, [])
 
-  // 監聽滾動事件和管理自動隱藏
+  // 處理自動隱藏
   useEffect(() => {
-    let scrollTimer: ReturnType<typeof setTimeout> | null = null
-    let hideTimer: ReturnType<typeof setTimeout> | null = null
+    // 只有當按鈕可見時才設置自動隱藏計時器
+    if (!isVisible) return;
+
+    let hideTimer: NodeJS.Timeout | null = null;
     
-    const handleScroll = () => {
-      // 重置自動隱藏計時器
+    // 更新交互時間並清除舊計時器
+    const updateInteraction = () => {
+      setLastInteractionTime(Date.now());
       if (hideTimer) {
-        clearTimeout(hideTimer)
+        clearTimeout(hideTimer);
+        hideTimer = null;
       }
       
-      const scrollY = window.scrollY
+      // 如果應該顯示但當前沒有顯示，則顯示按鈕
+      if (isVisible && !shouldDisplay) {
+        setShouldDisplay(true);
+      }
+    };
+
+    // 設置隱藏計時器
+    const setupHideTimer = () => {
+      if (hideTimer) clearTimeout(hideTimer);
       
-      // 設置正在滾動狀態
-      setIsScrolling(true)
+      hideTimer = setTimeout(() => {
+        // 如果最後交互時間至今已經超過autoHideDelay，則隱藏按鈕
+        const now = Date.now();
+        if (now - lastInteractionTime >= autoHideDelay) {
+          setShouldDisplay(false);
+        }
+      }, autoHideDelay + 100); // 增加100ms延遲確保計時正確
+    };
+
+    // 初始設置
+    updateInteraction();
+    setupHideTimer();
+
+    // 事件監聽
+    window.addEventListener('scroll', updateInteraction);
+    window.addEventListener('mousemove', updateInteraction);
+    
+    // 定時檢查是否應該隱藏按鈕
+    const intervalId = setInterval(setupHideTimer, 1000);
+
+    return () => {
+      if (hideTimer) clearTimeout(hideTimer);
+      clearInterval(intervalId);
+      window.removeEventListener('scroll', updateInteraction);
+      window.removeEventListener('mousemove', updateInteraction);
+    };
+  }, [isVisible, shouldDisplay, lastInteractionTime, autoHideDelay]);
+
+  // 監聽滾動事件
+  useEffect(() => {
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+    
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
       
       // 檢測滾動方向
-      const isDown = scrollY > lastScrollY
-      setIsScrollingDown(isDown)
-      setLastScrollY(scrollY)
+      const isDown = scrollY > lastScrollY;
+      setIsScrollingDown(isDown);
+      setLastScrollY(scrollY);
       
       // 顯示/隱藏邏輯
       if (scrollY > threshold) {
-        setIsVisible(true)
-        setShouldDisplay(true)
+        setIsVisible(true);
+        setShouldDisplay(true);
         
         // 快速滾動檢測
-        const scrollDelta = Math.abs(scrollY - lastScrollY)
+        const scrollDelta = Math.abs(scrollY - lastScrollY);
         if (scrollDelta > 30) { // 如果快速滾動
-          setIsRapidScrolling(true)
+          setIsRapidScrolling(true);
           
           // 重設快速滾動計時器
-          if (scrollTimer) clearTimeout(scrollTimer)
+          if (scrollTimer) clearTimeout(scrollTimer);
           scrollTimer = setTimeout(() => {
-            setIsRapidScrolling(false)
-          }, 300)
+            setIsRapidScrolling(false);
+          }, 300);
         }
       } else {
-        setIsVisible(false)
-        setShouldDisplay(false)
-        setIsRapidScrolling(false)
+        setIsVisible(false);
+        setShouldDisplay(false);
+        setIsRapidScrolling(false);
       }
       
-      // 設置停止滾動後的自動隱藏計時器
-      hideTimer = setTimeout(() => {
-        setIsScrolling(false)
-        
-        // 只有當頁面滾動超過閾值且不在頂部時自動隱藏
-        if (scrollY > threshold + 200) {
-          setShouldDisplay(false)
-        }
-      }, autoHideDelay)
-    }
+      // 更新交互時間
+      setLastInteractionTime(Date.now());
+    };
 
     // 添加滾動事件監聽
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    // 鼠標移動時顯示按鈕（如果條件滿足）
-    const handleMouseMove = () => {
-      if (window.scrollY > threshold && !shouldDisplay) {
-        setShouldDisplay(true)
-        
-        // 移動鼠標時重置自動隱藏計時器
-        if (hideTimer) clearTimeout(hideTimer)
-        hideTimer = setTimeout(() => {
-          if (!isScrolling && window.scrollY > threshold + 200) {
-            setShouldDisplay(false)
-          }
-        }, autoHideDelay)
-      }
-    }
-    
-    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     // 初始檢查
-    handleScroll()
+    handleScroll();
 
     // 清理函數
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('mousemove', handleMouseMove)
-      if (scrollTimer) clearTimeout(scrollTimer)
-      if (hideTimer) clearTimeout(hideTimer)
-    }
-  }, [threshold, lastScrollY, autoHideDelay, shouldDisplay, isScrolling])
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    };
+  }, [threshold, lastScrollY]);
+
+  // 處理滑鼠移入
+  const handleMouseEnter = useCallback(() => {
+    setShouldDisplay(true);
+    setLastInteractionTime(Date.now());
+  }, []);
 
   // 根據滾動狀態計算按鈕的視覺狀態
   const getButtonStyles = () => {
@@ -160,14 +184,14 @@ export default function BackToTopButton({
       return {
         scale: 0.9,
         opacity: isScrollingDown ? 0.7 : 0.8,
-      }
+      };
     }
     
     return {
       scale: 1,
       opacity: 1,
-    }
-  }
+    };
+  };
 
   // 使用AnimatePresence來處理按鈕的顯示/隱藏動畫
   return (
@@ -189,7 +213,7 @@ export default function BackToTopButton({
           className={`fixed ${position} bg-primary text-white ${size} flex items-center justify-center shadow-md hover:bg-primary/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/50 ${rounded ? 'rounded-full' : 'rounded'} z-50`}
           aria-label="回到頂部"
           title="回到頂部"
-          onMouseEnter={() => setShouldDisplay(true)}
+          onMouseEnter={handleMouseEnter}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className={iconSize} viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -197,5 +221,5 @@ export default function BackToTopButton({
         </motion.button>
       )}
     </AnimatePresence>
-  )
+  );
 } 
