@@ -20,12 +20,10 @@ const constructSecurityHeaders = () => {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     
     // 預存 DNS 查詢
-    'X-DNS-Prefetch-Control': 'on'
-  }
-  
-  // 只在非開發環境中添加 CSP
-  if (!isDev) {
-    headers['Content-Security-Policy'] = getContentSecurityPolicy()
+    'X-DNS-Prefetch-Control': 'on',
+    
+    // 添加 CSP (無論是開發環境還是生產環境)
+    'Content-Security-Policy': getContentSecurityPolicy()
   }
   
   return headers

@@ -22,6 +22,9 @@ export const getDefaultDirectives = () => {
       'https://vercel.com',
       'https://vercel.live',
       'https://*.vercel-scripts.com',
+      'https://*.google.com',
+      'https://*.googleapis.com',
+      'https://*.gstatic.com',
     ],
     
     // 允許載入的樣式
@@ -29,12 +32,14 @@ export const getDefaultDirectives = () => {
       "'self'",
       "'unsafe-inline'",
       'https://fonts.googleapis.com',
+      'https://*.googleapis.com',
     ],
     
     // 允許連接的來源
     'connect-src': [
       "'self'",
       'https://vitals.vercel-insights.com',
+      'https://*.vercel-insights.com',
       'https://*.googleapis.com',
       'https://*.google-analytics.com',
       'https://vercel.com',
@@ -49,12 +54,16 @@ export const getDefaultDirectives = () => {
       'blob:',
       'https://source.unsplash.com',
       'https://placehold.co',
+      'https://*.google.com',
+      'https://*.googleapis.com',
+      'https://*.gstatic.com',
     ],
     
     // 允許載入字體的來源
     'font-src': [
       "'self'",
       'https://fonts.gstatic.com',
+      'https://*.gstatic.com',
     ],
     
     // 允許載入音頻的來源
@@ -68,6 +77,8 @@ export const getDefaultDirectives = () => {
       "'self'",
       'https://vercel.com',
       'https://vercel.live',
+      'https://*.google.com',
+      'https://www.google.com/maps/',
     ],
     
     // 禁止顯示此網頁於iframe中
