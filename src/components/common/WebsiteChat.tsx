@@ -6,6 +6,7 @@ import { useEffect } from 'react'
  * Website Chat 組件
  * 集成 respond.io 客服聊天功能
  * 滾動優化版本 - 在滾動時自動隱藏/顯示聊天按鈕
+ * 更新：添加瀏覽過程中自動隱藏功能，類似BackToTopButton
  */
 export default function WebsiteChat(): React.ReactElement | null {
   useEffect(() => {
@@ -55,11 +56,15 @@ export default function WebsiteChat(): React.ReactElement | null {
       let isScrolling = false
       let isChatVisible = true
       let isScrollingDown = false
+      let lastInteractionTime = Date.now()
+      const autoHideDelay = 3000 // 停止互動後自動隱藏延遲（毫秒）
       
       // 滾動處理函數
       const handleScroll = () => {
         // 標記正在滾動
         isScrolling = true
+        // 更新最後互動時間
+        lastInteractionTime = Date.now()
         
         const currentScrollTop = window.scrollY
         isScrollingDown = currentScrollTop > lastScrollTop
@@ -77,8 +82,8 @@ export default function WebsiteChat(): React.ReactElement | null {
         const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
         
         if (chatLauncher && !chatWindow) { // 只在聊天窗口未打開時處理按鈕
-          // 向下滾動超過600px時隱藏聊天按鈕
-          if (isScrollingDown && currentScrollTop > 600) {
+          // 向下滾動超過300px時隱藏聊天按鈕
+          if (isScrollingDown && currentScrollTop > 300) {
             if (isChatVisible) {
               chatLauncher.style.transform = 'translateY(150%)'
               chatLauncher.style.opacity = '0'
@@ -95,25 +100,69 @@ export default function WebsiteChat(): React.ReactElement | null {
           }
         }
         
-        // 設置延遲，在滾動停止後恢復按鈕
+        // 設置延遲，在滾動停止後先顯示按鈕，然後延遲隱藏
         scrollTimer = window.setTimeout(() => {
           isScrolling = false
           
-          // 滾動停止時始終顯示聊天按鈕
+          // 滾動停止時顯示聊天按鈕
           if (chatLauncher && !chatWindow && !isChatVisible) {
             chatLauncher.style.transform = 'translateY(0)'
             chatLauncher.style.opacity = '1'
             isChatVisible = true
+            
+            // 設置自動隱藏計時器
+            setupAutoHideTimer()
           }
         }, 800) // 滾動停止後800ms顯示按鈕
       }
       
+      // 設置自動隱藏計時器
+      function setupAutoHideTimer() {
+        // 創建新的計時器，在一段時間後自動隱藏聊天按鈕
+        setTimeout(() => {
+          const now = Date.now()
+          // 如果自上次互動已經過了指定時間，且沒有正在滾動，則隱藏聊天按鈕
+          if (now - lastInteractionTime >= autoHideDelay && !isScrolling) {
+            const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
+            const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
+            
+            if (chatLauncher && !chatWindow && isChatVisible) {
+              chatLauncher.style.transform = 'translateY(150%)'
+              chatLauncher.style.opacity = '0'
+              isChatVisible = false
+            }
+          }
+        }, autoHideDelay)
+      }
+      
+      // 鼠標移動事件處理，更新互動時間並顯示按鈕
+      const handleMouseMove = () => {
+        lastInteractionTime = Date.now()
+        
+        // 如果鼠標移動且按鈕當前不可見，則顯示按鈕
+        const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
+        const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
+        
+        if (chatLauncher && !chatWindow && !isChatVisible) {
+          chatLauncher.style.transform = 'translateY(0)'
+          chatLauncher.style.opacity = '1'
+          isChatVisible = true
+        }
+      }
+      
+      // 監聽鼠標移動
+      window.addEventListener('mousemove', handleMouseMove, { passive: true })
+      
       // 添加滾動事件監聽
       window.addEventListener('scroll', handleScroll, { passive: true })
+      
+      // 初始設置自動隱藏計時器
+      setupAutoHideTimer()
       
       // 返回清理函數
       return () => {
         window.removeEventListener('scroll', handleScroll)
+        window.removeEventListener('mousemove', handleMouseMove)
         if (scrollTimer !== null) {
           window.clearTimeout(scrollTimer)
         }
