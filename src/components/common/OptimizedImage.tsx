@@ -90,7 +90,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
       
       tempImg.onerror = () => {
         setError(true);
-        console.error(`圖片載入失敗: ${src}`);
+        // 移除console.error，避免生產環境中顯示錯誤日誌
         tempImg.onerror = null;
       };
       
@@ -148,7 +148,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
 
   const handleError = () => {
     setError(true);
-    console.error(`Failed to load image: ${src}`);
+    // 移除console.error，避免生產環境中顯示錯誤日誌
   };
 
   // 替代圖片路徑
