@@ -10,8 +10,6 @@ import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Navbar from '@/components/layout/Navbar'
-import { siteConfig } from '@/config/site'
-import { cn } from '@/lib/utils'
 import { Loading } from '@/components/common'
 
 import '@/app/globals.css'

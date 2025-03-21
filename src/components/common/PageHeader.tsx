@@ -13,7 +13,6 @@ interface PageHeaderProps {
   size?: 'sm' | 'md' | 'lg'
   withBottomBorder?: boolean
   backgroundImage?: string
-  overlayOpacity?: number
 }
 
 /**
@@ -29,7 +28,6 @@ const PageHeader = memo(function PageHeader({
   size = 'md',
   withBottomBorder = false,
   backgroundImage,
-  overlayOpacity = 0.7
 }: PageHeaderProps) {
   // 根據不同 variant 設定背景與文字顏色
   const getVariantClasses = () => {
