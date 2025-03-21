@@ -194,6 +194,8 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
 
   // 針對 Next.js 15+ 與 React 19+ 優化圖片預加載邏輯
   useEffect(() => {
+    let isMounted = true;
+    
     // 僅在客戶端執行
     if (typeof window !== 'undefined') {
       // 避免使用 new Image() 構造函數，改用更安全的方法檢查圖片
@@ -204,18 +206,28 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
         
         // 設置監聽事件
         tempImg.onerror = () => {
-          setImageError(true);
+          if (isMounted) {
+            setImageError(true);
+            console.error(`加載圖片失敗: ${member.image}`);
+          }
           tempImg.onerror = null; // 清理事件處理器
         };
         
         // 如果圖片已在快取中，可能不會觸發load事件，但也不會觸發error事件
         tempImg.onload = () => {
+          if (isMounted) {
+            setImageLoading(false);
+          }
           tempImg.onload = null; // 清理事件處理器
         };
       };
       
       checkImage();
     }
+    
+    return () => {
+      isMounted = false; // 防止在組件卸載後設置狀態
+    };
   }, [member.image]);
 
   return (
@@ -236,14 +248,14 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
               onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
-              priority={true}
+              priority={delay === 0}
               quality={85}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
               <div className="flex flex-col items-center">
-                <span className="text-5xl mb-2">👤</span>
-                <span className="text-xs text-gray-500">圖片載入中</span>
+                <span className="text-4xl mb-2">👤</span>
+                <span className="text-xs text-gray-500">圖片無法載入</span>
               </div>
             </div>
           )}
