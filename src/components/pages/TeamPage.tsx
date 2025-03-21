@@ -194,8 +194,8 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
 
   return (
     <AnimatedSection delay={delay}>
-      <div className="group bg-white border border-gray-100 hover:border-red overflow-hidden transition-colors duration-300">
-        <div className="relative overflow-hidden aspect-[3/4]">
+      <div className="group bg-white border border-gray-100 hover:border-primary hover:shadow-md overflow-hidden transition-all duration-300">
+        <div className="relative overflow-hidden aspect-[1/1] sm:aspect-[4/3]">
           {imageLoading && !imageError && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
               <Spinner />
@@ -206,8 +206,8 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               src={member.image}
               alt={member.name}
               fill
-              className="object-cover"
-              sizes="(max-width: 480px) 45vw, (max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
               onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
               priority={true}
@@ -217,19 +217,23 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               <span className="text-4xl">👤</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+            <div className="text-white">
+              <p className="text-xs opacity-80">{member.education}</p>
+            </div>
+          </div>
         </div>
-        <div className="p-3 sm:p-4 md:p-6">
-          <div className="mb-3 sm:mb-4">
-            <div className="flex items-center justify-between mb-1 sm:mb-2">
-              <div>
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
-                  {member.name}
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  {member.role}
-                </p>
-              </div>
+        <div className="p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
+                {member.name}
+              </h3>
+              <p className="text-sm text-gray-500 mb-2">
+                {member.role}
+              </p>
+            </div>
+            <div className="flex space-x-2">
               {member.socialLinks.map((link: SocialLink, i) => (
                 <a
                   key={i}
@@ -241,11 +245,11 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
                 >
                   <span className="sr-only">{link.platform}</span>
                   {link.platform === 'linkedin' ? (
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.06 10.06 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                     </svg>
                   )}
@@ -253,13 +257,14 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               ))}
             </div>
           </div>
-          <p className="text-gray-600 line-clamp-3 text-sm sm:text-base mb-3">{member.description}</p>
           
-          <div className="flex flex-wrap gap-2 mt-4">
+          <p className="text-gray-600 line-clamp-3 text-sm mt-2">{member.description}</p>
+          
+          <div className="flex flex-wrap gap-2 mt-3">
             {member.expertise.slice(0, 2).map((skill, i) => (
               <span 
                 key={i} 
-                className="px-2 py-0.5 sm:px-3 sm:py-1 bg-primary text-white text-xs"
+                className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-full"
               >
                 {skill}
               </span>
@@ -288,14 +293,15 @@ export default function TeamPage() {
         <div className="container-custom">
           <AnimatedSection className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-primary">
-              認識我們的團隊
+              認識我們的專業團隊
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-6">
               每位成員都擁有豐富的醫療行銷經驗，致力於為診所打造最佳品牌策略
             </p>
+            <div className="w-20 h-1 bg-primary mx-auto"></div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
             {teamMembers.map((member, index) => (
               <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
             ))}
