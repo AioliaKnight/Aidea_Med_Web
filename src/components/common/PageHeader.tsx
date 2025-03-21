@@ -83,7 +83,7 @@ const PageHeader = memo(function PageHeader({
             src={backgroundImage}
             alt="背景"
             fill
-            className="object-cover opacity-30"
+            className="object-cover opacity-100"
             priority
           />
           <div 
@@ -91,7 +91,7 @@ const PageHeader = memo(function PageHeader({
             style={{ 
               backgroundColor: variant === 'red' ? '#e62733' : 
                               variant === 'black' ? '#111111' : '#ffffff',
-              opacity: overlayOpacity
+              opacity: 0.3
             }}
           />
         </div>

@@ -278,11 +278,10 @@ const TeamIntroSection = () => {
       <PageHeader
         title="認識我們的專業團隊"
         description="每一位成員都致力於為診所客戶創造最有溫度、最能打動人心的品牌體驗"
-        variant="black"
+        variant="red"
         size="lg"
         alignment="center"
-        backgroundImage="/images/bgline-w.png"
-        overlayOpacity={0.9}
+        backgroundImage="/images/bgline-rpng"
       />
       
       <section className="py-24 bg-gray-50">
@@ -338,7 +337,7 @@ const TeamIntroSection = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <Image 
-                  src="/images/team/office-1.jpg" 
+                  src="/images/team/office-1.png" 
                   alt="Our Office" 
                   width={800}
                   height={600}
@@ -381,7 +380,7 @@ const TeamIntroSection = () => {
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
                 <Image 
-                  src="/images/team/office-4.jpg" 
+                  src="/images/team/office-4.png" 
                   alt="Our Meeting" 
                   width={800}
                   height={600}
@@ -434,45 +433,19 @@ const TeamValues = () => {
 
 export default function TeamPage() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section - 優化響應式設計 */}
-      <section className="relative py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.1 }}
-          transition={{ duration: 1 }}
-        >
-          <Image
-            src="/images/team/bgline-w.png"
-            alt="背景線條"
-            fill
-            className="object-cover object-center mix-blend-soft-light"
-            quality={90}
-            sizes="100vw"
-            priority
-          />
-        </motion.div>
-
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <AnimatedSection>
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-4 md:mb-6 font-display">
-                專業團隊
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-                擁有豐富醫療行銷經驗的跨領域專家，
-                <br className="hidden sm:block" />
-                為您的診所打造最適合的品牌成長策略
-              </p>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
+    <div className="min-h-screen bg-gray-50">
+      {/* 頁面標題區 */}
+      <PageHeader
+        title="認識我們的專業團隊"
+        description="每一位成員都致力於為診所客戶創造最有溫度、最能打動人心的品牌體驗"
+        variant="red"
+        size="lg"
+        backgroundImage="/images/bgline-w.png"
+      />
 
       {/* 團隊成員 */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <section className="py-20">
+        <div className="container-custom">
           <AnimatedSection className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-primary">
               認識我們的團隊
@@ -551,41 +524,6 @@ export default function TeamPage() {
           </AnimatedSection>
         </div>
       </section>
-
-      <TeamIntroSection />
-      
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center max-w-3xl mx-auto mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
-              專業團隊
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              每位成員都是各自領域的<span className="text-primary">專家</span>
-            </h2>
-            <p className="text-lg text-gray-600">
-              我們的團隊由來自行銷、設計、技術與醫療背景的專業人才組成，共同為診所客戶創造最有溫度、最能打動人心的品牌體驗。
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <TeamMemberCard 
-                key={index} 
-                member={member}
-                delay={index * 0.1}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      <TeamValues />
     </div>
   )
 } 
