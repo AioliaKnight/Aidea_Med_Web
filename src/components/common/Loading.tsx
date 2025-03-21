@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import Logo from './Logo'
 import { cn } from '@/lib/utils'
 import { 
@@ -12,13 +12,22 @@ import {
   loadingTextVariants 
 } from '@/utils/animations'
 
-// 容器尺寸預設值
+// 容器尺寸預設值 - 使用Tailwind類
 const CONTAINER_SIZES = {
   xs: 'w-6 h-6',
   sm: 'w-16 h-16',
   md: 'w-24 h-24',
   lg: 'w-32 h-32',
   xl: 'w-40 h-40'
+} as const
+
+// SVG Spinner尺寸 - 使用數值以便於計算
+const SVG_SPINNER_SIZES = {
+  xs: { size: 24, width: 6, height: 6 },
+  sm: { size: 32, width: 8, height: 8 },
+  md: { size: 40, width: 10, height: 10 },
+  lg: { size: 48, width: 12, height: 12 },
+  xl: { size: 64, width: 16, height: 16 }
 } as const
 
 // Logo 尺寸對應
@@ -30,7 +39,7 @@ const LOGO_SIZES = {
   xl: 'lg'
 } as const
 
-// 動畫變體對應
+// 動畫變體對應 - 為Logo提供不同視覺效果
 const ANIMATION_VARIATIONS = {
   pulse: {
     logoVariants: {
@@ -74,10 +83,24 @@ const ANIMATION_VARIATIONS = {
         }
       }
     }
+  },
+  rotate: {
+    logoVariants: {
+      initial: { rotate: 0, opacity: 0.8 },
+      animate: { 
+        rotate: [0, 5, 0, -5, 0],
+        opacity: [0.8, 1, 0.9, 1, 0.8],
+        transition: {
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }
+      }
+    }
   }
 } as const
 
-// 顏色主題
+// 顏色主題 - 使用Tailwind類定義各部分顏色
 const COLOR_THEMES = {
   slate: {
     ring: 'border-slate-200',
@@ -162,17 +185,39 @@ export interface LoadingProps {
    * 子元素，用於overlay模式
    */
   children?: React.ReactNode;
+  /**
+   * 延遲顯示毫秒數 (防抖動)
+   */
+  delay?: number;
+  /**
+   * 自訂提示文本 (用於a11y)
+   */
+  ariaLabel?: string;
 }
 
 /**
  * 加載指示器組件
- * 根據傳入的type參數，可呈現不同的加載視覺效果:
- * - simple: 簡易SVG加載圖標，適合內聯使用
- * - minimal: 極簡的小型加載指示器，適合按鈕或小元素
- * - spinner: 環形加載動畫
- * - logo: 帶Logo的加載動畫，適合全頁加載狀態
- * - ring: 僅環形而無Logo
- * - overlay: 覆蓋式加載層，可包裹內容
+ * 
+ * 用法:
+ * ```tsx
+ * // 基本用法
+ * <Loading />
+ * 
+ * // 全屏加載
+ * <Loading fullscreen text="載入中..." />
+ * 
+ * // 簡易內聯使用
+ * <Button disabled={loading}>
+ *   {loading ? <Loading type="minimal" /> : "提交"}
+ * </Button>
+ * 
+ * // 覆蓋模式
+ * <Loading type="overlay">
+ *   <div className="h-64 w-full">內容區域</div>
+ * </Loading>
+ * ```
+ * 
+ * @param props LoadingProps 配置選項
  */
 function Loading({
   fullscreen = false,
@@ -186,26 +231,34 @@ function Loading({
   logoVariant = 'primary',
   logoPriority = true,
   animation = 'breathe',
-  children
+  children,
+  delay = 0,
+  ariaLabel = '載入中...'
 }: LoadingProps) {
-  const colors = COLOR_THEMES[theme]
-  const animationVariation = ANIMATION_VARIATIONS[animation]
-  const defaultBackground = fullscreen ? colors.overlay : 'bg-transparent'
-  const bgColor = background || defaultBackground
+  // 使用 useMemo 減少重複計算
+  const themeColors = useMemo(() => COLOR_THEMES[theme], [theme]);
+  const animationVariation = useMemo(() => ANIMATION_VARIATIONS[animation], [animation]);
+  const defaultBackground = useMemo(
+    () => fullscreen ? themeColors.overlay : 'bg-transparent', 
+    [fullscreen, themeColors.overlay]
+  );
+  const bgColor = background || defaultBackground;
   
-  // 簡易Spinner模式
+  // 簡易Spinner模式 - 適合內聯使用
   if (type === 'simple') {
-    const spinnerSize = size === 'xs' ? 'h-6 w-6' : 
-                        size === 'sm' ? 'h-8 w-8' : 
-                        size === 'md' ? 'h-10 w-10' : 'h-12 w-12';
+    const spinnerConfig = SVG_SPINNER_SIZES[size];
+    const spinnerSize = `h-${spinnerConfig.height} w-${spinnerConfig.width}`;
                         
     return (
       <svg
-        className={cn(`animate-spin ${spinnerSize}`, colors.smallSpinner, className)}
+        className={cn(`animate-spin ${spinnerSize}`, themeColors.smallSpinner, className)}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        aria-label="載入中..."
+        aria-label={ariaLabel}
+        role="status"
+        width={spinnerConfig.size}
+        height={spinnerConfig.size}
       >
         <circle
           className="opacity-25"
@@ -214,29 +267,33 @@ function Loading({
           r="10"
           stroke="currentColor"
           strokeWidth="4"
-        ></circle>
+        />
         <path
           className="opacity-75"
           fill="currentColor"
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
+        />
       </svg>
     );
   }
   
-  // 極簡小型spinner
+  // 極簡小型spinner - 適合按鈕等小元素
   if (type === 'minimal') {
     return (
-      <div className={cn("relative inline-block", className)}>
+      <div 
+        className={cn("relative inline-block", className)}
+        role="status"
+        aria-label={ariaLabel}
+      >
         <div className={cn(
           "w-4 h-4 rounded-full border-2 border-t-transparent animate-spin",
-          colors.spinner
+          themeColors.spinner
         )} />
       </div>
     )
   }
 
-  // 覆蓋式加載層 (包裹內容)
+  // 覆蓋式加載層 - 包裹內容
   if (type === 'overlay' && children) {
     return (
       <div className={cn("relative", className)}>
@@ -252,7 +309,9 @@ function Loading({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.2, delay: delay / 1000 }}
+            role="status"
+            aria-label={ariaLabel}
           >
             <div className="flex flex-col items-center gap-3">
               <Logo 
@@ -264,11 +323,11 @@ function Loading({
               <div className="w-8 h-8 relative">
                 <div className={cn(
                   "absolute inset-0 rounded-full border-2 border-t-transparent animate-spin",
-                  colors.spinner
+                  themeColors.spinner
                 )} />
               </div>
               {text && (
-                <p className={cn("text-sm font-medium", colors.text)}>
+                <p className={cn("text-sm font-medium", themeColors.text)}>
                   {text}
                 </p>
               )}
@@ -283,8 +342,9 @@ function Loading({
   return (
     <AnimatePresence>
       <motion.div
-        role="alert"
-        aria-live="assertive"
+        role="status"
+        aria-label={ariaLabel}
+        aria-live="polite"
         aria-busy="true"
         className={cn(
           'flex flex-col items-center justify-center gap-4',
@@ -297,6 +357,7 @@ function Loading({
         initial="initial"
         animate="animate"
         exit="exit"
+        transition={{ delay: delay / 1000 }}
       >
         <div className={cn(
           'relative',
@@ -311,20 +372,20 @@ function Loading({
           >
             <div className={cn(
               'absolute inset-0 rounded-full border-2',
-              colors.ring
+              themeColors.ring
             )} />
             <div className={cn(
               'absolute inset-0 rounded-full border-2',
-              colors.spinner,
+              themeColors.spinner,
               'border-t-transparent border-r-transparent',
-              'transform origin-center'
+              'transform origin-center will-change-transform'
             )} />
           </motion.div>
           
-          {/* Logo (在logo類型或其他適合類型時顯示) */}
+          {/* Logo (在logo類型或spinner類型時顯示) */}
           {(type === 'logo' || type === 'spinner') && (
             <motion.div
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center will-change-transform"
               variants={animationVariation.logoVariants}
               initial="initial"
               animate="animate"
@@ -349,7 +410,7 @@ function Loading({
           >
             <p className={cn(
               "text-sm font-medium tracking-wide",
-              colors.text
+              themeColors.text
             )}>
               {text}
             </p>
@@ -369,4 +430,5 @@ export const Spinner = memo(function Spinner({ className = 'h-6 w-6 text-primary
 
 Spinner.displayName = 'Spinner';
 
+// 使用memo避免不必要的重新渲染
 export default memo(Loading);

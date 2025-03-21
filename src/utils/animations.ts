@@ -1,4 +1,4 @@
-import { Variants } from 'framer-motion'
+import type { Transition, Variants } from 'framer-motion'
 
 // 基本動畫變體定義
 const defaultEasing = [0.6, 0.05, 0.01, 0.9]
@@ -22,73 +22,71 @@ export const DELAYS = {
 
 // Loading 動畫配置常量
 export const LOADING_ANIMATION_CONFIG = {
-  LOGO: {
-    duration: 0.6,
-    repeat: Infinity,
-    repeatType: "reverse" as const,
-    ease: "easeInOut"
+  staggerChildren: 0.1,
+  delayChildren: 0.2,
+  duration: {
+    fast: 0.15,
+    normal: 0.3,
+    slow: 0.5,
+    extraSlow: 0.8
   },
-  RING: {
-    duration: 1.2,
-    repeat: Infinity,
-    ease: "linear"
-  },
-  FADE: {
-    duration: 0.3,
-    ease: "easeOut"
+  ease: {
+    default: [0.23, 0.56, 0.32, 0.9], // custom easing
+    bounce: "backOut",  // 內建彈跳效果
+    gentle: "easeInOut", // 柔和
+    springy: [0.34, 1.56, 0.64, 1] // 有彈性的
   }
-}
+} as const
 
 // Loading 動畫變體
 export const loadingContainerVariants: Variants = {
   initial: { 
-    opacity: 0,
+    opacity: 0 
   },
   animate: { 
     opacity: 1,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
+    transition: { 
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default,
+      when: "beforeChildren"
     }
   },
   exit: { 
     opacity: 0,
-    transition: {
-      duration: 0.2,
-      ease: "easeIn"
+    transition: { 
+      duration: LOADING_ANIMATION_CONFIG.duration.fast,
+      ease: LOADING_ANIMATION_CONFIG.ease.default,
+      when: "afterChildren" 
     }
   }
 }
 
 export const loadingLogoVariants: Variants = {
   initial: { 
-    scale: 0.95,
-    opacity: 0.8
+    opacity: 0,
+    scale: 0.8
   },
   animate: { 
-    scale: 1,
     opacity: 1,
-    transition: {
-      duration: LOADING_ANIMATION_CONFIG.LOGO.duration,
-      repeat: LOADING_ANIMATION_CONFIG.LOGO.repeat,
-      repeatType: LOADING_ANIMATION_CONFIG.LOGO.repeatType,
-      ease: LOADING_ANIMATION_CONFIG.LOGO.ease
+    scale: 1,
+    transition: { 
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.bounce
     }
   }
 }
 
 export const loadingRingVariants: Variants = {
   initial: { 
-    rotate: 0,
-    opacity: 0
+    opacity: 0,
+    scale: 0.85
   },
   animate: { 
-    rotate: 360,
     opacity: 1,
-    transition: {
-      duration: LOADING_ANIMATION_CONFIG.RING.duration,
-      ease: LOADING_ANIMATION_CONFIG.RING.ease,
-      repeat: LOADING_ANIMATION_CONFIG.RING.repeat
+    scale: 1,
+    transition: { 
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
     }
   }
 }
@@ -96,14 +94,14 @@ export const loadingRingVariants: Variants = {
 export const loadingTextVariants: Variants = {
   initial: { 
     opacity: 0,
-    y: 4
+    y: 5
   },
   animate: { 
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
+    transition: { 
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
     }
   }
 }
@@ -311,11 +309,28 @@ export const TEXT_SHADOWS = {
 }
 
 // 頁面轉場動畫
-export const pageTransition = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-  transition: { duration: 0.3, ease: defaultEasing }
+export const pageTransitionVariants: Variants = {
+  initial: {
+    opacity: 0,
+    y: 8 
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default,
+      staggerChildren: LOADING_ANIMATION_CONFIG.staggerChildren,
+      delayChildren: LOADING_ANIMATION_CONFIG.delayChildren
+    }
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.fast,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  }
 }
 
 // 滾動觸發動畫
@@ -550,3 +565,153 @@ export const animations = {
     }
   }
 }; 
+
+// 標題動畫變體
+export const headingVariants: Variants = {
+  initial: {
+    opacity: 0,
+    y: 10
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  }
+}
+
+// 子元素動畫變體
+export const childVariants: Variants = {
+  initial: {
+    opacity: 0,
+    y: 15
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  }
+}
+
+// 標準動畫轉換配置
+export const defaultTransition: Transition = {
+  type: 'tween',
+  ease: LOADING_ANIMATION_CONFIG.ease.default,
+  duration: LOADING_ANIMATION_CONFIG.duration.normal
+}
+
+// 從下方滑入動畫變體
+export const slideUpVariants: Variants = {
+  initial: {
+    opacity: 0,
+    y: 20,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.normal,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: 10,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.fast,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  }
+}
+
+// 彈跳動畫變體
+export const bounceVariants: Variants = {
+  initial: {
+    opacity: 0,
+    scale: 0.9,
+    y: 10
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 20
+    }
+  },
+  hover: {
+    scale: 1.03,
+    transition: {
+      duration: 0.2
+    }
+  },
+  tap: {
+    scale: 0.97
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.fast
+    }
+  }
+}
+
+// 卡片懸停效果
+export const cardHoverVariants: Variants = {
+  initial: { 
+    scale: 1 
+  },
+  hover: { 
+    scale: 1.02,
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+    transition: { 
+      duration: 0.2 
+    } 
+  },
+  tap: { 
+    scale: 0.98 
+  }
+}
+
+// 按鈕動畫效果
+export const buttonVariants: Variants = {
+  initial: {
+    scale: 1
+  },
+  hover: {
+    scale: 1.03,
+    transition: {
+      duration: 0.2,
+      ease: LOADING_ANIMATION_CONFIG.ease.default
+    }
+  },
+  tap: {
+    scale: 0.97
+  }
+}
+
+// 高效能滾動動畫配置
+export const scrollAnimationConfig = {
+  transformTemplate: (transformProps: string) => `translateY(${transformProps})`,
+  style: { willChange: 'transform, opacity' }
+}
+
+// 高效能滑入動畫
+export const optimizedSlideUpVariants: Variants = {
+  ...slideUpVariants,
+  ...scrollAnimationConfig
+}
+
+// 高性能彈跳動畫
+export const optimizedBounceVariants: Variants = {
+  ...bounceVariants,
+  ...scrollAnimationConfig
+} 
