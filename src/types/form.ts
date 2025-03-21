@@ -15,6 +15,8 @@ export interface ContactFormData {
   title?: string;       // 職稱 (與position互為別名)
   service?: string;     // 需求服務
   message?: string;     // 諮詢內容
+  plan?: string;        // 添加 plan 欄位以儲存來源方案資訊
+  source?: string;      // 添加 source 欄位以追蹤流量來源
 }
 
 /**

@@ -1,11 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import { animations } from '@/utils/animations'
 import { ContactFormData, FormResponse, FormStatus } from '@/types/form'
 import SubmitButton from '@/components/common/SubmitButton'
+
+// 在文件頂部添加 Google Analytics 類型聲明
+declare global {
+  interface Window {
+    gtag?: (
+      command: 'event',
+      action: string,
+      params: {
+        event_category: string;
+        event_label: string;
+        value?: string;
+        [key: string]: any;
+      }
+    ) => void;
+  }
+}
 
 interface ContactFormProps {
   className?: string
@@ -28,6 +44,24 @@ export default function ContactForm({
     { value: "other", label: "其他服務" }
   ];
 
+  // 從 URL 參數獲取方案資訊
+  const [searchParams, setSearchParams] = useState<{[key: string]: string}>({});
+  
+  // 在客戶端獲取 URL 參數
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const planParam = params.get('plan');
+      const sourceParam = params.get('source');
+      
+      const urlParams: {[key: string]: string} = {};
+      if (planParam) urlParams.plan = planParam;
+      if (sourceParam) urlParams.source = sourceParam;
+      
+      setSearchParams(urlParams);
+    }
+  }, []);
+  
   // 表單初始狀態
   const initialFormData: ContactFormData = {
     name: '',
@@ -36,11 +70,27 @@ export default function ContactForm({
     clinic: '',
     position: '',
     service: '',
-    message: ''
+    message: '',
+    plan: '',
+    source: ''
   }
 
   const [formData, setFormData] = useState<ContactFormData>(initialFormData)
   const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE)
+
+  // 如果 URL 參數中有方案資訊，更新表單數據
+  useEffect(() => {
+    if (Object.keys(searchParams).length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        ...searchParams,
+        // 如果是從定價方案頁面過來的，自動添加方案相關訊息到諮詢內容
+        message: searchParams.plan 
+          ? `我對${searchParams.plan}方案有興趣，想了解更多詳情。${prev.message || ''}`
+          : prev.message
+      }));
+    }
+  }, [searchParams]);
 
   // 如果使用動畫，則使用motion.div，否則使用普通div
   const AnimatedDiv = animation ? motion.div : 'div' as any
@@ -65,46 +115,46 @@ export default function ContactForm({
     e.preventDefault()
     setFormStatus(FormStatus.SUBMITTING)
 
-    // 驗證表單
-    if (!formData.name || !formData.email || !formData.phone || !formData.service) {
-      toast.error('請填寫所有必填欄位')
-      setFormStatus(FormStatus.ERROR)
-      return
-    }
-
     try {
-      // 發送表單數據到API端點
+      // 確保方案信息被包含在提交的數據中
+      const submissionData = {
+        ...formData,
+        // 保留從 URL 獲取的方案和來源資訊
+        plan: formData.plan || searchParams.plan || '',
+        source: formData.source || searchParams.source || ''
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       })
 
-      const data: FormResponse = await response.json()
+      const data = await response.json() as FormResponse
 
       if (response.ok) {
-        // 清空表單
-        setFormData(initialFormData)
-        
-        // 顯示成功訊息
-        toast.success(data.message || '感謝您的訊息！我們的醫療行銷顧問將於一個工作日內與您聯繫。')
         setFormStatus(FormStatus.SUCCESS)
+        setFormData(initialFormData)
+        toast.success(data.message || '感謝您的訊息！我們將盡快與您聯繫。')
         
-        // 3秒後重置狀態
-        setTimeout(() => {
-          setFormStatus(FormStatus.IDLE)
-        }, 3000)
+        // 添加追蹤事件
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'form_submission', {
+            'event_category': 'contact',
+            'event_label': submissionData.plan || '一般諮詢',
+            'value': submissionData.source
+          });
+        }
       } else {
-        // 顯示錯誤訊息
-        toast.error(data.message || '提交失敗，請稍後再試。')
         setFormStatus(FormStatus.ERROR)
+        toast.error(data.message || '提交失敗，請稍後再試。')
       }
     } catch (error) {
       console.error('表單提交錯誤：', error)
-      toast.error('提交失敗，請稍後再試。')
       setFormStatus(FormStatus.ERROR)
+      toast.error('提交失敗，請稍後再試。')
     }
   }
 

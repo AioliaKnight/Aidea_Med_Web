@@ -153,14 +153,14 @@ const pricingPlans: PricingPlan[] = [
     price: '$ 168,000',
     period: '/月',
     features: [
-      '全方位品牌策略與執行',
-      '每月6篇深度專業內容',
+      '全方位品牌戰略規劃執行',
+      '每月8篇深度專業內容創作',
       'Google/Meta精準廣告投放',
-      '專業診所環境攝影',
-      '每週成效報告與策略調整',
+      '專業診所環境攝影與影片',
+      '每週成效分析與策略調整',
       '自費項目轉換率優化',
       '專屬顧問團隊即時服務',
-      '診所數位體驗全面升級'
+      '數位客戶體驗全面升級'
     ],
     btnText: '熱門推薦',
     isPopular: true
@@ -171,9 +171,9 @@ const pricingPlans: PricingPlan[] = [
     period: '/月',
     features: [
       '頂級品牌戰略全面規劃',
-      '專業內容創作',
+      '無限量專業內容創作',
       '多平台整合行銷策略',
-      '專業影音團隊拍攝',
+      '專業影音團隊拍攝製作',
       '產業實戰級顧問一對一服務',
       '獨家AI病患分析系統',
       '策略長季度診所發展規劃',
@@ -257,36 +257,28 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
   return (
     <motion.div
       variants={{
-        initial: { opacity: 0, y: 20 },
-        animate: { 
+        hidden: { opacity: 0, x: -10 },
+        visible: { 
           opacity: 1, 
-          y: 0,
-          transition: { 
-            duration: 0.5,
-            delay: index * 0.1 
-          }
+          x: 0,
+          transition: { duration: 0.5, delay: index * 0.1 }
         }
       }}
-      initial="initial"
-      whileInView="animate"
+      initial="hidden"
+      whileInView="visible"
       viewport={{ once: true }}
-      className="relative"
+      className="relative z-10"
       role="listitem"
-      aria-label={`步驟 ${step.step}: ${step.title}`}
     >
-      <div className="bg-white flex h-full border-l-4 border-primary pl-4 py-4 hover:bg-gray-50 transition-colors">
-        <motion.div 
-          className="w-8 h-8 bg-primary text-white flex items-center justify-center text-sm font-bold flex-shrink-0"
-          whileHover={{ scale: 1.05 }}
-          role="presentation"
-        >
+      <div className="bg-white flex h-full rounded-lg border-l-4 border-primary pl-4 py-5 shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="w-10 h-10 bg-primary text-white flex items-center justify-center text-sm font-bold flex-shrink-0 rounded-full">
           {step.step}
-        </motion.div>
-        <div className="ml-3">
-          <h3 className="text-base font-bold mb-1 text-standard">
+        </div>
+        <div className="ml-4">
+          <h3 className="text-base sm:text-lg font-bold mb-2 text-gray-800">
             {step.title}
           </h3>
-          <p className="text-xs text-description">{step.description}</p>
+          <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
         </div>
         
         {/* 手機版流程指示器 */}
@@ -296,9 +288,9 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
       {/* 連接線 - 手機版 */}
       {index < serviceProcess.length - 1 && (
         <motion.div
-          className="absolute top-full left-0 h-3 w-0.5 bg-primary sm:hidden"
+          className="absolute top-full left-0 h-6 w-1 bg-gradient-to-b from-primary to-primary/30 sm:hidden rounded-full"
           initial={{ height: 0 }}
-          whileInView={{ height: "100%" }}
+          whileInView={{ height: 24 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.3 }}
           role="presentation"
@@ -309,7 +301,7 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
       {/* 連接線 - 桌面版 */}
       {index < serviceProcess.length - 1 && (
         <div
-          className="absolute bottom-0 left-5 h-4 w-0.5 bg-gray-200 z-0 hidden sm:block"
+          className="absolute bottom-0 left-5 h-[calc(100%-40px)] w-1 bg-gray-100 z-0 hidden sm:block"
           role="presentation"
           aria-hidden="true"
         />
@@ -328,46 +320,57 @@ interface PricingPlanProps {
 const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps) {
   return (
     <motion.div
-      variants={animations.scaleIn}
+      variants={{
+        initial: { opacity: 0, y: 30, scale: 0.95 },
+        animate: { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: { duration: 0.5, delay: index * 0.1 }
+        }
+      }}
       initial="initial"
       whileInView="animate"
       viewport={{ once: true }}
-      className={`relative p-5 sm:p-6 border ${
+      className={`relative p-6 sm:p-8 border rounded-md ${
         plan.isPopular 
-          ? 'bg-primary text-white border-primary' 
-          : 'bg-white text-gray-900 border-gray-200'
-      }`}
+          ? 'bg-primary text-white border-primary shadow-md' 
+          : 'bg-white text-gray-900 border-gray-100 shadow-sm'
+      } transition-all duration-300`}
       role="article"
       aria-labelledby={`plan-title-${index}`}
     >
       {plan.isPopular && (
         <div 
-          className="absolute -top-3 right-5 bg-black text-white px-3 py-1 text-xs font-medium"
+          className="absolute -top-3 right-6 bg-black text-white px-3 py-1 text-xs font-semibold"
           role="note"
           aria-label="熱門方案"
         >
-          熱門方案
+          熱門推薦
         </div>
       )}
       <h3 
         id={`plan-title-${index}`}
-        className="text-lg sm:text-xl font-bold mb-3"
+        className={`text-xl sm:text-2xl font-bold mb-4 ${plan.isPopular ? 'text-white' : 'text-gray-900'}`}
       >
         {plan.title}
       </h3>
-      <div className="mb-4">
-        <span className="text-2xl sm:text-3xl font-bold">{plan.price}</span>
-        <span className="text-base">{plan.period}</span>
+      <div className="mb-6">
+        <span className={`text-3xl sm:text-4xl font-bold ${plan.isPopular ? 'text-white' : ''}`}>{plan.price}</span>
+        <span className={`text-base ${plan.isPopular ? 'text-white' : 'text-gray-500'}`}>{plan.period}</span>
       </div>
-      <ul className="space-y-2 mb-6" role="list">
+      <div className={`h-px w-full mb-6 ${plan.isPopular ? 'bg-white/30' : 'bg-gray-100'}`}></div>
+      <ul className="space-y-4 mb-8" role="list">
         {plan.features.map((feature, idx) => (
           <li 
             key={idx}
-            className="flex items-start text-sm"
+            className={`flex items-start text-sm ${idx < 3 ? 'font-medium' : ''} ${plan.isPopular ? 'text-white' : ''}`}
             role="listitem"
           >
             <svg
-              className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5"
+              className={`w-5 h-5 mr-3 flex-shrink-0 mt-0.5 ${
+                plan.isPopular ? 'text-white' : 'text-primary'
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -384,17 +387,25 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className={`w-full py-2 px-4 text-sm font-medium ${
+      <Link
+        href={`/contact?plan=${encodeURIComponent(plan.title)}&source=pricing`}
+        className={`w-full py-3 px-4 text-sm font-medium inline-flex justify-center items-center group transition-all duration-300 ${
           plan.isPopular 
             ? 'bg-white text-primary hover:bg-gray-50' 
-            : 'bg-black text-white hover:bg-gray-900'
+            : 'bg-primary text-white hover:bg-primary/90'
         }`}
         aria-label={`選擇${plan.title}方案`}
       >
-        {plan.btnText}
-      </button>
+        <span>{plan.btnText}</span>
+        <svg 
+          className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </Link>
     </motion.div>
   )
 })
@@ -402,7 +413,7 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
 // 服務特色部分
 function ServiceFeature() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-20 sm:py-28 bg-gray-50">
       <div className="container mx-auto px-4">
         <motion.div 
           className="text-center max-w-3xl mx-auto mb-16"
@@ -410,35 +421,31 @@ function ServiceFeature() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-xs xs:text-sm md:text-base font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-primary/10 text-primary rounded-full">
             我們的優勢
           </span>
-          <Heading 
-            level="h2" 
-            size="lg" 
-            className="mb-6" 
-            animate
-          >
-            專注於醫療行銷的<span className="text-primary">專業團隊</span>
-          </Heading>
-          <p className="text-lg text-gray-600">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
+            專注於<span className="text-primary">醫療行銷</span>的專業團隊
+          </h2>
+          <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
             我們深知醫療行業的獨特性與挑戰。十年以上的醫療行銷經驗，讓我們能精準理解診所與病患的需求，提供真正有效的解決方案。
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <motion.div 
-            className="bg-white p-8 rounded-lg shadow-sm"
+            className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
             <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
             </div>
-            <Heading level="h3" size="xs" className="mb-4">深刻理解醫療產業</Heading>
+            <h3 className="text-lg font-bold mb-4 text-gray-800">深刻理解醫療產業</h3>
             <p className="text-gray-600">
               我們不只是行銷團隊，更是醫療產業的深度觀察者與參與者。我們了解各類診所的運作邏輯、醫病關係的建立、診療項目的特色，能從醫師與病患雙方視角提供最適切的建議。
             </p>
@@ -448,7 +455,7 @@ function ServiceFeature() {
             className="bg-white p-8 rounded-lg shadow-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -465,7 +472,7 @@ function ServiceFeature() {
             className="bg-white p-8 rounded-lg shadow-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -583,47 +590,45 @@ export default function ServicePage() {
         </div>
         
         {/* Hero Content - 扁平化現代設計 */}
-        <div className="container-custom relative z-10 pt-20 sm:pt-24 md:pt-32 lg:pt-40 pb-20 md:pb-28">
+        <div className="container-custom relative z-10 pt-24 sm:pt-28 md:pt-32 lg:pt-40 pb-20 md:pb-28">
           <div className="max-w-2xl text-white">
-            <Heading 
-              level="h1"
-              size="xl"
-              variant="white"
-              className="mb-6 tracking-tight"
-              animate
-              withDivider
-              dividerPosition="left"
-              noWrap={false}
-              onDark={true}
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-white/10 backdrop-blur-sm text-white/90 rounded-full"
             >
-              <span className="text-white">打造</span><span className="text-primary bg-white px-2 mx-1">診所品牌</span><br />
-              <span className="text-white">贏得</span><span className="text-primary bg-white px-2 mx-1">患者信任</span>
-            </Heading>
-            
-            <Heading
-              level="h2"
-              size="sm"
-              variant="white"
-              className="mb-10 font-normal leading-relaxed text-shadow-sm"
-              animate
-              noWrap={false}
-              onDark={true}
+              專業醫療行銷服務
+            </motion.span>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight"
             >
-              <span className="text-white">
-              專業醫療行銷團隊，協助您在競爭激烈的市場中脫穎而出，<br className="hidden md:block" />
-              建立獨特品牌定位，打造持續成長的診所生態系統。
-              </span>
-            </Heading>
+              <span className="text-white">打造</span>
+              <span className="text-primary bg-white px-2 mx-1 rounded-sm">診所品牌</span><br />
+              <span className="text-white">贏得</span>
+              <span className="text-primary bg-white px-2 mx-1 rounded-sm">患者信任</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-base sm:text-lg text-white/90 mb-8 leading-relaxed max-w-xl"
+            >
+              全方位醫療行銷專家團隊，從品牌建立到數位轉型，為您的診所打造專屬成長策略，提升市場競爭力。
+            </motion.p>
             
             <motion.div 
               className="flex flex-col sm:flex-row gap-5"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
             >
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-medium hover:bg-red-700 transition-all duration-300 text-base shadow-none"
+                className="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-medium hover:bg-primary/90 transition-all duration-300 text-base shadow-md shadow-primary/30 rounded-md group"
               >
                 <span>免費品牌診斷</span>
                 <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -632,7 +637,7 @@ export default function ServicePage() {
               </Link>
               <Link
                 href="#pricing"
-                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white bg-black text-white font-medium hover:bg-white hover:text-black transition-all duration-300 text-base"
+                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 bg-black/20 backdrop-blur-sm text-white font-medium hover:bg-white/10 transition-all duration-300 text-base rounded-md"
               >
                 查看服務方案
               </Link>
@@ -1157,83 +1162,80 @@ export default function ServicePage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12 sm:mb-16"
           >
-            <Heading 
-              level="h2"
-              size="lg"
-              id="core-services-title"
-              className="mb-4 sm:mb-6 font-display text-brand-textDark"
-              animate
-              withDivider
-              dividerPosition="center"
+            <span className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-primary/10 text-primary">
+              服務方案
+            </span>
+            <h2 
+              id="pricing-title"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 font-display text-gray-900 leading-tight"
             >
-              我們的核心服務
-            </Heading>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
-              提供完整的醫療行銷解決方案，幫助診所建立品牌形象、提升市場競爭力
+              選擇<span className="text-primary">適合</span>的方案
+            </h2>
+            <p className="text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-6 text-gray-600">
+              根據診所不同階段的需求，我們提供彈性的行銷服務方案，協助您達成業務目標
             </p>
           </motion.div>
 
-          <div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6"
-            role="list"
-          >
-            {coreServices.map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-6 mb-16">
+            {pricingPlans.map((plan, index) => (
+              <PricingPlan key={plan.title} plan={plan} index={index} />
             ))}
           </div>
+          
+          <motion.div
+            className="mt-12 text-center bg-gray-50 py-8 px-4 sm:px-8 rounded-xl max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <h3 className="text-lg font-bold mb-3 text-gray-800">需要更客製化的方案?</h3>
+            <p className="text-gray-600 mb-6">
+              我們提供專屬診所需求的客製服務，無論您處於哪個階段，都能依照實際需求進行調整
+            </p>
+            <Link 
+              href="/contact?source=custom_pricing" 
+              className="inline-flex items-center justify-center px-6 py-3 bg-white border border-primary text-primary font-medium hover:bg-primary hover:text-white transition-all duration-300 rounded-md group shadow-sm"
+            >
+              <span>聯繫我們討論客製方案</span>
+              <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
       {/* 服務流程 */}
-      <section 
-        className="py-10 sm:py-12 bg-gray-50"
-        role="region"
-        aria-labelledby="service-process-title"
-      >
-        <div className="container-custom max-w-4xl">
+      <section className="py-16 sm:py-24 bg-gray-50">
+        <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-6"
+            className="text-center mb-16"
           >
-            <div className="flex items-center justify-center mb-2">
-              <motion.div 
-                className="h-0.5 w-6 bg-primary"
-                initial={{ width: 0 }}
-                whileInView={{ width: 24 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4 }}
-              ></motion.div>
-              <h2 
-                id="service-process-title"
-                className="text-lg sm:text-xl font-bold mx-3 text-standard"
-              >
-                專業服務流程
-              </h2>
-              <motion.div 
-                className="h-0.5 w-6 bg-primary"
-                initial={{ width: 0 }}
-                whileInView={{ width: 24 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-              ></motion.div>
-            </div>
-            <p className="text-sm max-w-lg mx-auto px-4 text-description">
-              系統化的服務流程，確保每個環節都能達到最佳效果
+            <span className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-primary/10 text-primary rounded-full">
+              專業行銷流程
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
+              透明高效的<span className="text-primary">合作流程</span>
+            </h2>
+            <p className="text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-6 text-gray-600 leading-relaxed">
+              從需求確認到執行監測，我們建立系統化流程，確保每個診所的行銷計畫都能有效實施
             </p>
           </motion.div>
 
           <div className="px-4 sm:px-8 relative">
             <motion.div 
-              className="absolute top-0 bottom-0 left-5 sm:left-9 w-0.5 bg-gray-200 hidden sm:block" 
+              className="absolute top-0 bottom-0 left-5 sm:left-9 w-1 bg-gradient-to-b from-primary/80 via-primary/50 to-primary/20 rounded-full hidden sm:block" 
               initial={{ height: 0 }}
               whileInView={{ height: '100%' }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
             />
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-6 sm:space-y-8">
               {serviceProcess.map((step, index) => (
                 <ProcessStep key={step.step} step={step} index={index} />
               ))}
@@ -1268,40 +1270,6 @@ export default function ServicePage() {
             >
               每個流程由專業團隊全程參與，確保最佳效果
             </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* 價格方案 */}
-      <section 
-        id="pricing" 
-        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white"
-        role="region"
-        aria-labelledby="pricing-title"
-      >
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12 sm:mb-16"
-          >
-            <h2 
-              id="pricing-title"
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis"
-            >
-              選擇適合的方案
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
-              根據診所需求提供彈性的服務方案，協助您達成行銷目標
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
-            {pricingPlans.map((plan, index) => (
-              <PricingPlan key={plan.title} plan={plan} index={index} />
-            ))}
           </div>
         </div>
       </section>
