@@ -171,24 +171,23 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
           </div>
         </div>
       ) : (
-        <Image
+        // 使用標準HTML img標籤代替Next.js的Image組件
+        // 避免Next.js 15中的Image API變更帶來的兼容性問題
+        <img
           src={src}
           alt={alt || ''}
           className={cn(
+            'w-full h-full object-cover',
             'transition-all duration-300 ease-in-out',
             withBlur && !isLoaded && blurDataURL && 'blur-sm scale-[1.02]',
             isLoaded && 'blur-0'
           )}
-          fetchPriority={isLCP || props.priority ? 'high' : 'auto'}
           loading={isLCP || props.priority ? 'eager' : 'lazy'}
-          quality={quality}
-          sizes={sizes}
-          placeholder={withBlur && blurDataURL ? 'blur' : 'empty'}
-          blurDataURL={blurDataURL}
           onLoad={handleLoad}
           onError={handleError}
           {...props}
-          priority={undefined}
+          width={props.width}
+          height={props.height}
         />
       )}
       
