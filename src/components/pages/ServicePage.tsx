@@ -634,75 +634,238 @@ export default function ServicePage() {
           </div>
           
           {/* Right Side Floating Element - 扁平化數據面板 */}
+          {/* 數據面板 - 響應式優化設計 */}
+          {/* 桌面版面板 */}
           <motion.div
-            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-white/95 p-7 w-80 z-10 border-l-4 border-primary shadow-lg backdrop-blur-sm rounded-tr-lg rounded-br-lg hover:shadow-xl transition-shadow"
+            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-white/95 p-7 w-80 z-10 border-l-4 border-primary shadow-lg backdrop-blur-sm rounded-tr-lg rounded-br-lg hover:shadow-xl transition-all duration-300"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
-            whileHover={{ x: -5 }}
+            whileHover={{ x: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
           >
             <Heading level="h3" size="xs" className="mb-5 text-primary border-b border-gray-100 pb-2">讓數據說話</Heading>
             <div className="mb-6">
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-gray-700 font-medium">診所知名度提升</span>
-                <motion.span 
-                  className="font-bold text-base text-primary"
+                <motion.div 
+                  className="flex items-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 1.5 }}
                 >
-                  76%
-                </motion.span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary mr-1"
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 1.8 }}
+                  >
+                    76%
+                  </motion.span>
+                  <motion.svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4 text-green-500"
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 2 }}
+                  >
+                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                  </motion.svg>
+                </motion.div>
               </div>
-              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '76%' }}
                   transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
-                ></motion.div>
+                >
+                  <motion.div 
+                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.5, delay: 2, repeat: Infinity, repeatDelay: 1 }}
+                  />
+                </motion.div>
               </div>
             </div>
             <div className="mb-6">
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-gray-700 font-medium">新患者轉換率</span>
-                <motion.span 
-                  className="font-bold text-base text-primary"
+                <motion.div 
+                  className="flex items-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 1.8 }}
                 >
-                  64%
-                </motion.span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary mr-1"
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 2.1 }}
+                  >
+                    64%
+                  </motion.span>
+                  <motion.svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4 text-green-500"
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 2.3 }}
+                  >
+                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                  </motion.svg>
+                </motion.div>
               </div>
-              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '64%' }}
                   transition={{ duration: 1.5, delay: 1.8, ease: "easeOut" }}
-                ></motion.div>
+                >
+                  <motion.div 
+                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.5, delay: 2.3, repeat: Infinity, repeatDelay: 1 }}
+                  />
+                </motion.div>
               </div>
             </div>
             <div>
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-gray-700 font-medium">患者回診率提升</span>
-                <motion.span 
-                  className="font-bold text-base text-primary"
+                <motion.div 
+                  className="flex items-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 2.1 }}
                 >
-                  89%
-                </motion.span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary mr-1"
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 2.4 }}
+                  >
+                    89%
+                  </motion.span>
+                  <motion.svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4 text-green-500"
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 2.6 }}
+                  >
+                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                  </motion.svg>
+                </motion.div>
               </div>
-              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '89%' }}
                   transition={{ duration: 1.5, delay: 2.1, ease: "easeOut" }}
-                ></motion.div>
+                >
+                  <motion.div 
+                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.5, delay: 2.6, repeat: Infinity, repeatDelay: 1 }}
+                  />
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* 平板/手機版數據面板 */}
+          <motion.div
+            className="lg:hidden relative w-full bg-white/95 p-6 my-8 z-10 border-l-4 border-primary shadow-md backdrop-blur-sm rounded-tr-lg rounded-br-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <Heading level="h3" size="xs" className="mb-4 text-primary text-center border-b border-gray-100 pb-2">診所數位行銷成效</Heading>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700 font-medium text-sm">診所知名度提升</span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary flex items-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                  >
+                    76%
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                    </svg>
+                  </motion.span>
+                </div>
+                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: '76%' }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                  ></motion.div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700 font-medium text-sm">新患者轉換率</span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary flex items-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 1 }}
+                  >
+                    64%
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                    </svg>
+                  </motion.span>
+                </div>
+                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: '64%' }}
+                    transition={{ duration: 1, delay: 0.7 }}
+                  ></motion.div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700 font-medium text-sm">患者回診率提升</span>
+                  <motion.span 
+                    className="font-bold text-lg text-primary flex items-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 1.2 }}
+                  >
+                    89%
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                    </svg>
+                  </motion.span>
+                </div>
+                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: '89%' }}
+                    transition={{ duration: 1, delay: 0.9 }}
+                  ></motion.div>
+                </div>
               </div>
             </div>
           </motion.div>
