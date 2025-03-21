@@ -271,166 +271,6 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
   )
 }
 
-// 團隊介紹區塊
-const TeamIntroSection = () => {
-  return (
-    <div>
-      <PageHeader
-        title="認識我們的專業團隊"
-        description="每一位成員都致力於為診所客戶創造最有溫度、最能打動人心的品牌體驗"
-        variant="red"
-        size="lg"
-        alignment="center"
-        backgroundImage="/images/bgline-rpng"
-      />
-      
-      <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="grid md:grid-cols-2 gap-12 items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div>
-              <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
-                為何選擇我們
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                一個理解醫療<span className="text-primary">與行銷</span>的專業團隊
-              </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                我們不僅是行銷專家，更深入理解醫療產業的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為醫療專業人士創造真正有價值的行銷解決方案。
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="ml-4 text-gray-600">我們的團隊成員平均擁有8年以上的醫療行銷經驗</p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="ml-4 text-gray-600">我們與超過100家醫療診所合作，深知各類專科的獨特需求</p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="ml-4 text-gray-600">我們的客戶平均實現40%以上的新病患增長</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <motion.div 
-                className="rounded-lg overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Image 
-                  src="/images/team/office-1.png" 
-                  alt="Our Office" 
-                  width={800}
-                  height={600}
-                  className="w-full h-auto"
-                  priority
-                />
-              </motion.div>
-              <motion.div 
-                className="rounded-lg overflow-hidden mt-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <Image 
-                  src="/images/team/office-2.jpg" 
-                  alt="Our Team" 
-                  width={800}
-                  height={600}
-                  className="w-full h-auto"
-                />
-              </motion.div>
-              <motion.div 
-                className="rounded-lg overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <Image 
-                  src="/images/team/office-3.jpg" 
-                  alt="Team Collaboration" 
-                  width={800}
-                  height={600}
-                  className="w-full h-auto"
-                />
-              </motion.div>
-              <motion.div 
-                className="rounded-lg overflow-hidden mt-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-              >
-                <Image 
-                  src="/images/team/office-4.png" 
-                  alt="Our Meeting" 
-                  width={800}
-                  height={600}
-                  className="w-full h-auto"
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-// 團隊價值觀組件
-const TeamValues = () => {
-  return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-10 sm:mb-12 md:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-primary mb-3 sm:mb-4">
-            團隊價值觀
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            秉持專業與創新精神，為客戶提供最優質的服務
-          </p>
-        </AnimatedSection>
-
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-          {values.map((value, index) => (
-            <AnimatedSection key={value.title} delay={index * 0.1}>
-              <div className="group bg-gray-50 p-4 sm:p-6 md:p-8 text-center hover:bg-white hover:border hover:border-red transition-colors duration-300">
-                <div className="mb-4 sm:mb-6 flex justify-center">
-                  <value.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary/80 group-hover:text-primary transition-colors duration-300" />
-                </div>
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-2 sm:mb-3">
-                  {value.title}
-                </h3>
-                <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-3 sm:line-clamp-none">
-                  {value.description}
-                </p>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function TeamPage() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -455,7 +295,7 @@ export default function TeamPage() {
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             {teamMembers.map((member, index) => (
               <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
             ))}
@@ -463,102 +303,185 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* 團隊價值觀 - 優化響應式設計 */}
-      <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <AnimatedSection className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-primary mb-3 sm:mb-4">
-              團隊價值觀
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-              秉持專業與創新精神，為客戶提供最優質的服務
-            </p>
-          </AnimatedSection>
-
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-            {values.map((value, index) => (
-              <AnimatedSection key={value.title} delay={index * 0.1}>
-                <div className="group bg-gray-50 p-4 sm:p-6 md:p-8 text-center hover:bg-white hover:border hover:border-red transition-colors duration-300">
-                  <div className="mb-4 sm:mb-6 flex justify-center">
-                    <value.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary/80 group-hover:text-primary transition-colors duration-300" />
+      {/* 團隊工作環境展示 */}
+      <section className="py-20 bg-white">
+        <div className="container-custom">
+          <AnimatedSection className="mb-12">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
+                  為何選擇我們
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                  一個理解醫療<span className="text-primary">與行銷</span>的專業團隊
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  我們不僅是行銷專家，更深入理解醫療產業的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為醫療專業人士創造真正有價值的行銷解決方案。
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <p className="ml-4 text-gray-600">我們的團隊成員平均擁有8年以上的醫療行銷經驗</p>
                   </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-2 sm:mb-3">
-                    {value.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-3 sm:line-clamp-none">
-                    {value.description}
-                  </p>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <p className="ml-4 text-gray-600">我們與超過100家醫療診所合作，深知各類專科的獨特需求</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
+                      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <p className="ml-4 text-gray-600">我們的客戶平均實現40%以上的新病患增長</p>
+                  </div>
                 </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section - 優化響應式設計 */}
-      <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-primary text-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <AnimatedSection>
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 sm:mb-6">
-                準備好開始合作了嗎？
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
-                讓我們的專業團隊，為您的診所打造最適合的品牌成長策略
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center bg-white text-primary px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold hover:bg-white/90 transition-colors"
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <motion.div 
+                  className="rounded-lg overflow-hidden shadow-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  立即預約諮詢
-                </Link>
-                <Link
-                  href="/service"
-                  className="inline-flex items-center justify-center border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold hover:bg-white/10 transition-colors"
+                  <Image 
+                    src="/images/team/office-1.png" 
+                    alt="Our Office" 
+                    width={400}
+                    height={300}
+                    className="w-full h-auto"
+                  />
+                </motion.div>
+                <motion.div 
+                  className="rounded-lg overflow-hidden mt-8 shadow-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  了解服務內容
-                </Link>
+                  <Image 
+                    src="/images/team/office-2.jpg" 
+                    alt="Our Team" 
+                    width={400}
+                    height={300}
+                    className="w-full h-auto"
+                  />
+                </motion.div>
+                <motion.div 
+                  className="rounded-lg overflow-hidden shadow-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                  <Image 
+                    src="/images/team/office-3.jpg" 
+                    alt="Team Collaboration" 
+                    width={400}
+                    height={300}
+                    className="w-full h-auto"
+                  />
+                </motion.div>
+                <motion.div 
+                  className="rounded-lg overflow-hidden mt-8 shadow-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                >
+                  <Image 
+                    src="/images/team/office-4.png" 
+                    alt="Our Meeting" 
+                    width={400}
+                    height={300}
+                    className="w-full h-auto"
+                  />
+                </motion.div>
               </div>
             </div>
           </AnimatedSection>
         </div>
       </section>
 
-      <TeamIntroSection />
-      
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center max-w-3xl mx-auto mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
-              專業團隊
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              每位成員都是各自領域的<span className="text-primary">專家</span>
+      {/* 團隊價值觀 - 優化響應式設計 */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom">
+          <AnimatedSection className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-primary">
+              團隊價值觀
             </h2>
-            <p className="text-lg text-gray-600">
-              我們的團隊由來自行銷、設計、技術與醫療背景的專業人才組成，共同為診所客戶創造最有溫度、最能打動人心的品牌體驗。
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              秉持專業與創新精神，為客戶提供最優質的服務
             </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <TeamMemberCard 
-                key={index} 
-                member={member}
-                delay={index * 0.1}
-              />
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((value, index) => (
+              <motion.div 
+                key={value.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border-t-2 border-primary"
+              >
+                <div className="flex justify-center mb-6">
+                  <value.icon className="w-12 h-12 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
+                  {value.title}
+                </h3>
+                <p className="text-gray-600 text-center">
+                  {value.description}
+                </p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
-      
-      <TeamValues />
+
+      {/* CTA Section - 優化響應式設計 */}
+      <section className="py-20 bg-primary text-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6">
+              準備好開始合作了嗎？
+            </h2>
+            <p className="text-xl mb-8 max-w-3xl mx-auto">
+              讓我們的專業團隊，為您的診所打造最適合的品牌成長策略
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+              >
+                立即預約諮詢
+              </Link>
+              <Link
+                href="/service"
+                className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+              >
+                了解服務內容
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   )
 } 
