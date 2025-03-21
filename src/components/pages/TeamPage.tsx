@@ -207,7 +207,6 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
         tempImg.onerror = () => {
           if (isMounted) {
             setImageError(true);
-            console.error(`加載圖片失敗: ${member.image}`);
           }
           tempImg.onerror = null; // 清理事件處理器
         };
