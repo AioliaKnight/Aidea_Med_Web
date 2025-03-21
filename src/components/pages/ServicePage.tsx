@@ -635,37 +635,74 @@ export default function ServicePage() {
           
           {/* Right Side Floating Element - 扁平化數據面板 */}
           <motion.div
-            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-white p-6 w-72 z-10 border-l-4 border-primary"
+            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-white/95 p-7 w-80 z-10 border-l-4 border-primary shadow-lg backdrop-blur-sm rounded-tr-lg rounded-br-lg hover:shadow-xl transition-shadow"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
+            whileHover={{ x: -5 }}
           >
-            <Heading level="h3" size="xs" className="mb-3">讓數據說話</Heading>
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-1">
-                <span>診所知名度提升</span>
-                <span className="font-bold">76%</span>
+            <Heading level="h3" size="xs" className="mb-5 text-primary border-b border-gray-100 pb-2">讓數據說話</Heading>
+            <div className="mb-6">
+              <div className="flex justify-between items-center text-sm mb-2">
+                <span className="text-gray-700 font-medium">診所知名度提升</span>
+                <motion.span 
+                  className="font-bold text-base text-primary"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 1.5 }}
+                >
+                  76%
+                </motion.span>
               </div>
-              <div className="h-2 bg-gray-200 w-full">
-                <div className="h-full bg-primary" style={{ width: '76%' }}></div>
+              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '76%' }}
+                  transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
+                ></motion.div>
               </div>
             </div>
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-1">
-                <span>新患者轉換率</span>
-                <span className="font-bold">64%</span>
+            <div className="mb-6">
+              <div className="flex justify-between items-center text-sm mb-2">
+                <span className="text-gray-700 font-medium">新患者轉換率</span>
+                <motion.span 
+                  className="font-bold text-base text-primary"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 1.8 }}
+                >
+                  64%
+                </motion.span>
               </div>
-              <div className="h-2 bg-gray-200 w-full">
-                <div className="h-full bg-primary" style={{ width: '64%' }}></div>
+              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '64%' }}
+                  transition={{ duration: 1.5, delay: 1.8, ease: "easeOut" }}
+                ></motion.div>
               </div>
             </div>
             <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>患者回診率提升</span>
-                <span className="font-bold">89%</span>
+              <div className="flex justify-between items-center text-sm mb-2">
+                <span className="text-gray-700 font-medium">患者回診率提升</span>
+                <motion.span 
+                  className="font-bold text-base text-primary"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 2.1 }}
+                >
+                  89%
+                </motion.span>
               </div>
-              <div className="h-2 bg-gray-200 w-full">
-                <div className="h-full bg-primary" style={{ width: '89%' }}></div>
+              <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: '89%' }}
+                  transition={{ duration: 1.5, delay: 2.1, ease: "easeOut" }}
+                ></motion.div>
               </div>
             </div>
           </motion.div>
