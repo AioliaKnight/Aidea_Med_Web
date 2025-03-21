@@ -53,7 +53,7 @@ export default function BackToTopButton({
 
   // 使用AnimatePresence來處理按鈕的顯示/隱藏動畫
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="sync">
       {isVisible && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
@@ -61,7 +61,7 @@ export default function BackToTopButton({
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.3 }}
           onClick={scrollToTop}
-          className={`fixed ${position} bg-primary text-white ${size} flex items-center justify-center shadow-md hover:bg-primary/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/50 ${rounded ? 'rounded-full' : 'rounded'}`}
+          className={`fixed ${position} bg-primary text-white ${size} flex items-center justify-center shadow-md hover:bg-primary/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/50 ${rounded ? 'rounded-full' : 'rounded'} z-50`}
           aria-label="回到頂部"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className={iconSize} viewBox="0 0 20 20" fill="currentColor">

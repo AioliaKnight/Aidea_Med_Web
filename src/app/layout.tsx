@@ -147,7 +147,10 @@ export default function RootLayout({
         {/* 全局回到頂部按鈕 */}
         <BackToTopButton 
           threshold={400}
+          position="bottom-5 right-8"
           rounded={true}
+          size="w-10 h-10"
+          iconSize="h-8 w-8"
         />
 
         {/* Portal Root */}
