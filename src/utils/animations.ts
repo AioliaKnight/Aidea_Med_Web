@@ -20,6 +20,94 @@ export const DELAYS = {
   large: 0.5
 }
 
+// Loading 動畫配置常量
+export const LOADING_ANIMATION_CONFIG = {
+  LOGO: {
+    duration: 0.6,
+    repeat: Infinity,
+    repeatType: "reverse" as const,
+    ease: "easeInOut"
+  },
+  RING: {
+    duration: 1.2,
+    repeat: Infinity,
+    ease: "linear"
+  },
+  FADE: {
+    duration: 0.3,
+    ease: "easeOut"
+  }
+}
+
+// Loading 動畫變體
+export const loadingContainerVariants: Variants = {
+  initial: { 
+    opacity: 0,
+  },
+  animate: { 
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeIn"
+    }
+  }
+}
+
+export const loadingLogoVariants: Variants = {
+  initial: { 
+    scale: 0.95,
+    opacity: 0.8
+  },
+  animate: { 
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.LOGO.duration,
+      repeat: LOADING_ANIMATION_CONFIG.LOGO.repeat,
+      repeatType: LOADING_ANIMATION_CONFIG.LOGO.repeatType,
+      ease: LOADING_ANIMATION_CONFIG.LOGO.ease
+    }
+  }
+}
+
+export const loadingRingVariants: Variants = {
+  initial: { 
+    rotate: 0,
+    opacity: 0
+  },
+  animate: { 
+    rotate: 360,
+    opacity: 1,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.RING.duration,
+      ease: LOADING_ANIMATION_CONFIG.RING.ease,
+      repeat: LOADING_ANIMATION_CONFIG.RING.repeat
+    }
+  }
+}
+
+export const loadingTextVariants: Variants = {
+  initial: { 
+    opacity: 0,
+    y: 4
+  },
+  animate: { 
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  }
+}
+
 // CSS 類動畫對應表
 export const CSS_ANIMATIONS = {
   fadeIn: 'animate-fade-in',

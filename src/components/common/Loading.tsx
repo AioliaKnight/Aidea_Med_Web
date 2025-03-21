@@ -3,25 +3,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from './Logo'
 import { cn } from '@/lib/utils'
-
-// 動畫配置常量
-const ANIMATION_CONFIG = {
-  LOGO: {
-    duration: 0.6,
-    repeat: Infinity,
-    repeatType: "reverse",
-    ease: "easeInOut"
-  },
-  RING: {
-    duration: 1.2,
-    repeat: Infinity,
-    ease: "linear"
-  },
-  FADE: {
-    duration: 0.3,
-    ease: "easeOut"
-  }
-} as const
+import { 
+  LOADING_ANIMATION_CONFIG, 
+  loadingContainerVariants, 
+  loadingLogoVariants, 
+  loadingRingVariants, 
+  loadingTextVariants 
+} from '@/utils/animations'
 
 // 容器尺寸預設值
 const CONTAINER_SIZES = {
@@ -65,75 +53,6 @@ const COLOR_THEMES = {
   }
 } as const
 
-// 動畫變體
-const containerVariants = {
-  initial: { 
-    opacity: 0,
-  },
-  animate: { 
-    opacity: 1,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
-    }
-  },
-  exit: { 
-    opacity: 0,
-    transition: {
-      duration: 0.2,
-      ease: "easeIn"
-    }
-  }
-}
-
-const logoVariants = {
-  initial: { 
-    scale: 0.95,
-    opacity: 0.8
-  },
-  animate: { 
-    scale: 1,
-    opacity: 1,
-    transition: {
-      duration: ANIMATION_CONFIG.LOGO.duration,
-      repeat: ANIMATION_CONFIG.LOGO.repeat,
-      repeatType: ANIMATION_CONFIG.LOGO.repeatType,
-      ease: ANIMATION_CONFIG.LOGO.ease
-    }
-  }
-}
-
-const ringVariants = {
-  initial: { 
-    rotate: 0,
-    opacity: 0
-  },
-  animate: { 
-    rotate: 360,
-    opacity: 1,
-    transition: {
-      duration: ANIMATION_CONFIG.RING.duration,
-      ease: ANIMATION_CONFIG.RING.ease,
-      repeat: ANIMATION_CONFIG.RING.repeat
-    }
-  }
-}
-
-const textVariants = {
-  initial: { 
-    opacity: 0,
-    y: 4
-  },
-  animate: { 
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
-    }
-  }
-}
-
 export interface LoadingProps {
   /**
    * 顯示加載中文字
@@ -167,6 +86,14 @@ export interface LoadingProps {
    * 背景顏色
    */
   background?: string;
+  /**
+   * Logo變體
+   */
+  logoVariant?: 'white' | 'black' | 'primary';
+  /**
+   * 是否優先載入Logo
+   */
+  logoPriority?: boolean;
 }
 
 export default function Loading({
@@ -175,8 +102,10 @@ export default function Loading({
   blur = false,
   className,
   size = 'md',
-  theme = 'slate',
-  background = 'bg-background/80'
+  theme = 'primary',
+  background = 'bg-background/80',
+  logoVariant = 'primary',
+  logoPriority = true
 }: LoadingProps) {
   const colors = COLOR_THEMES[theme]
 
@@ -193,7 +122,7 @@ export default function Loading({
           background,
           className
         )}
-        variants={containerVariants}
+        variants={loadingContainerVariants}
         initial="initial"
         animate="animate"
         exit="exit"
@@ -205,7 +134,7 @@ export default function Loading({
           {/* 旋轉環 */}
           <motion.div
             className="absolute inset-0"
-            variants={ringVariants}
+            variants={loadingRingVariants}
             initial="initial"
             animate="animate"
           >
@@ -224,13 +153,15 @@ export default function Loading({
           {/* Logo */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
-            variants={logoVariants}
+            variants={loadingLogoVariants}
             initial="initial"
             animate="animate"
           >
             <Logo 
               size={LOGO_SIZES[size]}
-              variant="black"
+              variant={logoVariant}
+              priority={logoPriority}
+              className="transform-gpu"
             />
           </motion.div>
         </div>
@@ -239,7 +170,7 @@ export default function Loading({
         {text && (
           <motion.div
             className="flex flex-col items-center gap-3"
-            variants={textVariants}
+            variants={loadingTextVariants}
             initial="initial"
             animate="animate"
           >
@@ -249,27 +180,6 @@ export default function Loading({
             )}>
               {text}
             </p>
-            <div className="flex gap-1.5">
-              {[0, 0.15, 0.3].map((delay, index) => (
-                <motion.span
-                  key={index}
-                  className={cn(
-                    "w-1 h-1 rounded-full",
-                    colors.dots
-                  )}
-                  animate={{ 
-                    opacity: [0.3, 1, 0.3],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    duration: 0.6, 
-                    repeat: Infinity, 
-                    delay,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-            </div>
           </motion.div>
         )}
       </motion.div>
