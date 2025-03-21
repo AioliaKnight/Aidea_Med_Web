@@ -35,9 +35,9 @@ interface TeamMember {
 // 團隊成員數據
 const teamMembers: TeamMember[] = [
   {
-    name: '林佳穎',
+    name: '陳維鈞',
     role: '創辦人暨策略總監',
-    image: '/images/team/team-1.jpg',
+    image: '/images/team/member-1.png',
     description: '擁有十年以上醫療行銷經驗，曾協助超過50家診所完成品牌轉型。曾任大型牙醫連鎖集團行銷總監，深諳醫療領域的病患心理與行銷策略。她相信，真正有溫度的醫療體驗，始於醫者的用心與良好的溝通橋樑。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -50,7 +50,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '陳俊宏',
     role: '數位行銷總監',
-    image: '/images/team/team-2.jpg',
+    image: '/images/team/member-2.jpg',
     description: '數位行銷專家，擅長診所網站優化與搜尋引擎行銷，過去五年成功幫助30多家牙醫與皮膚科診所提升40%以上的新客數量。他深信數據與溫度不是對立的，透過精準的數據分析，能更準確地回應病患的真實需求。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -63,7 +63,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '黃雅芳',
     role: '創意內容總監',
-    image: '/images/team/team-3.jpg',
+    image: '/images/team/member-3.jpg',
     description: '資深醫療內容創作者，曾任健康雜誌主編，擅長將艱澀的醫療知識轉化為溫暖易懂的內容。她帶領的創意團隊每月為診所客戶產出超過200篇精彩內容，從專業文章到暖心故事，讓醫療不再冰冷距離。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -76,7 +76,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '張志遠',
     role: '視覺設計總監',
-    image: '/images/team/team-4.jpg',
+    image: '/images/team/member-4.jpg',
     description: '擁有十年以上設計經驗，專注於醫療環境與品牌視覺設計。他理解醫療環境設計的獨特需求，如何在保持專業的同時，創造溫暖舒適的空間體驗。他的設計作品曾獲得多項國際設計大獎。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -89,7 +89,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '劉心怡',
     role: '顧客關係總監',
-    image: '/images/team/team-5.jpg',
+    image: '/images/team/member-1.png',
     description: '專注於優化診所病患體驗與建立忠誠度系統。她擁有心理諮商背景，深入理解病患心理需求與疑慮，協助診所建立完善的溝通系統與顧客旅程。她帶領的團隊成功幫助客戶提升30%以上的回診率。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -102,7 +102,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '王建中',
     role: '技術開發總監',
-    image: '/images/team/team-6.jpg',
+    image: '/images/team/member-2.jpg',
     description: '資深技術專家，專注於醫療相關數位工具開發。他帶領的技術團隊為診所開發便捷的預約管理系統、病患關係管理工具等，提升診所營運效率的同時，也創造更好的病患數位體驗。',
     socialLinks: [
       { platform: 'linkedin', url: '#' },
@@ -192,6 +192,32 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
   const [imageError, setImageError] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
 
+  // 針對 Next.js 15+ 與 React 19+ 優化圖片預加載邏輯
+  useEffect(() => {
+    // 僅在客戶端執行
+    if (typeof window !== 'undefined') {
+      // 避免使用 new Image() 構造函數，改用更安全的方法檢查圖片
+      const checkImage = () => {
+        // 建立臨時的 img 元素而不是用構造函數
+        const tempImg = document.createElement('img');
+        tempImg.src = member.image;
+        
+        // 設置監聽事件
+        tempImg.onerror = () => {
+          setImageError(true);
+          tempImg.onerror = null; // 清理事件處理器
+        };
+        
+        // 如果圖片已在快取中，可能不會觸發load事件，但也不會觸發error事件
+        tempImg.onload = () => {
+          tempImg.onload = null; // 清理事件處理器
+        };
+      };
+      
+      checkImage();
+    }
+  }, [member.image]);
+
   return (
     <AnimatedSection delay={delay}>
       <div className="group bg-white border border-gray-100 hover:border-primary hover:shadow-md overflow-hidden transition-all duration-300">
@@ -211,10 +237,14 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
               priority={true}
+              quality={85}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-              <span className="text-4xl">👤</span>
+              <div className="flex flex-col items-center">
+                <span className="text-5xl mb-2">👤</span>
+                <span className="text-xs text-gray-500">圖片載入中</span>
+              </div>
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -313,7 +343,7 @@ export default function TeamPage() {
       <section className="py-20 bg-white">
         <div className="container-custom">
           <AnimatedSection className="mb-12">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div>
                 <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
                   為何選擇我們
@@ -350,8 +380,20 @@ export default function TeamPage() {
                     <p className="ml-4 text-gray-600">我們的客戶平均實現40%以上的新病患增長</p>
                   </div>
                 </div>
+                <div className="mt-8">
+                  <Link 
+                    href="/service" 
+                    className="inline-flex items-center text-primary font-medium hover:underline"
+                    prefetch
+                  >
+                    了解我們的服務
+                    <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </Link>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <motion.div 
                   className="rounded-lg overflow-hidden shadow-md"
                   initial={{ opacity: 0, y: 20 }}
@@ -359,27 +401,31 @@ export default function TeamPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  <Image 
+                  <OptimizedImage 
                     src="/images/team/office-1.png" 
-                    alt="Our Office" 
+                    alt="現代化的辦公環境" 
                     width={400}
                     height={300}
                     className="w-full h-auto"
+                    quality={85}
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                   />
                 </motion.div>
                 <motion.div 
-                  className="rounded-lg overflow-hidden mt-8 shadow-md"
+                  className="rounded-lg overflow-hidden mt-4 sm:mt-8 shadow-md"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <Image 
+                  <OptimizedImage 
                     src="/images/team/office-2.jpg" 
-                    alt="Our Team" 
+                    alt="團隊協作空間" 
                     width={400}
                     height={300}
                     className="w-full h-auto"
+                    quality={85}
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                   />
                 </motion.div>
                 <motion.div 
@@ -389,27 +435,31 @@ export default function TeamPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  <Image 
+                  <OptimizedImage 
                     src="/images/team/office-3.jpg" 
-                    alt="Team Collaboration" 
+                    alt="創意討論空間" 
                     width={400}
                     height={300}
                     className="w-full h-auto"
+                    quality={85}
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                   />
                 </motion.div>
                 <motion.div 
-                  className="rounded-lg overflow-hidden mt-8 shadow-md"
+                  className="rounded-lg overflow-hidden mt-4 sm:mt-8 shadow-md"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  <Image 
+                  <OptimizedImage 
                     src="/images/team/office-4.png" 
-                    alt="Our Meeting" 
+                    alt="會議與討論空間" 
                     width={400}
                     height={300}
                     className="w-full h-auto"
+                    quality={85}
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                   />
                 </motion.div>
               </div>
