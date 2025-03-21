@@ -1575,7 +1575,7 @@ export default function ServicePage() {
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
-                      <p className="text-gray-600">+886 2 7728 0360</p>
+                      <p className="text-gray-600">02-2748-8919</p>
                       <p className="text-gray-500 text-sm">週一至週五 9:00-18:00</p>
                     </div>
                   </motion.div>
@@ -1593,7 +1593,7 @@ export default function ServicePage() {
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-gray-900 mb-1">Email 聯繫</h4>
-                      <p className="text-gray-600">leads@aideamed.com</p>
+                      <p className="text-gray-600">info@aideamed.com</p>
                       <p className="text-gray-500 text-sm">我們將在 24 小時內回覆</p>
                     </div>
                   </motion.div>

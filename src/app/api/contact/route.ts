@@ -9,7 +9,7 @@ const SMTP_USER = process.env.SMTP_USER || 'orzjzt@gmail.com';
 const SMTP_PASS = process.env.SMTP_PASS || 'gekr yxcm qhia eilw';
 
 // 郵件收件人
-const TO_EMAIL = process.env.TO_EMAIL || 'leads@aideamed.com';
+const TO_EMAIL = process.env.TO_EMAIL || 'info@aideamed.com';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'no-reply@aideamed.com';
 
 // 初始化Nodemailer傳輸
