@@ -59,19 +59,19 @@ export default function ContactPage() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
+      {/* 頁面標題區 */}
       <PageHeader 
         title="讓我們聆聽您的故事" 
         description="每間診所都有獨特的挑戰與願景，讓我們一同探索適合您的成長路徑"
         variant="red"
         size="lg"
-        alignment="center"
-        backgroundImage="/images/contact-header-bg.jpg"
-        overlayOpacity={0.8}
+        backgroundImage="/images/bgline-w.png"
       />
       
-      <section className="py-24">
-        <div className="container mx-auto px-4">
+      {/* 聯絡表單區 */}
+      <section className="py-20">
+        <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-20">
             {/* Left Side - Form */}
             <div className="lg:col-span-3">
