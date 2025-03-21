@@ -238,15 +238,17 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
             </div>
           )}
           {!imageError ? (
-            <div className="relative w-full h-full">
-              <img
-                src={member.image}
-                alt={member.name}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onLoad={() => setImageLoading(false)}
-                onError={() => setImageError(true)}
-              />
-            </div>
+            <OptimizedImage
+              src={member.image}
+              alt={member.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+              onLoadComplete={() => setImageLoading(false)}
+              onError={() => setImageError(true)}
+              priority={delay === 0}
+              quality={85}
+            />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
               <div className="flex flex-col items-center">
