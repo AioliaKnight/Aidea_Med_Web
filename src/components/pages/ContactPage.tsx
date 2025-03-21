@@ -275,9 +275,9 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
-                      <p className="text-gray-600">02-2748-8919</p>
-                      <p className="text-gray-500 text-sm">週一至週五 9:00-18:00</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">專線諮詢</h4>
+                      <p className="text-gray-600">(02) 2748-8919</p>
+                      <p className="text-gray-500 text-sm">醫療行銷顧問直接服務</p>
                     </div>
                   </motion.div>
                   
@@ -293,9 +293,9 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">Email 聯繫</h4>
-                      <p className="text-gray-600">info@aideamed.com</p>
-                      <p className="text-gray-500 text-sm">我們將在 24 小時內回覆</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">業務合作信箱</h4>
+                      <p className="text-gray-600">contact@aideamed.com</p>
+                      <p className="text-gray-500 text-sm">24小時內專人回覆</p>
                     </div>
                   </motion.div>
                   
@@ -312,9 +312,9 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
-                      <p className="text-gray-600">台北市內湖區瑞光路513巷32號7樓</p>
-                      <p className="text-gray-500 text-sm">台北市 內湖科技園區</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">顧問團隊總部</h4>
+                      <p className="text-gray-600">台北市大安區敦化南路二段99號13樓</p>
+                      <p className="text-gray-500 text-sm">歡迎預約參訪討論</p>
                     </div>
                   </motion.div>
                   
@@ -330,9 +330,9 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">預約諮詢</h4>
-                      <p className="text-gray-600">建議提前 3-5 天預約</p>
-                      <p className="text-gray-500 text-sm">可安排線上或實體會議</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">顧問服務時間</h4>
+                      <p className="text-gray-600">週一至週五：09:00 - 18:00</p>
+                      <p className="text-gray-500 text-sm">週六：預約制 / 週日：休息</p>
                     </div>
                   </motion.div>
                 </div>

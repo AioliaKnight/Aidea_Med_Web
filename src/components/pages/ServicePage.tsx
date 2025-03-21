@@ -1574,9 +1574,9 @@ export default function ServicePage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
-                      <p className="text-gray-600">02-2748-8919</p>
-                      <p className="text-gray-500 text-sm">週一至週五 9:00-18:00</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">專線諮詢</h4>
+                      <p className="text-gray-600">(02) 2748-8919</p>
+                      <p className="text-gray-500 text-sm">醫療行銷顧問直接服務</p>
                     </div>
                   </motion.div>
                   
@@ -1592,9 +1592,9 @@ export default function ServicePage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">Email 聯繫</h4>
-                      <p className="text-gray-600">info@aideamed.com</p>
-                      <p className="text-gray-500 text-sm">我們將在 24 小時內回覆</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">業務合作信箱</h4>
+                      <p className="text-gray-600">contact@aideamed.com</p>
+                      <p className="text-gray-500 text-sm">24小時內專人回覆</p>
                     </div>
                   </motion.div>
                   
@@ -1611,17 +1611,35 @@ export default function ServicePage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
-                      <p className="text-gray-600">台北市內湖區瑞光路513巷32號7樓</p>
-                      <p className="text-gray-500 text-sm">台北市 內湖科技園區</p>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">顧問團隊總部</h4>
+                      <p className="text-gray-600">台北市大安區敦化南路二段99號13樓</p>
+                      <p className="text-gray-500 text-sm">歡迎預約參訪討論</p>
                     </div>
                   </motion.div>
                   
                   <motion.div 
+                    className="flex items-start"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                  >
+                    <div className="w-10 h-10 bg-primary/10 flex items-center justify-center flex-shrink-0 mr-4">
+                      <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">顧問服務時間</h4>
+                      <p className="text-gray-600">週一至週五：09:00 - 18:00</p>
+                      <p className="text-gray-500 text-sm">週六：預約制 / 週日：休息</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
                     className="bg-black text-white p-6 mt-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
+                    transition={{ duration: 0.5, delay: 0.7 }}
                   >
                     <h4 className="text-lg font-bold mb-3">為什麼現在就該行動？</h4>
                     <ul className="space-y-2">
