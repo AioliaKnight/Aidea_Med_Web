@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
@@ -896,6 +896,9 @@ function StatsSection() {
       });
       
       setActiveIndex(index);
+      
+      // 觸發動畫重置
+      setAnimateNumber(prev => !prev);
     }
   }, []);
 
@@ -921,8 +924,38 @@ function StatsSection() {
       }
     });
     
-    setActiveIndex(closestIndex);
-  }, []);
+    if (activeIndex !== closestIndex) {
+      setActiveIndex(closestIndex);
+      // 當索引改變時觸發動畫重置
+      setAnimateNumber(prev => !prev);
+    }
+  }, [activeIndex]);
+
+  // 添加狀態控制數字動畫重置
+  const [animateNumber, setAnimateNumber] = useState(false);
+
+  // 延遲重置數字的計時器參考
+  const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // 當activeIndex變化時重置數字動畫
+  useEffect(() => {
+    // 清除之前的計時器
+    if (resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+    }
+    
+    // 設定新的計時器，延遲50ms以確保視覺效果流暢
+    resetTimerRef.current = setTimeout(() => {
+      setAnimateNumber(prev => !prev);
+    }, 50);
+    
+    // 清理函數
+    return () => {
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, [activeIndex]);
 
   return (
     <section className="relative py-16 md:py-24 bg-primary overflow-hidden">
@@ -1014,7 +1047,7 @@ function StatsSection() {
               <div className="flex gap-5 px-12 md:px-16 items-stretch mx-auto">
                 {stats.map((stat, index) => (
                   <motion.div
-                    key={stat.label}
+                    key={`stat-${stat.label}`}
                     variants={{
                       hidden: { opacity: 0, y: 20 },
                       visible: {
@@ -1026,18 +1059,26 @@ function StatsSection() {
                         }
                       }
                     }}
-                    className={`stats-item flex-none w-[260px] sm:w-[280px] md:w-[300px] snap-center ${index === activeIndex ? 'scale-100' : 'scale-95'}`}
-                    style={{ transition: 'transform 0.3s ease' }}
+                    className={`stats-item flex-none w-[260px] sm:w-[280px] md:w-[300px] snap-center`}
+                    style={{ 
+                      transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      transform: `scale(${index === activeIndex ? 1 : 0.92})`,
+                    }}
                   >
                     <motion.div 
                       className={`bg-white/8 p-6 md:p-8 rounded-xl h-full flex flex-col items-center border border-white/10 backdrop-blur-sm
                                 ${index === activeIndex ? 'ring-2 ring-white/20 shadow-xl' : ''}`}
+                      animate={{
+                        y: index === activeIndex ? -8 : 0,
+                        backgroundColor: index === activeIndex ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.08)",
+                        borderColor: index === activeIndex ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)"
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
                       whileHover={{ 
                         y: -6, 
-                        backgroundColor: "rgba(255, 255, 255, 0.12)",
-                        borderColor: "rgba(255, 255, 255, 0.2)"
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        borderColor: "rgba(255, 255, 255, 0.25)"
                       }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     >
                       <div className={`mb-5 p-3 bg-white/10 rounded-full ${index === activeIndex ? 'bg-white/15' : ''}`}>
                         {stat.icon}
@@ -1045,20 +1086,23 @@ function StatsSection() {
                       <div className="relative mb-5">
                         <div className="text-5xl sm:text-6xl font-bold text-white">
                           <CountUp 
+                            key={`count-${index}-${animateNumber}`}
                             end={stat.value} 
                             suffix={stat.suffix} 
-                            duration={2.5} 
-                            enableScrollSpy
-                            scrollSpyOnce
+                            duration={1.5} 
+                            delay={0.1}
+                            start={0}
+                            redraw={true}
+                            preserveValue={false}
                             useEasing
                           />
                         </div>
                         <motion.div 
+                          key={`underline-${index}-${animateNumber}`}
                           className="absolute -bottom-3 left-1/4 right-1/4 h-0.5 bg-white/20 rounded-full" 
                           initial={{ width: "0%", left: "50%", right: "50%" }}
-                          whileInView={{ width: "50%", left: "25%", right: "25%" }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1, delay: 0.5 }}
+                          animate={{ width: "50%", left: "25%", right: "25%" }}
+                          transition={{ duration: 1, delay: 0.2 }}
                         ></motion.div>
                       </div>
                       <h3 className="text-xl font-bold text-white mb-3">{stat.label}</h3>
