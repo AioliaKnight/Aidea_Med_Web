@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 /**
  * 回到頂部按鈕組件
  * 具有自動顯示/隱藏功能，只有當頁面滾動到一定距離時才會顯示
- * 優化版本 - 添加方向感知與平滑消失效果
+ * 優化版本 - 添加方向感知與平滑消失效果，停止滾動後自動隱藏
  */
 export default function BackToTopButton({
   threshold = 300, // 滾動閾值，超過此值才顯示按鈕
@@ -14,12 +14,14 @@ export default function BackToTopButton({
   size = 'w-10 h-10', // 按鈕大小
   iconSize = 'h-5 w-5', // 圖標大小
   rounded = true, // 是否使用圓形按鈕
+  autoHideDelay = 3000, // 停止滾動後自動隱藏延遲（毫秒）
 }: {
   threshold?: number
   position?: string
   size?: string
   iconSize?: string
   rounded?: boolean
+  autoHideDelay?: number
 }): React.ReactElement | null {
   // 檢查是否顯示按鈕
   const [isVisible, setIsVisible] = useState(false)
@@ -29,6 +31,10 @@ export default function BackToTopButton({
   const [isRapidScrolling, setIsRapidScrolling] = useState(false)
   // 上一次滾動位置
   const [lastScrollY, setLastScrollY] = useState(0)
+  // 是否應該顯示（包含自動隱藏邏輯）
+  const [shouldDisplay, setShouldDisplay] = useState(false)
+  // 是否正在滾動
+  const [isScrolling, setIsScrolling] = useState(false)
 
   // 回到頂部的處理函數
   const scrollToTop = useCallback(() => {
@@ -62,12 +68,21 @@ export default function BackToTopButton({
     }, 800)
   }, [])
 
-  // 監聽滾動事件
+  // 監聽滾動事件和管理自動隱藏
   useEffect(() => {
     let scrollTimer: ReturnType<typeof setTimeout> | null = null
+    let hideTimer: ReturnType<typeof setTimeout> | null = null
     
     const handleScroll = () => {
+      // 重置自動隱藏計時器
+      if (hideTimer) {
+        clearTimeout(hideTimer)
+      }
+      
       const scrollY = window.scrollY
+      
+      // 設置正在滾動狀態
+      setIsScrolling(true)
       
       // 檢測滾動方向
       const isDown = scrollY > lastScrollY
@@ -77,6 +92,7 @@ export default function BackToTopButton({
       // 顯示/隱藏邏輯
       if (scrollY > threshold) {
         setIsVisible(true)
+        setShouldDisplay(true)
         
         // 快速滾動檢測
         const scrollDelta = Math.abs(scrollY - lastScrollY)
@@ -91,12 +107,40 @@ export default function BackToTopButton({
         }
       } else {
         setIsVisible(false)
+        setShouldDisplay(false)
         setIsRapidScrolling(false)
       }
+      
+      // 設置停止滾動後的自動隱藏計時器
+      hideTimer = setTimeout(() => {
+        setIsScrolling(false)
+        
+        // 只有當頁面滾動超過閾值且不在頂部時自動隱藏
+        if (scrollY > threshold + 200) {
+          setShouldDisplay(false)
+        }
+      }, autoHideDelay)
     }
 
     // 添加滾動事件監聽
     window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    // 鼠標移動時顯示按鈕（如果條件滿足）
+    const handleMouseMove = () => {
+      if (window.scrollY > threshold && !shouldDisplay) {
+        setShouldDisplay(true)
+        
+        // 移動鼠標時重置自動隱藏計時器
+        if (hideTimer) clearTimeout(hideTimer)
+        hideTimer = setTimeout(() => {
+          if (!isScrolling && window.scrollY > threshold + 200) {
+            setShouldDisplay(false)
+          }
+        }, autoHideDelay)
+      }
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
     
     // 初始檢查
     handleScroll()
@@ -104,9 +148,11 @@ export default function BackToTopButton({
     // 清理函數
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('mousemove', handleMouseMove)
       if (scrollTimer) clearTimeout(scrollTimer)
+      if (hideTimer) clearTimeout(hideTimer)
     }
-  }, [threshold, lastScrollY])
+  }, [threshold, lastScrollY, autoHideDelay, shouldDisplay, isScrolling])
 
   // 根據滾動狀態計算按鈕的視覺狀態
   const getButtonStyles = () => {
@@ -126,7 +172,7 @@ export default function BackToTopButton({
   // 使用AnimatePresence來處理按鈕的顯示/隱藏動畫
   return (
     <AnimatePresence mode="sync">
-      {isVisible && (
+      {isVisible && shouldDisplay && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ 
@@ -143,6 +189,7 @@ export default function BackToTopButton({
           className={`fixed ${position} bg-primary text-white ${size} flex items-center justify-center shadow-md hover:bg-primary/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/50 ${rounded ? 'rounded-full' : 'rounded'} z-50`}
           aria-label="回到頂部"
           title="回到頂部"
+          onMouseEnter={() => setShouldDisplay(true)}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className={iconSize} viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
