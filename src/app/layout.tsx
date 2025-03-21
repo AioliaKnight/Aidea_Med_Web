@@ -1,4 +1,10 @@
-import { homeMetadata, organizationSchema, localBusinessSchema } from './metadata'
+import { 
+  sharedMetadata, 
+  organizationSchema, 
+  localBusinessSchema, 
+  medicalServicesFaq,
+  brandingWebsiteSchema
+} from './metadata'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 
@@ -8,12 +14,14 @@ import Loading from '@/components/common/Loading'
 import '@/app/globals.css'
 import '@/app/fonts.css'
 
-export const metadata = homeMetadata
+export const metadata = sharedMetadata
 
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  themeColor: '#e62733',
+  colorScheme: 'light'
 }
 
 interface RootLayoutProps {
@@ -99,6 +107,18 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ 
             __html: JSON.stringify(localBusinessSchema) 
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(medicalServicesFaq) 
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(brandingWebsiteSchema) 
           }}
         />
       </head>
