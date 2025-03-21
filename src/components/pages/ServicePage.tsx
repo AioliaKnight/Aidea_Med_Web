@@ -674,15 +674,15 @@ export default function ServicePage() {
                   </motion.svg>
                 </motion.div>
               </div>
-              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
+                  className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '76%' }}
                   transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
                 >
                   <motion.div 
-                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    className="absolute right-0 top-0 h-full w-2 bg-white/50"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0, 1, 0] }}
                     transition={{ duration: 1.5, delay: 2, repeat: Infinity, repeatDelay: 1 }}
@@ -720,15 +720,15 @@ export default function ServicePage() {
                   </motion.svg>
                 </motion.div>
               </div>
-              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
+                  className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '64%' }}
                   transition={{ duration: 1.5, delay: 1.8, ease: "easeOut" }}
                 >
                   <motion.div 
-                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    className="absolute right-0 top-0 h-full w-2 bg-white/50"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0, 1, 0] }}
                     transition={{ duration: 1.5, delay: 2.3, repeat: Infinity, repeatDelay: 1 }}
@@ -766,15 +766,15 @@ export default function ServicePage() {
                   </motion.svg>
                 </motion.div>
               </div>
-              <div className="h-3 bg-gray-100 w-full rounded-full overflow-hidden">
+              <div className="h-3 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full relative"
+                  className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full relative"
                   initial={{ width: 0 }}
                   animate={{ width: '89%' }}
                   transition={{ duration: 1.5, delay: 2.1, ease: "easeOut" }}
                 >
                   <motion.div 
-                    className="absolute right-0 top-0 h-full w-2 bg-white/30"
+                    className="absolute right-0 top-0 h-full w-2 bg-white/50"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0, 1, 0] }}
                     transition={{ duration: 1.5, delay: 2.6, repeat: Infinity, repeatDelay: 1 }}
@@ -808,9 +808,9 @@ export default function ServicePage() {
                     </svg>
                   </motion.span>
                 </div>
-                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <div className="h-2.5 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                   <motion.div 
-                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: '76%' }}
                     transition={{ duration: 1, delay: 0.5 }}
@@ -833,9 +833,9 @@ export default function ServicePage() {
                     </svg>
                   </motion.span>
                 </div>
-                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <div className="h-2.5 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                   <motion.div 
-                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: '64%' }}
                     transition={{ duration: 1, delay: 0.7 }}
@@ -858,9 +858,9 @@ export default function ServicePage() {
                     </svg>
                   </motion.span>
                 </div>
-                <div className="h-2.5 bg-gray-100 w-full rounded-full overflow-hidden">
+                <div className="h-2.5 bg-gray-200 w-full rounded-full overflow-hidden shadow-inner">
                   <motion.div 
-                    className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full"
+                    className="h-full bg-gradient-to-r from-red-500 to-primary rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: '89%' }}
                     transition={{ duration: 1, delay: 0.9 }}
