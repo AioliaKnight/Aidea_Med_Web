@@ -1,27 +1,18 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import sgMail from '@sendgrid/mail';
 import { ContactFormData, FormResponse } from '@/types/form';
 
-// 設置Nodemailer和SendGrid憑證
-// 如果有SendGrid API密鑰，則使用SendGrid發送
-// 否則使用標準SMTP（在生產環境中，應使用環境變數）
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
+// 設置Nodemailer憑證（使用環境變數）
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
-const SMTP_USER = process.env.SMTP_USER || 'your-email@gmail.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'your-password';
+const SMTP_USER = process.env.SMTP_USER || 'orzjzt@gmail.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'gekr yxcm qhia eilw';
 
 // 郵件收件人
 const TO_EMAIL = process.env.TO_EMAIL || 'leads@aideamed.com';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'no-reply@aideamed.com';
 
-// 初始化SendGrid（如果有API密鑰）
-if (SENDGRID_API_KEY) {
-  sgMail.setApiKey(SENDGRID_API_KEY);
-}
-
-// 初始化Nodemailer傳輸（備用選項）
+// 初始化Nodemailer傳輸
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
@@ -116,14 +107,8 @@ export async function POST(request: Request) {
       `,
     };
 
-    // 使用SendGrid或Nodemailer發送郵件
-    if (SENDGRID_API_KEY) {
-      // 使用SendGrid
-      await sgMail.send(mailOptions);
-    } else {
-      // 使用Nodemailer
-      await transporter.sendMail(mailOptions);
-    }
+    // 使用Nodemailer發送郵件
+    await transporter.sendMail(mailOptions);
 
     // 回傳成功響應
     const response: FormResponse = { 
