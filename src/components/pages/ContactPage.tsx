@@ -276,7 +276,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
-                      <p className="text-gray-600">+886 2 2345 6789</p>
+                      <p className="text-gray-600">+886 2 7728 0360</p>
                       <p className="text-gray-500 text-sm">週一至週五 9:00-18:00</p>
                     </div>
                   </motion.div>
@@ -294,7 +294,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-gray-900 mb-1">Email 聯繫</h4>
-                      <p className="text-gray-600">service@aidea.com.tw</p>
+                      <p className="text-gray-600">leads@aideamed.com</p>
                       <p className="text-gray-500 text-sm">我們將在 24 小時內回覆</p>
                     </div>
                   </motion.div>
@@ -313,8 +313,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
-                      <p className="text-gray-600">台北市信義區信義路五段7號</p>
-                      <p className="text-gray-500 text-sm">台北 101 大樓 60 樓</p>
+                      <p className="text-gray-600">台北市內湖區瑞光路513巷32號7樓</p>
+                      <p className="text-gray-500 text-sm">台北市 內湖科技園區</p>
                     </div>
                   </motion.div>
                   
