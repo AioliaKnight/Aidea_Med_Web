@@ -144,14 +144,20 @@ export default function RootLayout({
           </Suspense>
         </main>
 
-        {/* 全局回到頂部按鈕 */}
-        <BackToTopButton 
-          threshold={400}
-          position="bottom-5 right-8"
-          rounded={true}
-          size="w-10 h-10"
-          iconSize="h-8 w-8"
-        />
+        {/* 增強型使用者體驗功能控制 */}
+        <div id="ux-controls" className="print:hidden">
+          {/* 全局回到頂部按鈕 - 調整出現閾值，提升動畫效果 */}
+          <BackToTopButton 
+            threshold={600} /* 增加閾值，使按鈕不會過早出現 */
+            position="bottom-24 right-6" /* 調高位置與右側距離，避免視覺干擾 */
+            rounded={true}
+            size="w-11 h-11" /* 適中的按鈕大小 */
+            iconSize="h-5 w-5"
+          />
+
+          {/* 客服聊天功能 - 添加到固定UI控制區塊中 */}
+          <WebsiteChat />
+        </div>
 
         {/* Portal Root */}
         <div id="portal-root" />
@@ -186,9 +192,6 @@ export default function RootLayout({
         {/* 分析工具 */}
         <Analytics />
         <SpeedInsights />
-        
-        {/* 客服聊天功能 */}
-        <WebsiteChat />
       </body>
     </html>
   )
