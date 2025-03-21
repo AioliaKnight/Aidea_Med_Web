@@ -826,62 +826,165 @@ function ServiceSection() {
 
 // 更新數據統計區塊
 function StatsSection() {
+  // 擴展統計數據和類別
+  const stats = [
+    {
+      value: 300,
+      suffix: "+",
+      label: "合作醫療診所",
+      description: "遍布全台的合作診所網絡",
+      color: "primary"
+    },
+    {
+      value: 98,
+      suffix: "%",
+      label: "客戶續約率",
+      description: "高滿意度的專業服務品質",
+      color: "primary-light"
+    },
+    {
+      value: 180,
+      suffix: "%",
+      label: "平均預約成長",
+      description: "有效提升診所預約轉換率",
+      color: "accent"
+    },
+    {
+      value: 85,
+      suffix: "%",
+      label: "行銷投資回報率",
+      description: "精準行銷帶來顯著成效",
+      color: "primary-dark"
+    }
+  ];
+
   return (
-    <section className="relative py-24 bg-primary overflow-hidden">
+    <section className="relative py-16 md:py-24 bg-primary overflow-hidden">
       {/* 簡化的背景 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark z-0"></div>
-      
-      {/* 移除裝飾元素 */}
+      <div className="absolute inset-0 bg-primary z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-100"></div>
+        {/* 簡約裝飾元素 */}
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-white/5 rounded-bl-full transform -translate-y-1/4 translate-x-1/4"></div>
+        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-white/5 rounded-tr-full transform translate-y-1/4 -translate-x-1/4"></div>
+      </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-white font-medium mb-4 px-4 py-1.5 bg-white/10 rounded-full">成效數據</span>
+          <motion.span 
+            className="inline-block text-white font-medium mb-4 px-5 py-2 bg-white/10 rounded-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            成效數據
+          </motion.span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            實際<span className="relative inline-block mx-2">
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-block"
+            >
+              實際
+            </motion.span>
+            <motion.span className="relative inline-block mx-2">
               成效
               <motion.span 
                 initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="absolute -bottom-2 left-0 right-0 h-1 bg-white/30 rounded-full"
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="absolute -bottom-2 left-0 right-0 h-1.5 bg-white/30 rounded-full"
               ></motion.span>
-            </span>數據
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-block"
+            >
+              數據
+            </motion.span>
           </h2>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
+          <motion.p 
+            className="text-lg text-white/90 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             以數據說明我們的專業與實力，為您的診所帶來實質的成長
-          </p>
+          </motion.p>
         </motion.div>
 
         <motion.div 
-          className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
           variants={animations.staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {[
-            { value: 300, suffix: "+", label: "合作醫療診所" },
-            { value: 98, suffix: "%", label: "客戶續約率" },
-            { value: 180, suffix: "%", label: "平均預約成長" },
-            { value: 85, suffix: "%", label: "行銷投資回報率" }
-          ].map((stat) => (
+          {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
               variants={animations.slideUp}
+              custom={index}
               className="text-center"
             >
-              <div className="bg-white/10 p-6 rounded-lg hover:bg-white/15 transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-dark/20">
-                <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                  <CountUp end={stat.value} suffix={stat.suffix} duration={2.5} />
+              <motion.div 
+                className="bg-white/10 p-6 md:p-8 rounded-xl backdrop-blur-sm hover:bg-white/15 transition-all duration-300 h-full flex flex-col justify-center items-center"
+                whileHover={{ 
+                  y: -8, 
+                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                  backgroundColor: "rgba(255, 255, 255, 0.15)"
+                }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 15 
+                }}
+              >
+                <div className="relative mb-2">
+                  <motion.div 
+                    className="text-4xl sm:text-5xl xl:text-6xl font-bold text-white"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ 
+                      duration: 0.6, 
+                      delay: 0.2 + index * 0.1,
+                      ease: [0.34, 1.56, 0.64, 1]
+                    }}
+                  >
+                    <CountUp 
+                      end={stat.value} 
+                      suffix={stat.suffix} 
+                      duration={2.5} 
+                      delay={0.5}
+                      enableScrollSpy
+                      scrollSpyOnce
+                    />
+                  </motion.div>
+                  <motion.div 
+                    className="absolute -bottom-1 left-0 right-0 h-1 bg-white/20 rounded-full" 
+                    initial={{ width: "0%" }}
+                    whileInView={{ width: "100%" }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.5, delay: 0.8 + index * 0.1 }}
+                  ></motion.div>
                 </div>
-                <p className="text-lg text-white/90">{stat.label}</p>
-              </div>
+                <h3 className="text-xl font-semibold text-white mb-2">{stat.label}</h3>
+                <p className="text-white/70 text-sm">{stat.description}</p>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>
