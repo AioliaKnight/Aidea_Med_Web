@@ -60,8 +60,8 @@ const ANIMATION_VARIATIONS = {
     logoVariants: {
       initial: { y: 0, opacity: 0.8 },
       animate: { 
-        y: [-2, 2, -2],
-        opacity: [0.8, 1, 0.8],
+        y: [-2, 2, -2] as number[],
+        opacity: [0.8, 1, 0.8] as number[],
         transition: {
           duration: 1.5,
           repeat: Infinity,
@@ -74,8 +74,8 @@ const ANIMATION_VARIATIONS = {
     logoVariants: {
       initial: { scale: 0.95, opacity: 0.8 },
       animate: { 
-        scale: [0.95, 1.02, 0.95],
-        opacity: [0.8, 1, 0.8],
+        scale: [0.95, 1.02, 0.95] as number[],
+        opacity: [0.8, 1, 0.8] as number[],
         transition: {
           duration: 2,
           repeat: Infinity,
@@ -88,8 +88,8 @@ const ANIMATION_VARIATIONS = {
     logoVariants: {
       initial: { rotate: 0, opacity: 0.8 },
       animate: { 
-        rotate: [0, 5, 0, -5, 0],
-        opacity: [0.8, 1, 0.9, 1, 0.8],
+        rotate: [0, 5, 0, -5, 0] as number[],
+        opacity: [0.8, 1, 0.9, 1, 0.8] as number[],
         transition: {
           duration: 3,
           repeat: Infinity,

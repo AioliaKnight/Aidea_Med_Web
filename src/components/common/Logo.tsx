@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { memo } from 'react'
+import Link from 'next/link'
+import { memo, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 
 // Logo尺寸配置
@@ -11,7 +12,13 @@ const LOGO_SIZES = {
   md: { width: 48, height: 48 },
   lg: { width: 64, height: 64 },
   xl: { width: 96, height: 96 },
-  '2xl': { width: 128, height: 128 }
+  '2xl': { width: 128, height: 128 },
+  // 響應式尺寸 - 根據不同屏幕大小自動調整
+  'responsive': { 
+    width: 160, 
+    height: 53,
+    className: 'w-[120px] sm:w-[160px] lg:w-[200px] h-auto'
+  }
 } as const
 
 // Logo變體配置
@@ -62,6 +69,10 @@ export interface LogoProps {
    * 點擊事件處理函數
    */
   onClick?: () => void;
+  /**
+   * 連結目的地，若提供則渲染為Link組件
+   */
+  href?: string;
 }
 
 /**
@@ -74,6 +85,12 @@ export interface LogoProps {
  * 
  * // 自定義尺寸和變體
  * <Logo size="lg" variant="white" />
+ * 
+ * // 響應式尺寸 (在不同屏幕尺寸自動調整)
+ * <Logo size="responsive" />
+ * 
+ * // 作為連結使用
+ * <Logo href="/" size="md" />
  * 
  * // 優先加載 (用於頁面頂部)
  * <Logo priority />
@@ -89,23 +106,30 @@ function Logo({
   hover = false,
   width,
   height,
-  onClick
+  onClick,
+  href
 }: LogoProps) {
-  const logoSize = LOGO_SIZES[size];
-  const logoSrc = LOGO_VARIANTS[variant];
+  // 使用 useMemo 緩存計算結果
+  const logoSize = useMemo(() => LOGO_SIZES[size], [size]);
+  const logoSrc = useMemo(() => LOGO_VARIANTS[variant], [variant]);
   
   // 使用自定義尺寸或預設尺寸
   const logoWidth = width || logoSize.width;
   const logoHeight = height || logoSize.height;
   
-  return (
+  // 是否為響應式尺寸
+  const isResponsive = size === 'responsive';
+  
+  // Logo圖片組件
+  const logoImage = (
     <div 
       className={cn(
         "relative inline-block", 
         hover && "transition-transform duration-200 hover:scale-105",
+        isResponsive && logoSize.className,
         className
       )}
-      style={{ width: logoWidth, height: logoHeight }}
+      style={!isResponsive ? { width: logoWidth, height: logoHeight } : undefined}
       onClick={onClick}
     >
       <Image
@@ -113,14 +137,29 @@ function Logo({
         alt="AIDEA Logo"
         width={logoWidth}
         height={logoHeight}
-        className="object-contain"
+        className={cn("object-contain", isResponsive && "w-full h-auto")}
         priority={priority}
         quality={quality}
         placeholder={placeholder}
         draggable={false}
       />
     </div>
-  )
+  );
+  
+  // 如果提供了href，則渲染為Link組件
+  if (href) {
+    return (
+      <Link 
+        href={href} 
+        className={cn("focus:outline-none focus-visible:ring-2 focus-visible:ring-primary")}
+        aria-label="回到首頁"
+      >
+        {logoImage}
+      </Link>
+    );
+  }
+  
+  return logoImage;
 }
 
 export default memo(Logo) 
