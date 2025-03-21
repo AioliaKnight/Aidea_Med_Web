@@ -3,7 +3,46 @@
  * 用於集中管理網站基本信息、SEO和共享配置
  */
 
-export const siteConfig = {
+// 定義網站配置類型
+export interface SiteConfig {
+  name: string;
+  description: string;
+  url: string;
+  contact: {
+    email: string;
+    phone: string;
+    address: string;
+  };
+  social: {
+    facebook: string;
+    instagram: string;
+    line: string;
+  };
+  images: {
+    logo: string;
+    favicon: string;
+    ogImage: string;
+  };
+  seo: {
+    titleTemplate: string;
+    defaultTitle: string;
+    robotsProps: {
+      index: boolean;
+      follow: boolean;
+      googleBot: {
+        index: boolean;
+        follow: boolean;
+        'max-image-preview': string;
+        'max-snippet': number;
+      };
+    };
+  };
+  services: string[];
+  clientTypes: string[];
+}
+
+// 網站配置
+export const siteConfig: SiteConfig = {
   // 網站基本信息
   name: 'Aidea:Med 醫療行銷顧問',
   description: '讓專業的醫師專注於醫療品質，行銷交給我們。Aidea:Med運用創新科技與人性化服務，協助診所打造溫暖而專業的品牌形象。',
@@ -13,7 +52,7 @@ export const siteConfig = {
   contact: {
     email: 'contact@aideamed.com',
     phone: '(02) 2748-8919',
-    address: '台北市信義區松仁路100號',
+    address: '台北市大安區敦化南路二段99號13樓,
   },
   
   // 社交媒體

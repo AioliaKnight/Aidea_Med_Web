@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { Metadata } from 'next'
 import { animations } from '@/utils/animations'
 import { CaseCard } from '@/components/case/CaseCard'
-import PageHeader from '@/components/common/PageHeader'
+import { PageHeader } from '@/components/common'
 
 // 定義案例資料類型
 export interface CaseMetric {

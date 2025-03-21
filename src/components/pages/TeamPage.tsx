@@ -5,8 +5,7 @@ import { motion, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
-import { OptimizedImage, Spinner } from '@/components/common'
-import PageHeader from '@/components/common/PageHeader'
+import { OptimizedImage, Spinner, PageHeader } from '@/components/common'
 import {
   LightBulbIcon,
   ChartBarIcon,

@@ -1,8 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { PageHeader } from '@/components/common'
 import { motion } from 'framer-motion'
-import PageHeader from '@/components/common/PageHeader'
+import { animations } from '@/utils/animations'
+import ContactForm from '@/components/contact/ContactForm'
+import ContactInfo from '@/components/contact/ContactInfo'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
 import { ContactFormData, FormResponse } from '@/types/form'

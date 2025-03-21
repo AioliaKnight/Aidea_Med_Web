@@ -2,12 +2,24 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 /**
+ * ============================================
+ * UI 樣式相關工具函數
+ * ============================================
+ */
+
+/**
  * 合併Tailwind CSS類名，處理衝突的類名
  * 使用clsx和tailwind-merge處理多個類名組合
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ * ============================================
+ * 數據處理與格式化工具函數
+ * ============================================
+ */
 
 /**
  * 格式化日期為本地字符串
@@ -22,6 +34,45 @@ export function formatDate(date: Date | string, locale: string = 'zh-TW'): strin
     day: 'numeric'
   })
 }
+
+/**
+ * 將字符串首字母大寫
+ * @param str 輸入字符串
+ */
+export function capitalizeFirstLetter(str: string): string {
+  if (!str || typeof str !== 'string') return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+/**
+ * 安全地從對象中獲取深層屬性值
+ * @param obj 源對象
+ * @param path 屬性路徑，例如 'user.profile.name'
+ * @param defaultValue 如果路徑不存在時的默認值
+ */
+export function getNestedValue<T = any>(
+  obj: Record<string, any>,
+  path: string,
+  defaultValue: T | null = null
+): T | null {
+  const keys = path.split('.')
+  let result = obj
+  
+  for (const key of keys) {
+    if (result === undefined || result === null) {
+      return defaultValue
+    }
+    result = result[key]
+  }
+  
+  return (result === undefined ? defaultValue : result) as T
+}
+
+/**
+ * ============================================
+ * 性能優化相關工具函數
+ * ============================================
+ */
 
 /**
  * 防抖函數：限制函數在一段時間內只執行一次
@@ -67,46 +118,10 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 /**
- * 安全地從對象中獲取深層屬性值
- * @param obj 源對象
- * @param path 屬性路徑，例如 'user.profile.name'
- * @param defaultValue 如果路徑不存在時的默認值
+ * ============================================
+ * 數組操作相關工具函數
+ * ============================================
  */
-export function getNestedValue<T = any>(
-  obj: Record<string, any>,
-  path: string,
-  defaultValue: T | null = null
-): T | null {
-  const keys = path.split('.')
-  let result = obj
-  
-  for (const key of keys) {
-    if (result === undefined || result === null) {
-      return defaultValue
-    }
-    result = result[key]
-  }
-  
-  return (result === undefined ? defaultValue : result) as T
-}
-
-/**
- * 將字符串首字母大寫
- * @param str 輸入字符串
- */
-export function capitalizeFirstLetter(str: string): string {
-  if (!str || typeof str !== 'string') return ''
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-/**
- * 生成指定範圍內的隨機整數
- * @param min 最小值（包含）
- * @param max 最大值（包含）
- */
-export function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
 
 /**
  * 將數組分割成指定大小的塊
@@ -122,4 +137,13 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   }
   
   return chunks
+}
+
+/**
+ * 生成指定範圍內的隨機整數
+ * @param min 最小值（包含）
+ * @param max 最大值（包含）
+ */
+export function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
 } 

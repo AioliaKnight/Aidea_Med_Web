@@ -19,4 +19,13 @@ export { default as PageHeader } from './PageHeader';
 export { default as SubmitButton } from './SubmitButton';
 
 // 呼籲行動區塊
-export { default as CTASection } from './CTASection'; 
+export { default as CTASection } from './CTASection';
+
+/**
+ * 添加以下導出功能:
+ * 1. 可以直接使用index匯出的方式 @/components/common
+ * 2. 也保留直接引入特定路徑的兼容性 @/components/common/XXX
+ * 
+ * 建議使用方式:
+ * import { PageHeader, OptimizedImage, Spinner } from '@/components/common';
+ */ 

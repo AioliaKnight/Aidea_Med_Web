@@ -21,8 +21,7 @@ import {
   UserCog
 } from 'lucide-react'
 import Image from 'next/image'
-import Logo from '@/components/common/Logo'
-import CTASection from '@/components/common/CTASection'
+import { Logo, CTASection } from '@/components/common'
 
 // 服務特色數據 - 替換 emoji 為圖標組件
 const features = [

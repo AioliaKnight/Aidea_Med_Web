@@ -7,9 +7,12 @@ import {
 } from './metadata'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
-
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import Navbar from '@/components/layout/Navbar'
-import Loading from '@/components/common/Loading'
+import { siteConfig } from '@/config/site'
+import { cn } from '@/lib/utils'
+import { Loading } from '@/components/common'
 
 import '@/app/globals.css'
 import '@/app/fonts.css'
@@ -173,17 +176,9 @@ export default function RootLayout({
           }}
         />
 
-        {/* Analytics */}
-        <script
-          defer
-          src="/_vercel/insights/script.js"
-        ></script>
-        
-        {/* Speed Insights */}
-        <script
-          defer
-          src="/_vercel/speed-insights/script.js"
-        ></script>
+        {/* 分析工具 */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
