@@ -143,7 +143,7 @@ export default function ContactInfo({
           <h3 className="text-lg font-medium text-gray-900 mb-3">我們的位置</h3>
           <div className="aspect-video rounded-lg border border-gray-100 shadow-sm overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.0088590165146!2d121.54673731500854!3d25.033776983972203!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abd379a5ec97%3A0xedc006d25a9e35df!2zMTA25Y-w5YyX5biC5aSn5a6J5Y2A5pWm5YyW5Y2X6Lev5LqM5q61OTnomZ8!5e0!3m2!1szh-TW!2stw!4v1631234567890!5m2!1szh-TW!2stw"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.154726173558!2d121.54687947695335!3d25.02882267781986!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ab0005b56f13%3A0xc0d73bbc6001d29d!2z6ZuF5b635oCd6KGM6Yq36aGn5ZWP!5e0!3m2!1szh-TW!2stw!4v1742557801622!5m2!1szh-TW!2stw"
               width="100%"
               height="100%"
               style={{ border: 0 }}
