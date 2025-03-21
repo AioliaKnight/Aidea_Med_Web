@@ -57,9 +57,9 @@ export const siteConfig: SiteConfig = {
   
   // 社交媒體
   social: {
-    facebook: 'https://www.facebook.com/aideamed',
-    instagram: 'https://www.instagram.com/aidea_med',
-    line: 'https://line.me/ti/p/@aideamed'
+    facebook: 'https://www.facebook.com/www.aideamed',
+    instagram: 'https://www.instagram.com/aidea_med/',
+    line: 'https://lin.ee/ZPdkmHh'
   },
   
   // 圖片資源
