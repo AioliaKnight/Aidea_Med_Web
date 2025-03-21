@@ -185,9 +185,13 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
           loading={isLCP || props.priority ? 'eager' : 'lazy'}
           onLoad={handleLoad}
           onError={handleError}
-          {...props}
           width={props.width}
           height={props.height}
+          // 手動選擇img標籤支持的屬性，避免傳遞Next.js專有屬性
+          style={props.style}
+          decoding={props.decoding}
+          referrerPolicy={props.referrerPolicy}
+          sizes={undefined} // 標準img也有sizes，但我們不使用Next.js的sizes值
         />
       )}
       
