@@ -3,13 +3,14 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { ContactFormData, FormResponse } from '@/types/form'
 
-// 表單欄位類型
 interface FormData {
   name: string
   email: string
   phone: string
   company: string
+  title: string
   message: string
 }
 
@@ -19,7 +20,20 @@ const initialFormData: FormData = {
   email: '',
   phone: '',
   company: '',
+  title: '',
   message: ''
+}
+
+// 表單映射到ContactFormData
+const mapFormDataToContactFormData = (data: FormData): ContactFormData => {
+  return {
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    clinic: data.company,
+    position: data.title,
+    message: data.message
+  }
 }
 
 export default function ContactForm() {
@@ -31,13 +45,40 @@ export default function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
+    // 驗證表單
+    if (!formData.name || !formData.email || !formData.phone) {
+      toast.error('請填寫所有必填欄位')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
-      // 這裡添加表單提交邏輯
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('感謝您的訊息，我們會盡快回覆！')
-      setFormData(initialFormData)
+      // 映射為統一的表單數據結構
+      const contactFormData = mapFormDataToContactFormData(formData)
+
+      // 發送表單數據到API端點
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactFormData),
+      })
+
+      const data: FormResponse = await response.json()
+
+      if (response.ok) {
+        // 顯示成功訊息
+        toast.success(data.message || '感謝您的訊息，我們會盡快回覆！')
+        // 清空表單
+        setFormData(initialFormData)
+      } else {
+        // 顯示錯誤訊息
+        toast.error(data.message || '提交失敗，請稍後再試。')
+      }
     } catch (error) {
-      toast.error('發生錯誤，請稍後再試。')
+      console.error('表單提交錯誤：', error)
+      toast.error('提交失敗，請稍後再試。')
     } finally {
       setIsSubmitting(false)
     }

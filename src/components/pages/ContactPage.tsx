@@ -4,10 +4,12 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import PageHeader from '@/components/common/PageHeader'
 import Link from 'next/link'
+import { toast } from 'react-hot-toast'
+import { ContactFormData, FormResponse } from '@/types/form'
 
 export default function ContactPage() {
   const [formSubmitted, setFormSubmitted] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     title: '',
     phone: '',
@@ -22,10 +24,38 @@ export default function ContactPage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 這裡會處理表單提交邏輯，例如API呼叫
-    setFormSubmitted(true)
+    
+    // 驗證表單
+    if (!formData.name || !formData.email || !formData.phone) {
+      toast.error('請填寫所有必填欄位')
+      return
+    }
+    
+    try {
+      // 發送表單數據到API端點
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data: FormResponse = await response.json()
+
+      if (response.ok) {
+        // 顯示成功訊息並標記為已提交
+        setFormSubmitted(true)
+      } else {
+        // 顯示錯誤訊息
+        toast.error(data.message || '提交失敗，請稍後再試。')
+      }
+    } catch (error) {
+      console.error('表單提交錯誤：', error)
+      toast.error('提交失敗，請稍後再試。')
+    }
   }
 
   return (

@@ -127,7 +127,31 @@ export default function RootLayout({
         <div id="portal-root" />
 
         {/* Toast */}
-        <Toaster position="top-center" />
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 5000,
+            style: {
+              background: '#fff',
+              color: '#333',
+              boxShadow: '0px 3px 10px rgba(0,0,0,0.1)',
+              borderRadius: '6px',
+              padding: '16px',
+            },
+            success: {
+              style: {
+                border: '1px solid #e2f8f0',
+                borderLeft: '4px solid #10b981',
+              },
+            },
+            error: {
+              style: {
+                border: '1px solid #fee2e2',
+                borderLeft: '4px solid #ef4444',
+              },
+            },
+          }}
+        />
 
         {/* Analytics */}
         <script

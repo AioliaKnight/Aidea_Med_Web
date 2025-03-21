@@ -4,21 +4,13 @@ import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import { animations } from '@/utils/animations'
+import { ContactFormData, FormResponse, FormStatus } from '@/types/form'
+import SubmitButton from '@/components/common/SubmitButton'
 
 interface ContactFormProps {
   className?: string
   animation?: boolean
   showTitle?: boolean
-}
-
-interface FormData {
-  name: string
-  email: string
-  phone: string
-  clinic: string
-  position?: string
-  service: string
-  message: string
 }
 
 export default function ContactForm({
@@ -28,19 +20,16 @@ export default function ContactForm({
 }: ContactFormProps) {
   // 服務選項
   const services = [
-    '診所品牌形象建立',
-    '醫療SEO與搜尋排名優化',
-    '診所網站設計與開發',
-    '社群媒體行銷與內容管理',
-    '醫療服務廣告投放',
-    '病患轉介紹與預約系統',
-    '醫療專業內容製作',
-    '數據分析與診所績效追蹤',
-    '其他醫療行銷服務'
-  ]
+    { value: "", label: "請選擇服務項目" },
+    { value: "brand", label: "品牌故事打造" },
+    { value: "marketing", label: "整合行銷服務" },
+    { value: "digital", label: "數位轉型優化" },
+    { value: "content", label: "內容創作服務" },
+    { value: "other", label: "其他服務" }
+  ];
 
   // 表單初始狀態
-  const initialFormData: FormData = {
+  const initialFormData: ContactFormData = {
     name: '',
     email: '',
     phone: '',
@@ -50,8 +39,8 @@ export default function ContactForm({
     message: ''
   }
 
-  const [formData, setFormData] = useState<FormData>(initialFormData)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState<ContactFormData>(initialFormData)
+  const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE)
 
   // 如果使用動畫，則使用motion.div，否則使用普通div
   const AnimatedDiv = animation ? motion.div : 'div' as any
@@ -74,29 +63,48 @@ export default function ContactForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+    setFormStatus(FormStatus.SUBMITTING)
 
     // 驗證表單
     if (!formData.name || !formData.email || !formData.phone || !formData.service) {
       toast.error('請填寫所有必填欄位')
-      setIsSubmitting(false)
+      setFormStatus(FormStatus.ERROR)
       return
     }
 
-    // 模擬API請求
     try {
-      // 在實際應用中，這裡會是一個API請求
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // 發送表單數據到API端點
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
 
-      // 清空表單
-      setFormData(initialFormData)
-      
-      // 顯示成功訊息
-      toast.success('感謝您的訊息！我們的醫療行銷顧問將於一個工作日內與您聯繫。')
-      setIsSubmitting(false)
+      const data: FormResponse = await response.json()
+
+      if (response.ok) {
+        // 清空表單
+        setFormData(initialFormData)
+        
+        // 顯示成功訊息
+        toast.success(data.message || '感謝您的訊息！我們的醫療行銷顧問將於一個工作日內與您聯繫。')
+        setFormStatus(FormStatus.SUCCESS)
+        
+        // 3秒後重置狀態
+        setTimeout(() => {
+          setFormStatus(FormStatus.IDLE)
+        }, 3000)
+      } else {
+        // 顯示錯誤訊息
+        toast.error(data.message || '提交失敗，請稍後再試。')
+        setFormStatus(FormStatus.ERROR)
+      }
     } catch (error) {
+      console.error('表單提交錯誤：', error)
       toast.error('提交失敗，請稍後再試。')
-      setIsSubmitting(false)
+      setFormStatus(FormStatus.ERROR)
     }
   }
 
@@ -204,10 +212,9 @@ export default function ContactForm({
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               required
             >
-              <option value="">請選擇服務項目</option>
               {services.map((service) => (
-                <option key={service} value={service}>
-                  {service}
+                <option key={service.value} value={service.value}>
+                  {service.label}
                 </option>
               ))}
             </select>
@@ -230,15 +237,14 @@ export default function ContactForm({
         </div>
 
         <div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3 px-6 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg shadow-sm transition-colors ${
-              isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
-          >
-            {isSubmitting ? '提交中...' : '預約免費諮詢'}
-          </button>
+          <SubmitButton
+            status={formStatus}
+            idleText="預約免費諮詢"
+            submittingText="提交中..."
+            successText="提交成功！"
+            errorText="提交失敗，請重試"
+            className="rounded-lg shadow-sm"
+          />
           <p className="text-xs text-gray-500 mt-3 text-center">
             提交表單即表示您同意我們的隱私政策。您的資料將受到保護，僅用於行銷諮詢服務。
           </p>

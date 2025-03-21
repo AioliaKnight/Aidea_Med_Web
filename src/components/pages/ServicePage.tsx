@@ -7,6 +7,9 @@ import Image from 'next/image'
 import PageHeader from '@/components/common/PageHeader'
 import { Heading } from '@/components/ui'
 import CTASection from '@/components/common/CTASection'
+import { useState } from 'react'
+import { toast } from 'react-hot-toast'
+import { ContactFormData, FormResponse } from '@/types/form'
 
 // 從配置文件導入
 import { animations } from '@/utils/animations'
@@ -465,6 +468,74 @@ function renderListItem(text: string, _idx: number) {
 }
 
 export default function ServicePage() {
+  // 表單狀態管理
+  const [formData, setFormData] = useState<ContactFormData>({
+    name: '',
+    title: '',
+    phone: '',
+    email: '',
+    clinic: '',
+    service: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // 處理輸入變化
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  // 處理表單提交
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // 驗證表單
+    if (!formData.name || !formData.email || !formData.phone) {
+      toast.error('請填寫所有必填欄位')
+      setIsSubmitting(false)
+      return
+    }
+
+    try {
+      // 發送表單數據到API端點
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data: FormResponse = await response.json()
+
+      if (response.ok) {
+        // 清空表單
+        setFormData({
+          name: '',
+          title: '',
+          phone: '',
+          email: '',
+          clinic: '',
+          service: '',
+          message: ''
+        })
+        
+        // 顯示成功訊息
+        toast.success(data.message || '感謝您的訊息！我們的醫療行銷顧問將於一個工作日內與您聯繫。')
+      } else {
+        // 顯示錯誤訊息
+        toast.error(data.message || '提交失敗，請稍後再試。')
+      }
+    } catch (error) {
+      console.error('表單提交錯誤：', error)
+      toast.error('提交失敗，請稍後再試。')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section - 平面化扁平現代簡約設計 */}
@@ -785,6 +856,144 @@ export default function ServicePage() {
               立即預約免費診所競爭力評估
             </Link>
           </motion.div>
+          
+          {/* 數位醫療搜尋行為統計 */}
+          <motion.div 
+            className="mt-16 bg-gray-50 p-8 relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            {/* 背景紋理 */}
+            <div className="absolute inset-0 opacity-10">
+              <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="#e62733" strokeWidth="0.5" fill="none" />
+              </svg>
+            </div>
+            
+            <div className="relative z-10 max-w-4xl mx-auto">
+              <Heading 
+                level="h2" 
+                size="lg" 
+                className="mb-8 text-center"
+                animate
+                noWrap={false}
+              >
+                沒被看見的診所等同<span className="text-primary">不存在</span><br/>
+                你的專業還能被患者找到嗎？
+              </Heading>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div className="flex flex-col items-center">
+                  <p className="text-xl mb-6 font-semibold">in Taiwan</p>
+                  <div className="relative">
+                    <div className="bg-black text-white p-4 md:p-6 mb-4">
+                      <span className="text-5xl md:text-6xl font-bold">94.9%</span>
+                      <span className="text-lg ml-2">的台灣人</span>
+                    </div>
+                    <div className="border-2 border-black p-4 md:p-6 text-center">
+                      <p className="text-xl font-medium mb-2">每天平均花</p>
+                      <p className="text-4xl md:text-5xl font-bold text-primary mb-2">7小時13分</p>
+                      <p className="text-xl font-medium">在網路世界</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="bg-black text-white p-4 md:p-6 mb-4">
+                    <span className="text-5xl md:text-6xl font-bold">53.8%</span>
+                    <span className="text-lg ml-2">的台灣人</span>
+                  </div>
+                  
+                  <div className="text-center mb-6">
+                    <p className="text-xl">尋找醫療服務前會</p>
+                    <p className="text-2xl font-bold text-primary">網路研究診所評價</p>
+                    <p className="text-xl">前三管道為：</p>
+                  </div>
+                  
+                  {/* 優化視覺化比例展示 */}
+                  <div className="w-full">
+                    <div className="flex flex-col space-y-6">
+                      {/* 搜尋引擎 - 數值最高，顯示最突出 */}
+                      <motion.div 
+                        className="relative"
+                        initial={{ width: 0, opacity: 0 }}
+                        whileInView={{ width: "100%", opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                      >
+                        <div className="bg-primary text-white p-4 flex justify-between items-center">
+                          <div>
+                            <p className="text-lg font-medium">搜尋引擎</p>
+                          </div>
+                          <p className="text-3xl font-bold">62.3%</p>
+                        </div>
+                        <div className="absolute left-0 top-0 h-full bg-white opacity-20 w-full" style={{ width: "62.3%" }}></div>
+                      </motion.div>
+
+                      {/* 社群網路 - 數值中等 */}
+                      <motion.div 
+                        className="relative"
+                        initial={{ width: 0, opacity: 0 }}
+                        whileInView={{ width: "65%", opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                      >
+                        <div className="bg-primary text-white p-4 flex justify-between items-center">
+                          <div>
+                            <p className="text-lg font-medium">社群網路</p>
+                          </div>
+                          <p className="text-3xl font-bold">40.6%</p>
+                        </div>
+                        <div className="absolute left-0 top-0 h-full bg-white opacity-20 w-full" style={{ width: "40.6%" }}></div>
+                      </motion.div>
+
+                      {/* 醫療平台評論 - 數值最低 */}
+                      <motion.div 
+                        className="relative"
+                        initial={{ width: 0, opacity: 0 }}
+                        whileInView={{ width: "63%", opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.6 }}
+                      >
+                        <div className="bg-primary text-white p-4 flex justify-between items-center">
+                          <div>
+                            <p className="text-lg font-medium">醫療平台評論</p>
+                          </div>
+                          <p className="text-3xl font-bold">39.1%</p>
+                        </div>
+                        <div className="absolute left-0 top-0 h-full bg-white opacity-20 w-full" style={{ width: "39.1%" }}></div>
+                      </motion.div>
+
+                      {/* 視覺比例尺示意 */}
+                      <div className="flex justify-between items-center px-2 text-xs text-gray-500 mt-2">
+                        <span>0%</span>
+                        <span>20%</span>
+                        <span>40%</span>
+                        <span>60%</span>
+                        <span>80%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center text-sm font-medium">
+                <p>資料來源：2024台灣數位報告 / 醫療消費行為分析</p>
+                <p className="mt-4 max-w-3xl mx-auto">
+                  2024年台灣醫療相關數位廣告花費成長9.7%，醫療關鍵字搜尋量年增18.4%，顯示各大診所對數位行銷的重視程度與日俱增，網路已成為患者尋找醫療服務的首要管道。
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -915,6 +1124,544 @@ export default function ServicePage() {
 
       {/* Service Feature Section */}
       <ServiceFeature />
+      
+      {/* 數位醫療廣告策略區塊 */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* 背景紋理 */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 C50,0 50,100 100,100 M0,100 C50,100 50,0 100,0" stroke="#e62733" strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            {/* 頂部標題區塊 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="text-center mb-16"
+            >
+              <div className="inline-block text-primary text-4xl md:text-5xl font-bold mb-4">
+                Aidea<span className="text-black">:Med</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-black">
+                為醫療產業打造獨家廣告
+              </h2>
+              
+              {/* 下箭頭 */}
+              <motion.div
+                className="flex justify-center my-10"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <svg className="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
+              
+              <h3 className="text-2xl md:text-3xl font-bold text-black mb-2">
+                深度洞察的投放策略
+              </h3>
+              <h3 className="text-2xl md:text-3xl font-bold text-black mb-16">
+                助你搶先拿下網路市場
+              </h3>
+            </motion.div>
+            
+            {/* 三大特點 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="border-l-4 border-primary pl-6 md:pl-8"
+              >
+                <h4 className="text-xl md:text-2xl font-bold text-primary mb-2">
+                  數位行銷
+                </h4>
+                <p className="text-4xl md:text-5xl font-black text-black mb-4">15年經驗</p>
+                <p className="text-gray-600">深耕業界<br/>全盤視角分析</p>
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="border-l-4 border-primary pl-6 md:pl-8"
+              >
+                <h4 className="text-xl md:text-2xl font-bold text-primary mb-2">
+                  單年投放費
+                </h4>
+                <p className="text-4xl md:text-5xl font-black text-black mb-4">達1億</p>
+                <p className="text-gray-600">可靠的硬實力<br/>用數字說話</p>
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="border-l-4 border-primary pl-6 md:pl-8"
+              >
+                <h4 className="text-xl md:text-2xl font-bold text-primary mb-2">
+                  專業團隊
+                </h4>
+                <p className="text-4xl md:text-5xl font-black text-black mb-4">整合分工</p>
+                <p className="text-gray-600">企劃部・數據部・客服部<br/>一條龍服務</p>
+              </motion.div>
+            </div>
+            
+            {/* 流程標題 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="text-center mb-16"
+            >
+              <h3 className="text-3xl md:text-4xl font-bold text-black mb-4">
+                完整的線上開發 <span className="inline-flex items-center text-primary">
+                  <svg className="w-8 h-8 mx-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span> 線下轉單流程
+              </h3>
+            </motion.div>
+            
+            {/* 四步流程 */}
+            <div className="relative">
+              {/* 背景漸變連接線 */}
+              <div className="absolute left-16 md:left-24 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/20 via-primary to-primary/20 z-0"></div>
+              
+              <div className="relative z-10">
+                {/* 步驟 1 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.1 }}
+                  className="flex mb-16"
+                >
+                  <div className="w-32 md:w-48 flex-shrink-0">
+                    <div className="bg-primary text-white text-5xl md:text-6xl font-black flex items-center justify-center h-24 w-24 md:h-32 md:w-32">
+                      01
+                    </div>
+                  </div>
+                  <div className="bg-primary text-white p-6 md:p-8 flex-grow">
+                    <h4 className="text-2xl md:text-3xl font-bold mb-4">網路曝光</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>全方位的網路佈局</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>讓你的診所在各個管道都能被看見</span>
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
+                
+                {/* 步驟 2 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.3 }}
+                  className="flex mb-16 justify-end"
+                >
+                  <div className="bg-primary text-white p-6 md:p-8 flex-grow text-right">
+                    <h4 className="text-2xl md:text-3xl font-bold mb-4">主動聯繫</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start justify-end">
+                        <span>需求患者透過LINE@</span>
+                        <span className="ml-2">•</span>
+                      </li>
+                      <li className="flex items-start justify-end">
+                        <span>主動發訊聯繫</span>
+                        <span className="ml-2">•</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="w-32 md:w-48 flex-shrink-0 flex justify-end">
+                    <div className="bg-primary text-white text-5xl md:text-6xl font-black flex items-center justify-center h-24 w-24 md:h-32 md:w-32">
+                      02
+                    </div>
+                  </div>
+                </motion.div>
+                
+                {/* 步驟 3 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.5 }}
+                  className="flex mb-16"
+                >
+                  <div className="w-32 md:w-48 flex-shrink-0">
+                    <div className="bg-primary text-white text-5xl md:text-6xl font-black flex items-center justify-center h-24 w-24 md:h-32 md:w-32">
+                      03
+                    </div>
+                  </div>
+                  <div className="bg-primary text-white p-6 md:p-8 flex-grow">
+                    <h4 className="text-2xl md:text-3xl font-bold mb-4">持續深化</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>潛在患者加入LINE@</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>內容行銷持續互動</span>
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
+                
+                {/* 步驟 4 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.7 }}
+                  className="flex justify-end"
+                >
+                  <div className="bg-primary text-white p-6 md:p-8 flex-grow text-right">
+                    <h4 className="text-2xl md:text-3xl font-bold mb-4">客服約診</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start justify-end">
+                        <span>由專業的客服業務承接對話</span>
+                        <span className="ml-2">•</span>
+                      </li>
+                      <li className="flex items-start justify-end">
+                        <span>推動患者完成約診</span>
+                        <span className="ml-2">•</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="w-32 md:w-48 flex-shrink-0 flex justify-end">
+                    <div className="bg-primary text-white text-5xl md:text-6xl font-black flex items-center justify-center h-24 w-24 md:h-32 md:w-32">
+                      04
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 快速預約CTA和表單 */}
+      <section className="py-24 bg-gray-50 relative overflow-hidden">
+        {/* 背景紋理 */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="#e62733" strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <Heading 
+              level="h2" 
+              size="lg" 
+              variant="black" 
+              className="mb-4"
+              animate
+              noWrap={false}
+            >
+              立即開始醫療行銷轉型
+            </Heading>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              填寫諮詢表單，我們的專業顧問將於24小時內與您聯繫，<br/>
+              為您的診所量身打造最適合的數位行銷策略
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-12">
+            {/* Left Side - Form */}
+            <div className="lg:col-span-3">
+              <motion.div 
+                className="bg-white border border-gray-100 p-8 md:p-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="text-2xl md:text-3xl font-bold mb-6 heading-underline">預約專業諮詢</h2>
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="animate-slide-up">
+                      <label 
+                        htmlFor="name" 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        姓名 <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                        placeholder="您的姓名"
+                      />
+                    </div>
+                    <div className="animate-slide-up delay-100">
+                      <label 
+                        htmlFor="title" 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        職稱
+                      </label>
+                      <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                        placeholder="您的職稱"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="animate-slide-up delay-200">
+                      <label 
+                        htmlFor="phone" 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        電話 <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                        placeholder="聯絡電話"
+                      />
+                    </div>
+                    <div className="animate-slide-up delay-300">
+                      <label 
+                        htmlFor="email" 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                        placeholder="電子郵件"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6 animate-slide-up delay-300">
+                    <label 
+                      htmlFor="clinic" 
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      診所名稱 <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="clinic"
+                      name="clinic"
+                      value={formData.clinic}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                      placeholder="您的診所名稱"
+                    />
+                  </div>
+                  
+                  <div className="mb-6 animate-slide-up delay-300">
+                    <label 
+                      htmlFor="service" 
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      需求服務
+                    </label>
+                    <select
+                      id="service"
+                      name="service"
+                      value={formData.service}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                    >
+                      <option value="">請選擇服務項目</option>
+                      <option value="brand">品牌故事打造</option>
+                      <option value="marketing">整合行銷服務</option>
+                      <option value="digital">數位轉型優化</option>
+                      <option value="content">內容創作服務</option>
+                      <option value="other">其他服務</option>
+                    </select>
+                  </div>
+                  
+                  <div className="mb-6 animate-slide-up delay-400">
+                    <label 
+                      htmlFor="message" 
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      諮詢內容
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      value={formData.message}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                      placeholder="請簡述您的需求或問題"
+                    ></textarea>
+                  </div>
+                  
+                  <div className="animate-slide-up delay-500">
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`w-full bg-primary text-white py-3 font-semibold hover:bg-primary/90 transition-colors ${
+                        isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {isSubmitting ? '提交中...' : '送出諮詢表單'}
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+            
+            {/* Right Side - Contact Information */}
+            <div className="lg:col-span-2">
+              <motion.div 
+                className="bg-white border border-gray-100 p-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <h2 className="text-2xl font-bold mb-6 heading-underline">聯絡資訊</h2>
+                
+                <div className="space-y-6">
+                  <motion.div 
+                    className="flex items-start" 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    <div className="w-10 h-10 bg-primary/10 flex items-center justify-center flex-shrink-0 mr-4">
+                      <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">電話諮詢</h4>
+                      <p className="text-gray-600">+886 2 2345 6789</p>
+                      <p className="text-gray-500 text-sm">週一至週五 9:00-18:00</p>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="flex items-start"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
+                    <div className="w-10 h-10 bg-primary/10 flex items-center justify-center flex-shrink-0 mr-4">
+                      <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">Email 聯繫</h4>
+                      <p className="text-gray-600">service@aidea.com.tw</p>
+                      <p className="text-gray-500 text-sm">我們將在 24 小時內回覆</p>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="flex items-start"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
+                    <div className="w-10 h-10 bg-primary/10 flex items-center justify-center flex-shrink-0 mr-4">
+                      <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-1">公司地址</h4>
+                      <p className="text-gray-600">台北市信義區信義路五段7號</p>
+                      <p className="text-gray-500 text-sm">台北 101 大樓 60 樓</p>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="bg-black text-white p-6 mt-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                  >
+                    <h4 className="text-lg font-bold mb-3">為什麼現在就該行動？</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>醫療競爭日益激烈，先搶佔數位管道者先贏</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>62.3%的患者透過搜尋引擎尋找醫療服務</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>專業團隊協助，省時省力創造最大效益</span>
+                      </li>
+                    </ul>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* CTA Section */}
+      <CTASection
+        title="讓我們一同打造您的診所品牌"
+        description="專業醫療行銷團隊，為您量身打造數位成長方案，建立品牌差異化，搶佔醫療市場先機"
+        sectionId="service-cta"
+        primaryButton={{
+          href: "/contact",
+          text: "立即預約諮詢",
+          variant: "primary"
+        }}
+        secondaryButton={{
+          href: "/case",
+          text: "查看成功案例",
+          variant: "secondary"
+        }}
+      />
     </div>
   )
 } 
