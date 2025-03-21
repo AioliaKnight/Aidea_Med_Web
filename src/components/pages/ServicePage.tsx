@@ -257,7 +257,17 @@ interface ProcessStepProps {
 const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps) {
   return (
     <motion.div
-      variants={animations.fadeIn}
+      variants={{
+        initial: { opacity: 0, y: 20 },
+        animate: { 
+          opacity: 1, 
+          y: 0,
+          transition: { 
+            duration: 0.5,
+            delay: index * 0.1 
+          }
+        }
+      }}
       initial="initial"
       whileInView="animate"
       viewport={{ once: true }}
@@ -265,21 +275,42 @@ const ProcessStep = memo(function ProcessStep({ step, index }: ProcessStepProps)
       role="listitem"
       aria-label={`步驟 ${step.step}: ${step.title}`}
     >
-      <div className="flex flex-col items-center text-center">
-        <div 
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary text-white flex items-center justify-center text-xl md:text-2xl font-bold mb-3 md:mb-4"
+      <div className="bg-white flex h-full border-l-4 border-primary pl-4 py-4 hover:bg-gray-50 transition-colors">
+        <motion.div 
+          className="w-8 h-8 bg-primary text-white flex items-center justify-center text-sm font-bold flex-shrink-0"
+          whileHover={{ scale: 1.05 }}
           role="presentation"
         >
           {step.step}
+        </motion.div>
+        <div className="ml-3">
+          <h3 className="text-base font-bold mb-1 text-standard">
+            {step.title}
+          </h3>
+          <p className="text-xs text-description">{step.description}</p>
         </div>
-        <h3 className="text-xs xs:text-sm sm:text-base md:text-lg font-bold mb-2 text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis">
-          {step.title}
-        </h3>
-        <p className="text-sm md:text-base text-gray-600">{step.description}</p>
+        
+        {/* 手機版流程指示器 */}
+        <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-primary rounded-full sm:hidden"></div>
       </div>
+      
+      {/* 連接線 - 手機版 */}
       {index < serviceProcess.length - 1 && (
-        <div 
-          className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gray-200 -z-10"
+        <motion.div
+          className="absolute top-full left-0 h-3 w-0.5 bg-primary sm:hidden"
+          initial={{ height: 0 }}
+          whileInView={{ height: "100%" }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          role="presentation"
+          aria-hidden="true"
+        />
+      )}
+      
+      {/* 連接線 - 桌面版 */}
+      {index < serviceProcess.length - 1 && (
+        <div
+          className="absolute bottom-0 left-5 h-4 w-0.5 bg-gray-200 z-0 hidden sm:block"
           role="presentation"
           aria-hidden="true"
         />
@@ -302,17 +333,17 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       initial="initial"
       whileInView="animate"
       viewport={{ once: true }}
-      className={`relative p-6 md:p-8 rounded-none ${
+      className={`relative p-5 sm:p-6 border ${
         plan.isPopular 
-          ? 'bg-primary text-white transform scale-100 shadow-none' 
-          : 'bg-white text-gray-900'
+          ? 'bg-primary text-white border-primary' 
+          : 'bg-white text-gray-900 border-gray-200'
       }`}
       role="article"
       aria-labelledby={`plan-title-${index}`}
     >
       {plan.isPopular && (
         <div 
-          className="absolute -top-4 right-4 bg-accent text-white px-4 py-1 text-sm font-medium rounded-none"
+          className="absolute -top-3 right-5 bg-black text-white px-3 py-1 text-xs font-medium"
           role="note"
           aria-label="熱門方案"
         >
@@ -321,23 +352,23 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
       )}
       <h3 
         id={`plan-title-${index}`}
-        className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold mb-3 md:mb-4 whitespace-nowrap overflow-hidden text-ellipsis"
+        className="text-lg sm:text-xl font-bold mb-3"
       >
         {plan.title}
       </h3>
-      <div className="mb-4 md:mb-6">
-        <span className="text-2xl md:text-3xl font-bold">{plan.price}</span>
-        <span className="text-base md:text-lg">{plan.period}</span>
+      <div className="mb-4">
+        <span className="text-2xl sm:text-3xl font-bold">{plan.price}</span>
+        <span className="text-base">{plan.period}</span>
       </div>
-      <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8" role="list">
+      <ul className="space-y-2 mb-6" role="list">
         {plan.features.map((feature, idx) => (
           <li 
             key={idx}
-            className="flex items-center text-sm md:text-base"
+            className="flex items-start text-sm"
             role="listitem"
           >
             <svg
-              className="w-4 h-4 md:w-5 md:h-5 mr-2 flex-shrink-0"
+              className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -350,21 +381,21 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            {feature}
+            <span>{feature}</span>
           </li>
         ))}
       </ul>
-      <Link
-        href="/contact"
-        className={`block w-full py-2 md:py-3 px-4 md:px-6 text-center font-medium transition-all duration-300 rounded-lg text-sm md:text-base ${
-          plan.isPopular
-            ? 'bg-white text-primary hover:bg-gray-100'
-            : 'bg-primary text-white hover:bg-primary-dark'
+      <button
+        type="button"
+        className={`w-full py-2 px-4 text-sm font-medium ${
+          plan.isPopular 
+            ? 'bg-white text-primary hover:bg-gray-50' 
+            : 'bg-black text-white hover:bg-gray-900'
         }`}
-        aria-label={`選擇 ${plan.title} 方案`}
+        aria-label={`選擇${plan.title}方案`}
       >
         {plan.btnText}
-      </Link>
+      </button>
     </motion.div>
   )
 })
@@ -842,21 +873,21 @@ export default function ServicePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {/* 診所數量統計卡片 */}
             <motion.div 
-              className="bg-white p-6 border border-gray-200 shadow-sm"
+              className="bg-white p-5 border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">台灣牙醫診所數量</h3>
-              <div className="flex flex-col space-y-4">
+              <h3 className="text-base font-bold mb-4 text-primary border-b pb-2">台灣牙醫診所數量</h3>
+              <div className="flex flex-col space-y-3">
                 <div className="flex justify-between items-center">
-                  <div className="bg-black text-white py-2 px-3 text-sm">2021年</div>
-                  <div className="text-3xl font-bold">6,922<span className="text-lg ml-1">間</span></div>
+                  <div className="bg-black text-white py-1 px-3 text-sm">2021年</div>
+                  <div className="text-2xl font-bold">6,922<span className="text-base ml-1">間</span></div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <div className="bg-black text-white py-2 px-3 text-sm">2022年</div>
-                  <div className="text-3xl font-bold">6,969<span className="text-lg ml-1">間</span></div>
+                  <div className="bg-black text-white py-1 px-3 text-sm">2022年</div>
+                  <div className="text-2xl font-bold">6,969<span className="text-base ml-1">間</span></div>
                 </div>
                 <div className="flex justify-between items-center bg-gray-50 p-2">
                   <div className="font-medium text-sm">年度增長率</div>
@@ -867,21 +898,21 @@ export default function ServicePage() {
 
             {/* 牙醫師數量統計卡片 */}
             <motion.div 
-              className="bg-white p-6 border border-gray-200 shadow-sm"
+              className="bg-white p-5 border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-bold mb-5 text-primary border-b pb-2 whitespace-nowrap overflow-hidden text-ellipsis">台灣牙醫師人數</h3>
-              <div className="flex flex-col space-y-4">
+              <h3 className="text-base font-bold mb-4 text-primary border-b pb-2">台灣牙醫師人數</h3>
+              <div className="flex flex-col space-y-3">
                 <div className="flex justify-between items-center">
-                  <div className="bg-black text-white py-2 px-3 text-sm">2020年</div>
-                  <div className="text-3xl font-bold">15,429<span className="text-lg ml-1">位</span></div>
+                  <div className="bg-black text-white py-1 px-3 text-sm">2020年</div>
+                  <div className="text-2xl font-bold">15,429<span className="text-base ml-1">位</span></div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <div className="bg-black text-white py-2 px-3 text-sm">2022年</div>
-                  <div className="text-3xl font-bold">16,668<span className="text-lg ml-1">位</span></div>
+                  <div className="bg-black text-white py-1 px-3 text-sm">2022年</div>
+                  <div className="text-2xl font-bold">16,668<span className="text-base ml-1">位</span></div>
                 </div>
                 <div className="flex justify-between items-center bg-gray-50 p-2">
                   <div className="font-medium text-sm">年度增長率</div>
@@ -892,7 +923,7 @@ export default function ServicePage() {
 
             {/* 牙醫師分布統計卡片 */}
             <motion.div 
-              className="bg-white p-6 border border-gray-200 shadow-sm"
+              className="bg-white p-5 border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -1159,33 +1190,88 @@ export default function ServicePage() {
 
       {/* 服務流程 */}
       <section 
-        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gray-50"
+        className="py-10 sm:py-12 bg-gray-50"
         role="region"
         aria-labelledby="service-process-title"
       >
-        <div className="container-custom">
+        <div className="container-custom max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12 sm:mb-16"
+            className="text-center mb-6"
           >
-            <h2 
-              id="service-process-title"
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-4 sm:mb-6 font-display text-brand-textDark whitespace-nowrap overflow-hidden text-ellipsis"
-            >
-              專業服務流程
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4 sm:px-6 text-brand-textLight">
+            <div className="flex items-center justify-center mb-2">
+              <motion.div 
+                className="h-0.5 w-6 bg-primary"
+                initial={{ width: 0 }}
+                whileInView={{ width: 24 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+              ></motion.div>
+              <h2 
+                id="service-process-title"
+                className="text-lg sm:text-xl font-bold mx-3 text-standard"
+              >
+                專業服務流程
+              </h2>
+              <motion.div 
+                className="h-0.5 w-6 bg-primary"
+                initial={{ width: 0 }}
+                whileInView={{ width: 24 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              ></motion.div>
+            </div>
+            <p className="text-sm max-w-lg mx-auto px-4 text-description">
               系統化的服務流程，確保每個環節都能達到最佳效果
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6">
-            {serviceProcess.map((step, index) => (
-              <ProcessStep key={step.step} step={step} index={index} />
-            ))}
+          <div className="px-4 sm:px-8 relative">
+            <motion.div 
+              className="absolute top-0 bottom-0 left-5 sm:left-9 w-0.5 bg-gray-200 hidden sm:block" 
+              initial={{ height: 0 }}
+              whileInView={{ height: '100%' }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            />
+            <div className="space-y-3 sm:space-y-4">
+              {serviceProcess.map((step, index) => (
+                <ProcessStep key={step.step} step={step} index={index} />
+              ))}
+            </div>
+          </div>
+          
+          <motion.div
+            className="flex justify-center mt-8"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+          >
+            <Link 
+              href="/contact" 
+              className="btn-flat btn-flat-primary flex items-center group"
+            >
+              <span className="text-white">立即諮詢</span>
+              <svg className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          </motion.div>
+          
+          <div className="mt-6 text-center">
+            <motion.p 
+              className="text-xs text-caption italic"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 0.8 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.8 }}
+            >
+              每個流程由專業團隊全程參與，確保最佳效果
+            </motion.p>
           </div>
         </div>
       </section>
