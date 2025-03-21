@@ -25,6 +25,7 @@ export const getDefaultDirectives = () => {
       'https://*.google.com',
       'https://*.googleapis.com',
       'https://*.gstatic.com',
+      'https://cdn.respond.io',
     ],
     
     // 允許載入的樣式
@@ -33,6 +34,7 @@ export const getDefaultDirectives = () => {
       "'unsafe-inline'",
       'https://fonts.googleapis.com',
       'https://*.googleapis.com',
+      'https://cdn.respond.io',
     ],
     
     // 允許連接的來源
@@ -44,6 +46,8 @@ export const getDefaultDirectives = () => {
       'https://*.google-analytics.com',
       'https://vercel.com',
       'https://vercel.live',
+      'https://*.respond.io',
+      'wss://*.respond.io',
       ...(isDev ? ['http://localhost:*'] : []),
     ],
     
@@ -57,6 +61,7 @@ export const getDefaultDirectives = () => {
       'https://*.google.com',
       'https://*.googleapis.com',
       'https://*.gstatic.com',
+      'https://*.respond.io',
     ],
     
     // 允許載入字體的來源
@@ -64,10 +69,14 @@ export const getDefaultDirectives = () => {
       "'self'",
       'https://fonts.gstatic.com',
       'https://*.gstatic.com',
+      'https://cdn.respond.io',
     ],
     
     // 允許載入音頻的來源
-    'media-src': ["'self'"],
+    'media-src': [
+      "'self'",
+      'https://*.respond.io',
+    ],
     
     // 允許載入物件的來源（例如PDF）
     'object-src': ["'none'"],
@@ -79,6 +88,7 @@ export const getDefaultDirectives = () => {
       'https://vercel.live',
       'https://*.google.com',
       'https://www.google.com/maps/',
+      'https://*.respond.io',
     ],
     
     // 禁止顯示此網頁於iframe中
