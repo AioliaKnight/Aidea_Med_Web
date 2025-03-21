@@ -428,14 +428,13 @@ export default function TeamPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <OptimizedImage 
-                    src="/images/team/office-2.jpg" 
+                  <img 
+                    src="/images/team/office-2.png" 
                     alt="團隊協作空間" 
-                    width={400}
-                    height={300}
-                    className="w-full h-auto"
-                    quality={85}
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
+                    width="400"
+                    height="300"
+                    className="w-full h-auto object-cover"
+                    loading="lazy"
                   />
                 </motion.div>
                 <motion.div 
@@ -445,14 +444,13 @@ export default function TeamPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  <OptimizedImage 
-                    src="/images/team/office-3.jpg" 
+                  <img 
+                    src="/images/team/office-3.png" 
                     alt="創意討論空間" 
-                    width={400}
-                    height={300}
-                    className="w-full h-auto"
-                    quality={85}
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
+                    width="400"
+                    height="300"
+                    className="w-full h-auto object-cover"
+                    loading="lazy"
                   />
                 </motion.div>
                 <motion.div 
