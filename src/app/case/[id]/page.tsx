@@ -594,7 +594,7 @@ export default function CaseDetail() {
                         className="relative pl-8 pb-12 last:pb-0"
                       >
                         {/* 時間軸線 - 改為扁平化設計 */}
-                        <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary"></div>
+                        <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary" />
                         
                         {/* 時間點 - 改為扁平化設計 */}
                         <div className="absolute left-1 top-0 w-8 h-8 -translate-x-1/2 bg-primary text-white flex items-center justify-center">
@@ -696,7 +696,7 @@ export default function CaseDetail() {
                   <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
                     <h3 className="text-xl font-bold mb-6 text-center text-gray-800">專案執行時間表</h3>
                     <div className="relative">
-                      <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                      <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-200" />
                       
                       <div className="space-y-12">
                         <motion.div 
@@ -707,7 +707,7 @@ export default function CaseDetail() {
                         >
                           <div className="md:col-span-2 md:text-right pr-8 relative">
                             <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white"></div>
+                              <div className="h-2 w-2 rounded-full bg-white" />
                             </div>
                             <div className="font-bold text-gray-800">專案啟動</div>
                             <div className="text-sm text-gray-500">2023 年 1 月</div>
@@ -727,7 +727,7 @@ export default function CaseDetail() {
                         >
                           <div className="md:col-span-2 md:text-right pr-8 relative">
                             <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white"></div>
+                              <div className="h-2 w-2 rounded-full bg-white" />
                             </div>
                             <div className="font-bold text-gray-800">策略執行</div>
                             <div className="text-sm text-gray-500">2023 年 2-4 月</div>
@@ -747,7 +747,7 @@ export default function CaseDetail() {
                         >
                           <div className="md:col-span-2 md:text-right pr-8 relative">
                             <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white"></div>
+                              <div className="h-2 w-2 rounded-full bg-white" />
                             </div>
                             <div className="font-bold text-gray-800">成果驗收</div>
                             <div className="text-sm text-gray-500">2023 年 5-6 月</div>
@@ -789,7 +789,7 @@ export default function CaseDetail() {
                           onClick={() => openGalleryModal(index)}
                         >
                           <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                            <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
+                            <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                             <Image
                               src={image.url}
                               alt={image.alt}
@@ -837,7 +837,7 @@ export default function CaseDetail() {
                           <div className="text-center space-y-6">
                             <h3 className="text-xl font-semibold bg-gray-100 py-2 rounded-lg">改版前</h3>
                             <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                              <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
+                              <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                               <Image
                                 src={item.beforeImage}
                                 alt={`${item.title}改版前`}
@@ -856,7 +856,7 @@ export default function CaseDetail() {
                           <div className="text-center space-y-6">
                             <h3 className="text-xl font-semibold bg-primary text-white py-2 rounded-lg">改版後</h3>
                             <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                              <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
+                              <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                               <Image
                                 src={item.afterImage}
                                 alt={`${item.title}改版後`}
