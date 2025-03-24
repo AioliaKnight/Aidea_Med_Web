@@ -1,18 +1,15 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { useParams, notFound } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { caseStudies, CaseStudy, generateCaseStudyMetadata, generateCaseMetadata } from '@/components/pages/CasePage'
+import { caseStudies, CaseStudy, generateCaseStudyMetadata } from '@/components/pages/CasePage'
 import { ArrowLeftIcon, ShareIcon, StarIcon, ChartBarIcon, HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { motion, AnimatePresence } from 'framer-motion'
 import Script from 'next/script'
 import CountUp from 'react-countup'
-import { Metadata, ResolvingMetadata } from 'next'
-import { siteConfig } from '@/config/site'
-import CasePage from '@/components/pages/CasePage'
 
 // 時間軸項目介面
 interface TimelineItem {
@@ -182,7 +179,6 @@ function formatDate(dateString: string): string {
 export default function CaseDetail() {
   const params = useParams()
   const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null)
-  const [relatedCases, setRelatedCases] = useState<CaseStudy[]>([])
   const [loading, setLoading] = useState(true)
   const [structuredData, setStructuredData] = useState<string>('')
   const [activeTab, setActiveTab] = useState('overview')
@@ -221,10 +217,10 @@ export default function CaseDetail() {
         }
         
         // 尋找相同類別的其他案例
-        const related = caseStudies
-          .filter(c => c.id !== id && c.category === foundCase.category)
-          .slice(0, 3)
-        setRelatedCases(related)
+        // const related = caseStudies
+        //  .filter(c => c.id !== id && c.category === foundCase.category)
+        //  .slice(0, 3)
+        // setRelatedCases(related)
         
         // 使用共用函數設定結構化數據，保持一致性
         const schemaData = generateCaseStudyMetadata(foundCase)
@@ -328,7 +324,7 @@ export default function CaseDetail() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin"></div>
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin" />
       </div>
     )
   }
