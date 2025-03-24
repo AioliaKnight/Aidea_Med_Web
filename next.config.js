@@ -165,17 +165,25 @@ const nextConfig = {
       'lucide-react',
       'gsap',
       '@heroicons/react',
+      '@heroicons/react/24/outline',
+      '@heroicons/react/24/solid',
       '@phosphor-icons/react',
-      'tailwind-merge'
+      'tailwind-merge',
+      'react-countup',
+      'react-markdown',
+      'react-syntax-highlighter',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei'
     ],
     serverActions: {
       allowedOrigins: ['localhost:3000'],
     },
-    serverComponentsExternalPackages: [],
-    instrumentationHook: true,
     typedRoutes: true,
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'INP', 'TTFB'],
   },
+  // 將 serverComponentsExternalPackages 移至 serverExternalPackages
+  serverExternalPackages: [],
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -240,23 +248,10 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
           },
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.googleapis.com *.gstatic.com cdn.respond.io; connect-src 'self' *.vercel-insights.com *.respond.io wss://*.respond.io; img-src 'self' blob: data: *.google.com *.googleapis.com *.gstatic.com *.respond.io; style-src 'self' 'unsafe-inline' *.googleapis.com cdn.respond.io; font-src 'self' *.gstatic.com cdn.respond.io; frame-src 'self' *.google.com https://vercel.com https://vercel.live *.respond.io;"
-          }
-        ],
-      },
-      {
-        source: '/:path(.*)\.(jpg|jpeg|png|svg|webp|avif|ico|woff2|css|js)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          }
-        ],
-      },
+        ]
+      }
     ]
-  },
+  }
 }
 
 module.exports = withBundleAnalyzer(withPWA(nextConfig)) 

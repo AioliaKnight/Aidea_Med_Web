@@ -281,7 +281,7 @@ function HeroSection() {
       {/* 波浪背景 */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-primary opacity-100"></div>
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-50">
           <Image
             src="/images/bgline-w.png"
             alt="背景波浪線條"
