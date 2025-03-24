@@ -226,6 +226,48 @@ const faqs = [
   }
 ];
 
+function FloatingPaths({ position }: { position: number }) {
+  const paths = Array.from({ length: 36 }, (_, i) => ({
+    id: i,
+    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
+      380 - i * 5 * position
+    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
+      152 - i * 5 * position
+    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
+      684 - i * 5 * position
+    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+    width: 0.5 + i * 0.03,
+  }))
+
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      <svg className="w-full h-full text-white" viewBox="0 0 696 316" fill="none">
+        <title>背景波浪線條</title>
+        {paths.map((path) => (
+          <motion.path
+            key={path.id}
+            d={path.d}
+            stroke="currentColor"
+            strokeWidth={path.width}
+            strokeOpacity={0.1 + path.id * 0.03}
+            initial={{ pathLength: 0.3, opacity: 0.6 }}
+            animate={{
+              pathLength: 1,
+              opacity: [0.3, 0.6, 0.3],
+              pathOffset: [0, 1, 0],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
 // 更新 Hero Section 樣式
 function HeroSection() {
   // 改進動畫效果
@@ -278,24 +320,11 @@ function HeroSection() {
       role="banner"
       aria-label="網站主要橫幅"
     >
-      {/* 波浪背景 */}
+      {/* 新波浪背景 */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-primary opacity-100"></div>
-        <div className="absolute inset-0 opacity-50">
-          <Image
-            src="/images/bgline-w_sm.png"
-            alt="背景波浪線條"
-            fill
-            className="object-cover mix-blend-soft-light"
-            quality={75}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-            priority={true}
-            loading="eager"
-            fetchPriority="high"
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
-          />
-        </div>
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20 px-4 sm:px-6">
@@ -480,18 +509,10 @@ function MarketingStatement() {
       ref={ref}
     >
       {/* 背景線條裝飾 */}
-      <div className="absolute inset-0 opacity-20">
-        <Image
-          src="/images/bgline-w_sm.png"
-          alt="背景線條"
-          fill
-          className="object-cover mix-blend-soft-light"
-          quality={75}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
-        />
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-primary opacity-100"></div>
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
