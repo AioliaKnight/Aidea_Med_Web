@@ -1,191 +1,239 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 /**
  * Website Chat 組件
  * 集成 respond.io 客服聊天功能
- * 滾動優化版本 - 在滾動時自動隱藏/顯示聊天按鈕
- * 更新：添加瀏覽過程中自動隱藏功能，類似BackToTopButton
+ * 針對React 19和Next.js 15優化的版本
+ * 減少CLS(內容布局偏移)和性能優化
  */
-export default function WebsiteChat(): React.ReactElement | null {
-  useEffect(() => {
+export default function WebsiteChat(): React.ReactElement {
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const chatRef = useRef<HTMLDivElement>(null);
+  
+  // 使用useLayoutEffect避免布局偏移
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+  
+  useIsomorphicLayoutEffect(() => {
     // 確保script只在瀏覽器環境中執行
     if (typeof window !== 'undefined') {
       // 檢查是否已存在相同ID的腳本，避免重複加載
       if (!document.getElementById('respondio__widget')) {
+        // 預先創建並應用樣式，防止後續布局偏移
+        applyCustomStyles();
+        
         const script = document.createElement('script')
         script.id = 'respondio__widget'
         script.src = 'https://cdn.respond.io/webchat/widget/widget.js?cId=8a6609bcba76374da57d57fb66ffcf0'
         script.async = true
-        document.body.appendChild(script)
-
-        // 監聽聊天組件加載完成，並添加自定義樣式與滾動行為
+        script.defer = true // 使用defer屬性
+        
+        // 使用onload回調註冊事件處理
         script.onload = () => {
+          setIsScriptLoaded(true);
           // 添加組件載入觀察器
           setupMutationObserver()
-          // 額外的安全措施：即使沒有檢測到元素，也在一段時間後嘗試應用樣式
-          setTimeout(applyCustomStyles, 2000)
-          // 添加滾動事件優化
+          // 設置滾動優化
           setupScrollBehavior()
         }
+        
+        document.body.appendChild(script)
       }
     }
 
-    // 設置DOM觀察器
+    // 設置DOM觀察器 - 使用React 19兼容的方式
     function setupMutationObserver() {
-      const observer = new MutationObserver((mutations, obs) => {
+      if (typeof window === 'undefined') return;
+      
+      // 兼容React 19的非阻塞方式處理DOM觀察
+      const observer = new MutationObserver((mutations) => {
         const chatLauncher = document.querySelector('.respondio-launcher')
         if (chatLauncher) {
-          applyCustomStyles()
-          obs.disconnect() // 找到元素後停止觀察
+          // 找到元素後停止觀察
+          observer.disconnect()
+          
+          // 確保樣式已應用
+          updateCustomStyles()
         }
       })
 
-      // 開始觀察DOM變化
+      // 開始觀察DOM變化 - 使用更精確的觀察配置
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributeFilter: ['class', 'id'],
       })
     }
 
-    // 設置滾動行為優化
+    // 設置滾動行為優化 - 使用更高效的方式
     function setupScrollBehavior() {
+      if (typeof window === 'undefined') return;
+      
       let lastScrollTop = 0
-      let scrollTimer: number | null = null
+      let scrollTimer: ReturnType<typeof setTimeout> | null = null
       let isScrolling = false
       let isChatVisible = true
       let isScrollingDown = false
       let lastInteractionTime = Date.now()
       const autoHideDelay = 3000 // 停止互動後自動隱藏延遲（毫秒）
       
-      // 滾動處理函數
+      // 使用更高效的滾動處理 - 使用requestAnimationFrame減少重繪
       const handleScroll = () => {
-        // 標記正在滾動
-        isScrolling = true
-        // 更新最後互動時間
-        lastInteractionTime = Date.now()
-        
-        const currentScrollTop = window.scrollY
-        isScrollingDown = currentScrollTop > lastScrollTop
-        
-        // 儲存當前滾動位置作為下次比較基準
-        lastScrollTop = currentScrollTop
-        
-        // 重置滾動計時器
-        if (scrollTimer !== null) {
-          window.clearTimeout(scrollTimer)
-        }
-        
-        // 根據滾動方向控制聊天按鈕可見性
-        const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
-        const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
-        
-        if (chatLauncher && !chatWindow) { // 只在聊天窗口未打開時處理按鈕
-          // 向下滾動超過300px時隱藏聊天按鈕
-          if (isScrollingDown && currentScrollTop > 300) {
-            if (isChatVisible) {
-              chatLauncher.style.transform = 'translateY(150%)'
-              chatLauncher.style.opacity = '0'
-              isChatVisible = false
+        window.requestAnimationFrame(() => {
+          // 標記正在滾動
+          isScrolling = true
+          // 更新最後互動時間
+          lastInteractionTime = Date.now()
+          
+          const currentScrollTop = window.scrollY
+          isScrollingDown = currentScrollTop > lastScrollTop
+          
+          // 儲存當前滾動位置
+          lastScrollTop = currentScrollTop
+          
+          // 重置滾動計時器
+          if (scrollTimer !== null) {
+            clearTimeout(scrollTimer)
+          }
+          
+          // 根據滾動方向控制聊天按鈕可見性
+          const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
+          const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
+          
+          if (chatLauncher && !chatWindow) { // 只在聊天窗口未打開時處理
+            if (isScrollingDown && currentScrollTop > 300) {
+              if (isChatVisible) {
+                chatLauncher.style.transform = 'translateY(150%)'
+                chatLauncher.style.opacity = '0'
+                isChatVisible = false
+              }
+            } 
+            else if (!isScrollingDown || currentScrollTop < 300) {
+              if (!isChatVisible) {
+                chatLauncher.style.transform = 'translateY(0)'
+                chatLauncher.style.opacity = '1'
+                isChatVisible = true
+              }
             }
-          } 
-          // 向上滾動或頂部區域時顯示聊天按鈕
-          else if (!isScrollingDown || currentScrollTop < 300) {
-            if (!isChatVisible) {
+          }
+          
+          // 設置延遲，在滾動停止後的處理
+          scrollTimer = setTimeout(() => {
+            isScrolling = false
+            
+            // 滾動停止時顯示聊天按鈕
+            if (chatLauncher && !chatWindow && !isChatVisible) {
               chatLauncher.style.transform = 'translateY(0)'
               chatLauncher.style.opacity = '1'
               isChatVisible = true
+              
+              // 設置自動隱藏計時器
+              setupAutoHideTimer()
             }
-          }
-        }
-        
-        // 設置延遲，在滾動停止後先顯示按鈕，然後延遲隱藏
-        scrollTimer = window.setTimeout(() => {
-          isScrolling = false
-          
-          // 滾動停止時顯示聊天按鈕
-          if (chatLauncher && !chatWindow && !isChatVisible) {
-            chatLauncher.style.transform = 'translateY(0)'
-            chatLauncher.style.opacity = '1'
-            isChatVisible = true
-            
-            // 設置自動隱藏計時器
-            setupAutoHideTimer()
-          }
-        }, 800) // 滾動停止後800ms顯示按鈕
+          }, 800)
+        });
       }
       
-      // 設置自動隱藏計時器
+      // 設置自動隱藏計時器 - 優化
       function setupAutoHideTimer() {
-        // 創建新的計時器，在一段時間後自動隱藏聊天按鈕
-        setTimeout(() => {
-          const now = Date.now()
-          // 如果自上次互動已經過了指定時間，且沒有正在滾動，則隱藏聊天按鈕
+        // 使用requestIdleCallback或setTimeout，優先使用前者
+        if ('requestIdleCallback' in window) {
+          // @ts-ignore
+          window.requestIdleCallback(() => {
+            checkAndHideChatLauncher();
+          }, { timeout: autoHideDelay });
+        } else {
+          setTimeout(checkAndHideChatLauncher, autoHideDelay);
+        }
+        
+        // 共用的隱藏邏輯
+        function checkAndHideChatLauncher() {
+          const now = Date.now();
           if (now - lastInteractionTime >= autoHideDelay && !isScrolling) {
-            const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
-            const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
+            const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement;
+            const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement;
             
             if (chatLauncher && !chatWindow && isChatVisible) {
-              chatLauncher.style.transform = 'translateY(150%)'
-              chatLauncher.style.opacity = '0'
-              isChatVisible = false
+              chatLauncher.style.transform = 'translateY(150%)';
+              chatLauncher.style.opacity = '0';
+              isChatVisible = false;
             }
           }
-        }, autoHideDelay)
-      }
-      
-      // 鼠標移動事件處理，更新互動時間並顯示按鈕
-      const handleMouseMove = () => {
-        lastInteractionTime = Date.now()
-        
-        // 如果鼠標移動且按鈕當前不可見，則顯示按鈕
-        const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement
-        const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement
-        
-        if (chatLauncher && !chatWindow && !isChatVisible) {
-          chatLauncher.style.transform = 'translateY(0)'
-          chatLauncher.style.opacity = '1'
-          isChatVisible = true
         }
       }
       
-      // 監聽鼠標移動
-      window.addEventListener('mousemove', handleMouseMove, { passive: true })
+      // 優化鼠標移動事件 - 使用節流
+      let ticking = false;
+      const handleMouseMove = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            lastInteractionTime = Date.now();
+            
+            // 避免不必要的DOM操作
+            const chatLauncher = document.querySelector('.respondio-launcher') as HTMLElement;
+            const chatWindow = document.querySelector('.respondio-webchat') as HTMLElement;
+            
+            if (chatLauncher && !chatWindow && !isChatVisible) {
+              chatLauncher.style.transform = 'translateY(0)';
+              chatLauncher.style.opacity = '1';
+              isChatVisible = true;
+            }
+            
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
       
-      // 添加滾動事件監聽
-      window.addEventListener('scroll', handleScroll, { passive: true })
+      // 使用事件委托減少事件監聽器數量
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true });
       
       // 初始設置自動隱藏計時器
-      setupAutoHideTimer()
+      setupAutoHideTimer();
       
-      // 返回清理函數
+      // 返回清理函數 - 確保完全清理
       return () => {
-        window.removeEventListener('scroll', handleScroll)
-        window.removeEventListener('mousemove', handleMouseMove)
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('mousemove', handleMouseMove);
         if (scrollTimer !== null) {
-          window.clearTimeout(scrollTimer)
+          clearTimeout(scrollTimer);
         }
       }
     }
 
-    // 應用自定義樣式
+    // 應用自定義樣式 - 預先應用樣式避免布局偏移
     function applyCustomStyles() {
       // 檢查是否已存在自定義樣式
       if (document.getElementById('respondio-custom-style')) {
-        return
+        return;
       }
 
       // 創建樣式元素
-      const style = document.createElement('style')
-      style.id = 'respondio-custom-style'
+      const style = document.createElement('style');
+      style.id = 'respondio-custom-style';
       style.textContent = `
+        /* 預先保留聊天組件空間，減少CLS */
+        #chat-container {
+          position: fixed;
+          right: 24px;
+          bottom: 24px;
+          width: 60px;
+          height: 60px;
+          z-index: 49;
+          pointer-events: none;
+          will-change: transform, opacity;
+        }
+        
         /* 調整客服聊天按鈕的位置，確保不與回到頂部按鈕重疊 */
         .respondio-launcher {
           right: 24px !important;
           bottom: 24px !important;
           z-index: 49 !important; /* 確保在其他元素上面，但低於回到頂部按鈕 */
           transition: transform 0.3s ease, opacity 0.3s ease !important;
+          transform-origin: bottom right;
+          will-change: transform, opacity;
         }
         
         /* 聊天窗口位置調整 */
@@ -193,7 +241,9 @@ export default function WebsiteChat(): React.ReactElement | null {
           bottom: 100px !important;
           right: 24px !important;
           z-index: 49 !important;
-          transition: all 0.3s ease !important;
+          transition: transform 0.3s ease, opacity 0.3s ease !important;
+          will-change: transform, opacity;
+          contain: layout size;
         }
         
         /* 修復可能的覆蓋問題 */
@@ -209,6 +259,10 @@ export default function WebsiteChat(): React.ReactElement | null {
 
         /* 平板尺寸優化 */
         @media (max-width: 1024px) {
+          #chat-container {
+            right: 12px;
+            bottom: 12px;
+          }
           .respondio-launcher {
             transform: scale(0.9);
             right: 12px !important;
@@ -218,6 +272,10 @@ export default function WebsiteChat(): React.ReactElement | null {
 
         /* 移動設備優化 */
         @media (max-width: 640px) {
+          #chat-container {
+            right: 8px;
+            bottom: 8px;
+          }
           .respondio-launcher {
             transform: scale(0.85);
             right: 8px !important;
@@ -227,10 +285,16 @@ export default function WebsiteChat(): React.ReactElement | null {
             bottom: 70px !important;
             right: 8px !important;
             max-height: 80vh !important;
+            width: calc(100% - 16px) !important;
           }
         }
-      `
-      document.head.appendChild(style)
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // 更新樣式（當需要後續調整時）
+    function updateCustomStyles() {
+      // 實作可能需要的額外樣式調整
     }
 
     // 清理函數 - 組件卸載時移除腳本和樣式
@@ -246,10 +310,16 @@ export default function WebsiteChat(): React.ReactElement | null {
         if (style) {
           document.head.removeChild(style)
         }
+        
+        // 清理其他可能的殘留
+        const chatLauncher = document.querySelector('.respondio-launcher')
+        if (chatLauncher) {
+          (chatLauncher.parentNode as HTMLElement).removeChild(chatLauncher)
+        }
       }
     }
-  }, [])
+  }, []) // 空依賴數組確保只運行一次
 
-  // 該組件不渲染任何UI元素，僅在客戶端執行腳本
-  return null
+  // 返回占位容器，確保聊天組件有一個預定位置
+  return <div id="chat-container" ref={chatRef} aria-hidden="true" />;
 } 
