@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
@@ -18,7 +18,10 @@ import {
   Handshake,
   ClipboardEdit,
   MonitorSmartphone,
-  UserCog
+  UserCog,
+  Building2 as BuildingIcon,
+  Globe as GlobeIcon,
+  BarChart as ChartIcon
 } from 'lucide-react'
 import Image from 'next/image'
 import { Logo, CTASection } from '@/components/common'
@@ -664,42 +667,27 @@ function FeatureSection() {
 // 更新服務內容區塊 - 使用 Lucide 圖標
 const services = [
   {
-    title: '品牌策略規劃',
-    description: '從市場分析到競爭者研究，協助您建立診所獨特的品牌定位與價值主張',
-    features: [
-      '品牌定位與價值主張',
-      '目標患者族群分析',
-      '品牌視覺與聲音規劃',
-      '差異化競爭策略'
-    ],
-    icon: ClipboardEdit,
-    link: '/service#brand'
+    title: '品牌策略與視覺識別',
+    description: '建立強大的牙醫診所品牌識別，從院所精神到視覺設計，創造一致性的品牌體驗',
+    features: ['品牌策略規劃', '視覺識別設計', '診所空間規劃', '品牌故事建立'],
+    icon: BuildingIcon,
+    href: '/service#brand'
   },
   {
-    title: '數位行銷整合',
-    description: '結合搜尋引擎優化、社群經營與線上廣告，提升診所數位能見度與患者轉化率',
-    features: [
-      '搜尋引擎優化 (SEO)',
-      '社群媒體策略與經營',
-      '精準投放網路廣告',
-      '患者轉化率優化'
-    ],
-    icon: MonitorSmartphone,
-    link: '/service#digital'
+    title: '數位行銷與媒體整合',
+    description: '透過精準的數位行銷策略，提升診所線上能見度，吸引目標客群，轉化為實際到診',
+    features: ['網站設計開發', 'SEO優化', '社群媒體策略', '內容行銷規劃'],
+    icon: GlobeIcon,
+    href: '/service#digital'
   },
   {
-    title: '患者體驗優化',
-    description: '全面審視並改善患者與診所的每一個接觸點，提升整體滿意度與回診率',
-    features: [
-      '患者旅程地圖分析',
-      '前台服務流程優化',
-      '空間與視覺設計',
-      '患者關係管理系統'
-    ],
-    icon: UserCog,
-    link: '/service#marketing'
-  }
-];
+    title: '整合行銷服務',
+    description: '結合線上線下資源，建立完整行銷漏斗，提升品牌知名度、患者轉換率與回診率',
+    features: ['整合行銷策略', '患者體驗優化', '回診系統建立', '績效分析報告'],
+    icon: ChartIcon,
+    href: '/service#marketing'
+  },
+]
 
 // 更新服務內容區塊
 function ServiceSection() {
@@ -775,11 +763,9 @@ function ServiceSection() {
                     }
                   }}
                 >
-                  <service.icon 
-                    size={28} 
-                    strokeWidth={1.5} 
-                    className="text-primary group-hover:text-white transition-colors duration-300" 
-                  />
+                  <div className="flex items-center justify-center w-20 h-20 bg-primary/5 rounded-lg mb-6">
+                    {React.createElement(service.icon, { className: "w-10 h-10 text-primary" })}
+                  </div>
                 </motion.div>
               </motion.div>
               
@@ -800,7 +786,10 @@ function ServiceSection() {
               </ul>
               
               <div className="pt-4 mt-auto">
-                <Link href={service.link} className="inline-flex items-center text-primary font-medium group">
+                <Link 
+                  href={service.href as any} 
+                  className="inline-flex items-center text-primary font-medium group"
+                >
                   了解更多服務細節
                   <motion.svg 
                     className="w-5 h-5 ml-2" 
@@ -1284,8 +1273,8 @@ function CaseStudiesSection() {
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="mb-16"
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="grid grid-cols-12 gap-6 md:gap-8 mb-16"
                 >
                   <div className="p-1 mb-6">
                     <h3 className="text-xl font-bold text-gray-900 flex items-center mb-6">
@@ -1294,12 +1283,14 @@ function CaseStudiesSection() {
                     </h3>
                   </div>
                   
-                  {/* 移除外層的 Link 包裹，由 FeaturedCase 組件內部處理連結 */}
+                  {/* 包裝在Link中並添加prefetch */}
                   <div className="col-span-12 lg:col-span-8">
-                    <CaseCard
-                      caseStudy={featuredCase}
-                      index={0}
-                    />
+                    <Link href={`/case/${featuredCase.id}`} prefetch={true} className="block">
+                      <CaseCard
+                        caseStudy={featuredCase}
+                        index={0}
+                      />
+                    </Link>
                   </div>
                 </motion.div>
               )}
@@ -1317,27 +1308,43 @@ function CaseStudiesSection() {
                       <span className="block w-4 h-px bg-primary mr-3"></span>
                       更多成功案例
                     </h3>
-                    <Link href="/case" className="text-primary text-sm font-medium hover:underline">
+                    <Link href="/case" prefetch={true} className="text-primary text-sm font-medium hover:underline">
                       查看全部
                     </Link>
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {regularCases.map((caseStudy, index) => (
-                      // 移除外層 Link，改用 div，讓 CaseCard 內部處理導航
-                      <div 
-                        key={caseStudy.id} 
+                      // 包裝在Link中並添加prefetch
+                      <Link 
+                        key={caseStudy.id}
+                        href={`/case/${caseStudy.id}`}
+                        prefetch={true}
                         className="block h-full"
                       >
                         <CaseCard
                           caseStudy={caseStudy}
-                          index={index}
+                          index={index + 1}
                         />
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </motion.div>
               )}
+              
+              {/* 查看更多案例按鈕 */}
+              <div className="text-center mb-20">
+                <Link
+                  href="/case"
+                  prefetch={true}
+                  className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium group transition-all duration-200 hover:bg-primary/90"
+                >
+                  查看更多案例
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </Link>
+              </div>
               
               {/* CTA 區塊 */}
               <motion.div
