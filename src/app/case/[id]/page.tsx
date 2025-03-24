@@ -931,7 +931,7 @@ export default function CaseDetail() {
                             </div>
                           </div>
                           <div className="flex-grow">
-                            <div className="absolute -top-4 -left-2 text-primary opacity-30 text-6xl">"</div>
+                            <div className="absolute -top-4 -left-2 text-primary opacity-30 text-6xl">&ldquo;</div>
                             <p className="text-gray-700 italic mb-4 relative z-10">
                               {testimonial.content}
                             </p>
