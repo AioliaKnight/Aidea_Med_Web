@@ -1,503 +1,309 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
-import { useParams, notFound } from 'next/navigation'
+import React, { useEffect, useState, useMemo } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
-import { caseStudies, CaseStudy, generateCaseStudyMetadata, generateCaseMetadata } from '@/components/pages/CasePage'
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 import Script from 'next/script'
-import CountUp from 'react-countup'
-import { Metadata, ResolvingMetadata } from 'next'
-import { siteConfig } from '@/config/site'
-import CasePage from '@/components/pages/CasePage'
+import { CaseImage } from '@/components/case/CaseImage'
+import { CaseCard } from '@/components/case/CaseCard'
+import { getCaseById, getRelatedCases, generateTimeline } from '@/content/cases'
+import { CaseStudy } from '@/content/cases/types'
 
-// 時間軸項目介面
-interface TimelineItem {
-  title: string;
-  description: string;
-  date: string;
-  icon?: React.ReactNode;
-}
-
-// 生成時間軸數據
-function generateTimeline(caseStudy: CaseStudy): TimelineItem[] {
-  return [
-    {
-      title: '需求分析',
-      description: `深入了解${caseStudy.name}的市場定位、目標客群和發展需求，制定客製化行銷策略。`,
-      date: '第一階段',
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-      )
-    },
-    {
-      title: '策略規劃',
-      description: '根據診斷結果，提供完整的行銷策略建議，包含品牌定位、通路規劃等。',
-      date: '第二階段',
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-      )
-    },
-    {
-      title: '執行優化',
-      description: '專業團隊執行行銷策略，持續監測成效並即時調整優化。',
-      date: '第三階段',
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      )
-    }
-  ]
-}
-
-/**
- * 生成解決方案描述（如果缺少描述）
- */
-function generateSolutionDescription(index: number, clinicName: string): string {
-  const commonPhrases = [
-    `為${clinicName}量身打造的整合性解決方案，通過精準的目標市場分析和競爭對手研究，建立差異化的市場定位。`,
-    `針對${clinicName}的特殊需求，我們設計了全方位的客戶體驗優化方案，從預約到治療後的追蹤關懷，提升整體滿意度。`,
-    `結合${clinicName}的專業特色，開發獨特的數位行銷策略，精準觸及目標客群，大幅提升轉換率。`,
-    `重新規劃${clinicName}的品牌識別系統，包括視覺設計、溝通語調與服務流程，建立一致且專業的品牌形象。`
-  ];
-  
-  return commonPhrases[index % commonPhrases.length];
-}
-
-// 解決方案介面定義
-interface Solution {
-  title: string;
-  description: string;
-}
-
-// 添加日期格式化函數
+// 格式化日期函數
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  };
+  return date.toLocaleDateString('zh-TW', options);
+}
+
+// 生成結構化數據函數
+function generateStructuredData(caseStudy: CaseStudy): any {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aidea-med.com';
+  const imageUrl = caseStudy.image || `${baseUrl}/images/og-case.jpg`;
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": `${caseStudy.name} - ${caseStudy.category} 成功案例`,
+    "description": caseStudy.description,
+    "image": imageUrl,
+    "datePublished": caseStudy.publishedDate || new Date().toISOString(),
+    "author": {
+      "@type": "Organization",
+      "name": "Aidea:Med"
+    }
+  };
 }
 
 export default function CaseDetail() {
-  const params = useParams()
-  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null)
-  const [relatedCases, setRelatedCases] = useState<CaseStudy[]>([])
-  const [loading, setLoading] = useState(true)
-  const [structuredData, setStructuredData] = useState<string>('')
-  const [activeTab, setActiveTab] = useState('overview')
-  const [imageLoading, setImageLoading] = useState(true)
-  const [imageError, setImageError] = useState(false)
-
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
+  const [structuredData, setStructuredData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // 獲取案例數據
   useEffect(() => {
-    const id = params.id
-    if (typeof id === 'string') {
-      const foundCase = caseStudies.find(c => c.id === id)
-      if (foundCase) {
-        setCaseStudy(foundCase)
+    if (params?.id) {
+      try {
+        const id = Array.isArray(params.id) ? params.id[0] : params.id;
+        const foundCase = getCaseById(id);
         
-        // 處理解決方案
-        if (foundCase.solutions) {
-          foundCase.solutions = foundCase.solutions.map((solution: any, index) => {
-            if (typeof solution === 'object' && solution.title && solution.description) {
-              return solution as Solution;
-            } else {
-              return {
-                title: typeof solution === 'string' ? solution : `解決方案 ${index + 1}`,
-                description: generateSolutionDescription(index, foundCase.name)
-              };
-            }
-          });
+        if (foundCase) {
+          setCaseStudy(foundCase);
+          setStructuredData(generateStructuredData(foundCase));
+          
+          // 更新頁面標題
+          document.title = `${foundCase.name} - ${foundCase.category} 案例 | Aidea:Med`;
         }
         
-        // 尋找相同類別的其他案例
-        const related = caseStudies
-          .filter(c => c.id !== id && c.category === foundCase.category)
-          .slice(0, 3)
-        setRelatedCases(related)
-        
-        // 使用共用函數設定結構化數據，保持一致性
-        const schemaData = generateCaseStudyMetadata(foundCase)
-        setStructuredData(JSON.stringify(schemaData))
-        
-        // 動態設置文檔標題
-        document.title = `${foundCase.name} - ${foundCase.category}成功案例 | Aidea:Med 牙醫行銷專家`;
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching case study:', error);
+        setLoading(false);
       }
     }
-    setLoading(false)
-  }, [params.id])
-
-  // 使用 useMemo 緩存時間軸數據
+  }, [params]);
+  
+  // 生成相關案例
+  const relatedCases = useMemo(() => {
+    if (!caseStudy) return [];
+    return getRelatedCases(caseStudy, 3);
+  }, [caseStudy]);
+  
+  // 生成時間軸項目
   const timelineItems = useMemo(() => {
     if (!caseStudy) return [];
     return generateTimeline(caseStudy);
   }, [caseStudy]);
   
-  // 使用 useMemo 緩存相關案例
-  const relatedCasesMemo = useMemo(() => {
-    if (!caseStudy) return [];
-    return caseStudies
-      .filter(c => c.id !== caseStudy.id && c.category === caseStudy.category)
-      .slice(0, 3);
-  }, [caseStudy]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin"></div>
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
-    )
+    );
   }
-
+  
   if (!caseStudy) {
     return (
-      <div className="min-h-screen py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl font-bold mb-6 font-display text-brand-textDark">案例不存在</h1>
-          <p className="mb-8 text-brand-textLight">抱歉，您尋找的案例不存在或已被移除。</p>
-          <Link href="/case">
-            <span className="inline-flex items-center bg-primary text-white px-6 py-3 hover:bg-primaryDark transition-colors">
-              <ArrowLeftIcon className="h-4 w-4 mr-2" />
-              返回案例列表
-            </span>
-          </Link>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">案例不存在</h1>
+        <p className="text-gray-600 mb-8">找不到您請求的案例資料</p>
+        <Link href="/case" className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary-dark transition-colors">
+          返回案例列表
+        </Link>
       </div>
-    )
+    );
   }
-
+  
   return (
-    <>
+    <div className="min-h-screen bg-white">
       {/* 結構化數據 */}
       {structuredData && (
-        <Script id="case-structured-data" type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
+        <Script id="case-structured-data" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       )}
       
-      <main className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="relative bg-primary text-white py-32">
-          <div className="container-custom relative z-10">
-            {/* 返回按鈕 */}
-            <motion.div 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, ease: [0.6, 0.05, 0.01, 0.9] }}
-              className="mb-12"
+      {/* 英雄區塊 */}
+      <section className="relative py-20 bg-gradient-to-r from-primary to-blue-900">
+        <div className="container-custom relative z-10">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <Link href="/case">
-                <span className="inline-flex items-center text-white hover:text-white/80 transition-colors group">
-                  <ArrowLeftIcon className="h-5 w-5 mr-2 transition-transform group-hover:-translate-x-1" />
-                  返回案例列表
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                {caseStudy.name}
+              </h1>
+              <div className="flex flex-wrap gap-3 mb-6">
+                <span className="px-3 py-1.5 bg-white/20 rounded-full font-medium text-white">
+                  {caseStudy.category}
                 </span>
-              </Link>
+                {caseStudy.publishedDate && (
+                  <span className="px-3 py-1.5 bg-white/10 rounded-full font-medium">
+                    發佈於 {formatDate(caseStudy.publishedDate)}
+                  </span>
+                )}
+              </div>
+              <div className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90">
+                {caseStudy.description}
+              </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* 左側：內容 */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: [0.6, 0.05, 0.01, 0.9] }}
-              >
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                  {caseStudy.name}
-                </h1>
-                <div className="flex gap-4 mb-8">
-                  <span className="px-3 py-1.5 bg-white/10 rounded-full font-medium">
-                    {caseStudy.category}
-                  </span>
-                  {caseStudy.publishedDate && (
-                    <span className="px-3 py-1.5 bg-white/10 rounded-full font-medium">
-                      發佈於 {formatDate(caseStudy.publishedDate)}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90">
-                  {caseStudy.description}
-                </div>
-              </motion.div>
+            {/* 右側：圖片 - 使用優化後的圖片組件 */}
+            <CaseImage 
+              caseStudy={caseStudy}
+              priority={true}
+              aspectRatio="aspect-video"
+              containerClassName="shadow-xl rounded-lg"
+              animate={true}
+            />
+          </div>
+        </div>
+      </section>
 
-              {/* 右側：圖片 */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, ease: [0.6, 0.05, 0.01, 0.9] }}
-                className="relative aspect-video rounded-lg overflow-hidden shadow-xl"
-              >
-                {imageLoading && !imageError && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
-                  </div>
-                )}
-                {!imageError ? (
-                  <Image
-                    src={caseStudy.image || '/images/case-placeholder.jpg'}
-                    alt={caseStudy.name}
-                    fill
-                    className={`object-cover transition-opacity duration-500 ${
-                      imageLoading ? 'opacity-0' : 'opacity-100'
-                    }`}
-                    onLoad={() => setImageLoading(false)}
-                    onError={() => setImageError(true)}
-                    priority
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                    <span className="text-4xl">📷</span>
-                  </div>
-                )}
-              </motion.div>
+      {/* 內容區域 */}
+      <section className="py-20">
+        <div className="container-custom">
+          {/* 標籤頁切換 */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex bg-white shadow-md">
+              {['overview', 'solution', 'process'].map((tab) => (
+                <motion.button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-8 py-3 text-sm font-medium transition-all duration-300 ${
+                    activeTab === tab 
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-600 hover:text-primary'
+                  }`}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {tab === 'overview' && '概覽'}
+                  {tab === 'solution' && '解決方案'}
+                  {tab === 'process' && '專案流程'}
+                </motion.button>
+              ))}
             </div>
           </div>
-        </section>
 
-        {/* 內容區域 */}
-        <section className="py-32">
-          <div className="container-custom">
-            {/* 標籤頁切換 */}
-            <div className="flex justify-center mb-12">
-              <div className="inline-flex bg-white shadow-md">
-                {['overview', 'solution', 'process'].map((tab) => (
-                  <motion.button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-8 py-3 text-sm font-medium transition-all duration-300 ${
-                      activeTab === tab 
-                        ? 'bg-primary text-white' 
-                        : 'text-gray-600 hover:text-primary'
-                    }`}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
-                  >
-                    {tab === 'overview' && '專案概覽'}
-                    {tab === 'solution' && '解決方案'}
-                    {tab === 'process' && '執行流程'}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {/* 內容區塊 */}
-            <AnimatePresence mode="wait">
+          {/* 標籤頁內容 */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* 概覽標籤 */}
               {activeTab === 'overview' && (
-                <motion.div
-                  key="overview"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {/* 案例圖片 */}
-                  <div className="relative aspect-video mb-12 overflow-hidden shadow-lg">
-                    {imageLoading && !imageError && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                        <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
-                      </div>
-                    )}
-                    {!imageError ? (
-                      <Image
-                        src={caseStudy.image || '/images/case-placeholder.jpg'}
-                        alt={caseStudy.name}
-                        fill
-                        className={`object-cover transition-opacity duration-500 ${
-                          imageLoading ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        onLoad={() => setImageLoading(false)}
-                        onError={() => setImageError(true)}
-                        priority
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                        <span className="text-4xl">📷</span>
-                      </div>
-                    )}
+                <div className="grid md:grid-cols-12 gap-8">
+                  <div className="md:col-span-8">
+                    <h2 className="text-2xl font-bold mb-6">案例概覽</h2>
+                    <div className="prose prose-lg max-w-none">
+                      <p>
+                        {caseStudy.name}是一家位於{caseStudy.category}地區的專業牙醫診所，
+                        面臨品牌形象老舊、市場競爭激烈等挑戰。診所尋求突破，希望能夠吸引更多新患、
+                        提升服務品質，並建立現代化的品牌形象。
+                      </p>
+                      <p>
+                        我們為{caseStudy.name}設計了全方位的品牌重塑與數位行銷策略，
+                        從品牌識別、診所環境到線上形象，進行全面優化，創造一致且專業的品牌體驗。
+                      </p>
+                    </div>
                   </div>
+                  
+                  <div className="md:col-span-4">
+                    <h3 className="text-xl font-bold mb-6">成效指標</h3>
+                    <div className="grid gap-4">
+                      {caseStudy.metrics.map((metric, index) => (
+                        <div key={index} className="bg-gray-50 p-5 rounded-lg">
+                          <div className="text-3xl font-bold text-primary mb-2">{metric.value}</div>
+                          <div className="text-gray-600">{metric.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                  {/* 成效指標 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    {caseStudy.metrics.map((metric, index) => (
-                      <motion.div
+              {/* 解決方案標籤 */}
+              {activeTab === 'solution' && (
+                <div>
+                  <h2 className="text-2xl font-bold mb-8">我們的解決方案</h2>
+                  
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {caseStudy.solutions && caseStudy.solutions.map((solution, index) => (
+                      <motion.div 
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="bg-white p-6 shadow-md hover:shadow-lg transition-all duration-300"
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                        className="bg-white shadow-md p-6 rounded-lg"
                       >
-                        <div className="text-3xl font-bold text-primary mb-2">
-                          <CountUp
-                            end={parseInt(metric.value)}
-                            suffix={metric.value.replace(/[0-9]/g, '')}
-                            duration={2}
-                            separator=","
-                          />
-                        </div>
-                        <div className="text-gray-600">
-                          {metric.label}
-                        </div>
+                        <h3 className="text-xl font-bold mb-4">{solution.title}</h3>
+                        <p className="text-gray-600">{solution.description}</p>
                       </motion.div>
                     ))}
                   </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'solution' && (
-                <motion.div
-                  key="solution"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
-                >
-                  {caseStudy.solutions?.map((solution, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="bg-white p-6 shadow-md hover:shadow-lg transition-all duration-300"
-                    >
-                      <div className="flex items-start mb-4">
-                        <div className="w-10 h-10 bg-primary text-white flex items-center justify-center mr-4">
-                          <span className="text-xl font-bold">{index + 1}</span>
-                        </div>
+                  
+                  {caseStudy.testimonial && (
+                    <div className="mt-12 p-8 bg-gray-50 rounded-lg">
+                      <div className="flex flex-col md:flex-row items-start md:items-center">
                         <div className="flex-grow">
-                          <h3 className="text-xl font-bold text-brand-textDark">{solution.title}</h3>
-                          <p className="mt-2">{solution.description}</p>
+                          <div className="text-lg italic text-gray-600 mb-4">
+                            "{caseStudy.testimonial.content}"
+                          </div>
+                          <div>
+                            <div className="font-bold">{caseStudy.testimonial.author}</div>
+                            <div className="text-sm text-gray-500">{caseStudy.testimonial.title}</div>
+                          </div>
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
+                    </div>
+                  )}
+                </div>
               )}
 
+              {/* 專案流程標籤 */}
               {activeTab === 'process' && (
-                <motion.div
-                  key="process"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="max-w-4xl mx-auto">
+                <div>
+                  <h2 className="text-2xl font-bold mb-8">專案執行流程</h2>
+                  
+                  <div className="space-y-16">
                     {timelineItems.map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="relative pl-8 pb-12 last:pb-0"
-                      >
-                        {/* 時間軸線 */}
-                        <div className="absolute left-0 top-0 bottom-0 w-px bg-primary"></div>
-                        
-                        {/* 時間點 */}
-                        <div className="absolute left-0 top-0 w-8 h-8 -translate-x-1/2 bg-primary text-white flex items-center justify-center">
-                          {item.icon}
-                        </div>
-                        
-                        {/* 內容 */}
-                        <div className="bg-white p-6 shadow-md hover:shadow-lg transition-all duration-300">
-                          <div className="text-sm text-primary font-medium mb-2">
-                            {item.date}
+                      <div key={index} className="relative">
+                        <div className="flex">
+                          <div className="flex flex-col items-center mr-6">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white text-2xl">
+                              {item.icon}
+                            </div>
+                            {index < timelineItems.length - 1 && (
+                              <div className="w-px h-16 bg-gray-200 mt-4"></div>
+                            )}
                           </div>
-                          <h3 className="text-xl font-bold mb-2 text-brand-textDark">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600">
-                            {item.description}
-                          </p>
+                          
+                          <div>
+                            <div className="flex items-center mb-2">
+                              <h3 className="text-xl font-bold">{item.title}</h3>
+                              <span className="ml-4 px-3 py-1 bg-gray-100 text-sm rounded-full">
+                                {item.date}
+                              </span>
+                            </div>
+                            <p className="text-gray-600">{item.description}</p>
+                          </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
-          </div>
-        </section>
-
-        {/* 相關案例 */}
-        {relatedCasesMemo.length > 0 && (
-          <section className="py-32 bg-white">
-            <div className="container-custom">
-              <motion.h2 
-                className="text-4xl font-bold text-center mb-12 font-display text-brand-textDark"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                相關案例
-              </motion.h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedCasesMemo.map((relatedCase, index) => (
-                  <motion.div
-                    key={relatedCase.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.3) }}
-                    whileHover={{ y: -5 }}
-                    className="bg-gray-50 shadow-md hover:shadow-lg transition-all duration-300"
-                  >
-                    <Link href={`/case/${relatedCase.id}`} className="block p-6">
-                      <div className="text-sm text-primary font-medium mb-2">
-                        {relatedCase.category}
-                      </div>
-                      <h3 className="text-xl font-bold mb-2 text-brand-textDark">
-                        {relatedCase.name}
-                      </h3>
-                      <p className="text-gray-600 line-clamp-2">
-                        {relatedCase.description}
-                      </p>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* CTA Section */}
-        <section className="py-32 bg-primary text-white">
-          <div className="container-custom">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-4xl mx-auto"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display">
-                想為您的診所打造成功案例？
-              </h2>
-              <p className="text-xl mb-8 max-w-3xl mx-auto">
-                立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
-                >
-                  預約諮詢
-                </Link>
-                <Link
-                  href="/service"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
-                >
-                  了解更多服務
-                </Link>
-              </div>
             </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* 相關案例 */}
+      {relatedCases.length > 0 && (
+        <section className="py-20 bg-gray-50">
+          <div className="container-custom">
+            <h2 className="text-2xl font-bold mb-8">相關案例</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {relatedCases.map((relatedCase, index) => (
+                <CaseCard key={relatedCase.id} caseStudy={relatedCase} index={index} />
+              ))}
+            </div>
           </div>
         </section>
-      </main>
-    </>
-  )
+      )}
+    </div>
+  );
 } 
