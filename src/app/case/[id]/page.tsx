@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -193,11 +193,16 @@ export default function CaseDetail() {
   const [showGalleryModal, setShowGalleryModal] = useState(false)
 
   useEffect(() => {
+    // 使用 React 19 的改進特性: 自動批處理更新
     const id = params.id
     if (typeof id === 'string') {
       const foundCase = caseStudies.find(c => c.id === id)
       if (foundCase) {
-        setCaseStudy(foundCase)
+        // 使用函數式更新來避免過期閉包問題
+        setCaseStudy(prev => {
+          if (prev?.id === foundCase.id) return prev;
+          return foundCase;
+        });
         
         // 處理解決方案
         if (foundCase.solutions) {
@@ -216,12 +221,6 @@ export default function CaseDetail() {
           foundCase.solutions = processedSolutions as Solution[];
         }
         
-        // 尋找相同類別的其他案例
-        // const related = caseStudies
-        //  .filter(c => c.id !== id && c.category === foundCase.category)
-        //  .slice(0, 3)
-        // setRelatedCases(related)
-        
         // 使用共用函數設定結構化數據，保持一致性
         const schemaData = generateCaseStudyMetadata(foundCase)
         setStructuredData(JSON.stringify(schemaData))
@@ -229,10 +228,10 @@ export default function CaseDetail() {
         // 動態設置文檔標題
         document.title = `${foundCase.name} - ${foundCase.category}成功案例 | Aidea:Med 牙醫行銷專家`;
 
-        // 生成附加內容
-        setTestimonials(generateTestimonials(foundCase));
-        setCaseImages(generateCaseImages(foundCase));
-        setBeforeAfter(generateBeforeAfter(foundCase));
+        // 使用函數式設置狀態，確保狀態更新正確批處理
+        setTestimonials(() => generateTestimonials(foundCase));
+        setCaseImages(() => generateCaseImages(foundCase));
+        setBeforeAfter(() => generateBeforeAfter(foundCase));
       }
     }
     
@@ -244,7 +243,13 @@ export default function CaseDetail() {
       setLiked(true);
     }
     
-    setLoading(false)
+    setLoading(false);
+    
+    // 清理函數改進
+    return () => {
+      // 任何需要清理的資源
+      document.title = 'Aidea:Med 牙醫行銷專家';
+    };
   }, [params.id])
 
   // 使用 useMemo 緩存時間軸數據
@@ -261,7 +266,7 @@ export default function CaseDetail() {
       .slice(0, 3);
   }, [caseStudy]);
   
-  // 切換喜歡狀態
+  // 切換喜歡狀態 - 使用函數式更新
   const handleLikeToggle = () => {
     if (!caseStudy) return;
     
@@ -321,10 +326,11 @@ export default function CaseDetail() {
     }
   };
 
+  // 使用 Suspense 來優化載入體驗
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin" />
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin rounded-full" />
       </div>
     )
   }
@@ -428,7 +434,7 @@ export default function CaseDetail() {
               >
                 {imageLoading && !imageError && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin rounded-full"></div>
                   </div>
                 )}
                 {!imageError ? (
@@ -442,6 +448,7 @@ export default function CaseDetail() {
                     sizes="100vw"
                     quality={90}
                     priority
+                    loading="eager"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
@@ -480,487 +487,494 @@ export default function CaseDetail() {
               </div>
             </div>
 
-            {/* 內容區塊 */}
-            <AnimatePresence mode="wait">
-              {activeTab === 'overview' && caseStudy && (
-                <motion.div
-                  key="overview"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {/* 案例圖片 - 改為扁平化設計 */}
-                  <div className="relative aspect-video mb-12 overflow-hidden rounded-md border border-gray-200">
-                    {imageLoading && !imageError && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                        <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
-                      </div>
-                    )}
-                    {!imageError ? (
-                      <Image
-                        src={caseStudy.image || '/images/case-placeholder.jpg'}
-                        alt={caseStudy.name}
-                        fill
-                        className="object-cover"
-                        onLoad={() => setImageLoading(false)}
-                        onError={() => setImageError(true)}
-                        priority
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                        <span className="text-4xl">📷</span>
-                      </div>
-                    )}
-                  </div>
+            {/* 內容區塊 - 使用 Suspense 優化 */}
+            <Suspense fallback={
+              <div className="flex justify-center py-12">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin rounded-full"></div>
+              </div>
+            }>
+              <AnimatePresence mode="wait">
+                {activeTab === 'overview' && caseStudy && (
+                  <motion.div
+                    key="overview"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    {/* 案例圖片 - 改為扁平化設計 */}
+                    <div className="relative aspect-video mb-12 overflow-hidden rounded-md border border-gray-200">
+                      {imageLoading && !imageError && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                          <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin rounded-full"></div>
+                        </div>
+                      )}
+                      {!imageError ? (
+                        <Image
+                          src={caseStudy.image || '/images/case-placeholder.jpg'}
+                          alt={caseStudy.name}
+                          fill
+                          className="object-cover"
+                          onLoad={() => setImageLoading(false)}
+                          onError={() => setImageError(true)}
+                          priority
+                          sizes="100vw"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                          <span className="text-4xl">📷</span>
+                        </div>
+                      )}
+                    </div>
 
-                  {/* 成效指標 - 改為扁平化設計 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    {caseStudy.metrics.map((metric, index) => (
+                    {/* 成效指標 - 改為扁平化設計 */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                      {caseStudy.metrics.map((metric, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: index * 0.1 }}
+                          className="bg-white p-6 border-t-4 border-primary"
+                        >
+                          <div className="text-3xl font-bold text-primary mb-2">
+                            <CountUp
+                              end={parseInt(metric.value)}
+                              suffix={metric.value.replace(/[0-9]/g, '')}
+                              duration={1.5}
+                              separator=","
+                            />
+                          </div>
+                          <div className="text-gray-600">
+                            {metric.label}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === 'solution' && caseStudy && (
+                  <motion.div
+                    key="solution"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                  >
+                    {caseStudy.solutions?.map((solution, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="bg-white p-6 border-t-4 border-primary"
+                        className="bg-white p-6 border-l-4 border-primary"
                       >
-                        <div className="text-3xl font-bold text-primary mb-2">
-                          <CountUp
-                            end={parseInt(metric.value)}
-                            suffix={metric.value.replace(/[0-9]/g, '')}
-                            duration={1.5}
-                            separator=","
-                          />
-                        </div>
-                        <div className="text-gray-600">
-                          {metric.label}
+                        <div className="flex items-start mb-4">
+                          <div className="w-10 h-10 bg-primary text-white flex items-center justify-center mr-4">
+                            <span className="text-xl font-bold">{index + 1}</span>
+                          </div>
+                          <div className="flex-grow">
+                            <h3 className="text-xl font-bold text-gray-800">
+                              {typeof solution === 'string' ? solution : solution.title}
+                            </h3>
+                            <p className="mt-2 text-gray-600">
+                              {typeof solution === 'string' ? generateSolutionDescription(index, caseStudy.name) : solution.description}
+                            </p>
+                          </div>
                         </div>
                       </motion.div>
                     ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'solution' && caseStudy && (
-                <motion.div
-                  key="solution"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
-                >
-                  {caseStudy.solutions?.map((solution, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="bg-white p-6 border-l-4 border-primary"
-                    >
-                      <div className="flex items-start mb-4">
-                        <div className="w-10 h-10 bg-primary text-white flex items-center justify-center mr-4">
-                          <span className="text-xl font-bold">{index + 1}</span>
-                        </div>
-                        <div className="flex-grow">
-                          <h3 className="text-xl font-bold text-gray-800">
-                            {typeof solution === 'string' ? solution : solution.title}
-                          </h3>
-                          <p className="mt-2 text-gray-600">
-                            {typeof solution === 'string' ? generateSolutionDescription(index, caseStudy.name) : solution.description}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-              
-              {activeTab === 'process' && caseStudy && (
-                <motion.div
-                  key="process"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <div className="max-w-4xl mx-auto">
-                    {timelineItems.map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="relative pl-8 pb-12 last:pb-0"
-                      >
-                        {/* 時間軸線 - 改為扁平化設計 */}
-                        <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary" />
-                        
-                        {/* 時間點 - 改為扁平化設計 */}
-                        <div className="absolute left-1 top-0 w-8 h-8 -translate-x-1/2 bg-primary text-white flex items-center justify-center">
-                          {item.icon}
-                        </div>
-                        
-                        {/* 內容 - 改為扁平化設計 */}
-                        <div className="bg-white p-6 border-l-2 border-primary">
-                          <div className="text-sm text-primary font-medium mb-2">
-                            {item.date}
-                          </div>
-                          <h3 className="text-xl font-bold mb-2 text-gray-800">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600">
-                            {item.description}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-              
-              {activeTab === 'data' && caseStudy && (
-                <motion.div
-                  key="data"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-white rounded-lg shadow-md p-8"
-                >
-                  <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
-                    {caseStudy.name} 成效數據分析
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-                      <h3 className="text-xl font-bold mb-4 flex items-center text-gray-800">
-                        <ChartBarIcon className="w-6 h-6 mr-2 text-primary" />
-                        關鍵指標表現
-                      </h3>
-                      <div className="space-y-6">
-                        {caseStudy.metrics.map((metric, idx) => (
-                          <div key={idx} className="relative">
-                            <div className="flex justify-between mb-2">
-                              <span className="text-gray-700 font-medium">{metric.label}</span>
-                              <span className="text-primary font-bold">{metric.value}</span>
-                            </div>
-                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <motion.div 
-                                className="h-full bg-primary"
-                                initial={{ width: 0 }}
-                                animate={{ width: parseInt(metric.value) ? `${Math.min(parseInt(metric.value), 100)}%` : '75%' }}
-                                transition={{ duration: 1, delay: idx * 0.2, ease: "easeOut" }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-                      <h3 className="text-xl font-bold mb-4 flex items-center text-gray-800">
-                        <StarIcon className="w-6 h-6 mr-2 text-primary" />
-                        效益比較
-                      </h3>
-                      <div className="h-64 flex items-end justify-around space-x-4">
-                        <div className="flex flex-col items-center">
-                          <div className="text-sm text-gray-500 mb-2">實施前</div>
-                          <motion.div 
-                            className="w-20 bg-gray-300 rounded-t-lg relative"
-                            initial={{ height: 0 }}
-                            animate={{ height: 80 }}
-                            transition={{ duration: 1, delay: 0.3 }}
-                          >
-                            <div className="absolute -top-8 left-0 right-0 text-center font-bold">100%</div>
-                          </motion.div>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <div className="text-sm text-gray-500 mb-2">實施後</div>
-                          <motion.div 
-                            className="w-20 bg-primary rounded-t-lg relative"
-                            initial={{ height: 0 }}
-                            animate={{ height: 200 }}
-                            transition={{ duration: 1, delay: 0.5 }}
-                          >
-                            <div className="absolute -top-8 left-0 right-0 text-center font-bold text-primary">250%</div>
-                          </motion.div>
-                        </div>
-                      </div>
-                      <div className="mt-6 text-sm text-gray-600 text-center">
-                        實施我們的解決方案後，整體效益提升約 150%
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-                    <h3 className="text-xl font-bold mb-6 text-center text-gray-800">專案執行時間表</h3>
-                    <div className="relative">
-                      <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-200" />
-                      
-                      <div className="space-y-12">
-                        <motion.div 
-                          className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: 0.3 }}
-                        >
-                          <div className="md:col-span-2 md:text-right pr-8 relative">
-                            <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white" />
-                            </div>
-                            <div className="font-bold text-gray-800">專案啟動</div>
-                            <div className="text-sm text-gray-500">2023 年 1 月</div>
-                          </div>
-                          <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
-                            <p className="text-gray-600">
-                              進行詳細的市場分析與競爭對手研究，確立品牌定位和目標客群特性
-                            </p>
-                          </div>
-                        </motion.div>
-                        
-                        <motion.div 
-                          className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: 0.5 }}
-                        >
-                          <div className="md:col-span-2 md:text-right pr-8 relative">
-                            <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white" />
-                            </div>
-                            <div className="font-bold text-gray-800">策略執行</div>
-                            <div className="text-sm text-gray-500">2023 年 2-4 月</div>
-                          </div>
-                          <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
-                            <p className="text-gray-600">
-                              依據規劃實施行銷策略，逐步建立品牌形象，優化客戶體驗流程
-                            </p>
-                          </div>
-                        </motion.div>
-                        
-                        <motion.div 
-                          className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: 0.7 }}
-                        >
-                          <div className="md:col-span-2 md:text-right pr-8 relative">
-                            <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
-                              <div className="h-2 w-2 rounded-full bg-white" />
-                            </div>
-                            <div className="font-bold text-gray-800">成果驗收</div>
-                            <div className="text-sm text-gray-500">2023 年 5-6 月</div>
-                          </div>
-                          <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
-                            <p className="text-gray-600">
-                              全面評估行銷效果，透過數據分析驗證各項施策成效，持續優化調整
-                            </p>
-                          </div>
-                        </motion.div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'gallery' && caseStudy && (
-                <motion.div
-                  key="gallery"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-12"
-                >
-                  <div className="bg-white rounded-lg shadow-md p-8">
-                    <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
-                      {caseStudy.name} 專案實例展示
-                    </h2>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {caseImages.map((image, index) => (
+                  </motion.div>
+                )}
+                
+                {activeTab === 'process' && caseStudy && (
+                  <motion.div
+                    key="process"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <div className="max-w-4xl mx-auto">
+                      {timelineItems.map((item, index) => (
                         <motion.div
                           key={index}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="group relative cursor-pointer"
-                          onClick={() => openGalleryModal(index)}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.4, delay: index * 0.1 }}
+                          className="relative pl-8 pb-12 last:pb-0"
                         >
-                          <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                            <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-                            <Image
-                              src={image.url}
-                              alt={image.alt}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-500"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/cases/case-placeholder.jpg';
-                              }}
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                              <div className="text-white scale-0 group-hover:scale-100 transition-transform duration-300">
-                                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                                </svg>
-                              </div>
-                            </div>
+                          {/* 時間軸線 - 改為扁平化設計 */}
+                          <div className="absolute left-0 top-0 bottom-0 w-2 bg-primary" />
+                          
+                          {/* 時間點 - 改為扁平化設計 */}
+                          <div className="absolute left-1 top-0 w-8 h-8 -translate-x-1/2 bg-primary text-white flex items-center justify-center">
+                            {item.icon}
                           </div>
-                          {image.caption && (
-                            <p className="mt-2 text-sm text-center text-gray-600">
-                              {image.caption}
+                          
+                          {/* 內容 - 改為扁平化設計 */}
+                          <div className="bg-white p-6 border-l-2 border-primary">
+                            <div className="text-sm text-primary font-medium mb-2">
+                              {item.date}
+                            </div>
+                            <h3 className="text-xl font-bold mb-2 text-gray-800">
+                              {item.title}
+                            </h3>
+                            <p className="text-gray-600">
+                              {item.description}
                             </p>
-                          )}
+                          </div>
                         </motion.div>
                       ))}
                     </div>
-                  </div>
-
-                  {/* 前後對比區塊 */}
-                  <div className="bg-white rounded-lg shadow-md p-8">
+                  </motion.div>
+                )}
+                
+                {activeTab === 'data' && caseStudy && (
+                  <motion.div
+                    key="data"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-white rounded-lg shadow-md p-8"
+                  >
                     <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
-                      成效前後對比
+                      {caseStudy.name} 成效數據分析
                     </h2>
                     
-                    <div className="space-y-12">
-                      {beforeAfter.map((item, index) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                        <h3 className="text-xl font-bold mb-4 flex items-center text-gray-800">
+                          <ChartBarIcon className="w-6 h-6 mr-2 text-primary" />
+                          關鍵指標表現
+                        </h3>
+                        <div className="space-y-6">
+                          {caseStudy.metrics.map((metric, idx) => (
+                            <div key={idx} className="relative">
+                              <div className="flex justify-between mb-2">
+                                <span className="text-gray-700 font-medium">{metric.label}</span>
+                                <span className="text-primary font-bold">{metric.value}</span>
+                              </div>
+                              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <motion.div 
+                                  className="h-full bg-primary"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: parseInt(metric.value) ? `${Math.min(parseInt(metric.value), 100)}%` : '75%' }}
+                                  transition={{ duration: 1, delay: idx * 0.2, ease: "easeOut" }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                        <h3 className="text-xl font-bold mb-4 flex items-center text-gray-800">
+                          <StarIcon className="w-6 h-6 mr-2 text-primary" />
+                          效益比較
+                        </h3>
+                        <div className="h-64 flex items-end justify-around space-x-4">
+                          <div className="flex flex-col items-center">
+                            <div className="text-sm text-gray-500 mb-2">實施前</div>
+                            <motion.div 
+                              className="w-20 bg-gray-300 rounded-t-lg relative"
+                              initial={{ height: 0 }}
+                              animate={{ height: 80 }}
+                              transition={{ duration: 1, delay: 0.3 }}
+                            >
+                              <div className="absolute -top-8 left-0 right-0 text-center font-bold">100%</div>
+                            </motion.div>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="text-sm text-gray-500 mb-2">實施後</div>
+                            <motion.div 
+                              className="w-20 bg-primary rounded-t-lg relative"
+                              initial={{ height: 0 }}
+                              animate={{ height: 200 }}
+                              transition={{ duration: 1, delay: 0.5 }}
+                            >
+                              <div className="absolute -top-8 left-0 right-0 text-center font-bold text-primary">250%</div>
+                            </motion.div>
+                          </div>
+                        </div>
+                        <div className="mt-6 text-sm text-gray-600 text-center">
+                          實施我們的解決方案後，整體效益提升約 150%
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                      <h3 className="text-xl font-bold mb-6 text-center text-gray-800">專案執行時間表</h3>
+                      <div className="relative">
+                        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-200" />
+                        
+                        <div className="space-y-12">
+                          <motion.div 
+                            className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.3 }}
+                          >
+                            <div className="md:col-span-2 md:text-right pr-8 relative">
+                              <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
+                                <div className="h-2 w-2 rounded-full bg-white" />
+                              </div>
+                              <div className="font-bold text-gray-800">專案啟動</div>
+                              <div className="text-sm text-gray-500">2023 年 1 月</div>
+                            </div>
+                            <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
+                              <p className="text-gray-600">
+                                進行詳細的市場分析與競爭對手研究，確立品牌定位和目標客群特性
+                              </p>
+                            </div>
+                          </motion.div>
+                          
+                          <motion.div 
+                            className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.5 }}
+                          >
+                            <div className="md:col-span-2 md:text-right pr-8 relative">
+                              <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
+                                <div className="h-2 w-2 rounded-full bg-white" />
+                              </div>
+                              <div className="font-bold text-gray-800">策略執行</div>
+                              <div className="text-sm text-gray-500">2023 年 2-4 月</div>
+                            </div>
+                            <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
+                              <p className="text-gray-600">
+                                依據規劃實施行銷策略，逐步建立品牌形象，優化客戶體驗流程
+                              </p>
+                            </div>
+                          </motion.div>
+                          
+                          <motion.div 
+                            className="relative pl-8 md:pl-0 md:grid md:grid-cols-5 md:gap-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.7 }}
+                          >
+                            <div className="md:col-span-2 md:text-right pr-8 relative">
+                              <div className="md:absolute md:right-0 md:top-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center -translate-y-1/2 md:translate-x-1/2 z-10">
+                                <div className="h-2 w-2 rounded-full bg-white" />
+                              </div>
+                              <div className="font-bold text-gray-800">成果驗收</div>
+                              <div className="text-sm text-gray-500">2023 年 5-6 月</div>
+                            </div>
+                            <div className="md:col-span-3 bg-white p-4 rounded-lg shadow-sm">
+                              <p className="text-gray-600">
+                                全面評估行銷效果，透過數據分析驗證各項施策成效，持續優化調整
+                              </p>
+                            </div>
+                          </motion.div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === 'gallery' && caseStudy && (
+                  <motion.div
+                    key="gallery"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="space-y-12"
+                  >
+                    <div className="bg-white rounded-lg shadow-md p-8">
+                      <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+                        {caseStudy.name} 專案實例展示
+                      </h2>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {caseImages.map((image, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                            className="group relative cursor-pointer"
+                            onClick={() => openGalleryModal(index)}
+                          >
+                            <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
+                              <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+                              <Image
+                                src={image.url}
+                                alt={image.alt}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = '/cases/case-placeholder.jpg';
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                                <div className="text-white scale-0 group-hover:scale-100 transition-transform duration-300">
+                                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            {image.caption && (
+                              <p className="mt-2 text-sm text-center text-gray-600">
+                                {image.caption}
+                              </p>
+                            )}
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 前後對比區塊 */}
+                    <div className="bg-white rounded-lg shadow-md p-8">
+                      <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+                        成效前後對比
+                      </h2>
+                      
+                      <div className="space-y-12">
+                        {beforeAfter.map((item, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: index * 0.2 }}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                          >
+                            <div className="text-center space-y-6">
+                              <h3 className="text-xl font-semibold bg-gray-100 py-2 rounded-lg">改版前</h3>
+                              <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
+                                <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+                                <Image
+                                  src={item.beforeImage}
+                                  alt={`${item.title}改版前`}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/cases/case-placeholder.jpg';
+                                  }}
+                                />
+                              </div>
+                              <p className="text-gray-600">{item.beforeDescription}</p>
+                            </div>
+
+                            <div className="text-center space-y-6">
+                              <h3 className="text-xl font-semibold bg-primary text-white py-2 rounded-lg">改版後</h3>
+                              <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
+                                <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+                                <Image
+                                  src={item.afterImage}
+                                  alt={`${item.title}改版後`}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/cases/case-placeholder.jpg';
+                                  }}
+                                />
+                              </div>
+                              <p className="text-gray-600 font-medium">{item.afterDescription}</p>
+                            </div>
+
+                            <div className="md:col-span-2 border-b border-gray-200 pt-4 pb-8">
+                              <h3 className="text-xl font-bold text-center text-gray-800">{item.title} 提升成效</h3>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === 'testimonials' && caseStudy && (
+                  <motion.div
+                    key="testimonials"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-white rounded-lg shadow-md p-8"
+                  >
+                    <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+                      客戶見證與回饋
+                    </h2>
+                    
+                    <div className="space-y-8">
+                      {testimonials.map((testimonial, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, delay: index * 0.2 }}
-                          className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                          className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary relative"
                         >
-                          <div className="text-center space-y-6">
-                            <h3 className="text-xl font-semibold bg-gray-100 py-2 rounded-lg">改版前</h3>
-                            <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                              <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-                              <Image
-                                src={item.beforeImage}
-                                alt={`${item.title}改版前`}
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = '/cases/case-placeholder.jpg';
-                                }}
-                              />
+                          <div className="flex flex-col md:flex-row md:items-center gap-6">
+                            <div className="flex-shrink-0">
+                              <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 mx-auto md:mx-0">
+                                {testimonial.avatar ? (
+                                  <Image
+                                    src={testimonial.avatar}
+                                    alt={testimonial.name}
+                                    width={96}
+                                    height={96}
+                                    className="object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = '/images/avatars/default.jpg';
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-primary text-white text-2xl font-bold">
+                                    {testimonial.name.charAt(0)}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <p className="text-gray-600">{item.beforeDescription}</p>
-                          </div>
-
-                          <div className="text-center space-y-6">
-                            <h3 className="text-xl font-semibold bg-primary text-white py-2 rounded-lg">改版後</h3>
-                            <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                              <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-                              <Image
-                                src={item.afterImage}
-                                alt={`${item.title}改版後`}
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = '/cases/case-placeholder.jpg';
-                                }}
-                              />
+                            <div className="flex-grow">
+                              <div className="absolute -top-4 -left-2 text-primary opacity-30 text-6xl">&ldquo;</div>
+                              <p className="text-gray-700 italic mb-4 relative z-10">
+                                {testimonial.content}
+                              </p>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-gray-800">{testimonial.name}</span>
+                                <span className="text-sm text-gray-600">{testimonial.role}, {testimonial.company}</span>
+                              </div>
                             </div>
-                            <p className="text-gray-600 font-medium">{item.afterDescription}</p>
-                          </div>
-
-                          <div className="md:col-span-2 border-b border-gray-200 pt-4 pb-8">
-                            <h3 className="text-xl font-bold text-center text-gray-800">{item.title} 提升成效</h3>
                           </div>
                         </motion.div>
                       ))}
                     </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'testimonials' && caseStudy && (
-                <motion.div
-                  key="testimonials"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-white rounded-lg shadow-md p-8"
-                >
-                  <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
-                    客戶見證與回饋
-                  </h2>
-                  
-                  <div className="space-y-8">
-                    {testimonials.map((testimonial, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: index * 0.2 }}
-                        className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary relative"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center gap-6">
-                          <div className="flex-shrink-0">
-                            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 mx-auto md:mx-0">
-                              {testimonial.avatar ? (
-                                <Image
-                                  src={testimonial.avatar}
-                                  alt={testimonial.name}
-                                  width={96}
-                                  height={96}
-                                  className="object-cover"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.src = '/images/avatars/default.jpg';
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-primary text-white text-2xl font-bold">
-                                  {testimonial.name.charAt(0)}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex-grow">
-                            <div className="absolute -top-4 -left-2 text-primary opacity-30 text-6xl">&ldquo;</div>
-                            <p className="text-gray-700 italic mb-4 relative z-10">
-                              {testimonial.content}
-                            </p>
-                            <div className="flex flex-col">
-                              <span className="font-bold text-gray-800">{testimonial.name}</span>
-                              <span className="text-sm text-gray-600">{testimonial.role}, {testimonial.company}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
-                    <h3 className="text-xl font-bold mb-4 text-center text-gray-800">您也想成為我們的成功案例嗎？</h3>
-                    <p className="text-center text-gray-600 mb-6">
-                      立即預約免費諮詢，讓我們為您的診所打造專屬行銷策略
-                    </p>
-                    <div className="flex justify-center">
-                      <Link
-                        href="/contact"
-                        className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium hover:bg-primary/90 transition-colors rounded-lg"
-                      >
-                        預約免費諮詢
-                        <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </Link>
+                    
+                    <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                      <h3 className="text-xl font-bold mb-4 text-center text-gray-800">您也想成為我們的成功案例嗎？</h3>
+                      <p className="text-center text-gray-600 mb-6">
+                        立即預約免費諮詢，讓我們為您的診所打造專屬行銷策略
+                      </p>
+                      <div className="flex justify-center">
+                        <Link
+                          href="/contact"
+                          className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium hover:bg-primary/90 transition-colors rounded-lg"
+                        >
+                          預約免費諮詢
+                          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                          </svg>
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Suspense>
           </div>
         </section>
 

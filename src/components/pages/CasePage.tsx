@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, memo, useMemo } from 'react'
+import { useState, useEffect, memo, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Metadata } from 'next'
-import { animations } from '@/utils/animations'
+import { animations, fadeInUp, fadeInLeft, fadeInRight, staggerContainer } from '@/utils/animations'
 import { CaseCard } from '@/components/case/CaseCard'
 import { PageHeader } from '@/components/common'
 
@@ -268,308 +268,303 @@ export const caseStudies: CaseStudy[] = [
   }
 ]
 
-// 載入狀態組件
-export const LoadingState = (): React.ReactElement => {
+// 優化後的Loading State
+export const LoadingState = memo((): React.ReactElement => {
   return (
-    <div className="py-20 flex flex-col items-center justify-center">
-      <div className="w-12 h-12 rounded-full border-l-2 border-t-2 border-primary animate-spin mb-4"></div>
-      <p className="text-gray-500 font-medium">載入案例資料中...</p>
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[1, 2, 3, 4, 5, 6].map((item) => (
+          <div key={item} className="bg-gray-100 animate-pulse h-80 rounded-lg"></div>
+        ))}
+      </div>
     </div>
-  );
-};
+  )
+})
+LoadingState.displayName = 'LoadingState';
 
-// 更新 EmptyState 組件
 export interface EmptyStateProps {
   category?: string;
   message?: string;
 }
 
 function EmptyState({ category, message }: EmptyStateProps) {
-  const displayMessage = message || `暫無${category !== '全部' ? category + '類別的' : ''}案例`;
-  
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="bg-white p-8 rounded-lg shadow-sm max-w-md w-full">
-        <svg
-          className="mx-auto h-16 w-16 text-gray-400 mb-4"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">沒有找到案例</h3>
-        <p className="text-gray-500 mb-6">{displayMessage}</p>
-        <button
-          onClick={() => document.querySelector('button[data-category="全部"]')?.dispatchEvent(new Event('click', { bubbles: true }))}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/60"
-        >
-          查看所有案例
-        </button>
+    <div className="bg-white shadow-sm rounded-lg p-8 text-center max-w-2xl mx-auto my-12">
+      <svg
+        className="mx-auto h-16 w-16 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <h3 className="mt-4 text-lg font-medium text-gray-900">沒有找到{category ? `「${category}」`: ''}相關案例</h3>
+      <p className="mt-2 text-sm text-gray-500">
+        {message || '請嘗試選擇其他類別或聯繫我們了解更多資訊。'}
+      </p>
+      <div className="mt-6">
+        <Link href="/contact" className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primaryDark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+          <span>聯繫我們</span>
+        </Link>
       </div>
     </div>
-  );
+  )
 }
 
-// 篩選組件 - 改進導覽與無障礙體驗
 export interface CaseFilterProps {
   activeCategory: string;
   setActiveCategory: (category: string) => void;
   categories: string[];
 }
 
-export const CaseFilter = ({ activeCategory, setActiveCategory, categories }: CaseFilterProps): React.ReactElement => {
+// 使用React.memo優化不必要的重新渲染
+export const CaseFilter = memo(({ activeCategory, setActiveCategory, categories }: CaseFilterProps): React.ReactElement => {
   return (
-    <motion.nav 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-wrap gap-4 mb-20 justify-center"
-      aria-label="案例類別篩選"
-      role="navigation"
-    >
-      {categories.map((category: string, index: number) => (
-        <motion.button 
+    <div className="mb-12 flex flex-wrap gap-3 justify-center">
+      <button
+        onClick={() => setActiveCategory('全部案例')}
+        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          activeCategory === '全部案例'
+            ? 'bg-primary text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        }`}
+      >
+        全部案例
+      </button>
+      {categories.map((category) => (
+        <button
           key={category}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.05 * index }}
-          whileTap={{ scale: 0.95 }}
           onClick={() => setActiveCategory(category)}
-          aria-pressed={activeCategory === category}
-          aria-label={`篩選${category}類別案例`}
-          className={`px-5 py-2.5 text-sm font-medium transition-all duration-200 border ${
-            activeCategory === category 
-              ? 'bg-primary text-white border-primary shadow-sm' 
-              : 'bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary'
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeCategory === category
+              ? 'bg-primary text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
           {category}
-        </motion.button>
+        </button>
       ))}
-    </motion.nav>
-  );
-};
+    </div>
+  )
+})
+CaseFilter.displayName = 'CaseFilter';
 
-// 數字動畫組件
 export interface AnimatedNumberProps {
   value: string;
   className?: string;
 }
 
-export const AnimatedNumber = ({ value, className }: AnimatedNumberProps): React.ReactElement => {
-  // 過濾出數字部分，預處理加號和百分比
-  const numericPart = value.replace(/[^0-9.]/g, '');
-  const hasPlusSign = value.includes('+');
-  const hasPercentage = value.includes('%');
+// 使用React.memo優化數字動畫組件
+export const AnimatedNumber = memo(({ value, className }: AnimatedNumberProps): React.ReactElement => {
+  const numericPart = value.replace(/[^0-9]/g, '');
+  const suffix = value.replace(/[0-9]/g, '');
   
   return (
-    <motion.span 
-      className={className}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
+    <span className={className}>
       {numericPart}
-      {hasPercentage && <span>%</span>}
-      {hasPlusSign && <span>+</span>}
-    </motion.span>
-  );
-};
+      {suffix}
+    </span>
+  )
+})
+AnimatedNumber.displayName = 'AnimatedNumber';
 
-// 特色案例組件 - 優化結構與無障礙體驗
 export interface FeaturedCaseProps {
   caseStudy: CaseStudy;
 }
 
-export const FeaturedCase = ({ caseStudy }: FeaturedCaseProps): React.ReactElement => {
+// 使用React.memo優化特色案例組件
+export const FeaturedCase = memo(({ caseStudy }: FeaturedCaseProps): React.ReactElement => {
   return (
-    <motion.article 
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="mb-24"
-      role="article"
-      aria-labelledby={`featured-case-${caseStudy.id}`}
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={staggerContainer}
+      className="mb-20"
     >
-      <div className="overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white border border-gray-100">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative aspect-video lg:aspect-auto lg:h-full overflow-hidden lg:col-span-7 bg-brand-primary"
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <motion.h2 
+            variants={fadeInUp}
+            className="text-2xl md:text-3xl font-bold"
           >
-            {/* 扁平設計風格的幾何圖形背景 */}
-            <div className="absolute inset-0">
-              <div className="absolute top-[10%] right-[5%] w-24 h-24 opacity-20 bg-white rounded-none"></div>
-              <div className="absolute bottom-[15%] left-[10%] w-40 h-10 opacity-10 bg-black rounded-none"></div>
-              <div className="absolute top-[40%] right-[30%] w-16 h-16 opacity-15 bg-white rounded-none"></div>
+            特色案例
+          </motion.h2>
+          <motion.div variants={fadeInUp}>
+            <Link 
+              href={`/case/${caseStudy.id}`}
+              className="text-primary font-medium hover:underline transition-all flex items-center"
+            >
+              查看所有案例
+              <svg 
+                className="w-4 h-4 ml-1 transform transition-transform group-hover:translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M9 5l7 7-7 7" 
+                />
+              </svg>
+            </Link>
+          </motion.div>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div 
+            variants={fadeInLeft}
+            className="order-2 md:order-1"
+          >
+            <div className="flex items-center mb-4">
+              <span className="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                {caseStudy.category}
+              </span>
+              {caseStudy.featured && (
+                <span className="ml-3 bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
+                  精選案例
+                </span>
+              )}
             </div>
             
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-white text-center">
-                <AnimatedNumber 
-                  value={caseStudy.metrics[0].value}
-                  className="text-7xl font-bold mb-2 font-gothic"
-                />
-                <div className="text-xl font-tw">{caseStudy.metrics[0].label}</div>
-              </div>
-            </div>
-          </motion.div>
-          <div className="p-8 lg:p-12 lg:col-span-5">
-            <div className="flex items-center mb-6">
-              <motion.div 
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-                className="bg-primary h-6 w-1 mr-3"
-              ></motion.div>
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                className="text-gray-700 text-sm font-medium"
-              >
-                {caseStudy.category}
-              </motion.div>
-            </div>
-            <motion.h2 
-              id={`featured-case-${caseStudy.id}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="text-3xl md:text-4xl font-bold mb-6 font-gothic"
-            >
+            <h2 className="text-3xl font-bold mb-4">
               {caseStudy.name}
-            </motion.h2>
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="space-y-4 text-gray-600 mb-8"
+            </h2>
+            
+            <p className="text-gray-600 mb-6">
+              {caseStudy.description}
+            </p>
+            
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {caseStudy.metrics.slice(0, 4).map((metric, index) => (
+                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-primary mb-1">
+                    <AnimatedNumber value={metric.value} />
+                  </div>
+                  <div className="text-sm text-gray-500">{metric.label}</div>
+                </div>
+              ))}
+            </div>
+            
+            <Link 
+              href={`/case/${caseStudy.id}`}
+              className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-md hover:bg-primaryDark transition-colors group"
             >
-              <p>{caseStudy.description}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                {caseStudy.metrics.slice(1, 3).map((metric: CaseMetric, index: number) => (
-                  <motion.div 
-                    key={index} 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.5 + (index * 0.1) }}
-                    className="bg-gray-50 p-4 border-l-2 border-primary"
-                  >
-                    <AnimatedNumber 
-                      value={metric.value}
-                      className="text-2xl font-bold font-gothic text-primary"
-                    />
-                    <div className="text-sm text-gray-600">{metric.label}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.8 }}
-            >
-              <Link 
-                href={`/case/${caseStudy.id}`} 
-                aria-label={`查看${caseStudy.name}的完整案例細節`}
-                className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium group transition-all duration-300 hover:bg-primary/90"
+              查看詳細案例
+              <svg 
+                className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
               >
-                查看完整案例
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </Link>
-            </motion.div>
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M14 5l7 7-7 7" 
+                />
+              </svg>
+            </Link>
+          </motion.div>
+          
+          <motion.div 
+            variants={fadeInRight}
+            className="order-1 md:order-2"
+          >
+            <Link href={`/case/${caseStudy.id}`} className="block relative">
+              <div className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200 relative">
+                <div 
+                  className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent z-10"
+                ></div>
+                <img 
+                  src={caseStudy.image} 
+                  alt={caseStudy.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  )
+})
+FeaturedCase.displayName = 'FeaturedCase';
+
+// 使用React.memo優化CTA部分
+export const CTASection = memo((): React.ReactElement => {
+  return (
+    <section className="bg-primary py-20">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            準備好開始您的診所行銷升級了嗎？
+          </h2>
+          <p className="text-white/90 text-lg mb-8">
+            我們的專業團隊擁有豐富的牙醫診所行銷經驗，能為您打造專屬的行銷策略，提升品牌價值與病患轉換率。
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link 
+              href="/contact"
+              className="px-8 py-3 bg-white text-primary font-medium rounded-md hover:bg-gray-100 transition-colors"
+            >
+              免費諮詢
+            </Link>
+            <Link 
+              href="/service"
+              className="px-8 py-3 bg-transparent text-white border border-white font-medium rounded-md hover:bg-white/10 transition-colors"
+            >
+              探索服務方案
+            </Link>
           </div>
         </div>
       </div>
-    </motion.article>
-  );
-};
+    </section>
+  )
+})
+CTASection.displayName = 'CTASection';
 
-// CTA 組件 - 提供可重用的行動呼籲區塊
-export const CTASection = (): React.ReactElement => {
-  return (
-    <motion.section 
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: 0.2 }}
-      className="mb-20 section-dark-centered text-selection-dark"
-    >
-      <h2 className="font-gothic">想為您的診所打造 AI 驅動的專屬數位行銷策略？</h2>
-      <div className="divider divider-primary"></div>
-      <p className="max-w-2xl mx-auto">
-        立即與我們聯繫，獲取專業諮詢與由 AI 技術支持的量身定制行銷方案，讓您的診所在數位時代脫穎而出。
-      </p>
-      <div className="cta-buttons">
-        <Link 
-          href="/contact"
-          className="btn-on-dark-primary"
-        >
-          免費諮詢
-        </Link>
-        <Link 
-          href="/service"
-          className="btn-on-dark-outline"
-        >
-          了解服務方案
-        </Link>
-      </div>
-    </motion.section>
-  );
-};
-
-// 生成頁面 Metadata - 與 Next.js metadata 檔案保持一致
+// 生成頁面metadata (Server Component可使用)
 export const generateCasePageMetadata = (): Metadata => {
   return {
-    title: '成功案例分享 | Aidea:Med 牙醫行銷專家',
-    description: '透過專業的 AI 整合數位行銷策略，我們協助多家牙醫診所成功打造品牌形象、提升營收。瀏覽我們的成功案例，了解如何為您的診所帶來更多新患與營收。',
-    keywords: ['牙醫診所', 'AI行銷', '醫療行銷', '成功案例', '品牌重塑', '社群經營', '品牌策略', '整合行銷', '數位轉型'],
+    title: '成功案例 | Aidea:Med 牙醫行銷專家',
+    description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
     openGraph: {
-      title: '成功案例分享 | Aidea:Med 牙醫行銷專家',
-      description: '透過專業的 AI 整合數位行銷策略，我們協助多家牙醫診所成功打造品牌形象、提升營收。瀏覽我們的成功案例，了解如何為您的診所帶來更多新患與營收。',
+      title: '成功案例 | Aidea:Med 牙醫行銷專家',
+      description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
       url: 'https://www.aideamed.com/case',
       siteName: 'Aidea:Med 牙醫行銷專家',
-      images: [
-        {
-          url: 'https://www.aideamed.com/images/case-og.jpg',
-          width: 1200,
-          height: 630,
-          alt: '牙醫診所數位行銷成功案例'
-        }
-      ],
       locale: 'zh_TW',
       type: 'website',
     }
-  };
-};
+  }
+}
 
-// 生成個別案例的 schema.org 結構化資料
+// 生成案例結構化數據 (Server Component可使用)
 export const generateCaseStudyMetadata = (caseStudy: CaseStudy): ArticleStructuredData => {
-  return {
+  const schemaData: ArticleStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${caseStudy.name} - ${caseStudy.category}`,
+    headline: `${caseStudy.name} - ${caseStudy.category}成功案例`,
     description: caseStudy.description,
-    image: caseStudy.image || `https://www.aidea-med.com/images/cases/${caseStudy.id}.jpg`,
+    image: caseStudy.image,
     datePublished: caseStudy.publishedDate || new Date().toISOString(),
-    dateModified: caseStudy.updatedDate || new Date().toISOString(),
+    dateModified: caseStudy.updatedDate || caseStudy.publishedDate || new Date().toISOString(),
     author: {
       '@type': 'Organization',
       name: 'Aidea:Med 牙醫行銷專家',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.aideamed.com/logo.png'
+        url: 'https://www.aideamed.com/images/logo.png'
       }
     },
     publisher: {
@@ -577,7 +572,7 @@ export const generateCaseStudyMetadata = (caseStudy: CaseStudy): ArticleStructur
       name: 'Aidea:Med 牙醫行銷專家',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.aideamed.com/logo.png'
+        url: 'https://www.aideamed.com/images/logo.png'
       }
     },
     mainEntityOfPage: {
@@ -586,28 +581,27 @@ export const generateCaseStudyMetadata = (caseStudy: CaseStudy): ArticleStructur
     },
     about: {
       '@type': 'Thing',
-      name: caseStudy.category,
-      description: `Aidea:Med 牙醫行銷專家提供的${caseStudy.category}服務，結合AI技術與創意策略，為牙醫診所提供專業的數位行銷解決方案`
+      name: '牙醫診所行銷',
+      description: '專業牙醫診所品牌建立與數位行銷服務'
     },
-    articleSection: '成功案例',
-    keywords: ['牙醫診所', 'AI行銷', '醫療行銷', '數位行銷', caseStudy.category, caseStudy.name]
-  };
-};
+    articleSection: caseStudy.category,
+    keywords: ['牙醫行銷', '診所品牌', caseStudy.category, '醫療行銷', '成功案例']
+  }
+  
+  return schemaData
+}
 
-// 生成個別案例頁面的 Next.js Metadata
+// 生成案例metadata (Server Component可使用)
 export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
   return {
-    title: `${caseStudy.name} - ${caseStudy.category} | Aidea:Med 牙醫行銷專家`,
+    title: `${caseStudy.name} - ${caseStudy.category}成功案例 | Aidea:Med 牙醫行銷專家`,
     description: caseStudy.description,
-    keywords: ['牙醫診所', 'AI行銷', '醫療行銷', '成功案例', caseStudy.category, caseStudy.name],
     openGraph: {
-      title: `${caseStudy.name} - ${caseStudy.category} | Aidea:Med 牙醫行銷專家`,
+      title: `${caseStudy.name} - ${caseStudy.category}成功案例`,
       description: caseStudy.description,
-      url: `https://www.aideamed.com/case/${caseStudy.id}`,
-      siteName: 'Aidea:Med 牙醫行銷專家',
       images: [
         {
-          url: `https://www.aideamed.com/images/cases/${caseStudy.id}.jpg`,
+          url: caseStudy.image,
           width: 1200,
           height: 630,
           alt: caseStudy.name
@@ -615,126 +609,115 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
       ],
       locale: 'zh_TW',
       type: 'article',
+      publishedTime: caseStudy.publishedDate,
+      modifiedTime: caseStudy.updatedDate,
+      tags: ['牙醫行銷', '診所品牌', caseStudy.category, '醫療行銷', '成功案例']
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${caseStudy.name} - ${caseStudy.category} | Aidea:Med 牙醫行銷專家`,
+      title: `${caseStudy.name} - ${caseStudy.category}成功案例`,
       description: caseStudy.description,
-      images: [`https://www.aideamed.com/images/cases/${caseStudy.id}.jpg`],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
+      images: [caseStudy.image],
     },
     alternates: {
       canonical: `https://www.aideamed.com/case/${caseStudy.id}`,
-    },
-    authors: [{ name: 'Aidea:Med 牙醫行銷專家', url: 'https://www.aideamed.com' }],
-    publisher: 'Aidea:Med 牙醫行銷專家',
-    category: '成功案例',
-  };
-};
-
-// 在 MainContent 組件之前添加 FilteredCasesList 組件
-// 使用 memo 避免不必要的重新渲染
-const FilteredCasesList = memo(({ cases, selectedCategory }: { cases: CaseStudy[], selectedCategory: string }) => {
-  // 使用 useMemo 緩存過濾後的案例列表
-  const filteredCases = useMemo(() => {
-    return selectedCategory === '全部' 
-      ? cases 
-      : cases.filter(c => c.category === selectedCategory);
-  }, [cases, selectedCategory]);
-
-  if (filteredCases.length === 0) {
-    return <EmptyState category={selectedCategory} />;
+    }
   }
+}
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {filteredCases.map((caseStudy, index) => (
-        <CaseCard 
-          key={caseStudy.id} 
-          caseStudy={caseStudy} 
-          index={index} 
-        />
-      ))}
-    </div>
-  );
-});
-
-FilteredCasesList.displayName = 'FilteredCasesList';
-
-// 在 MainContent 組件中替換案例列表渲染邏輯
-function MainContent() {
-  const [activeCategory, setActiveCategory] = useState('全部')
+// 使用React.memo優化主要內容組件
+const MainContent = memo(function MainContent() {
+  const [activeCategory, setActiveCategory] = useState('全部案例')
   const [isLoading, setIsLoading] = useState(true)
   
-  // 使用 useMemo 緩存唯一的案例類別
+  // 使用useMemo優化分類和案例過濾
   const categories = useMemo(() => {
-    const uniqueCategories = Array.from(new Set(caseStudies.map(c => c.category)));
-    return ['全部', ...uniqueCategories];
-  }, []);
-
-  // 模擬異步加載過程
+    const allCategories = Array.from(new Set(caseStudies.map(item => item.category)))
+    return allCategories
+  }, [])
+  
+  const filteredCases = useMemo(() => {
+    if (activeCategory === '全部案例') {
+      return caseStudies
+    }
+    return caseStudies.filter(caseStudy => caseStudy.category === activeCategory)
+  }, [activeCategory])
+  
+  // 使用useMemo緩存精選案例
+  const featuredCase = useMemo(() => {
+    const featured = caseStudies.find(item => item.featured)
+    return featured || caseStudies[0]
+  }, [])
+  
   useEffect(() => {
-    // 模擬數據加載延遲
+    // 模擬載入延遲
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 500)
     
     return () => clearTimeout(timer)
   }, [])
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
-  }
-
+  
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <CaseFilter
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        categories={categories}
-      />
-      <div className="mt-8 md:mt-12">
-        <FilteredCasesList cases={caseStudies} selectedCategory={activeCategory} />
+    <>
+      {featuredCase && <FeaturedCase caseStudy={featuredCase} />}
+      
+      <div className="container mx-auto px-4 pb-24">
+        <CaseFilter 
+          activeCategory={activeCategory} 
+          setActiveCategory={setActiveCategory} 
+          categories={categories} 
+        />
+        
+        {isLoading ? (
+          <LoadingState />
+        ) : filteredCases.length > 0 ? (
+          <Suspense fallback={<LoadingState />}>
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {filteredCases.map((caseStudy, index) => (
+                <motion.div
+                  key={caseStudy.id}
+                  variants={fadeInUp}
+                  custom={index}
+                >
+                  <CaseCard caseStudy={caseStudy} index={index} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </Suspense>
+        ) : (
+          <EmptyState 
+            category={activeCategory} 
+            message="目前尚無此類別的案例，請嘗試其他類別或聯繫我們了解更多資訊。" 
+          />
+        )}
       </div>
-    </div>
-  )
-}
-
-// 更新主頁面組件
-export default function CasePage(): React.ReactElement {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 頁面標題區 */}
-      <PageHeader
-        title="成功案例展示"
-        description="探索我們如何幫助診所提升品牌價值、增加營業額，打造專屬的品牌成長策略"
-        variant="red"
-        size="lg"
-        backgroundImage="/images/bgline-w.png"
-      />
-
-      {/* 案例篩選與展示區 */}
-      <section className="py-20">
-        <div className="container-custom">
-          <MainContent />
-        </div>
-      </section>
-
-      {/* CTA 區域 */}
+      
       <CTASection />
-    </div>
+    </>
   )
-} 
+})
+MainContent.displayName = 'MainContent';
+
+// 使用React.memo優化主頁面組件
+export default memo(function CasePage(): React.ReactElement {
+  return (
+    <>
+      <PageHeader
+        title="我們的成功案例"
+        description="探索我們如何幫助客戶實現業務目標的真實案例，包含品牌重塑、數位行銷、空間規劃與社群經營等多元成功案例"
+        backgroundImage="/images/case-header-bg.jpg"
+      />
+      
+      <Suspense fallback={<LoadingState />}>
+        <MainContent />
+      </Suspense>
+    </>
+  )
+}) 
