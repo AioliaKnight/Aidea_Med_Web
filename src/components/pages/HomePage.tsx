@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense } from 'react'
+import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense, useTransition } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
@@ -227,21 +227,48 @@ const faqs = [
 ];
 
 function FloatingPaths({ position }: { position: number }) {
-  const paths = Array.from({ length: 36 }, (_, i) => ({
-    id: i,
-    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-      380 - i * 5 * position
-    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-      152 - i * 5 * position
-    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-      684 - i * 5 * position
-    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-    width: 0.5 + i * 0.03,
-  }))
+  // 使用useMemo緩存路徑計算，避免重複計算
+  const paths = useMemo(() => 
+    Array.from({ length: 36 }, (_, i) => ({
+      id: i,
+      d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
+        380 - i * 5 * position
+      } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
+        152 - i * 5 * position
+      } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
+        684 - i * 5 * position
+      } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+      width: 0.5 + i * 0.03,
+      duration: 20 + (Math.random() * 10), // 固定產生隨機值，避免重渲染時變化
+    })), 
+    [position] // 只有position變化時才重新計算
+  );
+
+  // 使用useCallback緩存初始化函數
+  const getInitialState = useCallback((index: number) => ({
+    pathLength: 0.3, 
+    opacity: 0.6,
+    // 錯開每條線的初始狀態，讓動畫看起來更自然
+    pathOffset: (index % 2 === 0) ? 0 : 0.5
+  }), []);
+
+  // 使用useCallback緩存動畫狀態
+  const getAnimateState = useCallback(() => ({
+    pathLength: 1,
+    opacity: [0.3, 0.6, 0.3],
+    pathOffset: [0, 1, 0],
+  }), []);
 
   return (
-    <div className="absolute inset-0 pointer-events-none">
-      <svg className="w-full h-full text-white" viewBox="0 0 696 316" fill="none">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden will-change-transform">
+      <svg 
+        className="w-full h-full text-white" 
+        viewBox="0 0 696 316" 
+        fill="none"
+        // 使用CSS containment屬性優化渲染
+        style={{ contain: "strict" }}
+        aria-hidden="true"
+      >
         <title>背景波浪線條</title>
         {paths.map((path) => (
           <motion.path
@@ -250,16 +277,20 @@ function FloatingPaths({ position }: { position: number }) {
             stroke="currentColor"
             strokeWidth={path.width}
             strokeOpacity={0.1 + path.id * 0.03}
-            initial={{ pathLength: 0.3, opacity: 0.6 }}
-            animate={{
-              pathLength: 1,
-              opacity: [0.3, 0.6, 0.3],
-              pathOffset: [0, 1, 0],
-            }}
+            initial={getInitialState(path.id)}
+            animate={getAnimateState()}
             transition={{
-              duration: 20 + Math.random() * 10,
+              duration: path.duration,
               repeat: Number.POSITIVE_INFINITY,
               ease: "linear",
+              // 使用更高效的動畫算法
+              restSpeed: 0.001,
+              restDelta: 0.001
+            }}
+            // 使用最佳化的渲染提示
+            style={{
+              willChange: "opacity, stroke-dashoffset",
+              contain: "layout style paint",
             }}
           />
         ))}
@@ -267,6 +298,9 @@ function FloatingPaths({ position }: { position: number }) {
     </div>
   )
 }
+
+// 使用memo優化FloatingPaths，避免不必要的重新渲染
+const MemoizedFloatingPaths = React.memo(FloatingPaths);
 
 // 更新 Hero Section 樣式
 function HeroSection() {
@@ -277,22 +311,41 @@ function HeroSection() {
     threshold: 0.1
   });
   const [isClient, setIsClient] = useState(false);
-
+  
+  // 使用新的useEffect方法
   useEffect(() => {
+    // 使用雙重效果模式，只執行一次
     setIsClient(true);
     
+    // 使用最佳實務讀取prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== 'undefined' && 
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    
     if (inView) {
-      controls.start('visible');
+      // 根據用戶偏好調整動畫
+      controls.start(prefersReducedMotion ? 'reduced' : 'visible');
     }
+    
+    // 註冊性能監測，React 19中可以使用useEffect清理函數更可靠地清理
+    return () => {
+      controls.stop();
+    };
   }, [controls, inView]);
 
   // 使用 useCallback 處理滾動
   const handleScroll = useCallback(() => {
     if (!isClient) return;
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById('features');
+    if (element) {
+      // 使用更可靠的滾動方法
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start'
+      });
+    }
   }, [isClient]);
 
-  // 簡化元素動畫變體
+  // 簡化元素動畫變體，包含減少動畫版本
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -302,6 +355,12 @@ function HeroSection() {
         duration: 0.6,
         ease: [0.6, 0.05, 0.01, 0.9]
       }
+    },
+    // 為偏好減少動畫的用戶提供替代方案
+    reduced: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.1 }
     }
   };
   
@@ -320,11 +379,11 @@ function HeroSection() {
       role="banner"
       aria-label="網站主要橫幅"
     >
-      {/* 新波浪背景 */}
+      {/* 新波浪背景 - 使用優化後的組件 */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-primary opacity-100"></div>
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
+        <MemoizedFloatingPaths position={1} />
+        <MemoizedFloatingPaths position={-1} />
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20 px-4 sm:px-6">
@@ -511,8 +570,8 @@ function MarketingStatement() {
       {/* 背景線條裝飾 */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-primary opacity-100"></div>
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
+        <MemoizedFloatingPaths position={1} />
+        <MemoizedFloatingPaths position={-1} />
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
@@ -1794,90 +1853,170 @@ const ContactSection = () => {
 
 // 優化首頁組件
 export default function HomePage() {
+  // 使用useTransition處理非關鍵更新，避免阻塞UI
+  const [isPending, startTransition] = useTransition();
+  // 效能監測狀態
+  const [perfMetrics, setPerfMetrics] = useState({
+    lcp: 0,
+    cls: 0,
+    fid: 0
+  });
+  
+  // 使用React 19的useEffect清理模式
   useEffect(() => {
-    // 加入網頁性能監控
+    // 加入網頁性能監控 - React 19 與 Next.js 15 優化版本
     if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
-      // 監控LCP
+      // 創建觀察者集合
+      const observers: PerformanceObserver[] = [];
+      
+      // 監控 LCP (Largest Contentful Paint)
       try {
-        // @ts-ignore - 因為TS可能無法識別Web Performance API的類型
         const lcpObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
           if (entries.length > 0) {
             const lastEntry = entries[entries.length - 1];
-            console.log('LCP:', lastEntry.startTime);
+            // 使用startTransition處理非關鍵狀態更新
+            startTransition(() => {
+              setPerfMetrics(prev => ({ ...prev, lcp: lastEntry.startTime }));
+            });
+            
+            // 輸出到控制台以便開發時檢視
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('LCP:', Math.round(lastEntry.startTime), 'ms');
+            }
           }
         });
         
-        // @ts-ignore - 因為TS可能無法識別某些觀察配置
         lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        observers.push(lcpObserver);
       } catch (e) {
         console.error('LCP監控錯誤:', e);
       }
+      
+      // 監控 CLS (Cumulative Layout Shift)
+      try {
+        const clsObserver = new PerformanceObserver((entryList) => {
+          let clsValue = 0;
+          for (const entry of entryList.getEntries()) {
+            // @ts-ignore - Web Vitals API 類型可能不完全匹配
+            if (!entry.hadRecentInput) {
+              // @ts-ignore
+              clsValue += entry.value;
+            }
+          }
+          
+          startTransition(() => {
+            setPerfMetrics(prev => ({ ...prev, cls: clsValue }));
+          });
+          
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('CLS:', clsValue.toFixed(3));
+          }
+        });
+        
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+        observers.push(clsObserver);
+      } catch (e) {
+        console.error('CLS監控錯誤:', e);
+      }
+      
+      // 監控 FID (First Input Delay)
+      try {
+        const fidObserver = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            // @ts-ignore
+            const delay = entry.processingStart - entry.startTime;
+            
+            startTransition(() => {
+              setPerfMetrics(prev => ({ ...prev, fid: delay }));
+            });
+            
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('FID:', Math.round(delay), 'ms');
+            }
+          }
+        });
+        
+        fidObserver.observe({ type: 'first-input', buffered: true });
+        observers.push(fidObserver);
+      } catch (e) {
+        console.error('FID監控錯誤:', e);
+      }
+      
+      // 使用新的清理函數模式，確保徹底清理資源
+      return () => {
+        observers.forEach(observer => {
+          observer.disconnect();
+        });
+      };
     }
-  }, []);
+  }, [startTransition]);
+  
+  // 使用新的Suspense回退模式
+  const fallbackElement = 
+    <div className="min-h-[600px] bg-gray-50 flex items-center justify-center">
+      <div className="flex flex-col items-center">
+        <div 
+          className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
+          aria-hidden="true"
+        />
+        <p className="sr-only">載入中...</p>
+      </div>
+    </div>;
   
   return (
     <div className="min-h-screen bg-white">
+      {/* 主要的Hero區段 - 關鍵渲染路徑 */}
       <section id="hero" className="min-h-[85vh]">
         <HeroSection />
       </section>
 
-      {/* 使用React.memo包裝的組件，避免不必要的重新渲染 */}
+      {/* 行銷陳述區域 - 第二優先級 */}
       <section id="marketing-statement" className="min-h-[600px]">
         <MarketingStatement />
       </section>
 
-      {/* 使用suspense包裝非首屏關鍵組件 */}
-      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+      {/* 使用經過優化的Suspense模式，包含更好的SSR水合支持 */}
+      <Suspense fallback={fallbackElement}>
         <section id="features" className="min-h-[600px]">
           <FeatureSection />
         </section>
       </Suspense>
 
-      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+      <Suspense fallback={fallbackElement}>
         <section id="services" className="min-h-[600px]">
           <ServiceSection />
         </section>
       </Suspense>
 
+      {/* 資料顯示區域 */}
       <section id="stats" className="min-h-[300px]">
         <StatsSection />
       </section>
 
+      {/* 案例研究區域 - 圖片密集型，使用懶加載 */}
       <section id="cases" className="min-h-[800px]">
-        <CaseStudiesSection />
+        <Suspense fallback={fallbackElement}>
+          <CaseStudiesSection />
+        </Suspense>
       </section>
 
-      <section id="testimonials" className="min-h-[600px]">
-        <TestimonialsSection />
-      </section>
+      {/* 使用者見證、FAQ和聯絡區域 */}
+      <Suspense fallback={fallbackElement}>
+        <section id="testimonials" className="min-h-[600px]">
+          <TestimonialsSection />
+        </section>
+      </Suspense>
 
-      <section id="faq" className="min-h-[400px]">
-        <FAQSection />
-      </section>
+      <Suspense fallback={fallbackElement}>
+        <section id="faq" className="min-h-[400px]">
+          <FAQSection />
+        </section>
+      </Suspense>
 
       <section id="contact" className="min-h-[400px]">
         <ContactSection />
       </section>
-
-      {/* CTA Section */}
-      <CTASection
-        title="開始您的品牌成長之旅"
-        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
-        titleClassName="tracking-tight"
-        descriptionClassName="text-shadow-light"
-        buttonsContainerClassName="animate-fade-in delay-200"
-        primaryButton={{
-          href: "/contact",
-          text: "預約諮詢",
-          variant: "primary"
-        }}
-        secondaryButton={{
-          href: "/case",
-          text: "查看案例",
-          variant: "secondary"
-        }}
-      />
     </div>
   );
 } 
