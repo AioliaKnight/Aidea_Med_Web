@@ -12,6 +12,7 @@ export interface CaseCardProps {
   index: number;
   isLinked?: boolean; // 新增屬性：是否需要被Link包裹
   isCompact?: boolean; // 新增屬性：是否使用緊湊佈局
+  hasParentLink?: boolean; // 新增屬性：是否已有父級Link包裹
 }
 
 // 有效案例 ID 列表作為常量避免重複創建
@@ -28,7 +29,8 @@ export const CaseCard = React.memo(({
   caseStudy, 
   index, 
   isLinked = true,
-  isCompact = false 
+  isCompact = false,
+  hasParentLink = false 
 }: CaseCardProps): React.ReactElement => {
   // 圖片源計算邏輯
   const imgSrc = useMemo(() => {
@@ -216,8 +218,13 @@ export const CaseCard = React.memo(({
     </div>
   );
 
-  // 如果需要Link包裹則返回Link包裹的內容，否則直接返回內容
-  return isLinked ? (
+  // 如果有父級Link包裹或不需要Link包裹，直接返回內容
+  if (hasParentLink || !isLinked) {
+    return cardContent;
+  }
+  
+  // 需要Link包裹且沒有父級Link，則添加Link
+  return (
     <Link 
       href={`/case/${caseStudy.id}`} 
       prefetch={true}
@@ -225,5 +232,8 @@ export const CaseCard = React.memo(({
     >
       {cardContent}
     </Link>
-  ) : cardContent;
+  );
 }); 
+
+// 重命名組件以便於調試
+CaseCard.displayName = 'CaseCard'; 

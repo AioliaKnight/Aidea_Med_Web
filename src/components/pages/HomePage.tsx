@@ -1296,6 +1296,7 @@ function CaseStudiesSection() {
                       <CaseCard
                         caseStudy={featuredCase}
                         index={0}
+                        hasParentLink={true}
                       />
                     </Link>
                   </div>
@@ -1332,6 +1333,7 @@ function CaseStudiesSection() {
                         <CaseCard
                           caseStudy={caseStudy}
                           index={index + 1}
+                          hasParentLink={true}
                         />
                       </Link>
                     ))}
