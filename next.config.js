@@ -3,7 +3,7 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB
+  maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 增加到 5 MB
   runtimeCaching: [
     {
       // API 請求緩存策略
@@ -44,8 +44,8 @@ const withPWA = require('next-pwa')({
       options: {
         cacheName: 'images-cache',
         expiration: {
-          maxEntries: 150, // 增加緩存數量
-          maxAgeSeconds: 30 * 24 * 60 * 60 // 30 天
+          maxEntries: 200, // 增加緩存數量
+          maxAgeSeconds: 60 * 24 * 60 * 60 // 增加到 60 天
         },
         cacheableResponse: {
           statuses: [0, 200]
@@ -146,14 +146,13 @@ const nextConfig = {
       }
     ],
     formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24, // 增加到 1 天
+    deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1440, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 160, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 天
     unoptimized: false,
   },
   experimental: {
     optimizeCss: true,
-    webpackBuildWorker: true,
     optimizePackageImports: [
       'framer-motion',
       'react-icons',
@@ -178,9 +177,9 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  // 增加資源壓縮
   compress: true,
   crossOrigin: 'anonymous',
+  bundlePagesRouterDependencies: process.env.NODE_ENV === 'production',
   async redirects() {
     return [
       {
@@ -237,7 +236,6 @@ const nextConfig = {
           }
         ],
       },
-      // 添加對靜態資源的快取頭
       {
         source: '/:path(.*)\.(jpg|jpeg|png|svg|webp|avif|ico|woff2|css|js)',
         headers: [

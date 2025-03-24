@@ -24,18 +24,11 @@ export interface CaseStudy {
   name: string;
   category: string;
   description: string;
-  metrics: CaseMetric[];
-  solutions?: Solution[];
-  featured?: boolean;
+  metrics: { value: string; label: string }[];
+  solutions: Solution[] | string[];
   color?: string;
-  image?: string;
-  imageWebp?: string;
-  imagePlaceholder?: string;
-  imageSizes?: {
-    sm: string;
-    md: string;
-    lg: string;
-  };
+  image: string;
+  featured?: boolean;
   publishedDate?: string;
   updatedDate?: string;
   testimonial?: {
@@ -115,14 +108,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#4A6CF7',
-    image: '/images/cases/Case_1.jpg',
-    imageWebp: '/images/cases/Case_1.webp',
-    imagePlaceholder: '/images/cases/Case_1_placeholder.jpg',
-    imageSizes: {
-      sm: '/images/cases/Case_1_sm.jpg',
-      md: '/images/cases/Case_1_md.jpg',
-      lg: '/images/cases/Case_1.jpg',
-    },
+    image: '/images/cases/north-district-dental.jpg',
     featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
     updatedDate: '2023-11-20T00:00:00Z',
@@ -162,14 +148,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#8D72E1',
-    image: '/images/cases/Case_2.jpg',
-    imageWebp: '/images/cases/Case_2.webp',
-    imagePlaceholder: '/images/cases/Case_2_placeholder.jpg',
-    imageSizes: {
-      sm: '/images/cases/Case_2_sm.jpg',
-      md: '/images/cases/Case_2_md.jpg',
-      lg: '/images/cases/Case_2.jpg',
-    },
+    image: '/images/cases/east-district-dental.jpg',
     featured: true,
     publishedDate: '2023-06-10T00:00:00Z',
     updatedDate: '2023-09-15T00:00:00Z',
@@ -209,14 +188,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#FF6C6C',
-    image: '/images/cases/Case_3.png',
-    imageWebp: '/images/cases/Case_3.webp',
-    imagePlaceholder: '/images/cases/Case_3_placeholder.png',
-    imageSizes: {
-      sm: '/images/cases/Case_3_sm.png',
-      md: '/images/cases/Case_3_md.png',
-      lg: '/images/cases/Case_3.png',
-    },
+    image: '/images/cases/central-district-dental.jpg',
     featured: false,
     publishedDate: '2023-05-20T00:00:00Z',
     updatedDate: '2023-08-10T00:00:00Z',
@@ -256,14 +228,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#3498DB',
-    image: '/images/cases/Case_4.jpg',
-    imageWebp: '/images/cases/Case_4.webp',
-    imagePlaceholder: '/images/cases/Case_4_placeholder.jpg',
-    imageSizes: {
-      sm: '/images/cases/Case_4_sm.jpg',
-      md: '/images/cases/Case_4_md.jpg',
-      lg: '/images/cases/Case_4.jpg',
-    },
+    image: '/images/cases/south-district-dental.jpg',
     featured: true,
     publishedDate: '2023-07-05T00:00:00Z',
     updatedDate: '2023-10-18T00:00:00Z',
@@ -271,6 +236,34 @@ export const caseStudies: CaseStudy[] = [
       content: '數位轉型讓我們從繁瑣的行政工作中解放，能更專注於病患照護。新系統不僅提升效率，老病患也感受到服務品質的提升。',
       author: '陳醫師',
       title: '南區診所第二代負責人'
+    }
+  },
+  {
+    id: 'smile-dental',
+    name: 'Smile牙醫診所',
+    category: '數位行銷',
+    description: '專注於美容牙科的專業診所，透過精準的數位行銷策略，提升品牌知名度與高價值客戶轉換率',
+    metrics: [
+      { value: '150%', label: '美容牙科療程成長' },
+      { value: '45%', label: '廣告投資報酬率提升' },
+      { value: '70%', label: '目標族群轉換率' },
+      { value: '65%', label: '品牌搜尋量增長' }
+    ],
+    solutions: [
+      '精準目標族群分析與定位',
+      '多管道整合數位行銷策略',
+      '專業內容創作與衛教資訊分享',
+      '數據導向的行銷效益優化'
+    ],
+    color: '#2ECC71',
+    image: '/images/cases/smile-dental.jpg',
+    featured: false,
+    publishedDate: '2023-09-12T00:00:00Z',
+    updatedDate: '2023-12-05T00:00:00Z',
+    testimonial: {
+      content: '數位行銷策略精準觸及我們的目標客群，大幅提升了高價值療程的詢問度與轉換率，投資報酬率遠超預期。',
+      author: '黃醫師',
+      title: 'Smile牙醫診所創辦人'
     }
   }
 ]
