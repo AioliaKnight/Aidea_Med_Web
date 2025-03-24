@@ -92,6 +92,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  body {
+    @apply bg-white;
+    font-family: var(--font-base);
+  }
+  
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
@@ -726,6 +732,12 @@
     backdrop-filter: none !important;
     background-image: none !important;
   }
+  
+  /* 自定義字體大小類 */
+  .text-xxs {
+    font-size: 0.625rem; /* 10px */
+    line-height: 1rem;
+  }
 }
 
 /* 強制紅白黑三色方案 */
@@ -854,7 +866,7 @@
 }
 
 .btn-on-dark-outline {
-  @apply inline-block border border-white text-white px-8 py-4 text-lg font-medium hover:bg-white hover:text-black transition-colors;
+  @apply inline-block border border-white text-white px-8 py-4 text-lg hover:bg-white hover:text-black transition-colors;
 }
 
 /* 黑色背景區塊變體 */
@@ -1037,4 +1049,9 @@
 
 .text-shadow-white-sm {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* 添加平滑滾動行為 */
+html {
+  scroll-behavior: smooth;
 } 

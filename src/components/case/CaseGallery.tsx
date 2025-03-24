@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -16,57 +16,62 @@ interface CaseImage {
   caption?: string
 }
 
-// 生成案例圖片
-function generateCaseImages(caseId: string, name: string): CaseImage[] {
-  // 根據案例ID生成一張主要圖片和相關視覺效果圖片
-  return [
-    {
-      url: `/cases/${caseId}.jpg`,
-      alt: `${name}主視覺`,
-      caption: '全新品牌視覺設計'
-    },
-    {
-      url: `/cases/${caseId}-website.jpg`,
-      alt: `${name}網站設計`,
-      caption: '響應式網站設計'
-    },
-    {
-      url: `/cases/${caseId}-social.jpg`,
-      alt: `${name}社群經營`,
-      caption: '社群媒體內容規劃'
-    },
-    {
-      url: `/cases/${caseId}-ads.jpg`,
-      alt: `${name}廣告投放`,
-      caption: '數位廣告成效分析'
-    }
-  ]
-}
-
+// 生成案例圖片 - 使用useMemo緩存圖片數組
 const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
   const [activeImage, setActiveImage] = useState(0)
   const [showModal, setShowModal] = useState(false)
-  const caseImages = generateCaseImages(caseId, name)
+  
+  // 使用useMemo緩存圖片列表，避免重新渲染時重複生成
+  const caseImages = useMemo(() => {
+    // 根據案例ID生成一張主要圖片和相關視覺效果圖片
+    return [
+      {
+        url: `/cases/${caseId}.jpg`,
+        alt: `${name}主視覺`,
+        caption: '全新品牌視覺設計'
+      },
+      {
+        url: `/cases/${caseId}-website.jpg`,
+        alt: `${name}網站設計`,
+        caption: '響應式網站設計'
+      },
+      {
+        url: `/cases/${caseId}-social.jpg`,
+        alt: `${name}社群經營`,
+        caption: '社群媒體內容規劃'
+      },
+      {
+        url: `/cases/${caseId}-ads.jpg`,
+        alt: `${name}廣告投放`,
+        caption: '數位廣告成效分析'
+      }
+    ]
+  }, [caseId, name])
 
-  // 開啟畫廊模態框
-  const openModal = (index: number) => {
+  // 使用useCallback緩存事件處理函數
+  const openModal = useCallback((index: number) => {
     setActiveImage(index)
     setShowModal(true)
-  }
+  }, [])
 
-  // 關閉畫廊模態框
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShowModal(false)
-  }
+  }, [])
 
-  // 切換畫廊圖片
-  const changeImage = (direction: 'next' | 'prev') => {
-    if (direction === 'next') {
-      setActiveImage((prev) => (prev + 1) % caseImages.length)
-    } else {
-      setActiveImage((prev) => (prev - 1 + caseImages.length) % caseImages.length)
-    }
-  }
+  const changeImage = useCallback((direction: 'next' | 'prev') => {
+    setActiveImage((prev) => {
+      if (direction === 'next') {
+        return (prev + 1) % caseImages.length
+      } else {
+        return (prev - 1 + caseImages.length) % caseImages.length
+      }
+    })
+  }, [caseImages.length])
+
+  const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement
+    target.src = '/cases/case-placeholder.jpg'
+  }, [])
 
   return (
     <>
@@ -88,10 +93,10 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = '/cases/case-placeholder.jpg'
-                }}
+                onError={handleImageError}
+                loading={index <= 1 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                quality={index <= 1 ? 85 : 75}
               />
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
                 <div className="text-white scale-0 group-hover:scale-100 transition-transform duration-300">
@@ -102,9 +107,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
               </div>
             </div>
             {image.caption && (
-              <p className="mt-2 text-sm text-center text-gray-600">
-                {image.caption}
-              </p>
+              <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
             )}
           </motion.div>
         ))}
@@ -117,87 +120,84 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-90"
             onClick={closeModal}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-4xl"
-              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-6xl w-full h-auto max-h-[80vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
               {/* 關閉按鈕 */}
-              <button 
-                className="absolute top-4 right-4 text-white hover:text-gray-300 z-20"
+              <button
+                className="absolute top-4 right-4 z-10 bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all duration-300"
                 onClick={closeModal}
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              
-              {/* 左右箭頭 */}
-              <button 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-20 p-2 bg-primary"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  changeImage('prev')
-                }}
-              >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-              <button 
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-20 p-2 bg-primary"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  changeImage('next')
-                }}
-              >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              
-              {/* 主圖片 */}
-              <div className="relative aspect-[16/9] bg-black">
+
+              {/* 主圖區 */}
+              <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
                 <Image
-                  src={caseImages[activeImage]?.url || '/cases/case-placeholder.jpg'}
-                  alt={caseImages[activeImage]?.alt || '案例圖片'}
+                  src={caseImages[activeImage].url}
+                  alt={caseImages[activeImage].alt}
                   fill
                   className="object-contain"
-                  sizes="100vw"
-                  quality={90}
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  onError={handleImageError}
                   priority
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = '/cases/case-placeholder.jpg'
-                  }}
+                  quality={90}
                 />
               </div>
-              
+
               {/* 圖片說明 */}
-              {caseImages[activeImage]?.caption && (
-                <div className="bg-black p-4 text-white text-center">
-                  <p>{caseImages[activeImage].caption}</p>
-                  <p className="text-sm text-gray-300 mt-1">圖片 {activeImage + 1} / {caseImages.length}</p>
+              {caseImages[activeImage].caption && (
+                <div className="bg-white bg-opacity-10 p-4 mt-2 rounded-lg">
+                  <p className="text-center text-white">{caseImages[activeImage].caption}</p>
                 </div>
               )}
+
+              {/* 導航按鈕 */}
+              <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between px-4">
+                <button
+                  className="bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    changeImage('prev')
+                  }}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  className="bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    changeImage('next')
+                  }}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
               
               {/* 縮圖列表 */}
-              <div className="mt-4 grid grid-cols-4 gap-2">
-                {caseImages.map((image, index) => (
-                  <div 
-                    key={index} 
-                    className={`relative aspect-[4/3] cursor-pointer ${
-                      index === activeImage ? 'border-4 border-primary' : 'border border-gray-700'
+              <div className="mt-4 flex space-x-2 overflow-x-auto py-2">
+                {caseImages.map((image, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative flex-shrink-0 w-20 h-20 cursor-pointer rounded overflow-hidden border-2 ${
+                      idx === activeImage ? 'border-primary' : 'border-transparent'
                     }`}
                     onClick={(e) => {
                       e.stopPropagation()
-                      setActiveImage(index)
+                      setActiveImage(idx)
                     }}
                   >
                     <Image
@@ -205,12 +205,9 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
                       alt={image.alt}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 25vw, 100px"
+                      onError={handleImageError}
+                      sizes="80px"
                       quality={60}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = '/cases/case-placeholder.jpg'
-                      }}
                     />
                   </div>
                 ))}
@@ -223,4 +220,4 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
   )
 }
 
-export default CaseGallery 
+export default React.memo(CaseGallery) 

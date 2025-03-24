@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, memo, useMemo, Suspense } from 'react'
+import { useState, useEffect, memo, useMemo, Suspense, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Metadata } from 'next'
@@ -326,30 +326,32 @@ export interface CaseFilterProps {
 // 使用React.memo優化不必要的重新渲染
 export const CaseFilter = memo(({ activeCategory, setActiveCategory, categories }: CaseFilterProps): React.ReactElement => {
   return (
-    <div className="mb-12 flex flex-wrap gap-3 justify-center">
-      <button
-        onClick={() => setActiveCategory('全部案例')}
-        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-          activeCategory === '全部案例'
-            ? 'bg-primary text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-        }`}
-      >
-        全部案例
-      </button>
-      {categories.map((category) => (
+    <div className="mb-8 md:mb-12 overflow-x-auto pb-2 -mx-4 px-4">
+      <div className="flex gap-2 md:gap-3 md:flex-wrap md:justify-center min-w-max">
         <button
-          key={category}
-          onClick={() => setActiveCategory(category)}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeCategory === category
+          onClick={() => setActiveCategory('全部案例')}
+          className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
+            activeCategory === '全部案例'
               ? 'bg-primary text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          {category}
+          全部案例
         </button>
-      ))}
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
+              activeCategory === category
+                ? 'bg-primary text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
     </div>
   )
 })
@@ -625,22 +627,53 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
   }
 }
 
-// 使用React.memo優化主要內容組件
+// 優化主內容組件
 const MainContent = memo(function MainContent() {
   const [activeCategory, setActiveCategory] = useState('全部案例')
   const [isLoading, setIsLoading] = useState(true)
+  // 新增視圖模式狀態
+  const [viewMode, setViewMode] = useState<'standard' | 'compact'>('standard')
   
-  // 使用useMemo優化分類和案例過濾
+  // 判斷是否為手機尺寸
+  const [isMobileView, setIsMobileView] = useState(false)
+  
+  // 監聽視窗尺寸變化
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 768)
+    }
+    
+    // 初始檢查
+    checkMobileView()
+    
+    // 監聽變化
+    window.addEventListener('resize', checkMobileView)
+    
+    // 如果是手機自動切換到緊湊模式
+    if (window.innerWidth < 640) {
+      setViewMode('compact')
+    }
+    
+    return () => {
+      window.removeEventListener('resize', checkMobileView)
+    }
+  }, [])
+  
+  // 優化：使用useMemo計算類別列表並排序，避免重複計算
   const categories = useMemo(() => {
     const allCategories = Array.from(new Set(caseStudies.map(item => item.category)))
     return allCategories
   }, [])
   
+  // 優化：使用useMemo過濾案例
   const filteredCases = useMemo(() => {
+    // 如果是全部案例直接返回全部
     if (activeCategory === '全部案例') {
-      return caseStudies
+      return caseStudies;
     }
-    return caseStudies.filter(caseStudy => caseStudy.category === activeCategory)
+    
+    // 過濾出指定類別的案例
+    return caseStudies.filter(caseStudy => caseStudy.category === activeCategory);
   }, [activeCategory])
   
   // 使用useMemo緩存精選案例
@@ -649,23 +682,77 @@ const MainContent = memo(function MainContent() {
     return featured || caseStudies[0]
   }, [])
   
+  // 使用useEffect處理初始加載狀態
   useEffect(() => {
     // 模擬載入延遲
+    let isMounted = true;
     const timer = setTimeout(() => {
-      setIsLoading(false)
+      if (isMounted) {
+        setIsLoading(false);
+      }
     }, 500)
     
-    return () => clearTimeout(timer)
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    }
   }, [])
+  
+  // 優化：使用useCallback包裝類別切換處理函數
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+    // 類別切換時顯示短暫的加載狀態，提升用戶體驗
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
+  
+  // 切換視圖模式
+  const toggleViewMode = useCallback(() => {
+    setViewMode(prev => prev === 'standard' ? 'compact' : 'standard')
+  }, [])
+  
+  // 根據視圖模式設置網格佈局
+  const gridLayoutClass = useMemo(() => {
+    if (viewMode === 'compact') {
+      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3'
+    }
+    return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'
+  }, [viewMode])
   
   return (
     <>
-      {featuredCase && <FeaturedCase caseStudy={featuredCase} />}
+      {featuredCase && !isMobileView && <FeaturedCase caseStudy={featuredCase} />}
       
-      <div className="container mx-auto px-4 pb-24">
+      <div className="container mx-auto px-4 pb-16 md:pb-24">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-10">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-1">成功案例</h1>
+            <p className="text-gray-600 text-sm">了解我們如何幫助客戶達成業務目標</p>
+          </div>
+          
+          {/* 視圖切換按鈕 */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleViewMode}
+              className="flex items-center justify-center p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+              aria-label={viewMode === 'standard' ? '切換到緊湊視圖' : '切換到標準視圖'}
+            >
+              {viewMode === 'standard' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18M3 18h18M3 6h18" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+        
         <CaseFilter 
           activeCategory={activeCategory} 
-          setActiveCategory={setActiveCategory} 
+          setActiveCategory={handleCategoryChange} 
           categories={categories} 
         />
         
@@ -678,7 +765,7 @@ const MainContent = memo(function MainContent() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className={gridLayoutClass}
             >
               {filteredCases.map((caseStudy, index) => (
                 <motion.div
@@ -686,7 +773,11 @@ const MainContent = memo(function MainContent() {
                   variants={fadeInUp}
                   custom={index}
                 >
-                  <CaseCard caseStudy={caseStudy} index={index} />
+                  <CaseCard 
+                    caseStudy={caseStudy} 
+                    index={index} 
+                    isCompact={viewMode === 'compact'}
+                  />
                 </motion.div>
               ))}
             </motion.div>
