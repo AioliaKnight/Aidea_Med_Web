@@ -7,9 +7,9 @@ import CountUp from 'react-countup'
 import Link from 'next/link'
 import ContactForm from '@/components/contact/ContactForm'
 import ContactInfo from '@/components/contact/ContactInfo'
-import { caseStudies as casesData } from '@/components/pages/CasePage'
 import { CaseCard } from '@/components/case/CaseCard'
 import { animations } from '@/utils/animations'
+import { caseStudies, getFeaturedCases } from '@/content/cases'
 // 引入 Lucide React 圖標
 import { 
   Stethoscope, 
@@ -1216,15 +1216,9 @@ function CaseStudiesSection() {
     threshold: 0.1
   });
   
-  // 只使用具有完整數據且確認存在的案例，明確列出已知有效的ID
+  // 取得有效的案例
   const validCases = useMemo(() => {
-    // 明確定義我們知道存在的有效ID列表
-    const validCaseIds = ['north-district-dental', 'east-district-dental', 'central-district-dental', 'south-district-dental'];
-    
-    // 只使用我們明確知道有效的案例ID
-    return casesData.filter(cs => 
-      // 檢查ID是否在我們的有效列表中 或 檢查案例是否有明確的圖片路徑
-      (validCaseIds.includes(cs.id) || cs.image) &&
+    return caseStudies.filter(cs => 
       // 確保有必要的基本數據
       cs.name && 
       cs.description && 
@@ -1235,8 +1229,7 @@ function CaseStudiesSection() {
   
   // 選擇一個精選案例
   const featuredCase = useMemo(() => {
-    const featured = validCases.find(cs => cs.featured);
-    return featured || validCases[0]; // 如果沒有標記為精選的，使用第一個
+    return getFeaturedCases(1)[0] || validCases[0]; // 如果沒有標記為精選的，使用第一個
   }, [validCases]);
   
   // 選擇非精選的其他案例
@@ -1246,11 +1239,6 @@ function CaseStudiesSection() {
       .filter(cs => cs.id !== featuredCase.id)
       .slice(0, 3); // 只顯示最多3個案例
   }, [validCases, featuredCase]);
-
-  // 建立從路由到案例詳情頁的函數
-  const getValidCaseUrl = useCallback((caseId: string) => {
-    return `/case/${caseId}`;
-  }, []);
 
   return (
     <section ref={ref} className="relative py-20 md:py-28 bg-white">
@@ -1294,7 +1282,6 @@ function CaseStudiesSection() {
                     </h3>
                   </div>
                   
-                  {/* 移除外層的 Link 包裹，由 FeaturedCase 組件內部處理連結 */}
                   <div className="col-span-12 lg:col-span-8">
                     <CaseCard
                       caseStudy={featuredCase}
@@ -1324,7 +1311,6 @@ function CaseStudiesSection() {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {regularCases.map((caseStudy, index) => (
-                      // 移除外層 Link，改用 div，讓 CaseCard 內部處理導航
                       <div 
                         key={caseStudy.id} 
                         className="block h-full"
