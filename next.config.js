@@ -53,6 +53,21 @@ const withPWA = require('next-pwa')({
       }
     },
     {
+      // 背景圖片專用緩存策略 - 更積極的緩存
+      urlPattern: /bgline-w.*\.(png|webp)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'background-images-cache',
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 90 * 24 * 60 * 60 // 90天
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        }
+      }
+    },
+    {
       // 字體資源緩存策略 - 優先使用緩存，長期有效
       urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
       handler: 'CacheFirst',
@@ -122,73 +137,37 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["three"],
+  experimental: { optimizeCss: true },
+  poweredByHeader: false,
+  compiler: {
+    // removeConsole: process.env.NODE_ENV === 'production',
+  },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.google.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.gstatic.com',
+        hostname: '**',
       }
     ],
     formats: ['image/avif', 'image/webp'],
-    deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1440, 1920, 2048],
-    imageSizes: [16, 32, 48, 64, 96, 128, 160, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 天
-    unoptimized: false,
-  },
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: [
-      'framer-motion',
-      'react-icons',
-      'react-intersection-observer',
-      'react-hook-form',
-      'tailwind-merge',
-      'clsx',
-      'cmdk',
-      'date-fns',
-      'lucide-react',
-      'gsap',
-      '@heroicons/react',
-      '@heroicons/react/24/outline',
-      '@heroicons/react/24/solid',
-      '@phosphor-icons/react',
-      'tailwind-merge',
-      'react-countup',
-      'react-markdown',
-      'react-syntax-highlighter',
-      'three',
-      '@react-three/fiber',
-      '@react-three/drei'
-    ],
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-    },
-    typedRoutes: true,
-    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'INP', 'TTFB'],
+    // 根據環境使用不同的尺寸配置
+    deviceSizes: process.env.NODE_ENV === 'development' 
+      ? [640, 750, 828] 
+      : [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 604800, // 7天
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // 啟用壓縮優化，提高性能
+    disableStaticImages: false,
+    // 優化圖片加載
+    loader: 'default',
+    loaderFile: '',
   },
   // 將 serverComponentsExternalPackages 移至 serverExternalPackages
   serverExternalPackages: [],
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-  poweredByHeader: false,
-  reactStrictMode: true,
   compress: true,
   crossOrigin: 'anonymous',
   bundlePagesRouterDependencies: process.env.NODE_ENV === 'production',

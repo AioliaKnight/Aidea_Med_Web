@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
@@ -283,13 +283,17 @@ function HeroSection() {
         <div className="absolute inset-0 bg-primary opacity-100"></div>
         <div className="absolute inset-0 opacity-50">
           <Image
-            src="/images/bgline-w.png"
+            src="/images/bgline-w_sm.png"
             alt="背景波浪線條"
             fill
             className="object-cover mix-blend-soft-light"
-            quality={90}
-            sizes="100vw"
-            priority
+            quality={75}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+            priority={true}
+            loading="eager"
+            fetchPriority="high"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
           />
         </div>
       </div>
@@ -478,12 +482,15 @@ function MarketingStatement() {
       {/* 背景線條裝飾 */}
       <div className="absolute inset-0 opacity-20">
         <Image
-          src="/images/bgline-w.png"
+          src="/images/bgline-w_sm.png"
           alt="背景線條"
           fill
           className="object-cover mix-blend-soft-light"
-          quality={90}
-          sizes="100vw"
+          quality={75}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
         />
       </div>
       
@@ -1765,8 +1772,26 @@ const ContactSection = () => {
 // 優化首頁組件
 export default function HomePage() {
   useEffect(() => {
-    // ... existing code ...
-  }, [])
+    // 加入網頁性能監控
+    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
+      // 監控LCP
+      try {
+        // @ts-ignore - 因為TS可能無法識別Web Performance API的類型
+        const lcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          if (entries.length > 0) {
+            const lastEntry = entries[entries.length - 1];
+            console.log('LCP:', lastEntry.startTime);
+          }
+        });
+        
+        // @ts-ignore - 因為TS可能無法識別某些觀察配置
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      } catch (e) {
+        console.error('LCP監控錯誤:', e);
+      }
+    }
+  }, []);
   
   return (
     <div className="min-h-screen bg-white">
@@ -1774,18 +1799,23 @@ export default function HomePage() {
         <HeroSection />
       </section>
 
-      {/* 新增行銷文案區塊 */}
+      {/* 使用React.memo包裝的組件，避免不必要的重新渲染 */}
       <section id="marketing-statement" className="min-h-[600px]">
         <MarketingStatement />
       </section>
 
-      <section id="features" className="min-h-[600px]">
-        <FeatureSection />
-      </section>
+      {/* 使用suspense包裝非首屏關鍵組件 */}
+      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+        <section id="features" className="min-h-[600px]">
+          <FeatureSection />
+        </section>
+      </Suspense>
 
-      <section id="services" className="min-h-[600px]">
-        <ServiceSection />
-      </section>
+      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+        <section id="services" className="min-h-[600px]">
+          <ServiceSection />
+        </section>
+      </Suspense>
 
       <section id="stats" className="min-h-[300px]">
         <StatsSection />
