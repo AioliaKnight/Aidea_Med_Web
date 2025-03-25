@@ -3,41 +3,52 @@
 @tailwind utilities;
 
 :root {
-  /* 主要顏色設定 - 紅白黑三色基礎 */
-  --color-red: #e62733;
-  --color-white: #ffffff;
+  /* 主色系統 - HEX格式 */
+  --color-primary: #e62733;
+  --color-primary-light: #f05a64;
+  --color-primary-dark: #cc1f2a;
+  --color-primary-hover: #d32129;
+  
+  /* 中性色系 */
   --color-black: #111111;
-  
-  /* 紅色不同明度 */
-  --color-red-light: #ff3b45;
-  --color-red-dark: #cc1f2a;
-  
-  /* 黑色不同明度 */
   --color-black-light: #333333;
   --color-black-dark: #000000;
   
-  /* 系統顏色變數 */
-  --primary: 0 84% 60%;
-  --primary-foreground: 0 0% 100%;
+  --color-white: #ffffff;
+  --color-white-off: #f5f5f5;
   
-  --secondary: 0 0% 7%;
-  --secondary-foreground: 0 0% 100%;
+  /* 功能色系 - 直接使用HEX */
+  --color-success: #2e7d32;
+  --color-warning: #ff9800;
+  --color-error: #e62733;
   
-  --background: 0 0% 100%;
-  --foreground: 0 0% 7%;
+  /* 文字色系 */
+  --color-text: #111111;
+  --color-text-light: #666666;
+  --color-text-muted: #808080;
   
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
+  /* Tailwind兼容變數 - 使用HEX替代HSL */
+  --primary: #e62733;
+  --primary-foreground: #ffffff;
   
-  --accent: 0 84% 60%;
-  --accent-foreground: 0 0% 100%;
+  --secondary: #111111;
+  --secondary-foreground: #ffffff;
   
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
+  --background: #ffffff;
+  --foreground: #111111;
   
-  --border: 0 0% 89%;
-  --input: 0 0% 89%;
-  --ring: 0 84% 60%;
+  --muted: #f5f5f5;
+  --muted-foreground: #666666;
+  
+  --accent: #e62733;
+  --accent-foreground: #ffffff;
+  
+  --destructive: #e62733;
+  --destructive-foreground: #ffffff;
+  
+  --border: #e0e0e0;
+  --input: #e0e0e0;
+  --ring: #e62733;
   
   --radius: 0;
   
@@ -63,11 +74,6 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
   --leading-loose: 2;
-  
-  --color-primary: #e62733;
-  --color-primary-light: #f05a64;
-  --color-primary-dark: #c61d28;
-  --color-primary-hover: #d32129;
   
   /* Loading組件光暈效果相關 */
   --color-primary-glow: rgba(230, 39, 51, 0.6);
@@ -106,7 +112,7 @@
   html {
     font-family: var(--font-base);
     line-height: var(--leading-normal);
-    color: var(--color-black);
+    color: var(--color-text);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -164,14 +170,14 @@
   }
   
   a {
-    color: var(--color-red);
+    color: var(--color-primary);
     text-decoration: none;
     transition: color var(--duration-normal) var(--ease-out);
     position: relative;
   }
   
   a:hover {
-    color: var(--color-red-dark);
+    color: var(--color-primary-dark);
   }
   
   a.underline-effect {
@@ -198,7 +204,7 @@
   }
   
   blockquote {
-    border-left: 2px solid var(--color-red);
+    border-left: 2px solid var(--color-primary);
     padding-left: 1rem;
     margin: 1.5rem 0;
     font-style: italic;
@@ -268,12 +274,12 @@
 
 /* 自定義文字選取樣式 */
 ::selection {
-  background-color: var(--color-red);
+  background-color: var(--color-primary);
   color: var(--color-white);
 }
 
 ::-moz-selection {
-  background-color: var(--color-red);
+  background-color: var(--color-primary);
   color: var(--color-white);
 }
 
@@ -283,7 +289,7 @@
 .bg-red,
 .bg-primary,
 .bg-[#e62733] {
-  background-color: var(--color-red);
+  background-color: var(--color-primary);
   color: var(--color-white) !important;
 }
 
@@ -344,11 +350,11 @@
 .bg-black a:hover:not(.text-primary),
 .bg-[#111111] a:hover:not(.text-primary),
 [class*="bg-black"] a:hover:not(.text-primary) {
-  color: var(--color-red-light);
+  color: var(--color-primary-light);
 }
 
 .bg-black .accent {
-  color: var(--color-red);
+  color: var(--color-primary);
 }
 
 /* 3. 白底黑字 */
@@ -363,15 +369,15 @@
 }
 
 .bg-white a {
-  color: var(--color-red);
+  color: var(--color-primary);
 }
 
 .bg-white a:hover {
-  color: var(--color-red-dark);
+  color: var(--color-primary-dark);
 }
 
 .bg-white .accent {
-  color: var(--color-red);
+  color: var(--color-primary);
 }
 
 /* 字體定義 */
@@ -420,12 +426,12 @@
   
   /* 紅色按鈕 - 白色文字 */
   .btn-primary {
-    @apply bg-[#e62733] text-white hover:bg-[#cc1f2a];
+    @apply bg-primary text-white hover:bg-primary-dark;
   }
   
   /* 白色按鈕 - 紅色文字 */
   .btn-white {
-    @apply bg-white text-[#e62733] hover:bg-gray-50;
+    @apply bg-white text-primary hover:bg-gray-50;
   }
   
   /* 黑色按鈕 - 白色文字 */
@@ -435,11 +441,11 @@
   
   /* 輪廓按鈕 */
   .btn-outline-white {
-    @apply border-2 border-white text-white hover:bg-white hover:text-[#e62733];
+    @apply border-2 border-white text-white hover:bg-white hover:text-primary;
   }
   
   .btn-outline-red {
-    @apply border-2 border-[#e62733] text-[#e62733] hover:bg-[#e62733] hover:text-white;
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
   }
   
   .btn-outline-black {
@@ -461,7 +467,7 @@
   }
   
   .tag-red {
-    @apply bg-[#e62733] text-white;
+    @apply bg-primary text-white;
   }
   
   .tag-black {
@@ -478,7 +484,7 @@
   }
   
   .card-hover {
-    @apply transition-colors hover:border-[#e62733];
+    @apply transition-colors hover:border-primary;
   }
   
   /* 頁面區塊標準間距 */
@@ -488,12 +494,12 @@
   
   /* 強調文字 */
   .accent {
-    @apply text-[#e62733];
+    @apply text-primary;
   }
   
   /* 標題設計 */
   .heading-accent {
-    @apply border-l-4 border-[#e62733] pl-4;
+    @apply border-l-4 border-primary pl-4;
   }
   
   .heading-underline {
@@ -502,12 +508,12 @@
   
   .heading-underline::after {
     content: '';
-    @apply absolute left-0 bottom-0 w-12 h-1 bg-[#e62733];
+    @apply absolute left-0 bottom-0 w-12 h-1 bg-primary;
   }
   
   /* 表單元素 - 扁平化設計 */
   .input {
-    @apply w-full px-4 py-3 border border-gray-200 focus:border-[#e62733] focus:ring-0 transition-colors;
+    @apply w-full px-4 py-3 border border-gray-200 focus:border-primary focus:ring-0 transition-colors;
   }
   
   .label {
@@ -639,7 +645,7 @@
     left: 0;
     width: 60px;
     height: 2px;
-    background-color: var(--color-red);
+    background-color: var(--color-primary);
   }
 
   /* 統計數字卡片 */
@@ -692,7 +698,7 @@
 
   /* 服務內容區塊按鈕樣式 - 確保紅底白字 */
   .service-cta-button {
-    background-color: var(--color-red) !important;
+    background-color: var(--color-primary) !important;
     color: white !important; 
     display: inline-flex;
     align-items: center;
@@ -702,7 +708,7 @@
   }
 
   .service-cta-button:hover {
-    background-color: var(--color-red-dark) !important;
+    background-color: var(--color-primary-dark) !important;
   }
 
   .service-cta-button svg {
@@ -831,7 +837,7 @@
   left: 0;
   width: 60px;
   height: 3px;
-  background-color: var(--color-red);
+  background-color: var(--color-primary);
   transition: width 0.3s ease;
 }
 
@@ -958,11 +964,11 @@
 
 /* 強制紅白黑三色方案 */
 .text-primary {
-  color: var(--color-red) !important;
+  color: var(--color-primary) !important;
 }
 
 .bg-primary {
-  background-color: var(--color-red) !important;
+  background-color: var(--color-primary) !important;
   color: var(--color-white) !important;
 }
 
@@ -1018,8 +1024,8 @@
 }
 
 .tag-outline-red {
-  color: var(--color-red);
-  border-color: var(--color-red);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .tag-outline-red:hover {

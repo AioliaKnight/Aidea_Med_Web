@@ -23,40 +23,40 @@ module.exports = {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: "#e0e0e0",
+        input: "#e0e0e0",
+        ring: "#e62733",
+        background: "#ffffff",
+        foreground: "#111111",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#e62733",
+          foreground: "#ffffff",
           light: "#f05a64",
           dark: "#cc1f2a"
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#111111",
+          foreground: "#ffffff",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#e62733",
+          foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#f5f5f5",
+          foreground: "#666666",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#e62733",
+          foreground: "#ffffff",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "#ffffff",
+          foreground: "#111111",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#ffffff",
+          foreground: "#111111",
         },
         brand: {
           primary: '#e62733',
@@ -71,7 +71,7 @@ module.exports = {
         },
         red: {
           DEFAULT: '#e62733',
-          light: '#ff3b45',
+          light: '#f05a64',
           dark: '#cc1f2a',
         },
         black: {
@@ -168,8 +168,8 @@ module.exports = {
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(to right, #e62733, #cc1f2a)',
-        'gradient-dark': 'linear-gradient(to right, #111111, #222222)',
+        'gradient-primary': 'linear-gradient(to right, var(--color-primary), var(--color-primary-dark))',
+        'gradient-dark': 'linear-gradient(to right, var(--color-black), var(--color-black-light))',
         'dot-pattern': 'url("/images/pattern-dot.png")',
       },
       typography: (theme) => ({

@@ -87,8 +87,8 @@ const PageHeader = memo(function PageHeader({
           <div 
             className="absolute inset-0" 
             style={{ 
-              backgroundColor: variant === 'red' ? '#e62733' : 
-                              variant === 'black' ? '#111111' : '#ffffff',
+              backgroundColor: variant === 'red' ? 'var(--color-primary)' : 
+                              variant === 'black' ? 'var(--color-black)' : 'var(--color-white)',
               opacity: 0.3
             }}
           />

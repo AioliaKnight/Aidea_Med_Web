@@ -1019,7 +1019,7 @@ export default function ServicePage() {
             {/* 背景紋理 */}
             <div className="absolute inset-0 opacity-10">
               <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="#e62733" strokeWidth="0.5" fill="none" />
+                <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="var(--color-primary)" strokeWidth="0.5" fill="none" />
               </svg>
             </div>
             
@@ -1299,7 +1299,7 @@ export default function ServicePage() {
         {/* 背景紋理 */}
         <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,0 C50,0 50,100 100,100 M0,100 C50,100 50,0 100,0" stroke="#e62733" strokeWidth="0.5" fill="none" />
+            <path d="M0,0 C50,0 50,100 100,100 M0,100 C50,100 50,0 100,0" stroke="var(--color-primary)" strokeWidth="0.5" fill="none" />
           </svg>
         </div>
         
@@ -1529,7 +1529,7 @@ export default function ServicePage() {
         {/* 背景紋理 */}
         <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="#e62733" strokeWidth="0.5" fill="none" />
+            <path d="M0,0 L100,100 M20,0 L100,80 M0,20 L80,100 M40,0 L100,60 M0,40 L60,100 M60,0 L100,40 M0,60 L40,100 M80,0 L100,20 M0,80 L20,100" stroke="var(--color-primary)" strokeWidth="0.5" fill="none" />
           </svg>
         </div>
         
