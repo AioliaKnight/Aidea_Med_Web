@@ -273,7 +273,7 @@ const HeroSection = memo(function HeroSection() {
                   >
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
                       {titles[currentTitleIndex].main}
-                      <span className="block mt-2 font-extrabold text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:h-[3px] after:w-full after:bg-white/50">
+                      <span className="block mt-2 font-extrabold text-white relative">
                         {titles[currentTitleIndex].sub}
                       </span>
                     </h1>
@@ -584,12 +584,10 @@ const MarketingStatement = memo(function MarketingStatement() {
                 >
                   <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
                     {block.en.title}
-                    <div className="absolute left-0 bottom-[-5px] h-[3px] w-0 bg-white/30 transition-all duration-300 group-hover:w-full"></div>
                   </h2>
                   {block.en.subtitle && (
                     <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-1 md:mt-2 leading-tight tracking-tight text-pretty relative group">
                       {block.en.subtitle}
-                      <div className="absolute left-0 bottom-[-5px] h-[3px] w-0 bg-white/30 transition-all duration-300 group-hover:w-full"></div>
                     </h3>
                   )}
                 </motion.div>
