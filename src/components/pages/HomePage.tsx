@@ -3,7 +3,6 @@
 import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import CountUp from 'react-countup'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -133,6 +132,12 @@ const faqs = [
   }
 ];
 
+// 動態引入CountUp以減少首屏加載大小
+const CountUp = dynamic(() => import('react-countup'), {
+  loading: () => <div className="text-2xl sm:text-3xl font-bold">99%</div>,
+  ssr: false
+})
+
 // 更新 Hero Section 樣式
 const HeroSection = memo(function HeroSection() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -176,20 +181,20 @@ const HeroSection = memo(function HeroSection() {
   
   // 動畫變體
   const titleVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.6,
-        ease: [0.6, 0.05, 0.01, 0.9]
+        duration: 0.4,
+        ease: "easeOut"
       }
     },
     exit: {
       opacity: 0,
-      y: -30,
+      y: -20,
       transition: {
-        duration: 0.4
+        duration: 0.3
       }
     }
   };
@@ -225,9 +230,9 @@ const HeroSection = memo(function HeroSection() {
         <div className="max-w-4xl mx-auto">
           {/* 標題和英文標語靠左對齊 */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="px-4 sm:px-6 md:pl-8 lg:pl-12"
           >
             <div className="flex flex-col">
@@ -1553,7 +1558,7 @@ const CaseStudiesSection = memo(function CaseStudiesSection() {
                                 fill
                                 sizes="100vw"
                                 className="object-cover"
-                        priority
+                                loading="lazy"
                       />
                               <div className="absolute top-0 left-0 right-0 flex justify-between p-2">
                                 {filteredCases[currentSlide].featured && (
@@ -2207,7 +2212,7 @@ const TestimonialSection = memo(function TestimonialSection() {
                       fill
                       sizes="(max-width: 768px) 96px, 128px"
                       className="object-cover"
-                      priority
+                      loading="lazy"
                     />
                   </div>
                 </div>
@@ -2305,9 +2310,17 @@ const HomePage = () => {
         {/* 核心區塊 - 不使用懶加載以加速首屏渲染 */}
         <HeroSection />
         <MarketingStatement />
-        <FeatureSection />
+        
+        {/* 將非首屏必要組件延遲加載 */}
+        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
+          <FeatureSection />
+        </Suspense>
+        
         <StatsSection />
-        <ServiceSection />
+        
+        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
+          <ServiceSection />
+        </Suspense>
         
         {/* 次要區塊 - 使用Suspense進行懶加載 */}
         <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
@@ -2318,8 +2331,13 @@ const HomePage = () => {
           <TestimonialSection />
         </Suspense>
         
-        <FAQSection />
-        <ContactSection />
+        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
+          <FAQSection />
+        </Suspense>
+        
+        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
+          <ContactSection />
+        </Suspense>
       </div>
     </ErrorBoundary>
   );
