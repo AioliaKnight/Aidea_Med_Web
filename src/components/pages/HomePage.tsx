@@ -241,7 +241,7 @@ const HeroSection = memo(function HeroSection() {
                 <AnimatePresence mode="wait">
                   <motion.h1 
                     key={currentTitleIndex}
-                    className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] relative absolute inset-0"
+                    className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] absolute inset-0"
               suppressHydrationWarning
                     variants={homePageAnimations.hero.title}
                     initial="hidden"
