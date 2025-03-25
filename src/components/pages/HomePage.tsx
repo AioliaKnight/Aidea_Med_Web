@@ -37,6 +37,12 @@ import {
 import { Logo, CTASection, AnimatedSection } from '@/components/common'
 import { caseStudies as casesData } from '@/components/pages/CasePage'
 import { animations, homePageAnimations } from '@/utils/animations'
+import { 
+  heroTitleVariants, 
+  heroSubtitleVariants,
+  marketingStatementVariants,
+  tagAnimationVariants
+} from '@/utils/animations'
 
 // 動態載入非核心組件
 const CaseCard = dynamic(() => import('@/components/case/CaseCard').then(mod => mod.CaseCard), {
@@ -215,15 +221,33 @@ const HeroSection = memo(function HeroSection() {
       aria-label="網站主要橫幅"
     >
       {/* 背景層 - 簡潔扁平化設計 */}
-      <div className="absolute inset-0 z-0">
-        {/* 純色背景基底 */}
-        <div className="absolute inset-0 bg-primary"></div>
-        
-        {/* 使用不透明的白色線條背景圖片 */}
-        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
-        
-        {/* 背景覆蓋 */}
-        <div className="absolute inset-0 bg-primary/20"></div>
+      <div 
+        className="absolute inset-0 z-0"
+        style={{ willChange: 'transform' }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/95 z-10"></div>
+        <motion.div 
+          className="absolute inset-0 w-full h-full select-none pointer-events-none"
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            transition: { 
+              duration: 0.8,
+              ease: "easeOut"
+            }
+          }}
+          style={{ willChange: 'transform' }}
+        >
+          <Image
+            src="/images/medical-bg.jpg"
+            alt="醫療背景"
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover object-center opacity-50"
+          />
+        </motion.div>
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20">
@@ -232,28 +256,25 @@ const HeroSection = memo(function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="px-4 sm:px-6 md:pl-8 lg:pl-12"
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="px-4 sm:px-6 md:pl-8 lg:pl-12 transform-gpu"
           >
             <div className="flex flex-col">
               <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
                 <AnimatePresence mode="wait">
-                  <motion.h1 
+                  <motion.div
                     key={currentTitleIndex}
-                    className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] absolute inset-0"
-              suppressHydrationWarning
-                    variants={homePageAnimations.hero.title}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
+                    variants={heroTitleVariants}
+                    className="font-bold text-white leading-tight md:leading-tight"
+                    style={{ willChange: 'transform, opacity' }}
                   >
-                    <span className="relative inline-block">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
                       {titles[currentTitleIndex].main}
-                      <span className="block mt-1 font-extrabold text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:h-[3px] after:w-full after:bg-white/50">
-                        {titles[currentTitleIndex].sub}
-                      </span>
-                    </span>
-                  </motion.h1>
+                    </h1>
+                  </motion.div>
                 </AnimatePresence>
               </div>
             </div>
@@ -265,10 +286,10 @@ const HeroSection = memo(function HeroSection() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentTitleIndex}
-                  variants={homePageAnimations.hero.subtitle}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
+                  variants={heroSubtitleVariants}
                   className="flex flex-col"
                 >
                   <div className="inline-block text-white/90 mb-0.5 leading-tight">{titles[currentTitleIndex].enMain},</div>
@@ -281,33 +302,46 @@ const HeroSection = memo(function HeroSection() {
           {/* 下面的元素置中對齊 */}
           <div className="flex flex-col items-center px-4 sm:px-6">
             {/* 扁平化標籤設計 - 簡化邊框並提高對比 */}
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 my-8 py-1 max-w-full">
-                {tags.map((tag, index) => (
-                  <motion.div
-                    key={tag.id}
-                    className="border border-white/70 text-white text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4 py-1.5"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
-                    whileHover={{
-                      backgroundColor: "rgba(255,255,255,0.15)",
-                      y: -2,
-                      transition: { duration: 0.2 }
-                    }}
-                  >
-                    {tag.name}
-                  </motion.div>
-                ))}
+            <div className="flex flex-wrap gap-3 mt-8 md:mt-12" style={{ willChange: 'transform' }}>
+              {tags.map((tag, index) => (
+                <motion.span
+                  key={tag.id}
+                  variants={tagAnimationVariants}
+                  initial="initial"
+                  animate="animate"
+                  whileHover="hover"
+                  custom={index}
+                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
+                             bg-white/10 border border-white/20 
+                             cursor-pointer hover:bg-white/15 transition-colors"
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  {tag.name}
+                </motion.span>
+              ))}
             </div>
             
             {/* 信任指標和簡短數據統計 */}
             <motion.div
-              className="mt-6 mb-8 w-full"
-              initial={{ opacity: 0, y: 20 }}
+              className="mt-6 mb-8 w-full transform-gpu"
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
             >
-              <div className="grid grid-cols-3 gap-6 sm:gap-8 justify-items-center">
+              <motion.div 
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 md:mt-16"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { 
+                    delay: 0.5, 
+                    duration: 0.4,
+                    ease: "easeOut" 
+                  }
+                }}
+                style={{ willChange: 'transform' }}
+              >
                 <div className="flex flex-col items-center">
                   <motion.div 
                     className="text-white text-2xl sm:text-3xl font-bold flex items-center"
@@ -365,7 +399,7 @@ const HeroSection = memo(function HeroSection() {
                   </motion.div>
                   <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">專業響應</span>
                 </div>
-              </div>
+              </motion.div>
           </motion.div>
           
           {/* 預約按鈕 - 純黑底白字扁平化設計 */}
@@ -519,23 +553,30 @@ const MarketingStatement = memo(function MarketingStatement() {
           {contentBlocks.map((block, index) => (
             <motion.div
               key={index}
-              className={`${block.className} mb-10 md:mb-16 text-selection-inverted`}
-              initial={{ opacity: 0, x: -50 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ 
-                duration: 0.7, 
-                delay: block.delay,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
+              className={`mb-8 ${block.className}`}
+              initial={{ opacity: 0, x: -20 }}
+              animate={inView ? 
+                { 
+                  opacity: 1, 
+                  x: 0,
+                  transition: {
+                    delay: block.delay,
+                    duration: 0.4,
+                    ease: "easeOut"
+                  }
+                } : 
+                { opacity: 0, x: -20 }
+              }
+              style={{ willChange: 'transform' }}
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
                 <motion.div 
                   className="w-full md:w-5/12"
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: -15 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ 
-                    duration: 0.5, 
-                    delay: block.delay + 0.1
+                    duration: 0.3, 
+                    delay: Math.min(block.delay + 0.1, 0.4)
                   }}
                 >
                   <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
@@ -561,27 +602,27 @@ const MarketingStatement = memo(function MarketingStatement() {
                 >
                   <div className="border-l-4 border-white/70 pl-4 md:pl-6">
                     <motion.p 
-                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative"
-                      initial={{ opacity: 0, y: 10 }}
+                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
+                      initial={{ opacity: 0, y: 5 }}
                       animate={inView ? { opacity: 1, y: 0 } : {}}
                       transition={{ 
-                        duration: 0.4, 
-                        delay: block.delay + 0.3
+                        duration: 0.3, 
+                        delay: Math.min(block.delay + 0.2, 0.5)
                       }}
-                      whileHover={{ x: 5 }}
+                      whileHover={{ x: 3 }}
                     >
                       {block.zh.title}
                     </motion.p>
                     {block.zh.subtitle && (
                       <motion.p 
-                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative"
-                        initial={{ opacity: 0, y: 10 }}
+                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
+                        initial={{ opacity: 0, y: 5 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ 
-                          duration: 0.4, 
-                          delay: block.delay + 0.4
+                          duration: 0.3, 
+                          delay: Math.min(block.delay + 0.3, 0.6)
                         }}
-                        whileHover={{ x: 5 }}
+                        whileHover={{ x: 3 }}
                       >
                         {block.zh.subtitle}
                       </motion.p>

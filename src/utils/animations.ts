@@ -569,26 +569,6 @@ export const optimizedBounceVariants: Variants = {
 
 // HeroSection 標題輪換動畫
 export const heroTitleVariants: Variants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.6,
-      ease: [0.6, 0.05, 0.01, 0.9]
-    }
-  },
-  exit: {
-    opacity: 0,
-    y: -30,
-    transition: {
-      duration: 0.4
-    }
-  }
-}
-
-// 英文標語切換動畫
-export const heroSubtitleVariants: Variants = {
   hidden: { 
     opacity: 0, 
     y: 20 
@@ -596,14 +576,39 @@ export const heroSubtitleVariants: Variants = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5 }
+    transition: { 
+      duration: 0.5,
+      ease: "easeOut",
+    }
   },
   exit: { 
     opacity: 0, 
-    y: -20,
-    transition: { duration: 0.5 }
+    y: -15,
+    transition: { duration: 0.3 }
   }
-}
+};
+
+// 英文標語切換動畫
+export const heroSubtitleVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    y: 15 
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      delay: 0.1,
+      duration: 0.4,
+      ease: "easeOut",
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -10,
+    transition: { duration: 0.3 }
+  }
+};
 
 // 數字統計動畫配置
 export const statsNumberVariants = {
@@ -652,16 +657,16 @@ export const countUpConfig = {
 
 // MarketingStatement 階梯式文案動畫
 export const marketingStatementVariants: Variants = {
-  hidden: { opacity: 0, x: -50 },
+  hidden: { opacity: 0, x: -30 },
   visible: { 
     opacity: 1, 
     x: 0,
     transition: { 
-      duration: 0.7, 
-      ease: [0.25, 0.46, 0.45, 0.94]
+      duration: 0.5, 
+      ease: "easeOut"
     }
   }
-}
+};
 
 // 分隔線展開動畫
 export const dividerExpandVariants: Variants = {
@@ -690,23 +695,23 @@ export const dividerGlowVariants: Variants = {
 
 // Feature 卡片懸停效果
 export const featureCardVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: { 
     opacity: 1, 
     y: 0,
     transition: { 
-      duration: 0.5
+      duration: 0.4
     }
   },
   hover: { 
-    y: -5,
-    boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.1)",
+    y: -3,
+    boxShadow: "0 8px 20px -8px rgba(0, 0, 0, 0.1)",
     borderColor: "rgba(var(--color-primary-rgb), 1)",
     transition: { 
       duration: 0.2
     }
   }
-}
+};
 
 // Feature 圖標動畫
 export const featureIconVariants: Variants = {
@@ -732,14 +737,14 @@ export const featureIconVariants: Variants = {
 // 底部指示箭頭動畫
 export const scrollIndicatorVariants = {
   animate: { 
-    y: [0, 8, 0],
+    y: [0, 6, 0],
     transition: { 
-      duration: 1.5, 
+      duration: 1.2, 
       repeat: Infinity, 
       ease: "easeInOut" 
     }
   }
-}
+};
 
 // 卡片懸停效果
 export const cardHoverVariants: Variants = {
@@ -804,12 +809,12 @@ export const faqContainerVariants: Variants = {
 
 // FAQ 項目動畫
 export const faqItemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 8 },
   visible: { 
     opacity: 1, 
     y: 0,
     transition: { 
-      duration: 0.4
+      duration: 0.3
     }
   }
 }
@@ -820,16 +825,16 @@ export const faqContentVariants: Variants = {
     height: 0,
     opacity: 0,
     transition: {
-      duration: 0.3,
-      ease: [0.33, 1, 0.68, 1]
+      duration: 0.25,
+      ease: "easeInOut"
     }
   },
   expanded: { 
     height: "auto",
     opacity: 1,
     transition: {
-      duration: 0.4,
-      ease: [0.33, 1, 0.68, 1]
+      duration: 0.35,
+      ease: "easeInOut"
     }
   }
 }
@@ -885,21 +890,21 @@ export const buttonVariants: Variants = {
 
 // 標籤動畫效果 (從 HomePage 整合)
 export const tagAnimationVariants: Variants = {
-  initial: { opacity: 0, x: -20 },
+  initial: { opacity: 0, x: -10 },
   animate: (index: number = 0) => ({ 
     opacity: 1, 
     x: 0,
     transition: { 
-      delay: 0.4 + index * 0.1, 
-      duration: 0.5 
+      delay: 0.3 + Math.min(index, 2) * 0.08, // 限制最多延遲時間，提高移動端效能
+      duration: 0.3 
     }
   }),
   hover: {
     backgroundColor: "rgba(255,255,255,0.15)",
-    y: -2,
+    scale: 1.05,
     transition: { duration: 0.2 }
   }
-}
+};
 
 // 更新標籤動畫配置 (適用於不同顏色的標籤)
 export const createTagAnimations = (isLight: boolean = true) => {
