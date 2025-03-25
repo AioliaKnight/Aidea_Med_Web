@@ -423,7 +423,7 @@ const HeroSection = memo(function HeroSection() {
   return (
     <section 
       ref={setRefs}
-      className="relative min-h-[100vh] flex flex-col justify-center bg-primary overflow-hidden pt-16"
+      className="relative flex flex-col bg-primary overflow-hidden pt-12 pb-10 md:pt-16 md:pb-14"
       role="banner"
       aria-label="網站主要橫幅"
       id="hero"
@@ -441,7 +441,7 @@ const HeroSection = memo(function HeroSection() {
       </div>
       
       {/* 主要標題內容區 */}
-      <div className="container-custom relative z-20 py-12 md:py-16 flex-grow">
+      <div className="container-custom relative z-20 py-6 md:py-8">
         <div className="max-w-5xl mx-auto">
           {/* 標題區塊 - 置中對齊 */}
           <motion.div
@@ -471,7 +471,7 @@ const HeroSection = memo(function HeroSection() {
                   </h1>
                   
                   {/* 英文主副標題 - 視覺上分隔但保持關聯性 */}
-                  <div className="mt-3 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
+                  <div className="mt-3 mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
                     {titles[currentTitleIndex].enMain},
                     <div className="font-extrabold text-white mt-2">
                       {titles[currentTitleIndex].enSub}.
@@ -483,7 +483,7 @@ const HeroSection = memo(function HeroSection() {
             
             {/* 單行白框線條標籤設計 */}
             <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
-              <div className="flex justify-between items-center border-t border-b border-white/40 py-4 px-1 my-8">
+              <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6">
                 {tags.map((tag, index) => (
                   <motion.span
                     key={tag.id}
@@ -517,7 +517,7 @@ const HeroSection = memo(function HeroSection() {
 
             {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 */}
             <motion.div
-              className="mt-2 mb-6"
+              className="mt-4 mb-5"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.5 }}
@@ -567,7 +567,7 @@ const HeroSection = memo(function HeroSection() {
             
             {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection */}
             <motion.div 
-              className="mt-4 flex justify-center"
+              className="mt-2 flex justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
