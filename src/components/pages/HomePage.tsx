@@ -21,7 +21,9 @@ import {
   UserCog,
   Building2 as BuildingIcon,
   Globe as GlobeIcon,
-  BarChart as ChartIcon
+  BarChart as ChartIcon,
+  Clock,
+  TrendingUp
 } from 'lucide-react'
 import Image from 'next/image'
 import { Logo, CTASection } from '@/components/common'
@@ -300,7 +302,7 @@ function HeroSection() {
           priority
           quality={100}
           sizes="100vw"
-          className="object-cover mix-blend-soft-light opacity-40"
+          className="object-cover mix-blend-soft-light opacity-100"
           loading="eager"
           fetchPriority="high"
         />
@@ -852,6 +854,60 @@ type StatsSectionProps = {
 
 // 更新數據統計區塊
 function StatsSection({ className = '' }: StatsSectionProps) {
+  // 設定輪播狀態
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [snapPosition, setSnapPosition] = useState({ start: 0, end: 0 });
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // 檢測視窗大小以決定是否為行動裝置
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // 處理輪播控制
+  const handleNext = useCallback(() => {
+    if (!carouselRef.current) return;
+    const maxSlides = stats.length - (isMobile ? 1 : 3);
+    setCurrentSlide(prev => Math.min(prev + 1, maxSlides));
+  }, [isMobile]);
+  
+  const handlePrev = useCallback(() => {
+    setCurrentSlide(prev => Math.max(prev - 1, 0));
+  }, []);
+  
+  // 自動輪播設定
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const maxSlides = stats.length - (isMobile ? 1 : 3);
+      if (currentSlide >= maxSlides) {
+        setCurrentSlide(0);
+      } else {
+        setCurrentSlide(prev => prev + 1);
+      }
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [currentSlide, isMobile]);
+  
+  // 計算滑動位置
+  useEffect(() => {
+    if (!carouselRef.current) return;
+    
+    const carousel = carouselRef.current;
+    const cardWidth = carousel.querySelector('.stat-card')?.clientWidth || 0;
+    const gap = 32; // gap-8 = 2rem = 32px
+    
+    carousel.style.transform = `translateX(-${currentSlide * (cardWidth + gap)}px)`;
+  }, [currentSlide]);
+  
   // 精簡的統計數據
   const stats: StatItem[] = [
     {
@@ -881,11 +937,25 @@ function StatsSection({ className = '' }: StatsSectionProps) {
       label: "客戶滿意度",
       description: "專業團隊品質保證",
       icon: <Handshake className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 365,
+      suffix: "天",
+      label: "全年專業支援",
+      description: "無間斷的行銷服務",
+      icon: <Clock className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 200,
+      suffix: "%",
+      label: "平均ROI",
+      description: "投資回報率保證",
+      icon: <TrendingUp className="w-10 h-10 text-white" strokeWidth={1.5} />
     }
   ];
 
   return (
-    <section className={`bg-primary py-20 ${className}`}>
+    <section className={`bg-primary py-20 ${className} overflow-hidden`}>
       <div className="container-custom">
         {/* 標題區塊 */}
         <motion.div 
@@ -907,42 +977,120 @@ function StatsSection({ className = '' }: StatsSectionProps) {
           </p>
         </motion.div>
 
-        {/* 統計數據網格 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              className="stat-card bg-white/10 border-l-2 border-white/30 p-8"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+        {/* 統計數據橫向輪播 */}
+        <div className="relative max-w-6xl mx-auto px-4">
+          {/* 輪播容器 */}
+          <div className="overflow-hidden">
+            <motion.div 
+              ref={carouselRef}
+              className="flex space-x-8 transition-transform duration-700"
+              initial={{ x: 0 }}
+              animate={{ x: `-${currentSlide * 100}%` }}
             >
-              <div className="flex items-center mb-6">
-                {stat.icon}
-              </div>
-              
-              <div className="stat-number text-white mb-3">
-                <CountUp
-                  start={0}
-                  end={stat.value}
-                  duration={2}
-                  separator=","
-                  decimals={0}
-                  suffix={stat.suffix}
-                  className="tabular-nums"
-                />
-              </div>
-              
-              <h3 className="text-xl font-bold text-white mb-2">
-                {stat.label}
-              </h3>
-              
-              <p className="text-white/80">
-                {stat.description}
-              </p>
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="stat-card bg-white/10 border-l-2 border-white/30 p-8 flex-shrink-0 w-full sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-16px)]"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  whileHover={{ 
+                    y: -5,
+                    boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2)",
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center mb-6">
+                      <motion.div
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 5, 0, -5, 0]
+                        }}
+                        transition={{ 
+                          duration: 2, 
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }}
+                      >
+                        {stat.icon}
+                      </motion.div>
+                    </div>
+                    
+                    <div className="stat-number text-white mb-3 text-4xl font-bold">
+                      <CountUp
+                        start={0}
+                        end={stat.value}
+                        duration={2.5}
+                        separator=","
+                        decimals={0}
+                        suffix={stat.suffix}
+                        enableScrollSpy
+                        scrollSpyDelay={100}
+                        className="tabular-nums"
+                      />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      {stat.label}
+                    </h3>
+                    
+                    <p className="text-white/80 mt-auto">
+                      {stat.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </div>
+          
+          {/* 控制按鈕 */}
+          <div className="flex justify-center mt-10 space-x-4">
+            <button
+              onClick={handlePrev}
+              disabled={currentSlide === 0}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                currentSlide === 0 
+                  ? 'bg-white/20 text-white/40 cursor-not-allowed' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+              aria-label="上一組數據"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            <button
+              onClick={handleNext}
+              disabled={currentSlide >= stats.length - (isMobile ? 1 : 4)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                currentSlide >= stats.length - (isMobile ? 1 : 4)
+                  ? 'bg-white/20 text-white/40 cursor-not-allowed' 
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+              aria-label="下一組數據"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          
+          {/* 進度指示器 */}
+          <div className="flex justify-center mt-4 space-x-2">
+            {Array.from({ length: stats.length - (isMobile ? 0 : 3) }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentSlide === i ? 'bg-white' : 'bg-white/30'
+                }`}
+                aria-label={`跳至第 ${i + 1} 組數據`}
+              />
+            ))}
+          </div>
         </div>
         
         {/* 註釋 */}
