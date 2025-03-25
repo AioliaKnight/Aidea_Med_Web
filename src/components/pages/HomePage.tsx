@@ -280,35 +280,36 @@ function HeroSection() {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center bg-primary overflow-hidden"
+      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center justify-center bg-primary overflow-hidden"
       role="banner"
       aria-label="網站主要橫幅"
     >
       {/* 波浪背景 */}
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark opacity-90"></div>
         <Image
-          src="/images/bgline-w_sm.png"
+          src="/images/bgline-w.webp"
           alt="背景波浪線條"
           fill
           priority
-          quality={75}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          className="object-cover mix-blend-soft-light"
+          quality={90}
+          sizes="100vw"
+          className="object-cover mix-blend-soft-light opacity-50"
           loading="eager"
           fetchPriority="high"
         />
       </div>
       
-      <div className="container-custom relative z-20 py-12 md:py-20 px-4 sm:px-6">
+      <div className="container-custom relative z-20 py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center"
+            className="text-center px-4 sm:px-6"
           >
             <h1 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 heading-hero animate-slide-up"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
               suppressHydrationWarning
             >
               數位精準驅動<br/>
@@ -316,7 +317,7 @@ function HeroSection() {
             </h1>
             
             <p 
-              className="text-lg sm:text-xl md:text-2xl text-white max-w-2xl mx-auto mt-4 mb-8 animate-slide-up delay-200"
+              className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl mx-auto mt-4 mb-8"
               suppressHydrationWarning
             >
               Digital precision-driven,<br/>
@@ -1118,6 +1119,10 @@ function StatsSection({ className = '' }: StatsSectionProps) {
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 activeIndex === index ? 'bg-white w-4' : 'bg-white/30'
               }`}
+              tabIndex={0}
+              aria-label={`切換到第 ${index + 1} 個統計數據`}
+              role="tab"
+              aria-selected={activeIndex === index}
               onClick={() => scrollToItem(index)}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
