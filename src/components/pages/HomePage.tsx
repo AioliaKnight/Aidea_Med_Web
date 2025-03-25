@@ -982,68 +982,96 @@ function StatsSection({ className = '' }: StatsSectionProps) {
   }, [activeIndex]);
 
   return (
-    <section className={`relative py-16 md:py-24 bg-primary overflow-hidden ${className}`}>
+    <section className={`relative py-20 md:py-32 overflow-hidden ${className}`}>
       {/* 優化的背景效果 */}
-      <div className="absolute inset-0 bg-primary z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-100"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-primary"></div>
+        <div className="absolute inset-0 bg-dot-pattern opacity-10"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2)_0%,transparent_60%)]"></div>
+        <motion.div 
+          className="absolute -bottom-40 -right-40 w-96 h-96 bg-primary-light rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ 
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        <motion.div 
+          className="absolute -top-20 -left-20 w-72 h-72 bg-primary-light rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{ 
+            duration: 10,
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 2
+          }}
+        />
       </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
         <motion.div 
-          className="text-center mb-14"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center mb-16 md:mb-20"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7 }}
         >
           <motion.div 
-            className="inline-block text-white font-medium mb-5 px-5 py-2 bg-white/10 rounded-full backdrop-blur-sm"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-block text-white font-medium mb-5 px-6 py-2.5 bg-white/10 rounded-none backdrop-blur-sm border-l-2 border-white/30 shadow-flat-primary"
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5 }}
           >
-            <BarChart2 className="w-4 h-4 inline-block mr-2 -mt-0.5" /> 成效數據
+            <BarChart2 className="w-5 h-5 inline-block mr-2 -mt-0.5" /> 實證行銷數據
           </motion.div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight heading-medical">
             <span className="relative">
-              <span className="inline-block mr-2">實際</span>
-              <span className="relative inline-block mx-2">
+              <span className="inline-block">顯著</span>
+              <span className="relative inline-block mx-3">
                 成效
                 <motion.span 
                   initial={{ width: "0%" }}
                   whileInView={{ width: "100%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="absolute -bottom-2 left-0 right-0 h-1.5 bg-white/30 rounded-full"
+                  className="absolute -bottom-3 left-0 right-0 h-2 bg-white/30"
                 ></motion.span>
               </span>
               <span className="inline-block">數據</span>
             </span>
           </h2>
           <motion.p 
-            className="text-lg text-white/80 max-w-2xl mx-auto"
+            className="text-xl text-white/80 max-w-3xl mx-auto font-light"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
           >
-            實證數據驅動診所業務增長，提供可量化的成功案例
+            多年實證數據驅動診所業務增長，提供可量化的成功案例與投資回報
           </motion.p>
         </motion.div>
 
         {/* 優化的統計數據卡片容器 */}
-        <div className="relative overflow-hidden px-4 md:px-8">
+        <div className="relative overflow-hidden px-4 md:px-12 max-w-7xl mx-auto">
           {/* 滾動箭頭 - 左 */}
           <motion.button
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm hidden md:flex items-center justify-center shadow-lg"
-            initial={{ opacity: 0, x: -10 }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-3.5 bg-white/10 hover:bg-white/20 border-l-2 border-white/30 backdrop-blur-sm hidden md:flex items-center justify-center shadow-flat"
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.25)" }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.3 }}
             onClick={() => scrollToItem(Math.max(0, activeIndex - 1))}
+            aria-label="查看上一個統計數據"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1053,57 +1081,111 @@ function StatsSection({ className = '' }: StatsSectionProps) {
           {/* 滾動容器 */}
           <div 
             ref={scrollRef}
-            className="stats-scroll-container flex overflow-x-auto scrollbar-hide gap-6 py-4 px-4 md:px-8"
+            className="stats-scroll-container flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-8 py-6 px-4 md:px-8"
             onScroll={handleScroll}
           >
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
-                className={`stats-item flex-none w-[280px] md:w-[320px] p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 ${
-                  activeIndex === index ? 'scale-105 shadow-xl' : 'scale-100'
+                className={`stats-item flex-none w-[300px] md:w-[340px] p-7 stat-card border-l-2 snap-center transition-all duration-500 ${
+                  activeIndex === index 
+                    ? 'bg-white/15 border-white/40 shadow-flat transform-gpu' 
+                    : 'bg-white/10 border-white/20 hover:bg-white/12'
                 }`}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-white/10 rounded-xl">
-                    {stat.icon}
-                  </div>
-                  <motion.div
-                    className="text-2xl font-bold text-white"
-                    initial={{ opacity: 0, scale: 0.8 }}
+                <div className={`p-4 mb-6 ${
+                  activeIndex === index 
+                    ? 'bg-gradient-to-br from-white/20 to-white/10 border-l border-white/30' 
+                    : 'bg-white/10'
+                }`}>
+                  {stat.icon}
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-3 flex items-baseline">
+                  <span className="mr-1">{stat.label}</span>
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-xs py-0.5 px-2 bg-white/20 text-white/90 ml-2 tag-flat"
                   >
-                    <CountUp
-                      start={0}
-                      end={stat.value}
-                      duration={2}
-                      separator=","
-                      decimals={0}
-                      suffix={stat.suffix}
-                      redraw={animateNumber}
+                    關鍵指標
+                  </motion.span>
+                </h3>
+                
+                <motion.div
+                  className={`stat-number flex items-baseline ${
+                    activeIndex === index ? 'text-white' : 'text-white/90'
+                  }`}
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.2 }}
+                >
+                  <CountUp
+                    start={0}
+                    end={stat.value}
+                    duration={2.5}
+                    separator=","
+                    decimals={0}
+                    suffix={stat.suffix}
+                    redraw={animateNumber}
+                    className="tabular-nums"
+                  />
+                  <motion.div 
+                    className="ml-2 h-8 w-1 bg-white/30"
+                    animate={{ 
+                      height: ["32px", "20px", "32px"],
+                      opacity: [0.3, 0.6, 0.3]
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  />
+                </motion.div>
+                
+                <p className={`text-base ${
+                  activeIndex === index ? 'text-white/85' : 'text-white/70'
+                }`}>
+                  {stat.description}
+                </p>
+                
+                {activeIndex === index && (
+                  <motion.div 
+                    className="w-full h-1 bg-white/20 mt-5 overflow-hidden"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <motion.div 
+                      className="h-full bg-white/60"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 2, ease: "easeOut" }}
                     />
                   </motion.div>
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">{stat.label}</h3>
-                <p className="text-white/70">{stat.description}</p>
+                )}
               </motion.div>
             ))}
           </div>
 
           {/* 滾動箭頭 - 右 */}
           <motion.button
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm hidden md:flex items-center justify-center shadow-lg"
-            initial={{ opacity: 0, x: 10 }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-3.5 bg-white/10 hover:bg-white/20 border-r-2 border-white/30 backdrop-blur-sm hidden md:flex items-center justify-center shadow-flat"
+            initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.25)" }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.3 }}
             onClick={() => scrollToItem(Math.min(stats.length - 1, activeIndex + 1))}
+            aria-label="查看下一個統計數據"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -1112,12 +1194,12 @@ function StatsSection({ className = '' }: StatsSectionProps) {
         </div>
 
         {/* 優化的導航點 */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-3 mt-10">
           {stats.map((_, index) => (
             <motion.button
               key={index}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                activeIndex === index ? 'bg-white w-4' : 'bg-white/30'
+              className={`h-1 transition-all duration-500 ${
+                activeIndex === index ? 'bg-white w-10 shadow-flat-primary' : 'bg-white/30 w-6 hover:bg-white/50'
               }`}
               tabIndex={0}
               aria-label={`切換到第 ${index + 1} 個統計數據`}
@@ -1129,6 +1211,17 @@ function StatsSection({ className = '' }: StatsSectionProps) {
             />
           ))}
         </div>
+        
+        {/* 添加註釋和來源說明 */}
+        <motion.div 
+          className="text-center mt-12 text-white/50 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+        >
+          *數據基於過去三年合作診所的實際統計 | 2021-2023年度報告
+        </motion.div>
       </div>
     </section>
   );

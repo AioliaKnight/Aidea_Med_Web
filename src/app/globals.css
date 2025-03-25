@@ -80,6 +80,25 @@
   --icon-hover-scale: 1.08;
   --icon-hover-rotate: 5deg;
   --icon-bg-hover: rgba(230, 39, 51, 0.15);
+  
+  /* 盒陰影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-primary: 0 10px 15px -3px rgba(230, 39, 51, 0.15), 0 4px 6px -2px rgba(230, 39, 51, 0.1);
+  
+  /* 動畫持續時間 */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  
+  /* 動畫緩動函數 */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* 基本文字設定 */
@@ -91,13 +110,14 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-white;
     font-family: var(--font-base);
+    overflow-x: hidden;
   }
-  
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
@@ -109,6 +129,7 @@
     /* 移除文字不換行與溢出處理，讓英文文字可自然換行 */
     white-space: normal;
     overflow: visible;
+    letter-spacing: -0.01em;
   }
   
   h1 {
@@ -134,6 +155,7 @@
   h6 {
     font-size: var(--text-sm);
     text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   
   p {
@@ -144,11 +166,31 @@
   a {
     color: var(--color-red);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--duration-normal) var(--ease-out);
+    position: relative;
   }
   
   a:hover {
     color: var(--color-red-dark);
+  }
+  
+  a.underline-effect {
+    position: relative;
+  }
+  
+  a.underline-effect::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transition: width var(--duration-normal) var(--ease-out);
+  }
+  
+  a.underline-effect:hover::after {
+    width: 100%;
   }
   
   small {
@@ -159,6 +201,8 @@
     border-left: 2px solid var(--color-red);
     padding-left: 1rem;
     margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--color-black-light);
   }
   
   /* 更精細的響應式標題尺寸調整 */
@@ -190,6 +234,35 @@
     h1 { font-size: var(--text-6xl); }
     h2 { font-size: var(--text-5xl); }
     h3 { font-size: var(--text-4xl); }
+  }
+  
+  /* 圖片優化 */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* 按鈕基本樣式 */
+  button {
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+  
+  /* 表單元素優化 */
+  input, textarea, select {
+    font-family: var(--font-base);
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+  
+  /* 列表樣式 */
+  ul, ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25em;
+  }
+  
+  li {
+    margin-bottom: 0.5em;
   }
 }
 
@@ -236,6 +309,7 @@
 .bg-primary a:hover,
 .bg-[#e62733] a:hover {
   text-decoration-thickness: 2px;
+  opacity: 0.9;
 }
 
 /* 2. 黑底紅字 */
@@ -491,6 +565,128 @@
   /* 手機優化間距 */
   .mobile-spacing {
     @apply py-4 px-4 sm:py-6 sm:px-6 md:py-8 md:px-8;
+  }
+
+  /* 平面化按鈕 */
+  .btn-flat {
+    @apply inline-flex items-center justify-center px-5 py-2.5 font-medium text-base transition-all duration-300 ease-out;
+    border: none;
+    outline: none;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 平面化標籤 */
+  .tag-flat {
+    @apply inline-flex items-center px-3 py-1 text-sm transition-all duration-300 ease-out;
+    border: none;
+    outline: none;
+    border-radius: 0;
+  }
+
+  /* 卡片組件 */
+  .card-flat {
+    @apply bg-white p-6 transition-all duration-300 ease-out;
+    border: none;
+    border-radius: 0;
+    position: relative;
+  }
+
+  /* 紅色卡片 */
+  .card-primary {
+    @apply bg-primary text-white;
+  }
+
+  /* 黑色卡片 */
+  .card-dark {
+    @apply bg-black text-white;
+  }
+
+  /* 單色圖片效果 */
+  .img-monochrome {
+    filter: grayscale(100%) brightness(1.1) contrast(1.2);
+    transition: filter var(--duration-normal) var(--ease-out);
+  }
+
+  .img-monochrome:hover {
+    filter: grayscale(80%) brightness(1.15) contrast(1.1);
+  }
+
+  /* 紅色濾鏡效果 */
+  .img-red-filter {
+    filter: grayscale(100%) sepia(50%) hue-rotate(325deg) saturate(150%);
+    transition: filter var(--duration-normal) var(--ease-out);
+  }
+
+  /* 分隔線 */
+  .divider-flat {
+    @apply w-full h-px my-6;
+    background-color: currentColor;
+    opacity: 0.1;
+  }
+
+  /* 醫療風格標題 */
+  .heading-medical {
+    @apply relative pb-3 mb-6;
+  }
+  
+  .heading-medical::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background-color: var(--color-red);
+  }
+
+  /* 統計數字卡片 */
+  .stat-card {
+    @apply p-6 flex flex-col items-start transition-all duration-300 ease-out;
+    border: none;
+    border-radius: 0;
+  }
+
+  .stat-card-primary {
+    @apply bg-primary text-white;
+  }
+
+  .stat-card-dark {
+    @apply bg-black text-white;
+  }
+
+  .stat-card-light {
+    @apply bg-white text-black border border-gray-100;
+  }
+
+  /* 數據數字 */
+  .stat-number {
+    @apply text-4xl sm:text-5xl font-bold leading-none mb-2;
+  }
+
+  /* 格柵系統 */
+  .grid-system {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+  }
+
+  /* 動畫效果 */
+  .fade-in {
+    animation: fadeIn var(--duration-slow) var(--ease-out) forwards;
+  }
+
+  .slide-up {
+    animation: slideUp var(--duration-slow) var(--ease-out) forwards;
+  }
+
+  /* 陰影效果 - 保持平面感 */
+  .shadow-flat {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 主色調陰影 */
+  .shadow-primary {
+    box-shadow: 0 2px 8px rgba(230, 39, 51, 0.15);
   }
 }
 
@@ -1054,4 +1250,16 @@
 /* 添加平滑滾動行為 */
 html {
   scroll-behavior: smooth;
+}
+
+/* 響應式調整 */
+@media (max-width: 640px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-text-center {
+    text-align: center;
+  }
 } 
