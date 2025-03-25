@@ -77,33 +77,41 @@ const NavItem = React.memo(({
     <Link
       href={item.href}
       className={cn(
-        "relative px-3 py-2 group transition-colors duration-300 no-underline",
+        "relative px-3 py-2 group transition-colors duration-300 flex flex-col items-center justify-center",
         activeStyle
       )}
       aria-current={isActive ? 'page' : undefined}
       role="menuitem"
     >
-      <span className="block text-base font-medium no-underline">{item.name}</span>
-      <span className={cn(
-        "block text-xs mt-0.5 font-light tracking-wide transition-colors duration-300 no-underline",
-        secondaryStyle
-      )}>
-        {item.nameEn}
-      </span>
+      <div className="flex flex-col items-center">
+        <span className="text-base font-medium text-center">{item.name}</span>
+        <span className={cn(
+          "text-xs mt-0.5 font-light tracking-wide transition-colors duration-300 text-center",
+          secondaryStyle
+        )}>
+          {item.nameEn}
+        </span>
+      </div>
       
-      {isActive && (
-        <motion.div
-          layoutId="navIndicator"
-          className={cn(
-            "absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 w-1/2",
-            textStyles[navMode].indicator
-          )}
-          initial={{ opacity: 0, width: '0%' }}
-          animate={{ opacity: 1, width: '50%' }}
-          exit={{ opacity: 0, width: '0%' }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-        />
-      )}
+      <div className="absolute bottom-0 inset-x-0 h-0.5 flex justify-center">
+        {isActive && (
+          <motion.div
+            layoutId="navIndicator"
+            className={cn(
+              "h-0.5 rounded-full",
+              textStyles[navMode].indicator
+            )}
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: '24px', opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ 
+              duration: 0.4, 
+              ease: [0.4, 0, 0.2, 1],
+              opacity: { duration: 0.2 }
+            }}
+          />
+        )}
+      </div>
     </Link>
   )
 })
@@ -195,7 +203,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             className={cn(
-              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:scale-105 no-underline",
+              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:scale-105",
               currentButtonStyle
             )}
             aria-label="預約專屬顧問諮詢"
@@ -283,7 +291,7 @@ export default function Navbar() {
               <Link
                 href="/contact"
                 className={cn(
-                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg transition-all duration-300 hover:scale-105 no-underline",
+                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg transition-all duration-300 hover:scale-105",
                   scrolled
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "bg-white text-primary hover:bg-white/95"
