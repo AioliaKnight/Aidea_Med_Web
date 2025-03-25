@@ -74,7 +74,7 @@ const PageHeader = memo(function PageHeader({
   }
 
   return (
-    <div className={`relative ${getVariantClasses()} ${getPaddingClass()} ${className}`}>
+    <div className={`relative ${getVariantClasses()} ${getPaddingClass()} ${className} pt-16`}>
       {backgroundImage && (
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image 

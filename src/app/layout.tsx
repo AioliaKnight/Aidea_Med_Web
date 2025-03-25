@@ -133,7 +133,7 @@ export default function RootLayout({
         <Navbar />
         
         {/* 主要內容區域 - 使用React 19的優化Suspense設計 */}
-        <main className="min-h-screen pt-0">
+        <main className="min-h-screen pt-16">
           <Suspense
             fallback={
               <Loading

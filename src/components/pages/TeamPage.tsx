@@ -5,7 +5,7 @@ import { motion, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
-import { OptimizedImage, Spinner, PageHeader } from '@/components/common'
+import { OptimizedImage, Spinner, PageHeader, AnimatedSection } from '@/components/common'
 import {
   LightBulbIcon,
   ChartBarIcon,
@@ -137,49 +137,6 @@ const values = [
     icon: UsersIcon
   }
 ]
-
-// 動畫區塊組件
-interface AnimatedSectionProps {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-}
-
-const AnimatedSection = ({ children, className = '', delay = 0 }: AnimatedSectionProps) => {
-  const controls = useAnimation()
-  const [ref, inView] = useInView({
-    threshold: 0.2,
-    triggerOnce: true
-  })
-
-  useEffect(() => {
-    if (inView) {
-      controls.start('animate')
-    }
-  }, [controls, inView])
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="initial"
-      animate={controls}
-      variants={{
-        initial: { opacity: 0, y: 20 },
-        animate: {
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.6,
-            delay
-          }
-        }
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
-}
 
 // 團隊成員卡片組件
 interface TeamMemberCardProps {

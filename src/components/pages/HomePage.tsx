@@ -205,7 +205,7 @@ const HeroSection = memo(function HeroSection() {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center justify-center bg-primary overflow-hidden"
+      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center justify-center bg-primary overflow-hidden pt-16"
       role="banner"
       aria-label="網站主要橫幅"
     >
@@ -231,12 +231,6 @@ const HeroSection = memo(function HeroSection() {
             className="px-4 sm:px-6 md:pl-8 lg:pl-12"
           >
             <div className="flex flex-col">
-              <motion.span
-                className="inline-block text-white/90 text-sm md:text-base font-medium border-l-2 border-white/70 pl-3 mb-2"
-              >
-                專為{titles[currentTitleIndex].target}量身打造
-              </motion.span>
-              
               <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.h1 

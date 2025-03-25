@@ -1288,4 +1288,18 @@ html {
   .mobile-text-center {
     text-align: center;
   }
+}
+
+/* 導航欄修正 - 確保內容不會被導航欄遮擋 */
+section[id]:first-of-type,
+.page-section:first-of-type,
+.content-section:first-of-type {
+  scroll-margin-top: 4rem;
+}
+
+/* 為帶有頁面頂部類的元素添加內邊距 */
+.page-top,
+.section-top,
+.content-top {
+  padding-top: calc(4rem + 16px);
 } 
