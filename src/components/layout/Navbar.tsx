@@ -77,15 +77,15 @@ const NavItem = React.memo(({
     <Link
       href={item.href}
       className={cn(
-        "relative px-3 py-2 group transition-colors duration-300",
+        "relative px-3 py-2 group transition-colors duration-300 no-underline",
         activeStyle
       )}
       aria-current={isActive ? 'page' : undefined}
       role="menuitem"
     >
-      <span className="block text-base font-medium">{item.name}</span>
+      <span className="block text-base font-medium no-underline">{item.name}</span>
       <span className={cn(
-        "block text-xs mt-0.5 font-light tracking-wide transition-colors duration-300",
+        "block text-xs mt-0.5 font-light tracking-wide transition-colors duration-300 no-underline",
         secondaryStyle
       )}>
         {item.nameEn}
@@ -195,7 +195,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             className={cn(
-              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:scale-105",
+              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:scale-105 no-underline",
               currentButtonStyle
             )}
             aria-label="預約專屬顧問諮詢"
@@ -283,7 +283,7 @@ export default function Navbar() {
               <Link
                 href="/contact"
                 className={cn(
-                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg transition-all duration-300 hover:scale-105",
+                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg transition-all duration-300 hover:scale-105 no-underline",
                   scrolled
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "bg-white text-primary hover:bg-white/95"
