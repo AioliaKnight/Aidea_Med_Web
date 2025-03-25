@@ -27,6 +27,9 @@ export { default as BackToTopButton } from './BackToTopButton';
 // 網站客服聊天組件
 export { default as WebsiteChat } from './WebsiteChat';
 
+// 添加ErrorBoundary組件導出
+export { default as ErrorBoundary } from './ErrorBoundary'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

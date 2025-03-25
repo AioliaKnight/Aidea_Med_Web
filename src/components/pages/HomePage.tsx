@@ -115,8 +115,8 @@ interface AnimatedSectionProps {
   suppressHydrationWarning?: boolean
 }
 
-// 優化動畫Section組件 - 移除不必要的 useCallback
-const AnimatedSection = ({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
+// 使用memo優化AnimatedSection
+const AnimatedSection = memo(({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
   const controls = useAnimation()
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -144,62 +144,9 @@ const AnimatedSection = ({ className = '', delay = 0, children, suppressHydratio
       {children}
     </motion.div>
   )
-}
+})
 
-// 客戶評價介面定義
-interface Testimonial {
-  name: string;
-  title: string;
-  content: string;
-  image: string;
-  rating: number;
-}
-
-// 新增客戶評價數據
-const testimonials: Testimonial[] = [
-  {
-    name: '張文瑞醫師',
-    title: '長榮牙醫診所 院長',
-    content: '從沒想過牙醫也需要行銷，一開始還有點疑慮，但事實證明這個時代需要，而且有效。Aidea團隊提供的行銷策略讓我們的新客量在三個月內成長超過50%。',
-    image: '/testimonials/doctor1.jpg',
-    rating: 5
-  },
-  {
-    name: '林佳欣醫師',
-    title: '微笑牙醫診所 負責人',
-    content: '提升了診所的曝光度，並且增加了患者的到診率，成果顯著。合作半年來，我們的Google搜尋排名提高了，社群互動也增加了3倍，實質帶來了業績成長。',
-    image: '/testimonials/doctor2.jpg',
-    rating: 5
-  },
-  {
-    name: '吳建志醫師',
-    title: '仁心齒科 創辦人',
-    content: '診所經營遇到的瓶頸得到有效解決，整體合作過程中沒有疏漏，令人放心。團隊專業度高，能夠針對牙醫特性提供客製化的行銷方案。',
-    image: '/testimonials/doctor3.jpg',
-    rating: 5
-  },
-  {
-    name: '陳雅婷醫師',
-    title: '雅典娜美學牙醫 院長',
-    content: '不僅有行銷專業，還獲得很多清晰的診所流程建議，值得推薦。與Aidea合作後，不只是客戶增加，整個診所的運作效率和服務品質都提升了。',
-    image: '/testimonials/doctor4.jpg',
-    rating: 5
-  },
-  {
-    name: '黃明德醫師',
-    title: '德仁齒科 總院長',
-    content: '報告和建議方案都很細緻，團隊真的很用心。每月提供的數據分析讓我們能清楚掌握行銷效果，看到投資回報，非常專業的團隊。',
-    image: '/testimonials/doctor5.jpg',
-    rating: 5
-  },
-  {
-    name: '王思穎醫師',
-    title: '康德牙醫聯合診所 執行長',
-    content: '與其他行銷公司合作過，Aidea: Med 是裡面最懂醫療產業的，溝通順暢會繼續合作下去。他們了解醫療倫理的界線，行銷手法專業又不失專業形象。',
-    image: '/testimonials/doctor6.jpg',
-    rating: 5
-  }
-];
+AnimatedSection.displayName = 'AnimatedSection'
 
 // 更新常見問題數據
 const faqs = [
@@ -256,7 +203,7 @@ const faqs = [
 ];
 
 // 更新 Hero Section 樣式
-function HeroSection() {
+const HeroSection = memo(function HeroSection() {
   const heroRef = useRef<HTMLDivElement>(null);
   
   // 標題數據 - 針對不同目標對象
@@ -500,7 +447,7 @@ function HeroSection() {
           >
               <Link href="/contact" prefetch={true}>
               <motion.span 
-                className="inline-flex items-center bg-black text-white px-8 py-4 text-lg font-medium border-0"
+                className="inline-flex items-center bg-red-600 text-white px-8 py-4 text-lg font-medium border-0"
                 initial={{ y: 0 }}
                 whileHover={{ 
                   y: -3,
@@ -570,10 +517,10 @@ function HeroSection() {
       </motion.div>
     </section>
   );
-}
+})
 
 // 新增階梯式行銷文案區塊 - 優化渲染和圖片載入
-function MarketingStatement() {
+const MarketingStatement = memo(function MarketingStatement() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -762,10 +709,10 @@ function MarketingStatement() {
       </div>
     </section>
   );
-}
+})
 
 // 更新服務特色區塊
-function FeatureSection() {
+const FeatureSection = memo(function FeatureSection() {
   const [currentFeature, setCurrentFeature] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -995,7 +942,7 @@ function FeatureSection() {
       </div>
     </section>
   );
-}
+})
 
 // 更新服務內容區塊 - 使用 Lucide 圖標
 const services = [
@@ -1044,7 +991,7 @@ const services = [
 ]
 
 // 更新服務內容區塊 - 使用扁平化現代設計
-function ServiceSection() {
+const ServiceSection = memo(function ServiceSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -1060,7 +1007,7 @@ function ServiceSection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  // 手動控制輪播
+  // 手動控制輪播 - 使用useCallback優化
   const handleNext = useCallback(() => {
     if (isMobile) {
       setCurrentSlide(prev => (prev + 1) % services.length);
@@ -1072,6 +1019,11 @@ function ServiceSection() {
       setCurrentSlide(prev => (prev - 1 + services.length) % services.length);
     }
   }, [isMobile]);
+  
+  // 使用useCallback優化轉換輪播
+  const handleSlideChange = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
   
   // 自動輪播設定
   useEffect(() => {
@@ -1113,7 +1065,7 @@ function ServiceSection() {
               >
                 <div className="flex items-start mb-6">
                   <div className="mr-4">
-                    <div className="w-12 h-12 flex items-center justify-center bg-red-600 text-white rounded-lg">
+                    <div className="w-12 h-12 flex items-center justify-center text-red-600">
                       {React.createElement(services[currentSlide].icon, { 
                         size: 24, 
                         strokeWidth: 1.5
@@ -1138,7 +1090,7 @@ function ServiceSection() {
                     {services[currentSlide].features.map((feature, i) => (
                       <motion.span
                         key={i}
-                        className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-md"
+                        className="bg-red-50 text-red-600 text-xs px-3 py-1.5 rounded-md border border-red-100"
                         initial={{ opacity: 0, x: -5 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 + i * 0.1, duration: 0.3 }}
@@ -1203,7 +1155,7 @@ function ServiceSection() {
                 >
                   <div className="flex items-start mb-6">
                     <div className="mr-4">
-                      <div className="w-12 h-12 flex items-center justify-center bg-red-600 text-white rounded-lg">
+                      <div className="w-12 h-12 flex items-center justify-center text-red-600">
                         {React.createElement(service.icon, { 
                           size: 24, 
                           strokeWidth: 1.5
@@ -1228,7 +1180,7 @@ function ServiceSection() {
                       {service.features.map((feature, i) => (
                         <motion.span
                           key={i}
-                          className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-md"
+                          className="bg-red-50 text-red-600 text-xs px-3 py-1.5 rounded-md border border-red-100"
                           initial={{ opacity: 0, x: -5 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.1 + i * 0.1, duration: 0.3 }}
@@ -1261,7 +1213,7 @@ function ServiceSection() {
       </div>
     </section>
   );
-}
+})
 
 type StatItem = {
   value: number;
@@ -1276,7 +1228,7 @@ type StatsSectionProps = {
 }
 
 // 更新數據統計區塊
-function StatsSection({ className = '' }: StatsSectionProps) {
+const StatsSection = memo(function StatsSection({ className = '' }: StatsSectionProps) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -1386,10 +1338,10 @@ function StatsSection({ className = '' }: StatsSectionProps) {
       </div>
     </section>
   );
-}
+})
 
 // 更新案例展示區塊 - 整合CaseStudiesSection和CaseShowcaseSection
-function CaseStudiesSection() {
+const CaseStudiesSection = memo(function CaseStudiesSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -1611,9 +1563,6 @@ function CaseStudiesSection() {
                                   />
                   </div>
                                 
-                                {/* 圓形外環效果 */}
-                                <div className="absolute inset-0 border-4 border-primary/20 rounded-full -m-1"></div>
-                                
                                 {/* 精選案例標籤，放在圖片上方 */}
                                 {caseStudy.featured && (
                                   <span className="absolute top-0 right-0 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full transform translate-x-1/4">
@@ -1794,10 +1743,10 @@ function CaseStudiesSection() {
       </div>
     </section>
   );
-}
+})
 
 // 更新 FAQ 區塊 - 優化渲染和狀態管理
-function FAQSection() {
+const FAQSection = memo(function FAQSection() {
   // 使用 useReducer 統一管理 FAQ 狀態
   type FaqState = {
     activeIndex: number | null;
@@ -1872,7 +1821,6 @@ function FAQSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-primary font-medium mb-3 px-4 py-1.5 bg-primary/10 rounded-md text-sm">解答您的疑問</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
             常見<span className="text-primary">問答集</span>
           </h2>
@@ -1965,7 +1913,7 @@ function FAQSection() {
       </div>
     </section>
   );
-}
+})
 
 interface FaqItemProps {
   faq: {
@@ -2034,7 +1982,7 @@ const FaqItem = memo(({ faq, index, isOpen, toggle }: FaqItemProps) => {
 });
 
 // 聯絡區塊 - 使用 Suspense 優化載入
-const ContactSection = () => {
+const ContactSection = memo(function ContactSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -2135,7 +2083,7 @@ const ContactSection = () => {
       </div>
     </section>
   );
-};
+})
 
 // 特性卡片組件 - 優化並移除不必要的 memo
 const FeatureCard = ({ feature, index }: { feature: any, index: number }) => {
@@ -2255,7 +2203,7 @@ const clientTestimonials: ClientTestimonial[] = [
 ];
 
 // 客戶見證區塊 - 使用與案例區相同的設計語言
-function TestimonialSection() {
+const TestimonialSection = memo(function TestimonialSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -2337,7 +2285,6 @@ function TestimonialSection() {
                       priority
                     />
                   </div>
-                  <div className="absolute inset-0 border-4 border-primary/10 rounded-full -m-1"></div>
                 </div>
                 
                 {/* 內容 */}
@@ -2397,73 +2344,59 @@ function TestimonialSection() {
       </div>
     </section>
   );
-}
+})
 
-// HomePage組件 - 使用 Suspense 和 ErrorBoundary 優化整體渲染
+// HomePage組件 - 使用 React.lazy 進行代碼分割與 Suspense 優化整體渲染
 const HomePage = () => {
-  // 使用 useState 進行狀態管理但避免不必要的初始化
-  const [state, setState] = useState({
-    activeTestimonialIndex: 0,
-    activeFaqIndex: null as number | null
-  });
+  // 使用useState進行狀態管理 - 使用最小需要的狀態
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
   
-  // 簡化狀態更新函數
-  const handleTestimonialChange = (index: number) => {
+  // 使用useCallback優化處理函數
+  const handleTestimonialChange = useCallback((index: number) => {
     React.startTransition(() => {
-      setState(prev => ({ ...prev, activeTestimonialIndex: index }));
+      setActiveTestimonialIndex(index);
     });
-  };
+  }, []);
   
-  const toggleFaq = (index: number) => {
-    setState(prev => ({ 
-      ...prev, 
-      activeFaqIndex: prev.activeFaqIndex === index ? null : index 
-    }));
-  };
+  const toggleFaq = useCallback((index: number) => {
+    setActiveFaqIndex(prev => prev === index ? null : index);
+  }, []);
 
-  // 優化渲染使用 ErrorBoundary 和 Suspense
+  // 使用useMemo來提供狀態值，避免不必要的重新渲染
+  const testimonialProps = useMemo(() => ({
+    activeIndex: activeTestimonialIndex,
+    onChange: handleTestimonialChange
+  }), [activeTestimonialIndex, handleTestimonialChange]);
+
+  const faqProps = useMemo(() => ({
+    activeIndex: activeFaqIndex,
+    onToggle: toggleFaq
+  }), [activeFaqIndex, toggleFaq]);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <ErrorBoundary>
-      <HeroSection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-      <MarketingStatement />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-      <FeatureSection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <div className="flex flex-col min-h-screen">
+        {/* 核心區塊 - 不使用懶加載以加速首屏渲染 */}
+        <HeroSection />
+        <MarketingStatement />
+        <FeatureSection />
         <StatsSection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-      <ServiceSection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
+        <ServiceSection />
+        
+        {/* 次要區塊 - 使用Suspense進行懶加載 */}
+        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
           <CaseStudiesSection />
         </Suspense>
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
+        
+        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
           <TestimonialSection />
         </Suspense>
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
+        
         <FAQSection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-      <ContactSection />
-      </ErrorBoundary>
-    </div>
+        <ContactSection />
+      </div>
+    </ErrorBoundary>
   );
 };
 

@@ -215,7 +215,7 @@ export default function Navbar() {
         {/* 移動設備菜單按鈕 */}
         <button
           type="button"
-          className="lg:hidden rounded-md p-2 hover:bg-black/5 transition-colors duration-300"
+          className="lg:hidden rounded-md p-2 transition-colors duration-300"
           onClick={toggleMobileMenu}
           aria-controls="mobile-menu"
           aria-expanded={mobileMenuOpen}
