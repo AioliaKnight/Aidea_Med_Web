@@ -139,10 +139,33 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["three"],
-  experimental: { optimizeCss: true },
+  experimental: { 
+    optimizeCss: true,
+    // 啟用部分預渲染功能 (PPR)
+    ppr: true,
+    // 應用目錄增強渲染優化
+    optimizePackageImports: ['lucide-react', '@phosphor-icons/react', 'react-icons', 'framer-motion'],
+    // 增強型圖片優化
+    optimisticClientCache: true,
+    // 性能指標
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'INP', 'TTFB'],
+  },
   poweredByHeader: false,
   compiler: {
-    // removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+    // 啟用React Compiler (React Forget)
+    reactRemoveProperties: process.env.NODE_ENV === 'production',
+    // 更詳細的Emotion配置
+    emotion: {
+      // 啟用Emotion的自動標籤功能，使開發者工具中更容易調試
+      autoLabel: 'dev-only',
+      // 使用文件名和組件名生成標籤
+      labelFormat: '[local]',
+      // 啟用源碼映射，以便於調試
+      sourceMap: process.env.NODE_ENV !== 'production'
+    },
   },
   images: {
     remotePatterns: [

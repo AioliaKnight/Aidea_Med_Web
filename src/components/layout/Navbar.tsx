@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import Logo from '@/components/common/Logo'
+import React from 'react'
 
 // 導航項目定義（統一導航項配置）
 const navigation = [
@@ -49,280 +50,237 @@ const textStyles = {
 // 按鈕樣式
 const buttonStyles = {
   default: 'bg-white text-primary hover:bg-white/95 transition-colors duration-300',
-  scrolled: 'bg-primary text-white hover:bg-primary/95 transition-colors duration-300'
+  scrolled: 'bg-primary text-white hover:bg-primary/90 transition-colors duration-300'
 }
 
-// 簡化動畫變體
-const menuVariants = {
-  open: {
-    opacity: 1,
-    height: 'auto',
-    transition: { duration: 0.25, ease: 'easeOut', staggerChildren: 0.03 }
-  },
-  closed: {
-    opacity: 0,
-    height: 0,
-    transition: { duration: 0.2, ease: 'easeIn' }
-  }
-}
-
-const menuItemVariants = {
-  open: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-  closed: { opacity: 0, y: -5, transition: { duration: 0.1 } }
-}
-
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
-  const pathname = usePathname()
+// 優化的NavItem組件 - 使用React.memo避免不必要重渲染
+const NavItem = React.memo(({ 
+  item, 
+  isActive, 
+  navMode 
+}: { 
+  item: typeof navigation[0]; 
+  isActive: boolean; 
+  navMode: 'default' | 'scrolled'; 
+}) => {
+  // 使用useMemo緩存計算結果
+  const activeStyle = useMemo(() => 
+    isActive ? textStyles[navMode].active : textStyles[navMode].normal,
+    [isActive, navMode]
+  )
   
-  // 判斷頁面類型 - 統一詳情頁判斷邏輯
-  const isDetailPage = useMemo(() => {
-    return (
-      (pathname.startsWith('/case/') && pathname !== '/case') || 
-      (pathname.startsWith('/team/') && pathname !== '/team') ||
-      (pathname.startsWith('/service/') && pathname !== '/service')
-    )
-  }, [pathname])
-
-  // 處理初始掛載
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  // 處理滾動
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    
-    // 初始檢查滾動位置
-    handleScroll()
-    
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // 關閉選單
-  const closeMenu = useCallback(() => {
-    setIsOpen(false)
-  }, [])
-  
-  // 獲取背景樣式
-  const getBackgroundStyle = useCallback(() => {
-    if (isScrolled) return navStyles.scrolled
-    if (isDetailPage) return navStyles.detail
-    return navStyles.default
-  }, [isScrolled, isDetailPage])
-  
-  // 獲取文字樣式集
-  const getTextStyles = useCallback(() => {
-    return isScrolled ? textStyles.scrolled : textStyles.default
-  }, [isScrolled])
-  
-  // 獲取按鈕樣式
-  const getButtonStyle = useCallback(() => {
-    return isScrolled ? buttonStyles.scrolled : buttonStyles.default
-  }, [isScrolled])
-
-  // 優化: 路徑活動狀態檢查
-  const isPathActive = useCallback((href: string) => {
-    return pathname === href || (pathname.startsWith(href) && href !== '/')
-  }, [pathname])
-
-  if (!isMounted) {
-    return (
-      <header className="fixed top-0 left-0 right-0 z-50 font-gothic">
-        <div className={cn('absolute inset-0', navStyles.default)} />
-        <nav className="container relative h-16 md:h-20 mx-auto px-4 md:px-6 flex items-center justify-between">
-          <Logo
-            href="/"
-            variant="white"
-            size="responsive"
-            priority
-          />
-        </nav>
-      </header>
-    )
-  }
+  const secondaryStyle = useMemo(() => 
+    isActive ? textStyles[navMode].activeSecondary : textStyles[navMode].normalSecondary,
+    [isActive, navMode]
+  )
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 font-gothic">
-      {/* 導航欄背景 */}
-      <motion.div 
-        className={cn('absolute inset-0 transition-all duration-300', getBackgroundStyle())}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      />
+    <Link
+      href={item.href}
+      className={cn(
+        "relative px-3 py-2 group transition-colors duration-300",
+        activeStyle
+      )}
+    >
+      <span className="block text-base font-medium">{item.name}</span>
+      <span className={cn(
+        "block text-xs mt-0.5 font-light tracking-wide transition-colors duration-300",
+        secondaryStyle
+      )}>
+        {item.nameEn}
+      </span>
       
-      {/* 導航欄內容 */}
-      <nav className="container relative h-16 md:h-20 mx-auto px-4 md:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Logo
-          href="/"
-          variant={isScrolled ? 'black' : 'white'}
-          size="responsive"
-          priority
+      {isActive && (
+        <motion.div
+          layoutId="navIndicator"
+          className={cn(
+            "absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 w-1/2",
+            textStyles[navMode].indicator
+          )}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
         />
+      )}
+    </Link>
+  )
+})
+NavItem.displayName = 'NavItem'
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center">
-          <div className="flex space-x-6 mr-6">
-            {navigation.map((item) => {
-              const isActive = isPathActive(item.href);
-              const styles = getTextStyles();
-              
-              return (
-                <Link 
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'relative group',
-                    isActive ? styles.active : styles.normal
-                  )}
-                >
-                  <div className="flex flex-col items-center py-3">
-                    {/* 英文名稱 (主要) */}
-                    <span className={cn(
-                      "font-medium tracking-wide text-sm",
-                      !isScrolled && "text-shadow-sm"
-                    )}>
-                      {item.nameEn}
-                    </span>
-                    
-                    {/* 中文名稱 (輔助) */}
-                    <span className={cn(
-                      "text-xs tracking-wide mt-0.5",
-                      isActive ? styles.activeSecondary : styles.normalSecondary
-                    )}>
-                      {item.name}
-                    </span>
-                    
-                    {/* 活動指示器 */}
-                    {isActive && (
-                      <motion.span
-                        className={cn(
-                          "absolute -bottom-1 left-0 w-full h-[2px]",
-                          styles.indicator
-                        )}
-                        layoutId="navIndicator"
-                        transition={{ duration: 0.2 }}
-                      />
-                    )}
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-          
-          {/* 諮詢按鈕 */}
-          <Link 
-            href="/contact"
-            className={cn(
-              'inline-flex items-center px-6 py-2.5 font-medium text-sm tracking-wide transition-all duration-300',
-              getButtonStyle()
-            )}
-          >
-            CONSULT
-            <span className="ml-1 text-xs opacity-80">免費諮詢</span>
+// 主导航组件
+export default function Navbar() {
+  const pathname = usePathname()
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // 計算當前頁面類型與導航模式 - 使用useMemo記憶結果避免重複計算
+  const { isDetailPage, navMode } = useMemo(() => {
+    const isDetail = pathname?.includes('/case/') || pathname?.includes('/service/') || pathname?.includes('/team/')
+    const mode = scrolled ? 'scrolled' : 'default'
+    return { isDetailPage: isDetail, navMode: mode as 'default' | 'scrolled' }
+  }, [pathname, scrolled])
+
+  // 使用useCallback優化滾動處理函數
+  const handleScroll = useCallback(() => {
+    if (window.scrollY > 20) {
+      setScrolled(true)
+    } else {
+      setScrolled(false)
+    }
+  }, [])
+
+  // 使用useCallback優化移動菜單切換
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen(prev => !prev)
+  }, [])
+
+  // 添加滾動監聽器
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
+
+  // 計算當前導航樣式 - 使用useMemo記憶結果避免重複計算
+  const currentNavStyle = useMemo(() => {
+    if (isDetailPage) return navStyles.detail
+    return scrolled ? navStyles.scrolled : navStyles.default
+  }, [isDetailPage, scrolled])
+
+  // 計算當前按鈕樣式 - 使用useMemo記憶結果避免重複計算
+  const currentButtonStyle = useMemo(() => 
+    scrolled ? buttonStyles.scrolled : buttonStyles.default,
+    [scrolled]
+  )
+
+  return (
+    <header 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        currentNavStyle
+      )}
+    >
+      {/* 導航內容 */}
+      <div className="container mx-auto px-4 flex justify-between items-center py-4">
+        {/* Logo區域 */}
+        <div className="flex-shrink-0">
+          <Link href="/" aria-label="回到首頁">
+            <Logo variant={scrolled ? 'black' : 'white'} className="h-10 w-auto" />
           </Link>
         </div>
-        
-        {/* Mobile hamburger */}
+
+        {/* 桌面導航項目 */}
+        <nav className="hidden lg:flex items-center space-x-2">
+          {navigation.map((item) => (
+            <NavItem 
+              key={item.href}
+              item={item}
+              isActive={pathname === item.href}
+              navMode={navMode}
+            />
+          ))}
+        </nav>
+
+        {/* 聯絡按鈕 */}
+        <div className="hidden lg:block">
+          <Link
+            href="/contact"
+            className={cn(
+              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300",
+              currentButtonStyle
+            )}
+          >
+            預約專屬顧問
+          </Link>
+        </div>
+
+        {/* 移動設備菜單按鈕 */}
         <button
-          className="md:hidden flex items-center justify-center p-2"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
+          type="button"
+          className="lg:hidden rounded-md p-2"
+          onClick={toggleMobileMenu}
+          aria-controls="mobile-menu"
+          aria-expanded={mobileMenuOpen}
         >
-          <div className="relative w-5 h-4">
-            {[0, 1, 2].map((index) => (
-              <motion.span
-                key={index}
-                animate={{ 
-                  rotate: isOpen && index !== 1 ? (index === 0 ? 45 : -45) : 0,
-                  y: isOpen ? (index === 0 ? 6 : index === 2 ? -6 : 0) : 0,
-                  opacity: isOpen && index === 1 ? 0 : 1
-                }}
-                className={cn(
-                  'absolute left-0 block w-5 h-[1.5px] transition-colors',
-                  isScrolled ? 'bg-gray-900' : 'bg-white shadow-glow',
-                  index === 0 ? 'top-0' : index === 1 ? 'top-1/2 -translate-y-1/2' : 'bottom-0'
-                )}
-              />
-            ))}
+          <span className="sr-only">打開主菜單</span>
+          <div className="relative w-6 h-5">
+            <span
+              className={cn(
+                "absolute h-0.5 w-6 transform transition duration-300 ease-in-out",
+                mobileMenuOpen ? "rotate-45 translate-y-2.5" : "-translate-y-2",
+                scrolled ? "bg-gray-800" : "bg-white"
+              )}
+            />
+            <span
+              className={cn(
+                "absolute h-0.5 w-6 transform transition-opacity duration-300 ease-in-out",
+                mobileMenuOpen ? "opacity-0" : "opacity-100",
+                scrolled ? "bg-gray-800" : "bg-white"
+              )}
+            />
+            <span
+              className={cn(
+                "absolute h-0.5 w-6 transform transition duration-300 ease-in-out",
+                mobileMenuOpen ? "-rotate-45 translate-y-2.5" : "translate-y-2",
+                scrolled ? "bg-gray-800" : "bg-white"
+              )}
+            />
           </div>
         </button>
-        
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              className="absolute top-full left-0 w-full bg-white overflow-hidden md:hidden shadow-md"
-              variants={menuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-            >
-              <div className="container mx-auto px-6 py-3 flex flex-col">
-                {navigation.map((item, index) => {
-                  const isActive = isPathActive(item.href);
-                  
-                  return (
-                    <motion.div 
-                      key={item.name} 
-                      variants={menuItemVariants}
-                      custom={index}
-                    >
-                      <Link 
-                        href={item.href}
-                        className={cn(
-                          'flex items-center justify-between py-3 border-b border-gray-100',
-                          isActive ? 'text-primary' : 'text-gray-800'
-                        )}
-                        onClick={closeMenu}
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-medium text-sm tracking-wide">{item.nameEn}</span>
-                          <span className="text-xs text-gray-500 mt-0.5">{item.name}</span>
-                        </div>
-                        <svg 
-                          width="16" 
-                          height="16" 
-                          viewBox="0 0 16 16" 
-                          fill="none" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="text-gray-400"
-                        >
-                          <path 
-                            d="M6 12L10 8L6 4" 
-                            stroke="currentColor" 
-                            strokeWidth="1" 
-                            strokeLinecap="square"
-                          />
-                        </svg>
-                      </Link>
-                    </motion.div>
-                  )
-                })}
-                
-                <motion.div 
-                  variants={menuItemVariants} 
-                  custom={navigation.length}
-                  className="mt-5 mb-3"
+      </div>
+
+      {/* 移動設備菜單 */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className={cn(
+              "lg:hidden overflow-hidden",
+              scrolled ? "bg-white" : "bg-primary"
+            )}
+          >
+            <div className="px-4 pt-2 pb-4 space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "block px-3 py-2.5 font-medium rounded-lg",
+                    pathname === item.href
+                      ? scrolled
+                        ? "bg-primary/10 text-primary"
+                        : "bg-white/10 text-white"
+                      : scrolled
+                      ? "text-gray-700 hover:bg-gray-50"
+                      : "text-white/90 hover:bg-white/5"
+                  )}
+                  onClick={toggleMobileMenu}
                 >
-                  <Link href="/contact" onClick={closeMenu}>
-                    <span className="block w-full py-3 text-center font-medium text-white text-sm tracking-wide bg-primary hover:bg-primary/90 shadow-sm">
-                      CONSULT <span className="text-xs opacity-80">免費諮詢</span>
-                    </span>
-                  </Link>
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+                  {item.name}
+                </Link>
+              ))}
+              <Link
+                href="/contact"
+                className={cn(
+                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg",
+                  scrolled
+                    ? "bg-primary text-white"
+                    : "bg-white text-primary"
+                )}
+                onClick={toggleMobileMenu}
+              >
+                預約顧問諮詢
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   )
 } 

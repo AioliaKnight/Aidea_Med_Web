@@ -108,7 +108,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#4A6CF7',
-    image: '/images/cases/north-district-dental.jpg',
+    image: '/images/case-placeholder.jpg',
     featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
     updatedDate: '2023-11-20T00:00:00Z',
@@ -148,7 +148,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#8D72E1',
-    image: '/images/cases/east-district-dental.jpg',
+    image: '/images/case-placeholder.jpg',
     featured: true,
     publishedDate: '2023-06-10T00:00:00Z',
     updatedDate: '2023-09-15T00:00:00Z',
@@ -188,7 +188,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#FF6C6C',
-    image: '/images/cases/central-district-dental.jpg',
+    image: '/images/case-placeholder.jpg',
     featured: false,
     publishedDate: '2023-05-20T00:00:00Z',
     updatedDate: '2023-08-10T00:00:00Z',
@@ -801,9 +801,13 @@ export default memo(function CasePage(): React.ReactElement {
   return (
     <>
       <PageHeader
-        title="我們的成功案例"
-        description="探索我們如何幫助客戶實現業務目標的真實案例，包含品牌重塑、數位行銷、空間規劃與社群經營等多元成功案例"
-        backgroundImage="/images/case-header-bg.jpg"
+        title="客戶成功案例"
+        description="見證醫療診所的數位行銷轉型與品牌成長"
+        alignment="center"
+        backgroundImage="/images/bgline-r.png"
+        variant="black"
+        size="md"
+        withBottomBorder={false}
       />
       
       <Suspense fallback={<LoadingState />}>

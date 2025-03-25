@@ -39,10 +39,10 @@ export const CaseCard = React.memo(({
     } 
     
     if (caseStudy.id && VALID_CASE_IDS.includes(caseStudy.id)) {
-      return `/cases/${caseStudy.id}.jpg`;
+      return `/images/case-placeholder.jpg`;
     }
     
-    return '/cases/case-placeholder.jpg';
+    return '/images/case-placeholder.jpg';
   }, [caseStudy.image, caseStudy.id]);
   
   // 新增狀態

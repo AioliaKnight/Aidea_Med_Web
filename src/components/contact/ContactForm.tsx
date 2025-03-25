@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useTransition, useRef } from 'react'
 import { toast } from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import { animations } from '@/utils/animations'
@@ -29,26 +29,44 @@ interface ContactFormProps {
   showTitle?: boolean
 }
 
-export default function ContactForm({
+// 將服務選項移到組件外部避免重複創建
+const services = [
+  { value: "", label: "請選擇服務項目" },
+  { value: "brand", label: "品牌故事打造" },
+  { value: "marketing", label: "整合行銷服務" },
+  { value: "digital", label: "數位轉型優化" },
+  { value: "content", label: "內容創作服務" },
+  { value: "other", label: "其他服務" }
+];
+
+// 表單初始狀態
+const initialFormData: ContactFormData = {
+  name: '',
+  email: '',
+  phone: '',
+  clinic: '',
+  position: '',
+  service: '',
+  message: '',
+  plan: '',
+  source: ''
+}
+
+// 使用React.memo優化組件渲染
+const ContactForm = React.memo(({
   className = '',
   animation = true,
   showTitle = true
-}: ContactFormProps) {
-  // 服務選項
-  const services = [
-    { value: "", label: "請選擇服務項目" },
-    { value: "brand", label: "品牌故事打造" },
-    { value: "marketing", label: "整合行銷服務" },
-    { value: "digital", label: "數位轉型優化" },
-    { value: "content", label: "內容創作服務" },
-    { value: "other", label: "其他服務" }
-  ];
-
-  // 從 URL 參數獲取方案資訊
-  const [searchParams, setSearchParams] = useState<{[key: string]: string}>({});
+}: ContactFormProps) => {
+  // 使用useRef保持數據持久性
+  const searchParamsRef = useRef<{[key: string]: string}>({});
+  const [isPending, startTransition] = useTransition()
   
-  // 在客戶端獲取 URL 參數
-  useEffect(() => {
+  const [formData, setFormData] = useState<ContactFormData>(initialFormData)
+  const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE)
+
+  // 在客戶端獲取 URL 參數 - 使用useCallback優化
+  const getUrlParams = useCallback(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const planParam = params.get('plan');
@@ -58,105 +76,105 @@ export default function ContactForm({
       if (planParam) urlParams.plan = planParam;
       if (sourceParam) urlParams.source = sourceParam;
       
-      setSearchParams(urlParams);
-    }
-  }, []);
-  
-  // 表單初始狀態
-  const initialFormData: ContactFormData = {
-    name: '',
-    email: '',
-    phone: '',
-    clinic: '',
-    position: '',
-    service: '',
-    message: '',
-    plan: '',
-    source: ''
-  }
-
-  const [formData, setFormData] = useState<ContactFormData>(initialFormData)
-  const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE)
-
-  // 如果 URL 參數中有方案資訊，更新表單數據
-  useEffect(() => {
-    if (Object.keys(searchParams).length > 0) {
+      searchParamsRef.current = urlParams;
+      
+      // 更新表單數據
       setFormData(prev => ({
         ...prev,
-        ...searchParams,
+        ...urlParams,
         // 如果是從定價方案頁面過來的，自動添加方案相關訊息到諮詢內容
-        message: searchParams.plan 
-          ? `我對${searchParams.plan}方案有興趣，想了解更多詳情。${prev.message || ''}`
+        message: urlParams.plan 
+          ? `我對${urlParams.plan}方案有興趣，想了解更多詳情。${prev.message || ''}`
           : prev.message
       }));
     }
-  }, [searchParams]);
+  }, []);
+  
+  // 僅在客戶端運行一次
+  useEffect(() => {
+    getUrlParams();
+  }, [getUrlParams]);
 
   // 如果使用動畫，則使用motion.div，否則使用普通div
   const AnimatedDiv = animation ? motion.div : 'div' as any
 
-  // 動畫屬性
-  const animationProps = animation
+  // 動畫屬性 - 使用useMemo避免重複計算
+  const animationProps = useMemo(() => animation
     ? {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.5 }
       }
-    : {}
+    : {}, [animation]);
 
-  const handleChange = (
+  // 使用useCallback優化事件處理函數，避免重複創建
+  const handleChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 使用useCallback和useTransition優化表單提交
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setFormStatus(FormStatus.SUBMITTING)
 
-    try {
-      // 確保方案信息被包含在提交的數據中
-      const submissionData = {
-        ...formData,
-        // 保留從 URL 獲取的方案和來源資訊
-        plan: formData.plan || searchParams.plan || '',
-        source: formData.source || searchParams.source || ''
-      }
-
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
-      })
-
-      const data = await response.json() as FormResponse
-
-      if (response.ok) {
-        setFormStatus(FormStatus.SUCCESS)
-        setFormData(initialFormData)
-        toast.success(data.message || '感謝您的訊息！我們將盡快與您聯繫。')
-        
-        // 添加追蹤事件
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'form_submission', {
-            'event_category': 'contact',
-            'event_label': submissionData.plan || '一般諮詢',
-            'value': submissionData.source
-          });
+    // 使用useTransition處理非UI阻塞操作
+    startTransition(async () => {
+      try {
+        // 確保方案信息被包含在提交的數據中
+        const submissionData = {
+          ...formData,
+          // 保留從 URL 獲取的方案和來源資訊
+          plan: formData.plan || searchParamsRef.current.plan || '',
+          source: formData.source || searchParamsRef.current.source || ''
         }
-      } else {
+
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        })
+
+        const data = await response.json() as FormResponse
+
+        if (response.ok) {
+          setFormStatus(FormStatus.SUCCESS)
+          setFormData(initialFormData)
+          toast.success(data.message || '感謝您的訊息！我們將盡快與您聯繫。')
+          
+          // 添加追蹤事件
+          if (typeof window !== 'undefined' && window.gtag) {
+            window.gtag('event', 'form_submission', {
+              'event_category': 'contact',
+              'event_label': submissionData.plan || '一般諮詢',
+              'value': submissionData.source
+            });
+          }
+        } else {
+          setFormStatus(FormStatus.ERROR)
+          toast.error(data.message || '提交失敗，請稍後再試。')
+        }
+      } catch (error) {
+        console.error('表單提交錯誤：', error)
         setFormStatus(FormStatus.ERROR)
-        toast.error(data.message || '提交失敗，請稍後再試。')
+        toast.error('提交失敗，請稍後再試。')
       }
-    } catch (error) {
-      console.error('表單提交錯誤：', error)
-      setFormStatus(FormStatus.ERROR)
-      toast.error('提交失敗，請稍後再試。')
+    });
+  }, [formData, startTransition]);
+
+  // 使用useMemo優化提交按鈕文本和狀態
+  const submitButtonProps = useMemo(() => {
+    return {
+      isLoading: formStatus === FormStatus.SUBMITTING || isPending,
+      loadingText: '提交中...',
+      text: '提交諮詢',
+      type: 'submit' as const
     }
-  }
+  }, [formStatus, isPending]);
 
   return (
     <AnimatedDiv {...animationProps} className={`${className}`}>
@@ -286,20 +304,14 @@ export default function ContactForm({
           ></textarea>
         </div>
 
-        <div>
-          <SubmitButton
-            status={formStatus}
-            idleText="預約免費諮詢"
-            submittingText="提交中..."
-            successText="提交成功！"
-            errorText="提交失敗，請重試"
-            className="rounded-lg shadow-sm"
-          />
-          <p className="text-xs text-gray-500 mt-3 text-center">
-            提交表單即表示您同意我們的隱私政策。您的資料將受到保護，僅用於行銷諮詢服務。
-          </p>
+        <div className="flex justify-center">
+          <SubmitButton {...submitButtonProps} />
         </div>
       </form>
     </AnimatedDiv>
   )
-} 
+});
+
+ContactForm.displayName = 'ContactForm';
+
+export default ContactForm 

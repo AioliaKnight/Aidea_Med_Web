@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense } from 'react'
+import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense, use } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
@@ -86,15 +86,16 @@ interface AnimatedSectionProps {
   suppressHydrationWarning?: boolean
 }
 
-// 動畫Section組件
-const AnimatedSection = ({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
+// 優化後的動畫Section組件 - 使用React 19更好的記憶體模型
+const AnimatedSection = React.memo(({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
   const controls = useAnimation()
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
   })
 
-  useEffect(() => {
+  // 使用useCallback優化效能
+  const handleAnimation = useCallback(() => {
     if (inView) {
       controls.start({ 
         opacity: 1, 
@@ -103,6 +104,10 @@ const AnimatedSection = ({ className = '', delay = 0, children, suppressHydratio
       })
     }
   }, [controls, inView, delay])
+
+  useEffect(() => {
+    handleAnimation()
+  }, [handleAnimation])
 
   return (
     <motion.div
@@ -115,7 +120,8 @@ const AnimatedSection = ({ className = '', delay = 0, children, suppressHydratio
       {children}
     </motion.div>
   )
-}
+})
+AnimatedSection.displayName = 'AnimatedSection'
 
 // 客戶評價介面定義
 interface Testimonial {
@@ -1386,237 +1392,165 @@ function CaseStudiesSection() {
 }
 
 // 新增客戶評價區塊
-function TestimonialsSection() {
-  // 添加滑動功能
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+function TestimonialsSection({ activeIndex, handleChange }: { activeIndex: number; handleChange: (index: number) => void }) {
+  const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   
-  const itemsPerPage = {
-    mobile: 1,  // 手機顯示1張
-    tablet: 2,  // 平板顯示2張
-    desktop: 3  // 桌面顯示3張
-  };
-  
-  // 使用 useEffect 處理客戶端邏輯
   useEffect(() => {
-    setIsClient(true);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+      if (window.innerWidth < 640) {
+        setViewportSize('mobile');
+      } else if (window.innerWidth < 1024) {
+        setViewportSize('tablet');
+      } else {
+        setViewportSize('desktop');
+      }
     };
     
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  // 計算當前項目數和總頁數
-  const currentItems = isClient
-    ? (isMobile ? itemsPerPage.mobile : (isTablet ? itemsPerPage.tablet : itemsPerPage.desktop))
-    : itemsPerPage.desktop;
-    
-  const totalPages = Math.ceil(testimonials.length / currentItems);
-  
-  // 自動播放功能
-  useEffect(() => {
-    if (totalPages <= 1) return;
-    
-    const autoplayInterval = setInterval(() => {
-      setCurrentPage(prev => (prev + 1) % totalPages);
-    }, 5000);
-    
-    return () => clearInterval(autoplayInterval);
-  }, [totalPages]);
-  
-  const handleNextPage = useCallback(() => {
-    setCurrentPage(prev => (prev + 1) % totalPages);
-  }, [totalPages]);
-  
-  const handlePrevPage = useCallback(() => {
-    setCurrentPage(prev => (prev - 1 + totalPages) % totalPages);
-  }, [totalPages]);
 
-  // 計算要顯示的評價
-  const displayTestimonials = useMemo(() => {
-    const start = currentPage * currentItems;
-    // 如果不夠一頁，則顯示全部
-    return testimonials.length <= currentItems
-      ? testimonials
-      : testimonials.slice(start, start + currentItems);
-  }, [currentPage, currentItems]);
-
-  // 動畫變體
-  const containerVariants = {
+  // Simple fade animation variants
+  const fadeVariants = {
     hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5 }
-    },
-    exit: { 
-      opacity: 0, 
-      x: -50,
-      transition: { duration: 0.3 }
-    }
+    visible: { opacity: 1, transition: { duration: 0.3 } }
   };
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
-      {/* 簡約背景元素 */}
-      <div className="absolute top-0 left-0 w-1/3 h-px bg-primary/20"></div>
-      <div className="absolute bottom-0 right-0 w-1/3 h-px bg-primary/20"></div>
+    <section className="relative py-20 md:py-28 bg-gray-50">
       
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-block text-primary font-medium mb-4 text-sm tracking-wide">客戶評價</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            合作夥伴<span className="text-primary">真實心聲</span>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-block bg-primary text-white py-1 px-4 mb-4">評價回饋</div>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+            合作診所真實評價
           </h2>
-          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <div className="w-16 h-1 bg-primary mx-auto mb-4"></div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            聽聽專業牙醫如何評價我們的服務
+            聽聽我們的合作夥伴怎麼說。這些是來自實際使用我們平台的診所和醫療專業人員的真實評價。
           </p>
-        </motion.div>
-
-        <div className="relative py-8">
-          {/* 輪播指示器 - 頂部置中 */}
-          {isClient && testimonials.length > currentItems && (
-            <div className="flex justify-center items-center gap-2 mb-10">
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i)}
-                  className={`w-8 h-1 transition-all duration-300 ${
-                    i === currentPage ? 'bg-primary' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
-                  aria-label={`切換到第${i+1}頁推薦`}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* 評價卡片容器 */}
-          <div className="relative overflow-hidden">
-            {/* 導航按鈕 - 絕對定位在兩側 */}
-            {isClient && !isMobile && testimonials.length > currentItems && (
-              <>
-                <button 
-                  onClick={handlePrevPage}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex justify-center items-center bg-white border border-gray-100 text-primary hover:bg-gray-50 transition-colors"
-                  aria-label="上一頁推薦"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button 
-                  onClick={handleNextPage}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex justify-center items-center bg-white border border-gray-100 text-primary hover:bg-gray-50 transition-colors"
-                  aria-label="下一頁推薦"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
-
-            {/* 評價卡片 */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"
-            >
-              <AnimatePresence mode="wait">
-                {displayTestimonials.map((testimonial) => (
-                  <motion.div
-                    key={testimonial.name}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    layout
-                  >
-                    <div className="bg-white border border-gray-100 p-6 h-full flex flex-col">
-                      {/* 評價頂部 - 引號裝飾 */}
-                      <div className="text-primary text-4xl font-serif mb-4">&ldquo;</div>
-                      
-                      {/* 評價內容 */}
-                      <div className="flex-1 mb-6">
-                        <p className="text-gray-700 leading-relaxed">
-                          {testimonial.content}
-                        </p>
-                      </div>
-                      
-                      {/* 評價底部 - 作者資訊 */}
-                      <div className="flex items-center mt-auto pt-4 border-t border-gray-100">
-                        <div className="w-10 h-10 bg-primary/10 text-primary flex items-center justify-center font-bold rounded-sm mr-4">
-                          {testimonial.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-gray-900">{testimonial.name}</h3>
-                          <p className="text-sm text-gray-500">{testimonial.title}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </div>
         </div>
         
-        {/* 聯絡我們CTA區塊 */}
-        <motion.div 
-          className="mt-20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="border border-primary/10 bg-white p-8 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">想了解更多合作案例？</h3>
-            <div className="w-12 h-1 bg-primary/30 mx-auto mb-6"></div>
-            <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
-              我們有更多成功案例分享，歡迎聯繫我們獲取專屬於您診所的行銷策略建議
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center px-8 py-3 bg-primary text-white hover:bg-primary/90 transition-colors duration-300"
+        <div className="max-w-6xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              variants={fadeVariants}
+              initial="hidden"
+              animate="visible"
+              className="bg-white border-t border-b border-gray-100 p-8 md:p-12"
             >
-              預約免費諮詢
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                {/* 左側內容區 */}
+                <div className="md:col-span-8 order-2 md:order-1">
+                  <div className="flex mb-6">
+                    {[...Array(testimonials[activeIndex].rating || 5)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className="w-6 h-1 bg-primary mr-1" 
+                      />
+                    ))}
+                  </div>
+                  
+                  <blockquote className="text-gray-800 text-xl md:text-2xl font-light leading-relaxed mb-6">
+                    "{testimonials[activeIndex].content}"
+                  </blockquote>
+                  
+                  <div className="flex items-center">
+                    <div className="mr-4">
+                      <h3 className="font-semibold text-gray-900">{testimonials[activeIndex].name}</h3>
+                      <p className="text-gray-500">{testimonials[activeIndex].title}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 右側圖片區 */}
+                <div className="md:col-span-4 order-1 md:order-2 relative h-[200px] md:h-[300px]">
+                  <div className="absolute inset-0 bg-gray-100 overflow-hidden">
+                    {/* 使用條件渲染代替動態路徑以避免 Next.js 圖片優化問題 */}
+                    {activeIndex === 0 && (
+                      <Image
+                        src="/testimonials/doctor1.jpg" 
+                        alt={testimonials[activeIndex].name}
+                        fill
+                        style={{ 
+                          objectFit: 'cover',
+                          objectPosition: 'center 25%' // 更精確聚焦於臉部
+                        }}
+                        sizes="(max-width: 768px) 100vw, 30vw"
+                        className="transition-transform duration-500"
+                        priority
+                      />
+                    )}
+                    {activeIndex === 1 && (
+                      <Image
+                        src="/testimonials/doctor2.jpg" 
+                        alt={testimonials[activeIndex].name}
+                        fill
+                        style={{ 
+                          objectFit: 'cover',
+                          objectPosition: 'center 30%' // 更精確聚焦於臉部
+                        }}
+                        sizes="(max-width: 768px) 100vw, 30vw"
+                        className="transition-transform duration-500"
+                        priority
+                      />
+                    )}
+                    {/* 對於空檔案的情況使用備用圖片 */}
+                    {(activeIndex > 1) && (
+                      <div className="w-full h-full flex items-center justify-center bg-primary-light">
+                        <div className="text-5xl text-white font-bold">
+                          {testimonials[activeIndex].name.charAt(0)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+               </div>
+             </motion.div>
+           </AnimatePresence>
+           
+          <div className="flex items-center justify-center mt-10">
+            <div className="flex items-center space-x-6">
+              <button 
+                onClick={() => handleChange((activeIndex - 1 + testimonials.length) % testimonials.length)}
+                className="w-12 h-12 bg-white border border-gray-200 flex items-center justify-center hover:border-primary transition-colors"
+                aria-label="上一個評價"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="butt" strokeLinejoin="miter" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleChange(index)}
+                  className={`w-3 h-3 ${activeIndex === index ? 'bg-primary' : 'bg-gray-300'} rounded-none transition-all duration-200 hover:bg-primary-light`}
+                  aria-label={`轉到評價 ${index + 1}`}
+                />
+              ))}
+              
+              <button 
+                onClick={() => handleChange((activeIndex + 1) % testimonials.length)}
+                className="w-12 h-12 bg-white border border-gray-200 flex items-center justify-center hover:border-primary transition-colors"
+                aria-label="下一個評價"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="butt" strokeLinejoin="miter" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
 // 更新 FAQ Section 樣式
-function FAQSection() {
+function FAQSection({ activeIndex, toggleFaq }: { activeIndex: number | null, toggleFaq: (index: number) => void }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('全部');
   
   // 從FAQ資料中提取所有類別
@@ -1659,7 +1593,7 @@ function FAQSection() {
         <div className="max-w-3xl mx-auto">
           <AnimatePresence>
             {filteredFaqs.map((faq, index) => (
-              <FaqItem key={faq.question} faq={faq} index={index} />
+              <FaqItem key={faq.question} faq={faq} index={index} isOpen={activeIndex === index} toggle={() => toggleFaq(index)} />
             ))}
           </AnimatePresence>
           
@@ -1685,11 +1619,11 @@ interface FaqItemProps {
     category: string;
   };
   index: number;
+  isOpen: boolean;
+  toggle: () => void;
 }
 
-const FaqItem = ({ faq, index }: FaqItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  
+const FaqItem = ({ faq, index, isOpen, toggle }: FaqItemProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1703,7 +1637,7 @@ const FaqItem = ({ faq, index }: FaqItemProps) => {
         } transition-colors duration-200`}
       >
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggle}
           className="w-full px-5 py-4 text-left flex items-center justify-between focus:outline-none"
         >
           <div className="flex flex-col sm:flex-row sm:items-center">
@@ -1771,92 +1705,98 @@ const ContactSection = () => {
   )
 }
 
-// 優化首頁組件
-export default function HomePage() {
-  useEffect(() => {
-    // 加入網頁性能監控
-    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
-      // 監控LCP
-      try {
-        // @ts-ignore - 因為TS可能無法識別Web Performance API的類型
-        const lcpObserver = new PerformanceObserver((entryList) => {
-          const entries = entryList.getEntries();
-          if (entries.length > 0) {
-            const lastEntry = entries[entries.length - 1];
-            console.log('LCP:', lastEntry.startTime);
-          }
-        });
-        
-        // @ts-ignore - 因為TS可能無法識別某些觀察配置
-        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      } catch (e) {
-        console.error('LCP監控錯誤:', e);
-      }
-    }
-  }, []);
-  
+// 特性卡片組件 - 抽離並優化以減少重複渲染
+const FeatureCard = React.memo(({ feature, index }: { feature: any, index: number }) => {
   return (
-    <div className="min-h-screen bg-white">
-      <section id="hero" className="min-h-[85vh]">
-        <HeroSection />
-      </section>
+    <AnimatedSection delay={index} className="bg-white rounded-xl p-6 md:p-8 shadow-lg border border-gray-100 h-full flex flex-col">
+      <div className="mb-4 text-primary">
+        {React.createElement(feature.icon, { 
+          size: 28,
+          strokeWidth: 2,
+          className: "text-primary" 
+        })}
+      </div>
+      <h3 className="text-xl font-bold mb-2 text-gray-800">{feature.title}</h3>
+      <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+    </AnimatedSection>
+  )
+})
+FeatureCard.displayName = 'FeatureCard'
 
-      {/* 使用React.memo包裝的組件，避免不必要的重新渲染 */}
-      <section id="marketing-statement" className="min-h-[600px]">
-        <MarketingStatement />
-      </section>
+// 優化的統計數字組件
+const StatItem = React.memo(({ value, title, symbol, delay }: { 
+  value: number, 
+  title: string, 
+  symbol?: string,
+  delay: number 
+}) => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  })
 
-      {/* 使用suspense包裝非首屏關鍵組件 */}
-      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
-        <section id="features" className="min-h-[600px]">
-          <FeatureSection />
-        </section>
-      </Suspense>
-
-      <Suspense fallback={<div className="min-h-[600px] bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
-        <section id="services" className="min-h-[600px]">
-          <ServiceSection />
-        </section>
-      </Suspense>
-
-      <section id="stats" className="min-h-[300px]">
-        <StatsSection />
-      </section>
-
-      <section id="cases" className="min-h-[800px]">
-        <CaseStudiesSection />
-      </section>
-
-      <section id="testimonials" className="min-h-[600px]">
-        <TestimonialsSection />
-      </section>
-
-      <section id="faq" className="min-h-[400px]">
-        <FAQSection />
-      </section>
-
-      <section id="contact" className="min-h-[400px]">
-        <ContactSection />
-      </section>
-
-      {/* CTA Section */}
-      <CTASection
-        title="開始您的品牌成長之旅"
-        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
-        titleClassName="tracking-tight"
-        descriptionClassName="text-shadow-light"
-        buttonsContainerClassName="animate-fade-in delay-200"
-        primaryButton={{
-          href: "/contact",
-          text: "預約諮詢",
-          variant: "primary"
-        }}
-        secondaryButton={{
-          href: "/case",
-          text: "查看案例",
-          variant: "secondary"
-        }}
-      />
+  return (
+    <div ref={ref} className="text-center">
+      <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+        {inView && (
+          <CountUp
+            start={0}
+            end={value}
+            duration={2.5}
+            separator=","
+            decimals={0}
+            decimal="."
+            suffix={symbol}
+            delay={delay * 0.3}
+          />
+        )}
+      </div>
+      <p className="text-gray-600">{title}</p>
     </div>
-  );
-} 
+  )
+})
+StatItem.displayName = 'StatItem'
+
+// HomePage組件 - 優化渲染
+const HomePage = () => {
+  // 使用useState並確保初始值合理避免水合不匹配問題
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0)
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null)
+  
+  // 使用useMemo減少不必要的重複計算
+  const filteredCases = useMemo(() => 
+    casesData.slice(0, 3),
+    []
+  )
+  
+  // 使用useCallback優化事件處理函數
+  const handleTestimonialChange = useCallback((index: number) => {
+    setActiveTestimonialIndex(index)
+  }, [])
+  
+  const toggleFaq = useCallback((index: number) => {
+    setActiveFaqIndex(prevIndex => prevIndex === index ? null : index)
+  }, [])
+
+  // 優化渲染 - 使用React 19的更好記憶體模型
+  return (
+    <div className="flex flex-col min-h-screen">
+      <HeroSection />
+      <MarketingStatement />
+      <StatsSection />
+      <FeatureSection />
+      <ServiceSection />
+      <TestimonialsSection 
+        activeIndex={activeTestimonialIndex}
+        handleChange={handleTestimonialChange}
+      />
+      <FAQSection 
+        activeIndex={activeFaqIndex}
+        toggleFaq={toggleFaq}
+      />
+      <ContactSection />
+    </div>
+  )
+}
+
+export default React.memo(HomePage) 
