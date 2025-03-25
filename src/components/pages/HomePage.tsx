@@ -414,7 +414,7 @@ const HeroSection = memo(function HeroSection() {
           >
               <Link href="/contact" prefetch={true}>
               <motion.span 
-                className="inline-flex items-center bg-red-600 text-white px-8 py-4 text-lg font-medium border-0"
+                className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 transform-gpu"
                 initial={{ y: 0 }}
                 whileHover={{ 
                   y: -3,
@@ -428,7 +428,7 @@ const HeroSection = memo(function HeroSection() {
                 }}
               >
                 <motion.span 
-                  className="mr-2 text-2xl font-bold"
+                  className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90"
                   animate={{ 
                     opacity: [0.7, 1, 0.7],
                     transition: { duration: 2, repeat: Infinity }
@@ -436,16 +436,16 @@ const HeroSection = memo(function HeroSection() {
                 >
                   A:
                 </motion.span>
-                  免費30分鐘專業顧問
+                <span className="font-medium">免費30分鐘專業顧問</span>
                 <motion.span
-                  className="ml-2"
+                  className="ml-1.5 sm:ml-2 text-white/90"
                   initial={{ x: 0 }}
-                    animate={{ 
-                      x: [0, 5, 0],
+                  animate={{ 
+                    x: [0, 4, 0],
                     transition: { 
                       repeat: Infinity, 
                       repeatType: "reverse", 
-                        duration: 1.5 
+                      duration: 1.2 
                     }
                   }}
                 >
@@ -460,23 +460,23 @@ const HeroSection = memo(function HeroSection() {
 
       {/* 向下滾動指示器 - 簡化設計 */}
       <motion.div 
-        className="absolute bottom-8 left-0 right-0 flex justify-center"
+        className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex justify-center z-10"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.5 }}
       >
         <motion.div 
-          className="flex flex-col items-center cursor-pointer"
+          className="flex flex-col items-center cursor-pointer group"
           onClick={() => document.getElementById('marketing-statement')?.scrollIntoView({ behavior: 'smooth' })}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ y: -2 }}
+          whileTap={{ y: 0 }}
         >
-          <span className="text-white text-sm mb-2 font-medium">探索更多</span>
+          <span className="text-white text-xs sm:text-sm mb-1.5 sm:mb-2 font-medium opacity-80 group-hover:opacity-100 transition-opacity">探索更多</span>
           <motion.div
             animate={homePageAnimations.hero.scrollIndicator.animate}
-            className="w-8 h-8 flex items-center justify-center text-white bg-white/10"
+            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-white bg-black border border-white/20 group-hover:bg-white/10 transition-colors"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </motion.div>
