@@ -23,7 +23,9 @@ import {
   Globe as GlobeIcon,
   BarChart as ChartIcon,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Award,
+  User
 } from 'lucide-react'
 import Image from 'next/image'
 import { Logo, CTASection } from '@/components/common'
@@ -854,60 +856,6 @@ type StatsSectionProps = {
 
 // 更新數據統計區塊
 function StatsSection({ className = '' }: StatsSectionProps) {
-  // 設定輪播狀態
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [snapPosition, setSnapPosition] = useState({ start: 0, end: 0 });
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // 檢測視窗大小以決定是否為行動裝置
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  
-  // 處理輪播控制
-  const handleNext = useCallback(() => {
-    if (!carouselRef.current) return;
-    const maxSlides = stats.length - (isMobile ? 1 : 3);
-    setCurrentSlide(prev => Math.min(prev + 1, maxSlides));
-  }, [isMobile]);
-  
-  const handlePrev = useCallback(() => {
-    setCurrentSlide(prev => Math.max(prev - 1, 0));
-  }, []);
-  
-  // 自動輪播設定
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const maxSlides = stats.length - (isMobile ? 1 : 3);
-      if (currentSlide >= maxSlides) {
-        setCurrentSlide(0);
-      } else {
-        setCurrentSlide(prev => prev + 1);
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [currentSlide, isMobile]);
-  
-  // 計算滑動位置
-  useEffect(() => {
-    if (!carouselRef.current) return;
-    
-    const carousel = carouselRef.current;
-    const cardWidth = carousel.querySelector('.stat-card')?.clientWidth || 0;
-    const gap = 32; // gap-8 = 2rem = 32px
-    
-    carousel.style.transform = `translateX(-${currentSlide * (cardWidth + gap)}px)`;
-  }, [currentSlide]);
-  
   // 精簡的統計數據
   const stats: StatItem[] = [
     {
@@ -951,12 +899,200 @@ function StatsSection({ className = '' }: StatsSectionProps) {
       label: "平均ROI",
       description: "投資回報率保證",
       icon: <TrendingUp className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 30,
+      suffix: "%",
+      label: "新客戶增長",
+      description: "月平均成長數據",
+      icon: <Users className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 8,
+      suffix: "+",
+      label: "行業領域",
+      description: "專業醫療垂直領域",
+      icon: <BuildingIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 85,
+      suffix: "%",
+      label: "回診率提升",
+      description: "有效病患維繫方案",
+      icon: <User className="w-10 h-10 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 10,
+      suffix: "年+",
+      label: "醫療行銷經驗",
+      description: "專注醫療產業經驗",
+      icon: <Award className="w-10 h-10 text-white" strokeWidth={1.5} />
     }
   ];
 
+  // 設定輪播狀態
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [snapPosition, setSnapPosition] = useState({ start: 0, end: 0 });
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [activeCardIndexes, setActiveCardIndexes] = useState<number[]>([]);
+  const [animateCards, setAnimateCards] = useState(false);
+  
+  // 檢測視窗大小以決定是否為行動裝置
+  useEffect(() => {
+    setIsClient(true);
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // 檢查卡片是否在當前可見區域
+  const isCardVisible = useCallback((index: number) => {
+    const visibleCount = isMobile ? 1 : 3;
+    return index >= currentSlide && index < currentSlide + visibleCount;
+  }, [currentSlide, isMobile]);
+  
+  // 觸發數字動畫
+  const triggerCountAnimation = useCallback(() => {
+    setAnimateCards(false);
+    // 使用 requestAnimationFrame 確保狀態更新和 DOM 渲染之間有足夠的時間
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setAnimateCards(true);
+      });
+    });
+  }, []);
+  
+  // 處理輪播控制
+  const handleNext = useCallback(() => {
+    if (!carouselRef.current) return;
+    const maxSlides = stats.length - (isMobile ? 1 : 3);
+    setCurrentSlide(prev => Math.min(prev + 1, maxSlides));
+    
+    // 重置計數動畫
+    const visibleCards = isMobile ? 1 : 3;
+    const newActiveIndexes = [];
+    for (let i = 0; i < visibleCards; i++) {
+      const index = currentSlide + 1 + i;
+      if (index < stats.length) {
+        newActiveIndexes.push(index);
+      }
+    }
+    setActiveCardIndexes(newActiveIndexes);
+    triggerCountAnimation();
+  }, [isMobile, currentSlide, stats.length, triggerCountAnimation]);
+  
+  const handlePrev = useCallback(() => {
+    setCurrentSlide(prev => Math.max(prev - 1, 0));
+    
+    // 重置計數動畫
+    const visibleCards = isMobile ? 1 : 3;
+    const newActiveIndexes = [];
+    for (let i = 0; i < visibleCards; i++) {
+      const index = Math.max(currentSlide - 1, 0) + i;
+      if (index < stats.length) {
+        newActiveIndexes.push(index);
+      }
+    }
+    setActiveCardIndexes(newActiveIndexes);
+    triggerCountAnimation();
+  }, [currentSlide, isMobile, stats.length, triggerCountAnimation]);
+  
+  // 自動輪播設定
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const maxSlides = stats.length - (isMobile ? 1 : 3);
+      if (currentSlide >= maxSlides) {
+        setCurrentSlide(0);
+        
+        // 重置為初始可見的卡片
+        const visibleCards = isMobile ? 1 : 3;
+        const newActiveIndexes = [];
+        for (let i = 0; i < visibleCards; i++) {
+          newActiveIndexes.push(i);
+        }
+        setActiveCardIndexes(newActiveIndexes);
+        triggerCountAnimation();
+      } else {
+        handleNext();
+      }
+    }, 6000); // 增加時間以便用戶有足夠時間閱讀
+    
+    return () => clearInterval(interval);
+  }, [currentSlide, isMobile, handleNext, stats.length, triggerCountAnimation]);
+  
+  // 計算滑動位置並添加平滑過渡
+  useEffect(() => {
+    if (!carouselRef.current) return;
+    
+    const carousel = carouselRef.current;
+    const cardWidth = carousel.querySelector('.stat-card')?.clientWidth || 0;
+    const gap = 32; // gap-8 = 2rem = 32px
+    
+    carousel.style.transform = `translateX(-${currentSlide * (cardWidth + gap)}px)`;
+  }, [currentSlide]);
+  
+  // 初始化可見卡片和動畫狀態
+  useEffect(() => {
+    const visibleCards = isMobile ? 1 : 3;
+    const initialActiveIndexes = [];
+    for (let i = 0; i < visibleCards; i++) {
+      initialActiveIndexes.push(i);
+    }
+    setActiveCardIndexes(initialActiveIndexes);
+    setAnimateCards(true);
+  }, [isMobile]);
+  
+  // 選擇適合當前卡片的動畫變體
+  const getCardAnimationVariant = useCallback((index: number) => {
+    if (isCardVisible(index)) {
+      return {
+        visible: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateY: 0,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+            delay: 0.1 * (index % 3),
+            duration: 0.6
+          }
+        }
+      };
+    } else {
+      const isLeft = index < currentSlide;
+      return {
+        hidden: {
+          opacity: 0.5,
+          y: 10,
+          scale: 0.9,
+          rotateY: isLeft ? -10 : 10,
+          transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+            duration: 0.4
+          }
+        }
+      };
+    }
+  }, [currentSlide, isCardVisible]);
+
   return (
     <section className={`bg-primary py-20 ${className} overflow-hidden`}>
-      <div className="container-custom">
+      {/* 背景紋理 */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:20px_20px] opacity-40"></div>
+      
+      <div className="container-custom relative z-10">
         {/* 標題區塊 */}
         <motion.div 
           className="text-center mb-16"
@@ -965,7 +1101,7 @@ function StatsSection({ className = '' }: StatsSectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-block text-white font-medium mb-4 px-5 py-1.5 border-l-2 border-white">
+          <div className="inline-block text-white font-medium mb-4 px-5 py-1.5 border-l-2 border-white bg-white/5 backdrop-blur-sm">
             <BarChart2 className="w-5 h-5 inline-block mr-2 -mt-0.5" /> 實證數據
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 heading-medical">
@@ -978,39 +1114,74 @@ function StatsSection({ className = '' }: StatsSectionProps) {
         </motion.div>
 
         {/* 統計數據橫向輪播 */}
-        <div className="relative max-w-6xl mx-auto px-4">
+        <motion.div 
+          className="relative max-w-6xl mx-auto px-4"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
           {/* 輪播容器 */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden rounded-lg backdrop-blur-sm">
             <motion.div 
               ref={carouselRef}
-              className="flex space-x-8 transition-transform duration-700"
+              className="flex space-x-8 transition-all duration-800 ease-out"
               initial={{ x: 0 }}
               animate={{ x: `-${currentSlide * 100}%` }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 150, 
+                damping: 20 
+              }}
             >
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="stat-card bg-white/10 border-l-2 border-white/30 p-8 flex-shrink-0 w-full sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-16px)]"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="stat-card bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border-l-2 border-white/50 p-8 flex-shrink-0 w-full sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-16px)] rounded-lg shadow-lg"
+                  initial="hidden"
+                  animate={isCardVisible(index) ? "visible" : "hidden"}
+                  variants={{
+                    hidden: {
+                      opacity: 0.5,
+                      y: 30,
+                      scale: 0.95,
+                      transition: {
+                        duration: 0.3
+                      }
+                    },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 15,
+                        delay: index % 3 * 0.1,
+                        duration: 0.5
+                      }
+                    }
+                  }}
                   whileHover={{ 
-                    y: -5,
-                    boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2)",
-                    transition: { duration: 0.2 }
+                    y: -8,
+                    boxShadow: "0 15px 30px -10px rgba(0,0,0,0.3)",
+                    transition: { duration: 0.3 }
                   }}
                 >
-                  <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full relative">
+                    {/* 背景裝飾元素 */}
+                    <div className="absolute -right-2 -top-2 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
+                    
                     <div className="flex items-center mb-6">
                       <motion.div
-                        animate={{ 
+                        className="p-3 bg-white/10 rounded-lg"
+                        animate={isCardVisible(index) ? { 
                           scale: [1, 1.1, 1],
                           rotate: [0, 5, 0, -5, 0]
-                        }}
+                        } : { scale: 1, rotate: 0 }}
                         transition={{ 
                           duration: 2, 
-                          repeat: Infinity,
+                          repeat: isCardVisible(index) ? Infinity : 0,
                           repeatType: "reverse"
                         }}
                       >
@@ -1018,83 +1189,127 @@ function StatsSection({ className = '' }: StatsSectionProps) {
                       </motion.div>
                     </div>
                     
-                    <div className="stat-number text-white mb-3 text-4xl font-bold">
-                      <CountUp
-                        start={0}
-                        end={stat.value}
-                        duration={2.5}
-                        separator=","
-                        decimals={0}
-                        suffix={stat.suffix}
-                        enableScrollSpy
-                        scrollSpyDelay={100}
-                        className="tabular-nums"
-                      />
+                    <div className="stat-number text-white mb-3 text-5xl font-bold tracking-tight">
+                      {isClient && (
+                        <CountUp
+                          key={`countup-${index}-${isCardVisible(index) ? 'visible' : 'hidden'}-${currentSlide}-${animateCards ? 'animate' : 'static'}`}
+                          start={0}
+                          end={stat.value}
+                          duration={isCardVisible(index) ? 2.5 : 0}
+                          separator=","
+                          decimals={0}
+                          suffix={stat.suffix}
+                          className="tabular-nums"
+                          useEasing={true}
+                          redraw={true}
+                          preserveValue={false}
+                        />
+                      )}
+                      {!isClient && (
+                        <span className="tabular-nums">{stat.value}{stat.suffix}</span>
+                      )}
                     </div>
                     
                     <h3 className="text-xl font-bold text-white mb-2">
                       {stat.label}
                     </h3>
                     
-                    <p className="text-white/80 mt-auto">
+                    <p className="text-white/90 mt-auto">
                       {stat.description}
                     </p>
+                    
+                    {/* 底部裝飾線 */}
+                    <motion.div 
+                      className="w-0 h-0.5 bg-white/50 mt-4"
+                      animate={isCardVisible(index) ? { width: "100%" } : { width: 0 }}
+                      transition={{ duration: 0.8, delay: (index % 3) * 0.2 + 0.3 }}
+                    />
                   </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
           
-          {/* 控制按鈕 */}
-          <div className="flex justify-center mt-10 space-x-4">
-            <button
+          {/* 控制按鈕 - 改進設計 */}
+          <div className="flex justify-center mt-10 space-x-6">
+            <motion.button
               onClick={handlePrev}
               disabled={currentSlide === 0}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
                 currentSlide === 0 
-                  ? 'bg-white/20 text-white/40 cursor-not-allowed' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-white/10 text-white/40 cursor-not-allowed' 
+                  : 'bg-white text-primary hover:bg-white/90'
               }`}
               aria-label="上一組數據"
+              whileHover={currentSlide !== 0 ? { scale: 1.1, boxShadow: "0 5px 15px rgba(0,0,0,0.1)" } : {}}
+              whileTap={currentSlide !== 0 ? { scale: 0.95 } : {}}
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </button>
+            </motion.button>
             
-            <button
+            {/* 進度指示器 - 改進為簡潔橫條 */}
+            <div className="flex items-center space-x-1.5 h-3">
+              {Array.from({ length: stats.length - (isMobile ? 0 : 3) }).map((_, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => {
+                    setCurrentSlide(i);
+                    
+                    // 更新可見卡片
+                    const visibleCards = isMobile ? 1 : 3;
+                    const newActiveIndexes = [];
+                    for (let j = 0; j < visibleCards; j++) {
+                      const index = i + j;
+                      if (index < stats.length) {
+                        newActiveIndexes.push(index);
+                      }
+                    }
+                    setActiveCardIndexes(newActiveIndexes);
+                    triggerCountAnimation();
+                  }}
+                  className="focus:outline-none"
+                  aria-label={`跳至第 ${i + 1} 組數據`}
+                >
+                  <motion.div 
+                    className={`h-1.5 rounded-sm transition-all ${
+                      currentSlide === i ? 'bg-white' : 'bg-white/30'
+                    }`}
+                    initial={{ width: 12 }}
+                    animate={{ 
+                      width: currentSlide === i ? 24 : 12,
+                      opacity: currentSlide === i ? 1 : 0.5
+                    }}
+                    whileHover={{ opacity: 0.8 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.button>
+              ))}
+            </div>
+            
+            <motion.button
               onClick={handleNext}
               disabled={currentSlide >= stats.length - (isMobile ? 1 : 4)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
                 currentSlide >= stats.length - (isMobile ? 1 : 4)
-                  ? 'bg-white/20 text-white/40 cursor-not-allowed' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+                  ? 'bg-white/10 text-white/40 cursor-not-allowed' 
+                  : 'bg-white text-primary hover:bg-white/90'
               }`}
               aria-label="下一組數據"
+              whileHover={currentSlide < stats.length - (isMobile ? 1 : 4) ? { scale: 1.1, boxShadow: "0 5px 15px rgba(0,0,0,0.1)" } : {}}
+              whileTap={currentSlide < stats.length - (isMobile ? 1 : 4) ? { scale: 0.95 } : {}}
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </button>
+            </motion.button>
           </div>
-          
-          {/* 進度指示器 */}
-          <div className="flex justify-center mt-4 space-x-2">
-            {Array.from({ length: stats.length - (isMobile ? 0 : 3) }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  currentSlide === i ? 'bg-white' : 'bg-white/30'
-                }`}
-                aria-label={`跳至第 ${i + 1} 組數據`}
-              />
-            ))}
-          </div>
-        </div>
+        </motion.div>
         
         {/* 註釋 */}
-        <div className="text-center mt-16 text-white/50 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto">
+        <div className="text-center mt-16 text-white/60 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto italic">
           *數據基於過去三年合作診所的實際統計 | 2021-2023年度報告
         </div>
       </div>
