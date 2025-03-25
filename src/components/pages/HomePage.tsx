@@ -836,392 +836,103 @@ type StatsSectionProps = {
 
 // 更新數據統計區塊
 function StatsSection({ className = '' }: StatsSectionProps) {
-  // 擴展統計數據和類別
+  // 精簡的統計數據
   const stats: StatItem[] = [
     {
       value: 50,
       suffix: "+",
       label: "合作診所",
       description: "全台醫療網絡覆蓋",
-      icon: <Stethoscope className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+      icon: <Stethoscope className="w-10 h-10 text-white" strokeWidth={1.5} />
     },
     {
       value: 700,
       suffix: "萬+",
       label: "月廣告投放",
       description: "精準投放策略",
-      icon: <ChartIcon className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+      icon: <ChartIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
     },
     {
       value: 12000,
       suffix: "萬+",
       label: "年廣告投放",
       description: "持續成長動能",
-      icon: <GlobeIcon className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+      icon: <GlobeIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
     },
     {
       value: 98,
       suffix: "%",
       label: "客戶滿意度",
       description: "專業團隊品質保證",
-      icon: <Handshake className="w-10 h-10 text-white/90" strokeWidth={1.5} />
-    },
-    {
-      value: 180,
-      suffix: "%",
-      label: "預約成長",
-      description: "顯著提升診所轉換率",
-      icon: <BarChart2 className="w-10 h-10 text-white/90" strokeWidth={1.5} />
-    },
-    {
-      value: 85,
-      suffix: "%",
-      label: "投資回報率",
-      description: "精準行銷高效投資",
-      icon: <MonitorSmartphone className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+      icon: <Handshake className="w-10 h-10 text-white" strokeWidth={1.5} />
     }
   ];
 
-  // 參考以追蹤滾動容器
-  const scrollRef = useCallback((node: HTMLDivElement) => {
-    if (node !== null) {
-      // 設定初始位置使第一個項目置中
-      setTimeout(() => {
-        const firstItem = node.querySelector('.stats-item');
-        if (firstItem) {
-          const container = node.parentElement;
-          if (container) {
-            const containerWidth = container.clientWidth;
-            const itemWidth = firstItem.clientWidth;
-            const scrollLeft = (itemWidth / 2) - (containerWidth / 2);
-            node.scrollLeft = Math.max(0, scrollLeft);
-          }
-        }
-      }, 100);
-    }
-  }, []);
-
-  // 控制當前活動項目索引
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // 滾動到特定項目
-  const scrollToItem = useCallback((index: number) => {
-    const container = document.querySelector('.stats-scroll-container');
-    const item = document.querySelectorAll('.stats-item')[index];
-    if (container && item) {
-      const containerWidth = container.clientWidth;
-      const itemRect = item.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const scrollLeft = (item as HTMLElement).offsetLeft - containerRect.left + container.scrollLeft - (containerWidth / 2) + (itemRect.width / 2);
-      
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth'
-      });
-      
-      setActiveIndex(index);
-      
-      // 觸發動畫重置
-      setAnimateNumber(prev => !prev);
-    }
-  }, []);
-
-  // 監聽滾動事件
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    const container = e.currentTarget;
-    const items = container.querySelectorAll('.stats-item');
-    const containerWidth = container.clientWidth;
-    const containerRect = container.getBoundingClientRect();
-    
-    let minDistance = Infinity;
-    let closestIndex = 0;
-    
-    items.forEach((item, index) => {
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.left + (itemRect.width / 2);
-      const containerCenter = containerRect.left + (containerWidth / 2);
-      const distance = Math.abs(itemCenter - containerCenter);
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = index;
-      }
-    });
-    
-    if (activeIndex !== closestIndex) {
-      setActiveIndex(closestIndex);
-      // 當索引改變時觸發動畫重置
-      setAnimateNumber(prev => !prev);
-    }
-  }, [activeIndex]);
-
-  // 添加狀態控制數字動畫重置
-  const [animateNumber, setAnimateNumber] = useState(false);
-
-  // 延遲重置數字的計時器參考
-  const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  // 當activeIndex變化時重置數字動畫
-  useEffect(() => {
-    // 清除之前的計時器
-    if (resetTimerRef.current) {
-      clearTimeout(resetTimerRef.current);
-    }
-    
-    // 設定新的計時器，延遲50ms以確保視覺效果流暢
-    resetTimerRef.current = setTimeout(() => {
-      setAnimateNumber(prev => !prev);
-    }, 50);
-    
-    // 清理函數
-    return () => {
-      if (resetTimerRef.current) {
-        clearTimeout(resetTimerRef.current);
-      }
-    };
-  }, [activeIndex]);
-
   return (
-    <section className={`relative py-20 md:py-32 overflow-hidden ${className}`}>
-      {/* 優化的背景效果 */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-primary"></div>
-        <div className="absolute inset-0 bg-dot-pattern opacity-10"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2)_0%,transparent_60%)]"></div>
+    <section className={`bg-primary py-20 ${className}`}>
+      <div className="container-custom">
+        {/* 標題區塊 */}
         <motion.div 
-          className="absolute -bottom-40 -right-40 w-96 h-96 bg-primary-light rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        <motion.div 
-          className="absolute -top-20 -left-20 w-72 h-72 bg-primary-light rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ 
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 2
-          }}
-        />
-      </div>
-      
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <motion.div 
-          className="text-center mb-16 md:mb-20"
-          initial={{ opacity: 0, y: 30 }}
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.5 }}
         >
-          <motion.div 
-            className="inline-block text-white font-medium mb-5 px-6 py-2.5 bg-white/10 rounded-none backdrop-blur-sm border-l-2 border-white/30 shadow-flat-primary"
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <BarChart2 className="w-5 h-5 inline-block mr-2 -mt-0.5" /> 實證行銷數據
-          </motion.div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight heading-medical">
-            <span className="relative">
-              <span className="inline-block">顯著</span>
-              <span className="relative inline-block mx-3">
-                成效
-                <motion.span 
-                  initial={{ width: "0%" }}
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="absolute -bottom-3 left-0 right-0 h-2 bg-white/30"
-                ></motion.span>
-              </span>
-              <span className="inline-block">數據</span>
-            </span>
+          <div className="inline-block text-white font-medium mb-4 px-5 py-1.5 border-l-2 border-white">
+            <BarChart2 className="w-5 h-5 inline-block mr-2 -mt-0.5" /> 實證數據
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 heading-medical">
+            顯著成效數據
           </h2>
-          <motion.p 
-            className="text-xl text-white/80 max-w-3xl mx-auto font-light"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
+          <div className="w-16 h-1 bg-white/30 mx-auto mb-5"></div>
+          <p className="text-xl text-white/80 max-w-3xl mx-auto">
             多年實證數據驅動診所業務增長，提供可量化的成功案例與投資回報
-          </motion.p>
+          </p>
         </motion.div>
 
-        {/* 優化的統計數據卡片容器 */}
-        <div className="relative overflow-hidden px-4 md:px-12 max-w-7xl mx-auto">
-          {/* 滾動箭頭 - 左 */}
-          <motion.button
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-3.5 bg-white/10 hover:bg-white/20 border-l-2 border-white/30 backdrop-blur-sm hidden md:flex items-center justify-center shadow-flat"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.25)" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => scrollToItem(Math.max(0, activeIndex - 1))}
-            aria-label="查看上一個統計數據"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </motion.button>
-
-          {/* 滾動容器 */}
-          <div 
-            ref={scrollRef}
-            className="stats-scroll-container flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-8 py-6 px-4 md:px-8"
-            onScroll={handleScroll}
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className={`stats-item flex-none w-[300px] md:w-[340px] p-7 stat-card border-l-2 snap-center transition-all duration-500 ${
-                  activeIndex === index 
-                    ? 'bg-white/15 border-white/40 shadow-flat transform-gpu' 
-                    : 'bg-white/10 border-white/20 hover:bg-white/12'
-                }`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className={`p-4 mb-6 ${
-                  activeIndex === index 
-                    ? 'bg-gradient-to-br from-white/20 to-white/10 border-l border-white/30' 
-                    : 'bg-white/10'
-                }`}>
-                  {stat.icon}
-                </div>
-                
-                <h3 className="text-xl font-bold text-white mb-3 flex items-baseline">
-                  <span className="mr-1">{stat.label}</span>
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    className="text-xs py-0.5 px-2 bg-white/20 text-white/90 ml-2 tag-flat"
-                  >
-                    關鍵指標
-                  </motion.span>
-                </h3>
-                
-                <motion.div
-                  className={`stat-number flex items-baseline ${
-                    activeIndex === index ? 'text-white' : 'text-white/90'
-                  }`}
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.2 }}
-                >
-                  <CountUp
-                    start={0}
-                    end={stat.value}
-                    duration={2.5}
-                    separator=","
-                    decimals={0}
-                    suffix={stat.suffix}
-                    redraw={animateNumber}
-                    className="tabular-nums"
-                  />
-                  <motion.div 
-                    className="ml-2 h-8 w-1 bg-white/30"
-                    animate={{ 
-                      height: ["32px", "20px", "32px"],
-                      opacity: [0.3, 0.6, 0.3]
-                    }}
-                    transition={{ 
-                      duration: 2, 
-                      repeat: Infinity,
-                      repeatType: "reverse"
-                    }}
-                  />
-                </motion.div>
-                
-                <p className={`text-base ${
-                  activeIndex === index ? 'text-white/85' : 'text-white/70'
-                }`}>
-                  {stat.description}
-                </p>
-                
-                {activeIndex === index && (
-                  <motion.div 
-                    className="w-full h-1 bg-white/20 mt-5 overflow-hidden"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <motion.div 
-                      className="h-full bg-white/60"
-                      initial={{ width: "0%" }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 2, ease: "easeOut" }}
-                    />
-                  </motion.div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* 滾動箭頭 - 右 */}
-          <motion.button
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-3.5 bg-white/10 hover:bg-white/20 border-r-2 border-white/30 backdrop-blur-sm hidden md:flex items-center justify-center shadow-flat"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.25)" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => scrollToItem(Math.min(stats.length - 1, activeIndex + 1))}
-            aria-label="查看下一個統計數據"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </motion.button>
-        </div>
-
-        {/* 優化的導航點 */}
-        <div className="flex justify-center gap-3 mt-10">
-          {stats.map((_, index) => (
-            <motion.button
+        {/* 統計數據網格 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          {stats.map((stat, index) => (
+            <motion.div
               key={index}
-              className={`h-1 transition-all duration-500 ${
-                activeIndex === index ? 'bg-white w-10 shadow-flat-primary' : 'bg-white/30 w-6 hover:bg-white/50'
-              }`}
-              tabIndex={0}
-              aria-label={`切換到第 ${index + 1} 個統計數據`}
-              role="tab"
-              aria-selected={activeIndex === index}
-              onClick={() => scrollToItem(index)}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-            />
+              className="stat-card bg-white/10 border-l-2 border-white/30 p-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <div className="flex items-center mb-6">
+                {stat.icon}
+              </div>
+              
+              <div className="stat-number text-white mb-3">
+                <CountUp
+                  start={0}
+                  end={stat.value}
+                  duration={2}
+                  separator=","
+                  decimals={0}
+                  suffix={stat.suffix}
+                  className="tabular-nums"
+                />
+              </div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">
+                {stat.label}
+              </h3>
+              
+              <p className="text-white/80">
+                {stat.description}
+              </p>
+            </motion.div>
           ))}
         </div>
         
-        {/* 添加註釋和來源說明 */}
-        <motion.div 
-          className="text-center mt-12 text-white/50 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-        >
+        {/* 註釋 */}
+        <div className="text-center mt-16 text-white/50 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto">
           *數據基於過去三年合作診所的實際統計 | 2021-2023年度報告
-        </motion.div>
+        </div>
       </div>
     </section>
   );
