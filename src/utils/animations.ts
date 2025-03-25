@@ -605,6 +605,47 @@ export const defaultTransition: Transition = {
   duration: LOADING_ANIMATION_CONFIG.duration.normal
 }
 
+// 高效能滾動動畫配置
+export const scrollAnimationConfig = {
+  transformTemplate: (transformProps: string) => `translateY(${transformProps})`,
+  style: { willChange: 'transform, opacity' }
+}
+
+// 彈跳動畫變體
+export const bounceVariants: Variants = {
+  initial: { 
+    opacity: 0,
+    scale: 0.9,
+    y: 10
+  },
+  animate: {
+    opacity: 1, 
+    scale: 1,
+    y: 0,
+    transition: { 
+      type: 'spring',
+      stiffness: 300,
+      damping: 20
+    }
+  },
+  hover: {
+    scale: 1.03,
+    transition: {
+      duration: 0.2
+    }
+  },
+  tap: {
+    scale: 0.97
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      duration: LOADING_ANIMATION_CONFIG.duration.fast
+    }
+  }
+}
+
 // 從下方滑入動畫變體
 export const slideUpVariants: Variants = {
   initial: {
@@ -629,37 +670,188 @@ export const slideUpVariants: Variants = {
   }
 }
 
-// 彈跳動畫變體
-export const bounceVariants: Variants = {
-  initial: {
-    opacity: 0,
-    scale: 0.9,
-    y: 10
-  },
-  animate: {
-    opacity: 1,
-    scale: 1,
+// 高效能滑入動畫
+export const optimizedSlideUpVariants: Variants = {
+  ...slideUpVariants,
+  ...scrollAnimationConfig
+}
+
+// 高性能彈跳動畫
+export const optimizedBounceVariants: Variants = {
+  ...bounceVariants,
+  ...scrollAnimationConfig
+}
+
+// HeroSection 標題輪換動畫
+export const heroTitleVariants: Variants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { 
+    opacity: 1, 
     y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 20
+    transition: { 
+      duration: 0.6,
+      ease: [0.6, 0.05, 0.01, 0.9]
     }
-  },
-  hover: {
-    scale: 1.03,
-    transition: {
-      duration: 0.2
-    }
-  },
-  tap: {
-    scale: 0.97
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
+    y: -30,
     transition: {
-      duration: LOADING_ANIMATION_CONFIG.duration.fast
+      duration: 0.4
+    }
+  }
+}
+
+// 英文標語切換動畫
+export const heroSubtitleVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    y: 20 
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5 }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    transition: { duration: 0.5 }
+  }
+}
+
+// 數字統計動畫配置
+export const statsNumberVariants = {
+  initial: { scale: 0.5, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  transition: { 
+    type: "spring", 
+    stiffness: 260, 
+    damping: 20
+  }
+}
+
+// CountUp 組件配置
+export const countUpConfig = {
+  // 客戶滿意度
+  satisfaction: {
+    start: 0,
+    end: 98,
+    duration: 2.5,
+    delay: 1.2,
+    suffix: "%",
+    decimals: 0,
+    useEasing: true
+  },
+  // 成功案例
+  cases: {
+    start: 0,
+    end: 50,
+    duration: 2.5,
+    delay: 1.3,
+    suffix: "+",
+    decimals: 0,
+    useEasing: true
+  },
+  // 專業響應
+  response: {
+    start: 0,
+    end: 24,
+    duration: 2.5,
+    delay: 1.4,
+    suffix: "hr",
+    decimals: 0,
+    useEasing: true
+  }
+}
+
+// MarketingStatement 階梯式文案動畫
+export const marketingStatementVariants: Variants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { 
+      duration: 0.7, 
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
+}
+
+// 分隔線展開動畫
+export const dividerExpandVariants: Variants = {
+  hidden: { scaleX: 0, opacity: 0 },
+  visible: { 
+    scaleX: 1, 
+    opacity: 0.3,
+    transition: { 
+      duration: 0.8
+    }
+  }
+}
+
+// 分隔線光效動畫
+export const dividerGlowVariants: Variants = {
+  hidden: { x: "-100%" },
+  visible: { 
+    x: "400%",
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      repeatDelay: 4
+    }
+  }
+}
+
+// Feature 卡片懸停效果
+export const featureCardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.5
+    }
+  },
+  hover: { 
+    y: -5,
+    boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.1)",
+    borderColor: "rgba(var(--color-primary-rgb), 1)",
+    transition: { 
+      duration: 0.2
+    }
+  }
+}
+
+// Feature 圖標動畫
+export const featureIconVariants: Variants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { 
+    scale: 1, 
+    opacity: 1,
+    transition: { 
+      type: "spring",
+      stiffness: 200,
+      damping: 10
+    }
+  },
+  hover: {
+    rotate: [0, 5, -5, 0],
+    scale: 1.1,
+    transition: {
+      duration: 0.5
+    }
+  }
+}
+
+// 底部指示箭頭動畫
+export const scrollIndicatorVariants = {
+  animate: { 
+    y: [0, 8, 0],
+    transition: { 
+      duration: 1.5, 
+      repeat: Infinity, 
+      ease: "easeInOut" 
     }
   }
 }
@@ -681,6 +873,114 @@ export const cardHoverVariants: Variants = {
   }
 }
 
+// 案例研究卡片動畫
+export const caseCardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.5,
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  },
+  hover: {
+    y: -10,
+    boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.1)",
+    transition: { 
+      duration: 0.3,
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
+}
+
+// 案例詳情頁面切換動畫
+export const caseDetailVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      delay: 0.1,
+      duration: 0.5 
+    }
+  }
+}
+
+// FAQ 區塊動畫
+export const faqContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+}
+
+// FAQ 項目動畫
+export const faqItemVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.4
+    }
+  }
+}
+
+// FAQ 展開/收合動畫
+export const faqContentVariants: Variants = {
+  collapsed: { 
+    height: 0,
+    opacity: 0,
+    transition: {
+      duration: 0.3,
+      ease: [0.33, 1, 0.68, 1]
+    }
+  },
+  expanded: { 
+    height: "auto",
+    opacity: 1,
+    transition: {
+      duration: 0.4,
+      ease: [0.33, 1, 0.68, 1]
+    }
+  }
+}
+
+// 聯絡表單動畫
+export const contactFormVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  }
+}
+
+// 表單輸入欄位動畫
+export const formInputVariants: Variants = {
+  initial: { borderColor: "transparent" },
+  focus: { 
+    borderColor: "rgba(var(--color-primary-rgb), 1)",
+    backgroundColor: "rgba(var(--color-primary-rgb), 0.05)",
+    transition: { duration: 0.2 }
+  },
+  success: {
+    borderColor: "rgba(34, 197, 94, 1)",
+    transition: { duration: 0.2 }
+  },
+  error: {
+    borderColor: "rgba(239, 68, 68, 1)",
+    x: [0, -5, 5, -5, 5, 0],
+    transition: { duration: 0.4 }
+  }
+}
+
 // 按鈕動畫效果
 export const buttonVariants: Variants = {
   initial: {
@@ -698,20 +998,57 @@ export const buttonVariants: Variants = {
   }
 }
 
-// 高效能滾動動畫配置
-export const scrollAnimationConfig = {
-  transformTemplate: (transformProps: string) => `translateY(${transformProps})`,
-  style: { willChange: 'transform, opacity' }
-}
-
-// 高效能滑入動畫
-export const optimizedSlideUpVariants: Variants = {
-  ...slideUpVariants,
-  ...scrollAnimationConfig
-}
-
-// 高性能彈跳動畫
-export const optimizedBounceVariants: Variants = {
-  ...bounceVariants,
-  ...scrollAnimationConfig
+// 整合首頁所有動畫，用於統一管理和調用
+export const homePageAnimations = {
+  // HeroSection 動畫
+  hero: {
+    title: heroTitleVariants,
+    subtitle: heroSubtitleVariants,
+    stats: statsNumberVariants,
+    countUp: countUpConfig,
+    scrollIndicator: scrollIndicatorVariants
+  },
+  
+  // MarketingStatement 動畫
+  marketing: {
+    statement: marketingStatementVariants,
+    divider: {
+      expand: dividerExpandVariants,
+      glow: dividerGlowVariants
+    }
+  },
+  
+  // Feature Section 動畫
+  feature: {
+    card: featureCardVariants,
+    icon: featureIconVariants,
+  },
+  
+  // Case Studies 動畫
+  case: {
+    card: caseCardVariants,
+    detail: caseDetailVariants
+  },
+  
+  // FAQ 動畫
+  faq: {
+    container: faqContainerVariants,
+    item: faqItemVariants,
+    content: faqContentVariants
+  },
+  
+  // 聯絡表單動畫
+  contact: {
+    form: contactFormVariants,
+    input: formInputVariants
+  },
+  
+  // 通用動畫
+  common: {
+    button: buttonVariants,
+    card: cardHoverVariants,
+    bounce: bounceVariants,
+    slideUp: slideUpVariants,
+    optimizedSlideUp: optimizedSlideUpVariants
+  }
 } 

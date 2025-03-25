@@ -73,20 +73,24 @@ export default function ContactPage() {
       />
       
       {/* 聯絡表單區 */}
-      <section className="py-20">
+      <section className="py-20 bg-white border-t border-gray-100">
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-20">
             {/* Left Side - Form */}
             <div className="lg:col-span-3">
               <motion.div 
-                className="bg-white border border-gray-100 p-8 md:p-12"
+                className="bg-white border border-gray-100 shadow-sm p-8 md:p-12"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
                 {!formSubmitted ? (
                   <>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-6 heading-underline">預約專業諮詢</h2>
+                    <span className="inline-block text-primary font-medium mb-3 px-4 py-1.5 bg-primary/10 rounded-md text-sm">預約諮詢</span>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">獲得專屬<span className="text-primary">行銷策略</span></h2>
+                    <div className="w-16 h-1 bg-primary mb-6"></div>
+                    <p className="text-gray-600 mb-8">填寫以下表單，我們將安排專業顧問與您聯繫，提供最適合您診所的行銷解決方案</p>
+                    
                     <form onSubmit={handleSubmit}>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div className="animate-slide-up">
@@ -103,7 +107,7 @@ export default function ContactPage() {
                             required
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                            className="w-full px-4 py-3 border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200"
                             placeholder="您的姓名"
                           />
                         </div>
@@ -120,7 +124,7 @@ export default function ContactPage() {
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                            className="w-full px-4 py-3 border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200"
                             placeholder="您的職稱"
                           />
                         </div>
@@ -141,7 +145,7 @@ export default function ContactPage() {
                             required
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                            className="w-full px-4 py-3 border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200"
                             placeholder="聯絡電話"
                           />
                         </div>
@@ -159,7 +163,7 @@ export default function ContactPage() {
                             required
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 focus:ring-0 focus:border-primary transition-colors duration-200"
+                            className="w-full px-4 py-3 border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200"
                             placeholder="電子郵件"
                           />
                         </div>

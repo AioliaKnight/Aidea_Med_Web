@@ -161,13 +161,13 @@ export default function CaseDetailPage() {
       {/* 頂部導航區域 */}
       <div className="bg-white pt-8 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-6">
             <Link 
               href="/case" 
               prefetch={true}
               className="flex items-center text-gray-600 hover:text-primary transition-colors duration-300"
             >
-              <ArrowLeftIcon className="w-5 h-5 mr-2" />
+              <ArrowLeftIcon className="w-4 h-4 mr-1" />
               返回案例列表
             </Link>
             
@@ -182,7 +182,7 @@ export default function CaseDetailPage() {
                 ) : (
                   <HeartIcon className="w-5 h-5" />
                 )}
-                <span className="ml-2 hidden sm:inline">{isLiked ? '已收藏' : '收藏'}</span>
+                <span className="ml-1 hidden sm:inline text-sm">{isLiked ? '已收藏' : '收藏'}</span>
               </button>
               
               <div className="relative">
@@ -192,7 +192,7 @@ export default function CaseDetailPage() {
                   aria-label="分享案例"
                 >
                   <ShareIcon className="w-5 h-5" />
-                  <span className="ml-2 hidden sm:inline">分享</span>
+                  <span className="ml-1 hidden sm:inline text-sm">分享</span>
                 </button>
                 
                 <AnimatePresence>
@@ -238,182 +238,262 @@ export default function CaseDetailPage() {
             </div>
           </div>
           
-          {/* 案例標題和分類 */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">{caseStudy.name}</h1>
-            <div className="flex flex-wrap gap-3">
-              <span className="bg-primary text-white px-3 py-1 text-sm">
-                {caseStudy.category}
-              </span>
-              {caseStudy.featured && (
-                <span className="bg-amber-500 text-white px-3 py-1 text-sm">
-                  精選案例
+          {/* 案例關鍵資訊卡片 */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+            {/* 左側內容：標題和標籤 */}
+            <div className="lg:col-span-3 flex flex-col justify-center">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{caseStudy.name}</h1>
+              <p className="text-gray-600 mb-4 line-clamp-2">{caseStudy.description}</p>
+              
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-white">
+                  {caseStudy.category}
                 </span>
-              )}
-              {caseStudy.publishedDate && (
-                <span className="bg-gray-100 text-gray-700 px-3 py-1 text-sm">
-                  發布日期: {new Date(caseStudy.publishedDate).toLocaleDateString('zh-TW')}
-                </span>
-              )}
+                {caseStudy.featured && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500 text-white">
+                    精選案例
+                  </span>
+                )}
+                {caseStudy.publishedDate && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {new Date(caseStudy.publishedDate).toLocaleDateString('zh-TW')}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            {/* 右側內容：關鍵指標 */}
+            <div className="lg:col-span-2">
+              <div className="grid grid-cols-2 gap-3">
+                {caseStudy.metrics.slice(0, 4).map((metric, index) => (
+                  <div key={index} className="flex flex-col justify-center bg-gray-50 p-3 rounded-md border-l-2 border-primary">
+                    <span className="text-xl font-bold text-primary">
+                      {metric.value}
+                    </span>
+                    <span className="text-xs text-gray-600">{metric.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           
           {/* 主要圖片展示 */}
-          <div className="relative aspect-[16/9] w-full mb-10 overflow-hidden">
+          <div className="relative aspect-[21/9] w-full mb-6 overflow-hidden rounded-lg shadow-sm">
             <Image
               src={caseStudy.image || `/cases/${caseStudy.id}.jpg`}
               alt={caseStudy.name}
               fill
               sizes="100vw"
               priority
-              className="object-cover rounded"
+              className="object-cover"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
           </div>
         </div>
       </div>
       
       {/* 案例內容區域 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* 左側內容區 */}
-          <div className="lg:col-span-2 space-y-10">
-            {/* 標籤切換按鈕 */}
-            <div className="flex border-b border-gray-200">
-              {['solution', 'process', 'results'].map(tab => (
-                <button
-                  key={tab}
-                  className={`py-4 px-6 font-medium text-sm ${
-                    activeTab === tab 
-                      ? 'text-primary border-b-2 border-primary' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  } transition-colors duration-300`}
-                  onClick={() => handleTabChange(tab)}
-                >
-                  {tab === 'solution' && '解決方案'}
-                  {tab === 'process' && '執行過程'}
-                  {tab === 'results' && '成效分析'}
-                </button>
-              ))}
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* 左側主要內容區 */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* 標籤切換按鈕 - 改進樣式與互動體驗 */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="flex border-b border-gray-100">
+                {['solution', 'process', 'results'].map(tab => (
+                  <button
+                    key={tab}
+                    className={`flex-1 py-4 px-6 font-medium text-sm transition-all duration-300 ${
+                      activeTab === tab 
+                        ? 'text-primary border-b-2 border-primary bg-primary/5' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleTabChange(tab)}
+                  >
+                    {tab === 'solution' && '解決方案'}
+                    {tab === 'process' && '執行過程'}
+                    {tab === 'results' && '成效分析'}
+                  </button>
+                ))}
+              </div>
             
-            {/* 解決方案內容 */}
-            <AnimatePresence mode="wait">
-              {activeTab === 'solution' && (
-                <motion.div
-                  key="solution"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">解決方案</h2>
-                  <div className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-600">
-                    <p className="text-lg text-gray-600 mb-6">{caseStudy.description}</p>
-                    
-                    <div className="space-y-8">
-                      {Array.isArray(caseStudy.solutions) && caseStudy.solutions.map((solution, index) => (
-                        <div key={index} className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
-                          <h3 className="text-xl font-bold text-gray-900 mb-4">
-                            {typeof solution === 'string' ? `解決方案 ${index + 1}` : solution.title}
-                          </h3>
-                          <p className="text-gray-600">
-                            {typeof solution === 'string' ? solution : solution.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-              
-              {/* 執行過程內容 */}
-              {activeTab === 'process' && (
-                <motion.div
-                  key="process"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">執行過程</h2>
-                  
-                  <Suspense fallback={<div className="h-60 bg-gray-100 animate-pulse rounded-lg" />}>
-                    <CaseTimeline caseStudy={caseStudy} />
-                  </Suspense>
-                  
-                  <div className="mt-12">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">案例圖片展示</h3>
-                    
-                    <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg" />}>
-                      <CaseGallery caseId={caseStudy.id} name={caseStudy.name} />
-                    </Suspense>
-                  </div>
-                </motion.div>
-              )}
-              
-              {/* 成效分析內容 */}
-              {activeTab === 'results' && (
-                <motion.div
-                  key="results"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">成效分析</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                    {caseStudy.metrics.map((metric, index) => (
-                      <div key={index} className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-gray-600 text-sm">{metric.label}</span>
-                          <ChartBarIcon className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="text-3xl font-bold text-primary">
-                          <CountUp end={parseFloat(metric.value.replace(/[^0-9.]/g, ''))} 
-                                  duration={2.5}
-                                  separator=","
-                                  decimals={metric.value.includes('.') ? 2 : 0}
-                                  suffix={metric.value.replace(/[0-9.]/g, '')} />
-                        </div>
+              {/* 標籤內容容器 - 統一外觀 */}
+              <div className="p-6">
+                <AnimatePresence mode="wait">
+                  {/* 解決方案內容 */}
+                  {activeTab === 'solution' && (
+                    <motion.div
+                      key="solution"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                        <span className="w-1 h-5 bg-primary rounded-full mr-2"></span>
+                        解決方案
+                      </h2>
+                      
+                      <div className="prose max-w-none prose-p:text-gray-600 prose-p:my-4">
+                        <p className="text-gray-600">{caseStudy.description}</p>
                       </div>
-                    ))}
-                  </div>
+                      
+                      <div className="space-y-4 mt-6">
+                        {Array.isArray(caseStudy.solutions) && caseStudy.solutions.map((solution, index) => (
+                          <div key={index} className="bg-white border border-gray-100 rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+                              <span className="flex items-center justify-center bg-primary/10 text-primary w-6 h-6 rounded-full text-sm mr-2">{index + 1}</span>
+                              {typeof solution === 'string' ? `解決方案 ${index + 1}` : solution.title}
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                              {typeof solution === 'string' ? solution : solution.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
                   
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">客戶見證</h3>
+                  {/* 執行過程內容 */}
+                  {activeTab === 'process' && (
+                    <motion.div
+                      key="process"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                        <span className="w-1 h-5 bg-primary rounded-full mr-2"></span>
+                        執行過程
+                      </h2>
+                      
+                      <Suspense fallback={<div className="h-60 bg-gray-100 animate-pulse rounded-lg" />}>
+                        <CaseTimeline caseStudy={caseStudy} />
+                      </Suspense>
+                      
+                      <div className="mt-8">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                          <span className="w-1 h-4 bg-gray-300 rounded-full mr-2"></span>
+                          案例圖片展示
+                        </h3>
+                        
+                        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg" />}>
+                          <CaseGallery caseId={caseStudy.id} name={caseStudy.name} />
+                        </Suspense>
+                      </div>
+                    </motion.div>
+                  )}
                   
-                  <Suspense fallback={<div className="h-60 bg-gray-100 animate-pulse rounded-lg" />}>
-                    <CaseTestimonials caseStudy={caseStudy} />
-                  </Suspense>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {/* 成效分析內容 */}
+                  {activeTab === 'results' && (
+                    <motion.div
+                      key="results"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                        <span className="w-1 h-5 bg-primary rounded-full mr-2"></span>
+                        成效分析
+                      </h2>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        {caseStudy.metrics.map((metric, index) => (
+                          <div key={index} className="bg-white border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow duration-300">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm text-gray-600">{metric.label}</span>
+                              <ChartBarIcon className="w-4 h-4 text-primary" />
+                            </div>
+                            <div className="text-2xl font-bold text-primary flex items-baseline">
+                              <CountUp 
+                                end={parseFloat(metric.value.replace(/[^0-9.]/g, ''))} 
+                                duration={2.5}
+                                separator=","
+                                decimals={metric.value.includes('.') ? 2 : 0}
+                                enableScrollSpy={false}
+                              />
+                              <span className="ml-1">{metric.value.replace(/[0-9.]/g, '')}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                        <span className="w-1 h-4 bg-gray-300 rounded-full mr-2"></span>
+                        客戶見證
+                      </h3>
+                      
+                      <Suspense fallback={<div className="h-60 bg-gray-100 animate-pulse rounded-lg" />}>
+                        <CaseTestimonials caseStudy={caseStudy} />
+                      </Suspense>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
           
           {/* 右側側邊欄 */}
-          <div className="lg:col-span-1">
-            {/* 成效指標概覽 */}
-            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">成效指標</h3>
-              <div className="space-y-4">
-                {caseStudy.metrics.map((metric, index) => (
-                  <div key={index} className="flex items-center space-x-3 border-l-4 border-primary pl-3 py-1">
-                    <span className="text-lg font-bold text-primary">{metric.value}</span>
-                    <span className="text-gray-600">{metric.label}</span>
+          <div className="lg:col-span-4 space-y-6">
+            {/* 案例概要卡片 */}
+            <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+              <div className="bg-gray-50 py-3 px-4 border-b border-gray-100">
+                <h3 className="text-lg font-medium text-gray-900">案例概要</h3>
+              </div>
+              <div className="p-4">
+                <dl className="space-y-4">
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">類別</dt>
+                    <dd className="mt-1 text-sm text-gray-900">{caseStudy.category}</dd>
                   </div>
-                ))}
+                  {caseStudy.publishedDate && (
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">發佈日期</dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {new Date(caseStudy.publishedDate).toLocaleDateString('zh-TW')}
+                      </dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">解決方案數量</dt>
+                    <dd className="mt-1 text-sm text-gray-900">{caseStudy.solutions.length} 項</dd>
+                  </div>
+                </dl>
               </div>
             </div>
             
             {/* 相關案例推薦 */}
-            <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">相關案例</h3>
-              
-              <Suspense fallback={<div className="space-y-4">{Array(3).fill(0).map((_, i) => (
-                <div key={i} className="h-24 bg-gray-100 animate-pulse rounded" />
-              ))}</div>}>
-                <CaseRelated currentId={caseStudy.id} category={caseStudy.category} />
-              </Suspense>
+            <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+              <div className="bg-gray-50 py-3 px-4 border-b border-gray-100">
+                <h3 className="text-lg font-medium text-gray-900">相關案例</h3>
+              </div>
+              <div className="p-4">
+                <Suspense fallback={<div className="space-y-4">
+                  {Array(3).fill(0).map((_, i) => (
+                    <div key={i} className="h-24 bg-gray-100 animate-pulse rounded-lg" />
+                  ))}
+                </div>}>
+                  <CaseRelated currentId={caseStudy.id} category={caseStudy.category} />
+                </Suspense>
+              </div>
+            </div>
+            
+            {/* 聯絡我們卡片 */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-5 text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">需要類似的解決方案？</h3>
+              <p className="text-sm text-gray-600 mb-4">我們可以為您的診所量身打造專屬策略</p>
+              <Link
+                href="/contact"
+                prefetch={true}
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              >
+                立即諮詢
+              </Link>
             </div>
           </div>
         </div>

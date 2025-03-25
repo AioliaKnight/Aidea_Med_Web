@@ -72,8 +72,9 @@ export const CaseCard = React.memo(({
   const cardContent = (
     <div 
       className={`
-        h-full bg-white border border-gray-100 transition-all duration-400
-        ${isHovered ? 'shadow-lg translate-y-[-5px]' : 'shadow-md'}
+        h-full bg-white border-t border-r border-b border-gray-100 
+        border-l-2 border-l-primary transition-all duration-300
+        ${isHovered ? 'shadow-md translate-y-[-4px]' : 'shadow-sm'}
         ${isCompact ? 'rounded-lg overflow-hidden' : ''}
       `}
       onMouseEnter={handleMouseEnter}
@@ -98,7 +99,7 @@ export const CaseCard = React.memo(({
         `}>
           {imgStatus.loading && (
             <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent animate-spin rounded-full" />
+              <div className="w-8 h-8 border-2 border-primary border-t-transparent animate-spin rounded-full" />
             </div>
           )}
           
@@ -108,7 +109,7 @@ export const CaseCard = React.memo(({
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={`
-              object-cover transition-transform duration-400 
+              object-cover transition-transform duration-300 
               ${isHovered ? 'scale-105' : 'scale-100'}
             `}
             priority={index <= 2} // 優化：只對前2個案例設置為優先加載
@@ -121,27 +122,32 @@ export const CaseCard = React.memo(({
           
           {/* 圖片覆蓋層 */}
           <div className={`
-            absolute inset-0 bg-black transition-opacity duration-400
-            ${isHovered ? 'opacity-20' : 'opacity-0'}
+            absolute inset-0 bg-gradient-to-t from-black/60 to-transparent transition-opacity duration-300
+            ${isHovered ? 'opacity-100' : 'opacity-70'}
           `} />
           
           {/* 類別標籤 */}
-          {caseStudy.category && (
-            <div className={`
-              absolute left-0 top-3 bg-primary text-white font-medium
-              ${isCompact ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-xs'}
-            `}>
-              {caseStudy.category}
-            </div>
-          )}
+          <div className="absolute top-3 left-0 right-0 flex justify-between px-3 z-10">
+            {caseStudy.category && (
+              <div className="bg-primary text-white font-medium px-2 py-0.5 text-xs">
+                {caseStudy.category}
+              </div>
+            )}
+            
+            {/* 精選標籤 */}
+            {caseStudy.featured && (
+              <div className="bg-amber-500 text-white font-medium px-2 py-0.5 text-xs">
+                精選案例
+              </div>
+            )}
+          </div>
           
-          {/* 精選標籤 */}
-          {caseStudy.featured && (
-            <div className={`
-              absolute right-0 top-3 bg-amber-500 text-white font-medium
-              ${isCompact ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-xs'}
-            `}>
-              精選案例
+          {/* 案例名稱 - 移到圖片上以節省空間 */}
+          {isCompact && (
+            <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+              <h3 className="text-white font-bold text-base line-clamp-1 drop-shadow-sm">
+                {caseStudy.name}
+              </h3>
             </div>
           )}
         </div>
@@ -149,18 +155,18 @@ export const CaseCard = React.memo(({
         {/* 內容區域 */}
         <div className={`
           flex-1 flex flex-col
-          ${isCompact ? 'p-3' : 'p-5'}
+          ${isCompact ? 'p-3' : 'p-4'}
         `}>
-          <h3 className={`
-            font-bold text-gray-900 
-            ${isCompact ? 'text-base mb-1.5' : 'text-xl mb-3'}
-          `}>
-            {caseStudy.name}
-          </h3>
+          {/* 僅在非緊湊模式下顯示標題 */}
+          {!isCompact && (
+            <h3 className="font-bold text-gray-900 text-lg mb-2">
+              {caseStudy.name}
+            </h3>
+          )}
           
           <p className={`
             text-gray-600 flex-grow
-            ${isCompact ? 'text-xs mb-2 line-clamp-1' : 'text-sm mb-4 line-clamp-2'}
+            ${isCompact ? 'text-xs line-clamp-2' : 'text-sm line-clamp-2 mb-3'}
           `}>
             {caseStudy.description}
           </p>
@@ -169,24 +175,15 @@ export const CaseCard = React.memo(({
           {Array.isArray(caseStudy.metrics) && caseStudy.metrics.length > 0 && (
             <div className="mt-auto">
               <div className={`
-                flex flex-wrap
-                ${isCompact ? 'gap-2 mb-2' : 'gap-3 mb-4'}
+                grid ${isCompact ? 'grid-cols-1' : 'grid-cols-2'} gap-2
+                ${isCompact ? 'mb-1' : 'mb-3'}
               `}>
                 {caseStudy.metrics.slice(0, isCompact ? 1 : 2).map((metric, idx) => (
-                  <div key={idx} className={`
-                    flex items-center border-l-4 border-primary
-                    ${isCompact ? 'pl-1.5 py-0.5' : 'pl-2 py-1'}
-                  `}>
-                    <span className={`
-                      font-bold text-primary
-                      ${isCompact ? 'text-base' : 'text-lg'}
-                    `}>
+                  <div key={idx} className="flex items-center border-l-2 border-primary pl-2 py-0.5">
+                    <span className="font-bold text-primary text-sm mr-1">
                       {metric.value}
                     </span>
-                    <span className={`
-                      text-gray-600 ml-1
-                      ${isCompact ? 'text-xxs' : 'text-xs'}
-                    `}>
+                    <span className="text-gray-600 text-xs">
                       {metric.label}
                     </span>
                   </div>
@@ -195,21 +192,17 @@ export const CaseCard = React.memo(({
             </div>
           )}
           
-          {/* 解決方案提示 - 只在非緊湊模式下顯示 */}
-          {!isCompact && Array.isArray(caseStudy.solutions) && caseStudy.solutions.length > 0 && (
-            <div className="flex items-center text-sm text-primary mt-auto">
-              <span className="mr-2">解決方案</span>
-              <div className="flex gap-1">
-                {caseStudy.solutions.slice(0, 3).map((_, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`
-                      w-2 h-2 bg-primary rounded-sm
-                      ${isHovered ? 'scale-110' : 'scale-100'}
-                      transition-transform duration-300
-                    `}
-                  />
-                ))}
+          {/* 解決方案計數 - 所有模式下都顯示，但樣式不同 */}
+          {Array.isArray(caseStudy.solutions) && caseStudy.solutions.length > 0 && (
+            <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+              <span className="text-xs text-gray-500">
+                {caseStudy.solutions.length} 項解決方案
+              </span>
+              <div className="flex items-center text-primary text-sm">
+                查看詳情
+                <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </div>
           )}

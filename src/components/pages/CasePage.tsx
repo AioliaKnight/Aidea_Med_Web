@@ -79,13 +79,13 @@ export interface ArticleStructuredData {
 // 案例資料模型
 export const caseStudies: CaseStudy[] = [
   {
-    id: 'north-district-dental',
-    name: '北區牙醫診所A',
+    id: 'artisticdc',
+    name: '雅德思牙醫診所',
     category: '品牌重塑',
-    description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 6 個月內實現顯著成長：',
+    description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 2 個月內實現顯著成長：',
     metrics: [
       { value: '200%', label: '新患預約成長' },
-      { value: '5萬+', label: '社群追蹤者' },
+      { value: '9億+', label: '年營業額' },
       { value: '300%', label: '品牌知名度提升' },
       { value: '50%', label: '每月穩定回診率成長' }
     ],
@@ -108,7 +108,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#4A6CF7',
-    image: '/images/case-placeholder.jpg',
+    image: '/images/cases/case_artisticdc.jpg',
     featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
     updatedDate: '2023-11-20T00:00:00Z',
@@ -119,14 +119,14 @@ export const caseStudies: CaseStudy[] = [
     }
   },
   {
-    id: 'east-district-dental',
-    name: '東區牙醫診所B',
-    category: '空間規劃',
-    description: '建立全新的診所空間設計，結合專業醫療環境與舒適療癒氛圍，提升診所差異化競爭力與病患體驗。',
+    id: 'ytdentalcare',
+    name: '雲天牙醫診所',
+    category: '廣告投放',
+    description: '優化廣告投放，每月新增100+NP',
     metrics: [
       { value: '35%', label: '初診患者滿意度提升' },
-      { value: '60%', label: '轉診推薦率增長' },
-      { value: '23%', label: '平均診次營收成長' },
+      { value: '20%', label: '新患者增長' },
+      { value: '23%', label: '廣告成效優化' },
       { value: '40%', label: '回診率提升' }
     ],
     solutions: [
@@ -148,14 +148,14 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#8D72E1',
-    image: '/images/case-placeholder.jpg',
+    image: '/images/cases/case_ytdentalcare.jpg',
     featured: true,
     publishedDate: '2023-06-10T00:00:00Z',
     updatedDate: '2023-09-15T00:00:00Z',
     testimonial: {
       content: '全新的診所空間不只讓患者感到舒適，也讓我們的工作效率提高。專業團隊從設計到執行都給予最佳支援。',
-      author: '林醫師',
-      title: '東區診所負責人'
+      author: '蘇醫師',
+      title: '雲天牙醫診所總院長'
     }
   },
   {
@@ -264,6 +264,46 @@ export const caseStudies: CaseStudy[] = [
       content: '數位行銷策略精準觸及我們的目標客群，大幅提升了高價值療程的詢問度與轉換率，投資報酬率遠超預期。',
       author: '黃醫師',
       title: 'Smile牙醫診所創辦人'
+    }
+  },
+  {
+    id: 'cloud-sky-dental',
+    name: '雲天牙醫診所',
+    category: '整合行銷',
+    description: '幫助都會區牙醫診所從激烈競爭中脫穎而出，透過精準的SEO與社群媒體策略吸引理想客群，建立專業品牌形象',
+    metrics: [
+      { value: '258%', label: '診所網站流量成長' },
+      { value: '68%', label: '新客戶預約增加率' },
+      { value: '4.8', label: '客戶平均滿意度' },
+      { value: '152%', label: '社群互動率提升' }
+    ],
+    solutions: [
+      {
+        title: '全面SEO優化與本地搜尋排名提升',
+        description: '針對關鍵字「信義區植牙」、「台北牙醫推薦」等進行優化，提升Google本地搜尋排名，讓診所在地區搜尋中脫穎而出。'
+      },
+      {
+        title: '客製化社群媒體內容策略',
+        description: '建立符合診所品牌調性的社群內容計畫，定期發布專業口腔健康知識與診所動態，增加與潛在客戶互動機會。'
+      },
+      {
+        title: '患者旅程改善與預約流程優化',
+        description: '重新設計線上預約系統與自動化提醒機制，簡化患者預約流程，提高轉換率與降低預約取消比例。'
+      },
+      {
+        title: '專業醫療內容製作與權威建立',
+        description: '透過高品質的部落格文章與影片內容，建立診所在特定治療領域的專業權威，提升患者信任感與專業形象。'
+      }
+    ],
+    color: '#E74C3C',
+    image: '/images/cases/cloud-sky-dental.jpg',
+    featured: true,
+    publishedDate: '2023-12-15T00:00:00Z',
+    updatedDate: '2024-01-30T00:00:00Z',
+    testimonial: {
+      content: '自從實施了整合行銷策略後，我們診所的新患數量顯著增加，尤其是對於我們主打的植牙和隱形矯正治療特別有興趣的患者。專業團隊的服務讓我們能專注於診療，同時擴大診所影響力。',
+      author: '李醫師',
+      title: '雲天牙醫診所院長'
     }
   }
 ]
