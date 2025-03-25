@@ -273,7 +273,7 @@ const HeroSection = memo(function HeroSection() {
                   >
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
                       {titles[currentTitleIndex].main}
-                      <span className="block mt-2 font-extrabold text-white relative">
+                      <span className="block mt-1 font-extrabold text-white relative">
                         {titles[currentTitleIndex].sub}
                       </span>
                     </h1>
@@ -283,7 +283,7 @@ const HeroSection = memo(function HeroSection() {
             </div>
             
             <div 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-3 mb-6 font-bold tracking-wide"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-1 mb-4 font-bold tracking-wide"
               suppressHydrationWarning
             >
               <AnimatePresence mode="wait">
@@ -586,7 +586,7 @@ const MarketingStatement = memo(function MarketingStatement() {
                     {block.en.title}
                   </h2>
                   {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-1 md:mt-2 leading-tight tracking-tight text-pretty relative group">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
                       {block.en.subtitle}
                     </h3>
                   )}
