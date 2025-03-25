@@ -169,12 +169,13 @@ const ContactForm = React.memo(({
   // 使用useMemo優化提交按鈕文本和狀態
   const submitButtonProps = useMemo(() => {
     return {
-      isLoading: formStatus === FormStatus.SUBMITTING || isPending,
-      loadingText: '提交中...',
-      text: '提交諮詢',
-      type: 'submit' as const
+      status: formStatus,
+      submittingText: '提交中...',
+      idleText: '提交諮詢',
+      successText: '提交成功',
+      errorText: '請重試'
     }
-  }, [formStatus, isPending]);
+  }, [formStatus]);
 
   return (
     <AnimatedDiv {...animationProps} className={`${className}`}>

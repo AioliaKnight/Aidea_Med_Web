@@ -826,16 +826,42 @@ function ServiceSection() {
   );
 }
 
+type StatItem = {
+  value: number;
+  suffix: string;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+type StatsSectionProps = {
+  className?: string;
+}
+
 // 更新數據統計區塊
-function StatsSection() {
+function StatsSection({ className = '' }: StatsSectionProps) {
   // 擴展統計數據和類別
-  const stats = [
+  const stats: StatItem[] = [
     {
       value: 300,
       suffix: "+",
       label: "合作診所",
       description: "全台醫療網絡覆蓋",
       icon: <Stethoscope className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+    },
+    {
+      value: 700,
+      suffix: "萬+",
+      label: "月廣告投放",
+      description: "精準投放策略",
+      icon: <ChartIcon className="w-10 h-10 text-white/90" strokeWidth={1.5} />
+    },
+    {
+      value: 10000,
+      suffix: "萬+",
+      label: "年廣告投放",
+      description: "持續成長動能",
+      icon: <GlobeIcon className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     },
     {
       value: 98,
@@ -960,10 +986,11 @@ function StatsSection() {
   }, [activeIndex]);
 
   return (
-    <section className="relative py-16 md:py-24 bg-primary overflow-hidden">
-      {/* 簡化的背景 */}
+    <section className={`relative py-16 md:py-24 bg-primary overflow-hidden ${className}`}>
+      {/* 優化的背景效果 */}
       <div className="absolute inset-0 bg-primary z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-100"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
       </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
@@ -975,7 +1002,7 @@ function StatsSection() {
           transition={{ duration: 0.6 }}
         >
           <motion.div 
-            className="inline-block text-white font-medium mb-5 px-5 py-2 bg-white/10 rounded-full"
+            className="inline-block text-white font-medium mb-5 px-5 py-2 bg-white/10 rounded-full backdrop-blur-sm"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -1010,7 +1037,7 @@ function StatsSection() {
           </motion.p>
         </motion.div>
 
-        {/* 改良的單行水平滾動統計數據 */}
+        {/* 優化的統計數據卡片容器 */}
         <div className="relative overflow-hidden px-4 md:px-8">
           {/* 滾動箭頭 - 左 */}
           <motion.button
@@ -1027,95 +1054,51 @@ function StatsSection() {
             </svg>
           </motion.button>
 
-          {/* 水平滾動容器 */}
-          <div className="relative mx-auto overflow-hidden">
-            <motion.div
-              ref={scrollRef}
-              className="stats-scroll-container flex overflow-x-auto pb-8 md:pb-10 scrollbar-custom snap-x snap-mandatory"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.1
-                  }
-                }
-              }}
-              onScroll={handleScroll}
-            >
-              {/* 內容容器 - 確保卡片居中顯示 */}
-              <div className="flex gap-5 px-12 md:px-16 items-stretch mx-auto">
-                {stats.map((stat, index) => (
+          {/* 滾動容器 */}
+          <div 
+            ref={scrollRef}
+            className="stats-scroll-container flex overflow-x-auto scrollbar-hide gap-6 py-4 px-4 md:px-8"
+            onScroll={handleScroll}
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                className={`stats-item flex-none w-[280px] md:w-[320px] p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 ${
+                  activeIndex === index ? 'scale-105 shadow-xl' : 'scale-100'
+                }`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-white/10 rounded-xl">
+                    {stat.icon}
+                  </div>
                   <motion.div
-                    key={`stat-${stat.label}`}
-                    variants={{
-                      hidden: { opacity: 0, y: 20 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          duration: 0.5,
-                          ease: [0.6, 0.05, 0.01, 0.9]
-                        }
-                      }
-                    }}
-                    className={`stats-item flex-none w-[260px] sm:w-[280px] md:w-[300px] snap-center`}
-                    style={{ 
-                      transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                      transform: `scale(${index === activeIndex ? 1 : 0.92})`,
-                    }}
+                    className="text-2xl font-bold text-white"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <motion.div 
-                      className={`bg-white/8 p-6 md:p-8 rounded-xl h-full flex flex-col items-center border border-white/10 backdrop-blur-sm
-                                ${index === activeIndex ? 'ring-2 ring-white/20 shadow-xl' : ''}`}
-                      animate={{
-                        y: index === activeIndex ? -8 : 0,
-                        backgroundColor: index === activeIndex ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.08)",
-                        borderColor: index === activeIndex ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)"
-                      }}
-                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                      whileHover={{ 
-                        y: -6, 
-                        backgroundColor: "rgba(255, 255, 255, 0.15)",
-                        borderColor: "rgba(255, 255, 255, 0.25)"
-                      }}
-                    >
-                      <div className={`mb-5 p-3 bg-white/10 rounded-full ${index === activeIndex ? 'bg-white/15' : ''}`}>
-                        {stat.icon}
-                      </div>
-                      <div className="relative mb-5">
-                        <div className="text-5xl sm:text-6xl font-bold text-white">
-                          <CountUp 
-                            key={`count-${index}-${animateNumber}`}
-                            end={stat.value} 
-                            suffix={stat.suffix} 
-                            duration={1.5} 
-                            delay={0.1}
-                            start={0}
-                            redraw={true}
-                            preserveValue={false}
-                            useEasing
-                          />
-                        </div>
-                        <motion.div 
-                          key={`underline-${index}-${animateNumber}`}
-                          className="absolute -bottom-3 left-1/4 right-1/4 h-0.5 bg-white/20 rounded-full" 
-                          initial={{ width: "0%", left: "50%", right: "50%" }}
-                          animate={{ width: "50%", left: "25%", right: "25%" }}
-                          transition={{ duration: 1, delay: 0.2 }}
-                        ></motion.div>
-                      </div>
-                      <h3 className="text-xl font-bold text-white mb-3">{stat.label}</h3>
-                      <p className="text-white/70 text-center text-sm">{stat.description}</p>
-                    </motion.div>
+                    <CountUp
+                      start={0}
+                      end={stat.value}
+                      duration={2}
+                      separator=","
+                      decimals={0}
+                      suffix={stat.suffix}
+                      redraw={animateNumber}
+                    />
                   </motion.div>
-                ))}
-              </div>
-            </motion.div>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">{stat.label}</h3>
+                <p className="text-white/70">{stat.description}</p>
+              </motion.div>
+            ))}
           </div>
-          
+
           {/* 滾動箭頭 - 右 */}
           <motion.button
             className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm hidden md:flex items-center justify-center shadow-lg"
@@ -1130,83 +1113,23 @@ function StatsSection() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </motion.button>
-          
-          {/* 改進的滾動指示器 */}
-          <div className="mt-4 flex justify-center gap-3 items-center">
-            {stats.map((_, index) => (
-              <motion.button
-                key={index}
-                initial={{ opacity: 0.5, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => scrollToItem(index)}
-                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer
-                  ${index === activeIndex 
-                      ? 'w-8 bg-white shadow-glow' 
-                      : 'w-2.5 bg-white/30 hover:bg-white/50'}`}
-                aria-label={`滾動到數據 ${index + 1}`}
-              ></motion.button>
-            ))}
-          </div>
-          
-          {/* 手機版滾動提示 */}
-          <motion.div 
-            className="mt-4 text-center text-white/60 text-sm flex items-center justify-center md:hidden"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1 }}
-          >
-            <span className="inline-flex items-center">
-              <motion.div 
-                animate={{ x: [-5, 0, -5] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                className="mr-1.5"
-              >
-                ←
-              </motion.div>
-              左右滑動查看更多
-              <motion.div 
-                animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut", delay: 0.5 }}
-                className="ml-1.5"
-              >
-                →
-              </motion.div>
-            </span>
-          </motion.div>
+        </div>
+
+        {/* 優化的導航點 */}
+        <div className="flex justify-center gap-2 mt-8">
+          {stats.map((_, index) => (
+            <motion.button
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                activeIndex === index ? 'bg-white w-4' : 'bg-white/30'
+              }`}
+              onClick={() => scrollToItem(index)}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            />
+          ))}
         </div>
       </div>
-      
-      {/* 自定義滾動條樣式 */}
-      <style jsx global>{`
-        .scrollbar-custom::-webkit-scrollbar {
-          height: 4px;
-          background: transparent;
-        }
-        
-        .scrollbar-custom::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-        }
-        
-        .scrollbar-custom::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 10px;
-          cursor: pointer;
-        }
-        
-        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .shadow-glow {
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-      `}</style>
     </section>
   );
 }
