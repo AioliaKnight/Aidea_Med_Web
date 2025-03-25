@@ -147,6 +147,20 @@ const CountUp = dynamic(() => import('react-countup'), {
 // 更新 Hero Section 樣式
 const HeroSection = memo(function HeroSection() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { ref: inViewRef, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  
+  // 設置ref函數，同時設置兩個ref
+  const setRefs = useCallback(
+    (node: HTMLDivElement | null) => {
+      // 應用兩個refs
+      heroRef.current = node;
+      inViewRef(node);
+    },
+    [inViewRef]
+  );
   
   // 標題數據 - 針對不同目標對象
   const titles = [
@@ -173,327 +187,7 @@ const HeroSection = memo(function HeroSection() {
     }
   ];
 
-  // 追蹤當前顯示的標題
-  const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
-  
-  // 定期切換標題
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
-    }, 4000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  // 動畫變體
-  const titleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.4,
-        ease: "easeOut"
-      }
-    },
-    exit: {
-      opacity: 0,
-      y: -20,
-      transition: {
-        duration: 0.3
-      }
-    }
-  };
-  
-  // 標籤數據
-  const tags = [
-    { id: 'ai', name: '#AI' },
-    { id: 'creativity', name: '#Creativity' },
-    { id: 'design', name: '#Design Thinking' },
-    { id: 'insight', name: '#Insight' }
-  ];
-  
-  return (
-    <section 
-      ref={heroRef}
-      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center justify-center bg-primary overflow-hidden pt-16"
-      role="banner"
-      aria-label="網站主要橫幅"
-    >
-      {/* 背景層 - 簡潔扁平化設計 */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{ willChange: 'transform' }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/95 z-10"></div>
-        <motion.div 
-          className="absolute inset-0 w-full h-full select-none pointer-events-none"
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1,
-            transition: { 
-              duration: 0.8,
-              ease: "easeOut"
-            }
-          }}
-          style={{ willChange: 'transform' }}
-        >
-          <Image
-            src="/images/medical-bg.jpg"
-            alt="醫療背景"
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover object-center opacity-50"
-          />
-        </motion.div>
-      </div>
-      
-      <div className="container-custom relative z-20 py-12 md:py-20">
-        <div className="max-w-4xl mx-auto">
-          {/* 標題和英文標語靠左對齊 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="px-4 sm:px-6 md:pl-8 lg:pl-12 transform-gpu"
-          >
-            <div className="flex flex-col">
-              <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentTitleIndex}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    variants={heroTitleVariants}
-                    className="font-bold text-white leading-tight md:leading-tight"
-                    style={{ willChange: 'transform, opacity' }}
-                  >
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
-                      {titles[currentTitleIndex].main}
-                      <span className="block mt-1 font-extrabold text-white relative">
-                        {titles[currentTitleIndex].sub}
-                      </span>
-                    </h1>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-            
-            <div 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-1 mb-4 font-bold tracking-wide"
-              suppressHydrationWarning
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentTitleIndex}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={heroSubtitleVariants}
-                  className="flex flex-col"
-                >
-                  <div className="inline-block text-white/90 mb-0.5 leading-tight">{titles[currentTitleIndex].enMain},</div>
-                  <div className="inline-block font-extrabold bg-clip-text text-white leading-tight break-words hyphens-auto">{titles[currentTitleIndex].enSub}.</div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </motion.div>
-          
-          {/* 下面的元素置中對齊 */}
-          <div className="flex flex-col items-center px-4 sm:px-6">
-            {/* 扁平化標籤設計 - 簡化邊框並提高對比 */}
-            <div className="flex flex-wrap gap-3 mt-8 md:mt-12" style={{ willChange: 'transform' }}>
-              {tags.map((tag, index) => (
-                <motion.span
-                  key={tag.id}
-                  variants={tagAnimationVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  custom={index}
-                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
-                             bg-white/10 border border-white/20 
-                             cursor-pointer hover:bg-white/15 transition-colors"
-                  style={{ willChange: 'transform, opacity' }}
-                >
-                  {tag.name}
-                </motion.span>
-              ))}
-            </div>
-            
-            {/* 信任指標和簡短數據統計 */}
-            <motion.div
-              className="mt-6 mb-8 w-full transform-gpu"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.3 }}
-            >
-              <motion.div 
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 md:mt-16"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0,
-                  transition: { 
-                    delay: 0.5, 
-                    duration: 0.4,
-                    ease: "easeOut" 
-                  }
-                }}
-                style={{ willChange: 'transform' }}
-              >
-                <div className="flex flex-col items-center">
-                  <motion.div 
-                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
-                    variants={homePageAnimations.hero.stats}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ 
-                      ...homePageAnimations.hero.stats.transition,
-                      delay: 0.7 
-                    }}
-                  >
-                    <CountUp
-                      {...homePageAnimations.hero.countUp.satisfaction}
-                      separator=","
-                      enableScrollSpy={false}
-                    />
-                  </motion.div>
-                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">客戶滿意度</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <motion.div 
-                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
-                    variants={homePageAnimations.hero.stats}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ 
-                      ...homePageAnimations.hero.stats.transition,
-                      delay: 0.8 
-                    }}
-                  >
-                    <CountUp
-                      {...homePageAnimations.hero.countUp.cases}
-                      separator=","
-                      enableScrollSpy={false}
-                    />
-                  </motion.div>
-                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">成功案例</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <motion.div 
-                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
-                    variants={homePageAnimations.hero.stats}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ 
-                      ...homePageAnimations.hero.stats.transition, 
-                      delay: 0.9 
-                    }}
-                  >
-                    <CountUp
-                      {...homePageAnimations.hero.countUp.response}
-                      separator=","
-                      enableScrollSpy={false}
-                    />
-                  </motion.div>
-                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">專業響應</span>
-                </div>
-              </motion.div>
-          </motion.div>
-          
-          {/* 預約按鈕 - 純黑底白字扁平化設計 */}
-          <motion.div
-              className="mt-4 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-          >
-              <Link href="/contact" prefetch={true}>
-              <motion.span 
-                className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 transform-gpu"
-                initial={{ y: 0 }}
-                whileHover={{ 
-                  y: -3,
-                  boxShadow: '0 3px 0 rgba(255,255,255,0.3)',
-                  transition: { duration: 0.2 }
-                }}
-                whileTap={{ 
-                  y: 0,
-                  boxShadow: '0 0px 0 rgba(255,255,255,0)',
-                  transition: { duration: 0.1 }
-                }}
-              >
-                <motion.span 
-                  className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90"
-                  animate={{ 
-                    opacity: [0.7, 1, 0.7],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  A:
-                </motion.span>
-                <span className="font-medium">免費30分鐘專業顧問</span>
-                <motion.span
-                  className="ml-1.5 sm:ml-2 text-white/90"
-                  initial={{ x: 0 }}
-                  animate={{ 
-                    x: [0, 4, 0],
-                    transition: { 
-                      repeat: Infinity, 
-                      repeatType: "reverse", 
-                      duration: 1.2 
-                    }
-                  }}
-                >
-                  →
-                </motion.span>
-              </motion.span>
-            </Link>
-          </motion.div>
-          </div>
-        </div>
-      </div>
-
-      {/* 向下滾動指示器 - 簡化設計 */}
-      <motion.div 
-        className="absolute bottom-6 sm:bottom-8 left-0 right-0 flex justify-center z-10"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-      >
-        <motion.div 
-          className="flex flex-col items-center cursor-pointer group"
-          onClick={() => document.getElementById('marketing-statement')?.scrollIntoView({ behavior: 'smooth' })}
-          whileHover={{ y: -2 }}
-          whileTap={{ y: 0 }}
-        >
-          <span className="text-white text-xs sm:text-sm mb-1.5 sm:mb-2 font-medium opacity-80 group-hover:opacity-100 transition-opacity">探索更多</span>
-          <motion.div
-            animate={homePageAnimations.hero.scrollIndicator.animate}
-            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-white bg-black border border-white/20 group-hover:bg-white/10 transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-})
-
-// 新增階梯式行銷文案區塊 - 優化渲染和圖片載入
-const MarketingStatement = memo(function MarketingStatement() {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
-
-  // 重新組織文案，按照語義分段
+  // 階梯式行銷文案數據
   const contentBlocks = [
     {
       en: {
@@ -533,13 +227,35 @@ const MarketingStatement = memo(function MarketingStatement() {
     }
   ];
 
+  // 追蹤當前顯示的標題
+  const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
+  
+  // 定期切換標題
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // 標籤數據
+  const tags = [
+    { id: 'ai', name: '#AI' },
+    { id: 'creativity', name: '#Creativity' },
+    { id: 'design', name: '#Design Thinking' },
+    { id: 'insight', name: '#Insight' }
+  ];
+  
   return (
     <section 
-      id="marketing-statement" 
-      className="relative py-16 md:py-24 bg-primary overflow-hidden"
-      ref={ref}
+      ref={setRefs}
+      className="relative min-h-[100vh] flex flex-col justify-center bg-primary overflow-hidden pt-16"
+      role="banner"
+      aria-label="網站主要橫幅"
+      id="hero"
     >
-      {/* 背景設計 - 與 HeroSection 統一風格 */}
+      {/* 背景設計 - 採用MarketingStatement的背景樣式 */}
       <div className="absolute inset-0">
         {/* 純色背景 */}
         <div className="absolute inset-0 bg-primary"></div>
@@ -547,138 +263,262 @@ const MarketingStatement = memo(function MarketingStatement() {
         {/* 使用不透明的白色線條背景圖片 */}
         <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
         
-        {/* 背景覆蓋 - 調整透明度與 HeroSection 一致 */}
+        {/* 背景覆蓋 */}
         <div className="absolute inset-0 bg-primary/20"></div>
       </div>
       
-      <div className="container-custom relative z-10 px-4 sm:px-6 md:px-8">
+      {/* 主要標題內容區 */}
+      <div className="container-custom relative z-20 py-12 md:py-16 flex-grow">
         <div className="max-w-5xl mx-auto">
-          {contentBlocks.map((block, index) => (
-            <motion.div
-              key={index}
-              className={`mb-8 ${block.className}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={inView ? 
-                { 
-                  opacity: 1, 
-                  x: 0,
-                  transition: {
-                    delay: block.delay,
-                    duration: 0.4,
-                    ease: "easeOut"
-                  }
-                } : 
-                { opacity: 0, x: -20 }
-              }
-              style={{ willChange: 'transform' }}
+          {/* 標題和英文標語靠左對齊 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="px-4 sm:px-6 md:pl-8 lg:pl-12 transform-gpu mb-10 md:mb-20"
+          >
+            <div className="flex flex-col">
+              <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentTitleIndex}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={heroTitleVariants}
+                    className="font-bold text-white leading-tight md:leading-tight"
+                    style={{ willChange: 'transform, opacity' }}
+                  >
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
+                      {titles[currentTitleIndex].main}
+                      <span className="block mt-1 font-extrabold text-white relative">
+                        {titles[currentTitleIndex].sub}
+                      </span>
+                    </h1>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+            
+            <div 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-1 mb-8 font-bold tracking-wide"
+              suppressHydrationWarning
             >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
-                <motion.div 
-                  className="w-full md:w-5/12"
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-                    duration: 0.3, 
-                    delay: Math.min(block.delay + 0.1, 0.4)
-                  }}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTitleIndex}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={heroSubtitleVariants}
+                  className="flex flex-col"
                 >
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
-                    {block.en.title}
-                  </h2>
-                  {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
-                      {block.en.subtitle}
-                    </h3>
-                  )}
+                  <div className="inline-block text-white/90 mb-0.5 leading-tight">{titles[currentTitleIndex].enMain},</div>
+                  <div className="inline-block font-extrabold bg-clip-text text-white leading-tight break-words hyphens-auto">{titles[currentTitleIndex].enSub}.</div>
                 </motion.div>
-                
-                <motion.div 
-                  className="mt-3 md:mt-0 w-full md:w-6/12"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: block.delay + 0.2
+              </AnimatePresence>
+            </div>
+
+            {/* 預約按鈕 - 黑底白字扁平化設計 */}
+            <motion.div
+              className="mt-4 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
+              <Link href="/contact" prefetch={true}>
+                <motion.span 
+                  className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 transform-gpu"
+                  initial={{ y: 0 }}
+                  whileHover={{ 
+                    y: -3,
+                    boxShadow: '0 3px 0 rgba(255,255,255,0.3)',
+                    transition: { duration: 0.2 }
+                  }}
+                  whileTap={{ 
+                    y: 0,
+                    boxShadow: '0 0px 0 rgba(255,255,255,0)',
+                    transition: { duration: 0.1 }
                   }}
                 >
-                  <div className="border-l-4 border-white/70 pl-4 md:pl-6">
-                    <motion.p 
-                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={inView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ 
-                        duration: 0.3, 
-                        delay: Math.min(block.delay + 0.2, 0.5)
-                      }}
-                      whileHover={{ x: 3 }}
-                    >
-                      {block.zh.title}
-                    </motion.p>
-                    {block.zh.subtitle && (
+                  <motion.span 
+                    className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90"
+                    animate={{ 
+                      opacity: [0.7, 1, 0.7],
+                      transition: { duration: 2, repeat: Infinity }
+                    }}
+                  >
+                    A:
+                  </motion.span>
+                  <span className="font-medium">免費30分鐘專業顧問</span>
+                  <motion.span
+                    className="ml-1.5 sm:ml-2 text-white/90"
+                    initial={{ x: 0 }}
+                    animate={{ 
+                      x: [0, 4, 0],
+                      transition: { 
+                        repeat: Infinity, 
+                        repeatType: "reverse", 
+                        duration: 1.2 
+                      }
+                    }}
+                  >
+                    →
+                  </motion.span>
+                </motion.span>
+              </Link>
+            </motion.div>
+            
+            {/* 扁平化標籤設計 */}
+            <div className="flex flex-wrap gap-3 mt-8" style={{ willChange: 'transform' }}>
+              {tags.map((tag, index) => (
+                <motion.span
+                  key={tag.id}
+                  variants={tagAnimationVariants}
+                  initial="initial"
+                  animate="animate"
+                  whileHover="hover"
+                  custom={index}
+                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
+                             bg-white/10 border border-white/20 
+                             cursor-pointer hover:bg-white/15 transition-colors"
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  {tag.name}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+          
+          {/* 階梯式行銷文案部分 */}
+          <div className="mt-8 md:mt-0 px-4 sm:px-6">
+            {contentBlocks.map((block, index) => (
+              <motion.div
+                key={index}
+                className={`mb-8 ${block.className}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={inView ? 
+                  { 
+                    opacity: 1, 
+                    x: 0,
+                    transition: {
+                      delay: block.delay,
+                      duration: 0.4,
+                      ease: "easeOut"
+                    }
+                  } : 
+                  { opacity: 0, x: -20 }
+                }
+                style={{ willChange: 'transform' }}
+              >
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+                  <motion.div 
+                    className="w-full md:w-5/12"
+                    initial={{ opacity: 0, x: -15 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ 
+                      duration: 0.3, 
+                      delay: Math.min(block.delay + 0.1, 0.4)
+                    }}
+                  >
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
+                      {block.en.title}
+                    </h2>
+                    {block.en.subtitle && (
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
+                        {block.en.subtitle}
+                      </h3>
+                    )}
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="mt-3 md:mt-0 w-full md:w-6/12"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ 
+                      duration: 0.5, 
+                      delay: block.delay + 0.2
+                    }}
+                  >
+                    <div className="border-l-4 border-white/70 pl-4 md:pl-6">
                       <motion.p 
-                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
+                        className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
                         initial={{ opacity: 0, y: 5 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ 
                           duration: 0.3, 
-                          delay: Math.min(block.delay + 0.3, 0.6)
+                          delay: Math.min(block.delay + 0.2, 0.5)
                         }}
                         whileHover={{ x: 3 }}
                       >
-                        {block.zh.subtitle}
+                        {block.zh.title}
                       </motion.p>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-              
-              {/* 分隔線 - 提高對比度 */}
-              {index < contentBlocks.length - 1 && (
-                <motion.div 
-                  className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
-                  transition={{ 
-                    duration: 0.8, 
-                    delay: block.delay + 0.5
-                  }}
-                >
+                      {block.zh.subtitle && (
+                        <motion.p 
+                          className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={inView ? { opacity: 1, y: 0 } : {}}
+                          transition={{ 
+                            duration: 0.3, 
+                            delay: Math.min(block.delay + 0.3, 0.6)
+                          }}
+                          whileHover={{ x: 3 }}
+                        >
+                          {block.zh.subtitle}
+                        </motion.p>
+                      )}
+                    </div>
+                  </motion.div>
+                </div>
+                
+                {/* 分隔線 - 提高對比度 */}
+                {index < contentBlocks.length - 1 && (
                   <motion.div 
-                    className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
-                    initial={{ x: "-100%" }}
-                    animate={inView ? { x: "400%" } : {}}
-                    transition={{
-                      duration: 2,
-                      delay: block.delay + 1,
-                      repeat: Infinity,
-                      repeatDelay: 4
+                    className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
+                    transition={{ 
+                      duration: 0.8, 
+                      delay: block.delay + 0.5
                     }}
-                  />
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
+                  >
+                    <motion.div 
+                      className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
+                      initial={{ x: "-100%" }}
+                      animate={inView ? { x: "400%" } : {}}
+                      transition={{
+                        duration: 2,
+                        delay: block.delay + 1,
+                        repeat: Infinity,
+                        repeatDelay: 4
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
-        
-        {/* 底部箭頭指示 - 扁平化設計 */}
-        <motion.div 
-          className="mt-6 flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 1.3 }}
-        >
-          <motion.div
-            className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </motion.div>
-        </motion.div>
       </div>
+
+      {/* 向下滾動指示器 */}
+      <motion.div 
+        className="relative z-10 pb-8 flex justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1.3 }}
+      >
+        <motion.div
+          className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </motion.div>
+      </motion.div>
     </section>
   );
 })
@@ -2351,9 +2191,7 @@ const HomePage = () => {
       <div className="flex flex-col min-h-screen">
         {/* 核心區塊 - 不使用懶加載以加速首屏渲染 */}
         <HeroSection />
-        <MarketingStatement />
         
-        {/* 將非首屏必要組件延遲加載 */}
         <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
           <FeatureSection />
         </Suspense>
