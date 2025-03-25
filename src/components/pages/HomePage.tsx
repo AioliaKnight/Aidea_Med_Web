@@ -270,58 +270,67 @@ const HeroSection = memo(function HeroSection() {
       {/* 主要標題內容區 */}
       <div className="container-custom relative z-20 py-12 md:py-16 flex-grow">
         <div className="max-w-5xl mx-auto">
-          {/* 標題和英文標語靠左對齊 */}
+          {/* 標題區塊 - 置中對齊 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="px-4 sm:px-6 md:pl-8 lg:pl-12 transform-gpu mb-10 md:mb-20"
+            className="px-4 sm:px-6 flex flex-col items-center text-center transform-gpu mb-10 md:mb-16"
           >
-            <div className="flex flex-col">
-              <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentTitleIndex}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    variants={heroTitleVariants}
-                    className="font-bold text-white leading-tight md:leading-tight"
-                    style={{ willChange: 'transform, opacity' }}
-                  >
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
-                      {titles[currentTitleIndex].main}
-                      <span className="block mt-1 font-extrabold text-white relative">
-                        {titles[currentTitleIndex].sub}
-                      </span>
-                    </h1>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-            
-            <div 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-1 mb-8 font-bold tracking-wide"
-              suppressHydrationWarning
-            >
+            {/* 統一標題結構 - 中文主副標題下方緊接英文主副標題 */}
+            <div className="w-full max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentTitleIndex}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  variants={heroSubtitleVariants}
-                  className="flex flex-col"
+                  variants={heroTitleVariants}
+                  className="font-bold text-white text-center"
+                  style={{ willChange: 'transform, opacity' }}
                 >
-                  <div className="inline-block text-white/90 mb-0.5 leading-tight">{titles[currentTitleIndex].enMain},</div>
-                  <div className="inline-block font-extrabold bg-clip-text text-white leading-tight break-words hyphens-auto">{titles[currentTitleIndex].enSub}.</div>
+                  {/* 中文主副標題 */}
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
+                    {titles[currentTitleIndex].main}
+                    <span className="block mt-1 mb-2 font-extrabold text-white">
+                      {titles[currentTitleIndex].sub}
+                    </span>
+                  </h1>
+                  
+                  {/* 英文主副標題 - 緊接著中文標題 */}
+                  <div className="mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/90 leading-tight">
+                    {titles[currentTitleIndex].enMain},
+                    <div className="font-extrabold text-white mt-1">
+                      {titles[currentTitleIndex].enSub}.
+                    </div>
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
+            
+            {/* 扁平化標籤設計 - 移至預約按鈕上方 */}
+            <div className="flex flex-wrap justify-center gap-3 my-6" style={{ willChange: 'transform' }}>
+              {tags.map((tag, index) => (
+                <motion.span
+                  key={tag.id}
+                  variants={tagAnimationVariants}
+                  initial="initial"
+                  animate="animate"
+                  whileHover="hover"
+                  custom={index}
+                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
+                             bg-white/10 border border-white/20 
+                             cursor-pointer hover:bg-white/15 transition-colors"
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  {tag.name}
+                </motion.span>
+              ))}
+            </div>
 
-            {/* 預約按鈕 - 黑底白字扁平化設計 */}
+            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 */}
             <motion.div
-              className="mt-4 mb-8"
+              className="mt-2 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.5 }}
@@ -369,29 +378,28 @@ const HeroSection = memo(function HeroSection() {
               </Link>
             </motion.div>
             
-            {/* 扁平化標籤設計 */}
-            <div className="flex flex-wrap gap-3 mt-8" style={{ willChange: 'transform' }}>
-              {tags.map((tag, index) => (
-                <motion.span
-                  key={tag.id}
-                  variants={tagAnimationVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  custom={index}
-                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
-                             bg-white/10 border border-white/20 
-                             cursor-pointer hover:bg-white/15 transition-colors"
-                  style={{ willChange: 'transform, opacity' }}
-                >
-                  {tag.name}
-                </motion.span>
-              ))}
-            </div>
+            {/* 預約按鈕下方的向下滾動指示器 */}
+            <motion.div 
+              className="mt-4 flex justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1 }}
+            >
+              <motion.div
+                className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
+            </motion.div>
           </motion.div>
           
           {/* 階梯式行銷文案部分 */}
-          <div className="mt-8 md:mt-0 px-4 sm:px-6">
+          <div id="marketing-section" className="mt-8 md:mt-0 px-4 sm:px-6">
             {contentBlocks.map((block, index) => (
               <motion.div
                 key={index}
@@ -500,25 +508,6 @@ const HeroSection = memo(function HeroSection() {
           </div>
         </div>
       </div>
-
-      {/* 向下滾動指示器 */}
-      <motion.div 
-        className="relative z-10 pb-8 flex justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1.3 }}
-      >
-        <motion.div
-          className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </motion.div>
-      </motion.div>
     </section>
   );
 })
