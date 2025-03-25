@@ -144,7 +144,7 @@ const nextConfig = {
     // 啟用部分預渲染功能 (PPR)
     ppr: true,
     // 應用目錄增強渲染優化
-    optimizePackageImports: ['lucide-react', '@phosphor-icons/react', 'react-icons', 'framer-motion'],
+    optimizePackageImports: ['lucide-react', '@phosphor-icons/react', 'react-icons', 'framer-motion', '@heroicons/react'],
     // 增強型圖片優化
     optimisticClientCache: true,
     // 性能指標
@@ -171,16 +171,16 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
-      }
+        hostname: 'www.aideamed.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
-    formats: ['image/avif', 'image/webp'],
+    formats: ['image/webp'],
     // 根據環境使用不同的尺寸配置
-    deviceSizes: process.env.NODE_ENV === 'development' 
-      ? [640, 750, 828] 
-      : [640, 750, 828, 1080, 1200, 1920, 2048],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 604800, // 7天
+    minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // 啟用壓縮優化，提高性能
@@ -253,7 +253,38 @@ const nextConfig = {
         ]
       }
     ]
-  }
+  },
+  webpack: (config, { dev, isServer }) => {
+    // 優化圖片載入
+    config.module.rules.push({
+      test: /\.(png|jpe?g|gif|webp)$/i,
+      use: [
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            mozjpeg: {
+              progressive: true,
+              quality: 65,
+            },
+            optipng: {
+              enabled: !dev,
+            },
+            pngquant: {
+              quality: [0.65, 0.90],
+              speed: 4,
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+            webp: {
+              quality: 75,
+            },
+          },
+        },
+      ],
+    });
+    return config;
+  },
 }
 
 module.exports = withBundleAnalyzer(withPWA(nextConfig)) 

@@ -285,23 +285,18 @@ function HeroSection() {
       aria-label="網站主要橫幅"
     >
       {/* 波浪背景 */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-primary opacity-100"></div>
-        <div className="absolute inset-0 opacity-50">
-          <Image
-            src="/images/bgline-w_sm.png"
-            alt="背景波浪線條"
-            fill
-            className="object-cover mix-blend-soft-light"
-            quality={75}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-            priority={true}
-            loading="eager"
-            fetchPriority="high"
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
-          />
-        </div>
+      <div className="relative w-full h-full overflow-hidden">
+        <Image
+          src="/images/bgline-w_sm.png"
+          alt="背景波浪線條"
+          fill
+          priority
+          quality={75}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          className="object-cover mix-blend-soft-light"
+          loading="eager"
+          fetchPriority="high"
+        />
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20 px-4 sm:px-6">
@@ -843,7 +838,7 @@ function StatsSection({ className = '' }: StatsSectionProps) {
   // 擴展統計數據和類別
   const stats: StatItem[] = [
     {
-      value: 300,
+      value: 50,
       suffix: "+",
       label: "合作診所",
       description: "全台醫療網絡覆蓋",
@@ -857,7 +852,7 @@ function StatsSection({ className = '' }: StatsSectionProps) {
       icon: <ChartIcon className="w-10 h-10 text-white/90" strokeWidth={1.5} />
     },
     {
-      value: 10000,
+      value: 12000,
       suffix: "萬+",
       label: "年廣告投放",
       description: "持續成長動能",
