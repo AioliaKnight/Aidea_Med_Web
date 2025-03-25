@@ -1,16 +1,12 @@
 'use client'
 
-import React, { useEffect, useState, useCallback, useMemo, useRef, Suspense, use } from 'react'
+import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
 import Link from 'next/link'
-import ContactForm from '@/components/contact/ContactForm'
-import ContactInfo from '@/components/contact/ContactInfo'
-import { caseStudies as casesData } from '@/components/pages/CasePage'
-import { CaseCard } from '@/components/case/CaseCard'
-import { animations } from '@/utils/animations'
-// 引入 Lucide React 圖標
+import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { 
   Stethoscope, 
   BarChart2, 
@@ -24,32 +20,61 @@ import {
   BarChart as ChartIcon,
   Clock,
   TrendingUp,
+  Building,
+  Star,
+  Mail,
+  Globe,
+  ChevronDown, 
+  PlusCircle,
+  CalendarClock,
+  CheckCircle,
+  ArrowRight,
   Award,
-  User
+  Zap,
+  Lightbulb,
+  Headset,
+  FileText
 } from 'lucide-react'
-import Image from 'next/image'
 import { Logo, CTASection } from '@/components/common'
+import { caseStudies as casesData } from '@/components/pages/CasePage'
+import { animations, homePageAnimations } from '@/utils/animations'
+
+// 動態載入非核心組件
+const CaseCard = dynamic(() => import('@/components/case/CaseCard').then(mod => mod.CaseCard), {
+  loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-lg"></div>,
+  ssr: false
+})
+
+const ContactForm = dynamic(() => import('@/components/contact/ContactForm'), {
+  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg"></div>,
+  ssr: false
+})
+
+const ContactInfo = dynamic(() => import('@/components/contact/ContactInfo'), {
+  loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg"></div>,
+  ssr: false
+})
 
 // 服務特色數據 - 替換 emoji 為圖標組件
 const features = [
   {
-    title: '專注醫療，行銷交給我們',
-    description: '深知每位醫師的堅持與熱忱，我們用十年以上的醫療行銷經驗，讓您能安心專注於診療品質，為病患提供最好的照護',
+    title: '專注醫療，了解您的專業',
+    description: '作為醫療行銷專家，我們深入理解醫療產業的獨特性與法規限制。十年以上的專業經驗，讓我們能精準把握醫師的核心價值，將您的專業轉化為患者能理解的信任',
     icon: Stethoscope
   },
   {
-    title: '數據驅動成長',
-    description: '不只是數字，而是每位病患的信任。我們運用智慧分析工具，從預約率到回診率，協助您更了解病患需求，提供更貼心的服務',
+    title: 'AI驅動的精準成長',
+    description: '結合前沿AI技術與醫療行銷專業，我們不只分析數據，而是解讀背後的患者需求。透過智能化工具優化每個接觸點，實現更高效的患者轉化與更精準的預算配置',
     icon: BarChart2
   },
   {
-    title: '用心經營口碑',
-    description: '好的口碑來自於真誠。我們協助您建立診所獨特價值，透過真實故事與在地連結，讓更多人認識您的專業與用心',
-    icon: Users
+    title: '創造品牌差異化',
+    description: 'Aidea:Med 團隊由醫療背景與行銷專家組成，能精準捕捉您診所的獨特價值。我們協助您脫穎而出，建立難以複製的品牌聲譽，吸引真正適合的目標患者',
+    icon: Award
   },
   {
-    title: '全方位夥伴',
-    description: '從線上到線下，我們不只是服務提供者，更是您的成長夥伴。整合數位行銷、空間設計到人員培訓，一起打造溫暖而專業的診所環境',
+    title: '長期成長夥伴',
+    description: '我們不是短期顧問，而是您診所成長路上的長期夥伴。從品牌策略、數位轉型到團隊培訓，提供全面支持，與您一同建立持續成長的醫療品牌生態系統',
     icon: Handshake
   }
 ]
@@ -90,16 +115,15 @@ interface AnimatedSectionProps {
   suppressHydrationWarning?: boolean
 }
 
-// 優化後的動畫Section組件 - 使用React 19更好的記憶體模型
-const AnimatedSection = React.memo(({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
+// 優化動畫Section組件 - 移除不必要的 useCallback
+const AnimatedSection = ({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
   const controls = useAnimation()
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
   })
 
-  // 使用useCallback優化效能
-  const handleAnimation = useCallback(() => {
+  useEffect(() => {
     if (inView) {
       controls.start({ 
         opacity: 1, 
@@ -108,10 +132,6 @@ const AnimatedSection = React.memo(({ className = '', delay = 0, children, suppr
       })
     }
   }, [controls, inView, delay])
-
-  useEffect(() => {
-    handleAnimation()
-  }, [handleAnimation])
 
   return (
     <motion.div
@@ -124,8 +144,7 @@ const AnimatedSection = React.memo(({ className = '', delay = 0, children, suppr
       {children}
     </motion.div>
   )
-})
-AnimatedSection.displayName = 'AnimatedSection'
+}
 
 // 客戶評價介面定義
 interface Testimonial {
@@ -238,37 +257,61 @@ const faqs = [
 
 // 更新 Hero Section 樣式
 function HeroSection() {
-  // 改進動畫效果
-  const controls = useAnimation();
-  const [heroRef, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    
-    if (inView) {
-      controls.start('visible');
+  const heroRef = useRef<HTMLDivElement>(null);
+  
+  // 標題數據 - 針對不同目標對象
+  const titles = [
+    {
+      main: "數位精準驅動",
+      sub: "專為真實醫療服務",
+      target: "醫療診所",
+      enMain: "Digital precision-driven",
+      enSub: "tailored for authentic healthcare services"
+    },
+    {
+      main: "打造專業形象",
+      sub: "提升牙醫診所競爭力",
+      target: "牙醫診所",
+      enMain: "Building professional image",
+      enSub: "enhancing dental clinic competitiveness"
+    },
+    {
+      main: "連結病患信任",
+      sub: "成就醫師專業品牌",
+      target: "專業醫師",
+      enMain: "Connecting patient trust",
+      enSub: "establishing your professional brand"
     }
-  }, [controls, inView]);
+  ];
 
-  // 使用 useCallback 處理滾動
-  const handleScroll = useCallback(() => {
-    if (!isClient) return;
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-  }, [isClient]);
-
-  // 簡化元素動畫變體
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+  // 追蹤當前顯示的標題
+  const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
+  
+  // 定期切換標題
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // 動畫變體
+  const titleVariants = {
+    hidden: { opacity: 0, y: 50 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
         duration: 0.6,
         ease: [0.6, 0.05, 0.01, 0.9]
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -30,
+      transition: {
+        duration: 0.4
       }
     }
   };
@@ -288,64 +331,86 @@ function HeroSection() {
       role="banner"
       aria-label="網站主要橫幅"
     >
-      {/* 背景層 - 優化扁平化設計 */}
+      {/* 背景層 - 簡潔扁平化設計 */}
       <div className="absolute inset-0 z-0">
         {/* 純色背景基底 */}
         <div className="absolute inset-0 bg-primary"></div>
         
-        {/* 紋理圖樣疊加 */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+        {/* 使用不透明的白色線條背景圖片 */}
+        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
         
-        {/* 背景圖片 */}
-        <Image
-          src="/images/bgline-w.webp"
-          alt="背景紋理"
-          fill
-          priority
-          quality={100}
-          sizes="100vw"
-          className="object-cover mix-blend-soft-light opacity-100"
-          loading="eager"
-          fetchPriority="high"
-        />
-        
-        {/* 漸層覆蓋 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/50 to-primary"></div>
+        {/* 背景覆蓋 */}
+        <div className="absolute inset-0 bg-primary/20"></div>
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
+          {/* 標題和英文標語靠左對齊 */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="text-center px-4 sm:px-6"
+            className="px-4 sm:px-6 md:pl-8 lg:pl-12"
           >
-            <h1 
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6"
+            <div className="flex flex-col">
+              <motion.span
+                className="inline-block text-white/90 text-sm md:text-base font-medium border-l-2 border-white/70 pl-3 mb-2"
+              >
+                專為{titles[currentTitleIndex].target}量身打造
+              </motion.span>
+              
+              <div className="h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.h1 
+                    key={currentTitleIndex}
+                    className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] relative absolute inset-0"
+              suppressHydrationWarning
+                    variants={homePageAnimations.hero.title}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <span className="relative inline-block">
+                      {titles[currentTitleIndex].main}
+                      <span className="block mt-1 font-extrabold text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:h-[3px] after:w-full after:bg-white/50">
+                        {titles[currentTitleIndex].sub}
+                      </span>
+                    </span>
+                  </motion.h1>
+                </AnimatePresence>
+              </div>
+            </div>
+            
+            <div 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white max-w-3xl mt-3 mb-6 font-bold tracking-wide"
               suppressHydrationWarning
             >
-              數位精準驅動<br/>
-              <span className="font-bold text-white">專為真實醫療服務</span>
-            </h1>
-            
-            <p 
-              className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl mx-auto mt-4 mb-8"
-              suppressHydrationWarning
-            >
-              Digital precision-driven,<br/>
-              tailored for authentic healthcare services.
-            </p>
-            
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTitleIndex}
+                  variants={homePageAnimations.hero.subtitle}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="flex flex-col"
+                >
+                  <div className="inline-block text-white/90 mb-0.5 leading-tight">{titles[currentTitleIndex].enMain},</div>
+                  <div className="inline-block font-extrabold bg-clip-text text-white leading-tight break-words hyphens-auto">{titles[currentTitleIndex].enSub}.</div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+          
+          {/* 下面的元素置中對齊 */}
+          <div className="flex flex-col items-center px-4 sm:px-6">
             {/* 扁平化標籤設計 - 簡化邊框並提高對比 */}
-            <div className="flex flex-nowrap justify-center overflow-x-auto scrollbar-hide gap-3 sm:gap-4 my-10 px-2 py-1 max-w-full mx-auto">
-              <div className="flex items-center space-x-3 sm:space-x-4 min-w-max mx-auto">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 my-8 py-1 max-w-full">
                 {tags.map((tag, index) => (
                   <motion.div
                     key={tag.id}
                     className="border border-white/70 text-white text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4 py-1.5"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                     whileHover={{
                       backgroundColor: "rgba(255,255,255,0.15)",
@@ -356,18 +421,84 @@ function HeroSection() {
                     {tag.name}
                   </motion.div>
                 ))}
-              </div>
             </div>
+            
+            {/* 信任指標和簡短數據統計 */}
+            <motion.div
+              className="mt-6 mb-8 w-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <div className="grid grid-cols-3 gap-6 sm:gap-8 justify-items-center">
+                <div className="flex flex-col items-center">
+                  <motion.div 
+                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
+                    variants={homePageAnimations.hero.stats}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ 
+                      ...homePageAnimations.hero.stats.transition,
+                      delay: 0.7 
+                    }}
+                  >
+                    <CountUp
+                      {...homePageAnimations.hero.countUp.satisfaction}
+                      separator=","
+                      enableScrollSpy={false}
+                    />
+                  </motion.div>
+                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">客戶滿意度</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <motion.div 
+                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
+                    variants={homePageAnimations.hero.stats}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ 
+                      ...homePageAnimations.hero.stats.transition,
+                      delay: 0.8 
+                    }}
+                  >
+                    <CountUp
+                      {...homePageAnimations.hero.countUp.cases}
+                      separator=","
+                      enableScrollSpy={false}
+                    />
+                  </motion.div>
+                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">成功案例</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <motion.div 
+                    className="text-white text-2xl sm:text-3xl font-bold flex items-center"
+                    variants={homePageAnimations.hero.stats}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ 
+                      ...homePageAnimations.hero.stats.transition, 
+                      delay: 0.9 
+                    }}
+                  >
+                    <CountUp
+                      {...homePageAnimations.hero.countUp.response}
+                      separator=","
+                      enableScrollSpy={false}
+                    />
+                  </motion.div>
+                  <span className="text-white/80 text-xs sm:text-sm mt-1 font-medium">專業響應</span>
+                </div>
+              </div>
           </motion.div>
           
           {/* 預約按鈕 - 純黑底白字扁平化設計 */}
           <motion.div
-            className="mt-12 text-center"
+              className="mt-4 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.5 }}
           >
-            <Link href="/contact">
+              <Link href="/contact" prefetch={true}>
               <motion.span 
                 className="inline-flex items-center bg-black text-white px-8 py-4 text-lg font-medium border-0"
                 initial={{ y: 0 }}
@@ -391,16 +522,16 @@ function HeroSection() {
                 >
                   A:
                 </motion.span>
-                預約線上諮詢
+                  免費30分鐘專業顧問
                 <motion.span
                   className="ml-2"
                   initial={{ x: 0 }}
-                  whileHover={{ 
-                    x: 5,
+                    animate={{ 
+                      x: [0, 5, 0],
                     transition: { 
                       repeat: Infinity, 
                       repeatType: "reverse", 
-                      duration: 0.3 
+                        duration: 1.5 
                     }
                   }}
                 >
@@ -409,6 +540,7 @@ function HeroSection() {
               </motion.span>
             </Link>
           </motion.div>
+          </div>
         </div>
       </div>
 
@@ -427,8 +559,7 @@ function HeroSection() {
         >
           <span className="text-white text-sm mb-2 font-medium">探索更多</span>
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            animate={homePageAnimations.hero.scrollIndicator.animate}
             className="w-8 h-8 flex items-center justify-center text-white bg-white/10"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -441,7 +572,7 @@ function HeroSection() {
   );
 }
 
-// 新增階梯式行銷文案區塊
+// 新增階梯式行銷文案區塊 - 優化渲染和圖片載入
 function MarketingStatement() {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -494,29 +625,19 @@ function MarketingStatement() {
       className="relative py-16 md:py-24 bg-primary overflow-hidden"
       ref={ref}
     >
-      {/* 背景設計 - 扁平化並增加視覺層次 */}
+      {/* 背景設計 - 與 HeroSection 統一風格 */}
       <div className="absolute inset-0">
         {/* 純色背景 */}
         <div className="absolute inset-0 bg-primary"></div>
         
-        {/* 網格圖案覆蓋 */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[length:40px_40px]"></div>
+        {/* 使用不透明的白色線條背景圖片 */}
+        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
         
-        {/* 背景圖片覆蓋 */}
-        <Image
-          src="/images/bgline-w.webp"
-          alt="背景紋理"
-          fill
-          className="object-cover mix-blend-overlay opacity-30"
-          quality={90}
-          sizes="100vw"
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
-        />
+        {/* 背景覆蓋 - 調整透明度與 HeroSection 一致 */}
+        <div className="absolute inset-0 bg-primary/20"></div>
       </div>
       
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+      <div className="container-custom relative z-10 px-4 sm:px-6 md:px-8">
         <div className="max-w-5xl mx-auto">
           {contentBlocks.map((block, index) => (
             <motion.div
@@ -540,12 +661,14 @@ function MarketingStatement() {
                     delay: block.delay + 0.1
                   }}
                 >
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
                     {block.en.title}
+                    <div className="absolute left-0 bottom-[-5px] h-[3px] w-0 bg-white/30 transition-all duration-300 group-hover:w-full"></div>
                   </h2>
                   {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-1 md:mt-2 leading-tight tracking-tight text-pretty">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-1 md:mt-2 leading-tight tracking-tight text-pretty relative group">
                       {block.en.subtitle}
+                      <div className="absolute left-0 bottom-[-5px] h-[3px] w-0 bg-white/30 transition-all duration-300 group-hover:w-full"></div>
                     </h3>
                   )}
                 </motion.div>
@@ -559,27 +682,29 @@ function MarketingStatement() {
                     delay: block.delay + 0.2
                   }}
                 >
-                  <div className="border-l-4 border-white pl-4 md:pl-6">
+                  <div className="border-l-4 border-white/70 pl-4 md:pl-6">
                     <motion.p 
-                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight"
+                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative"
                       initial={{ opacity: 0, y: 10 }}
                       animate={inView ? { opacity: 1, y: 0 } : {}}
                       transition={{ 
                         duration: 0.4, 
                         delay: block.delay + 0.3
                       }}
+                      whileHover={{ x: 5 }}
                     >
                       {block.zh.title}
                     </motion.p>
                     {block.zh.subtitle && (
                       <motion.p 
-                        className="text-lg md:text-xl text-white/90 mt-1 md:mt-2 font-medium leading-tight"
+                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative"
                         initial={{ opacity: 0, y: 10 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ 
                           duration: 0.4, 
                           delay: block.delay + 0.4
                         }}
+                        whileHover={{ x: 5 }}
                       >
                         {block.zh.subtitle}
                       </motion.p>
@@ -591,14 +716,26 @@ function MarketingStatement() {
               {/* 分隔線 - 提高對比度 */}
               {index < contentBlocks.length - 1 && (
                 <motion.div 
-                  className="w-full h-px bg-white/30 mt-6 md:mt-12"
+                  className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
                   transition={{ 
                     duration: 0.8, 
                     delay: block.delay + 0.5
                   }}
-                />
+                >
+                  <motion.div 
+                    className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
+                    initial={{ x: "-100%" }}
+                    animate={inView ? { x: "400%" } : {}}
+                    transition={{
+                      duration: 2,
+                      delay: block.delay + 1,
+                      repeat: Infinity,
+                      repeatDelay: 4
+                    }}
+                  />
+                </motion.div>
               )}
             </motion.div>
           ))}
@@ -615,6 +752,7 @@ function MarketingStatement() {
             className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -628,29 +766,72 @@ function MarketingStatement() {
 
 // 更新服務特色區塊
 function FeatureSection() {
+  const [currentFeature, setCurrentFeature] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 監控視窗大小，判斷是否為行動裝置
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // 處理輪播控制
+  const handleNext = useCallback(() => {
+    setCurrentFeature(prev => (prev + 1) % features.length);
+  }, []);
+  
+  const handlePrev = useCallback(() => {
+    setCurrentFeature(prev => (prev - 1 + features.length) % features.length);
+  }, []);
+  
+  // 自動輪播
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const interval = setInterval(() => {
+      handleNext();
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [isMobile, handleNext]);
+  
   return (
     <section id="features" className="py-16 sm:py-20 bg-gray-50 overflow-hidden" suppressHydrationWarning>
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-10 sm:mb-16" suppressHydrationWarning>
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10">我們的優勢</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 flex items-center justify-center flex-wrap" suppressHydrationWarning>
-            為什麼選擇
-            <span className="inline-flex items-center mx-2 transform scale-75 sm:scale-90 md:scale-100">
+        <AnimatedSection className="text-center mb-12 sm:mb-20" suppressHydrationWarning>
+          <h2 className="inline-flex items-center justify-center text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 relative" suppressHydrationWarning>
               <Logo 
                 variant="primary" 
                 size="responsive" 
-                className="ml-1 sm:ml-2" 
+              className="mr-3 transform scale-90 sm:scale-100" 
                 priority={true}
               />
+            <span className="relative">
+              專業團隊
+              <div className="absolute -bottom-2 left-0 w-full h-1 bg-primary"></div>
             </span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            深耕醫療行銷領域超過十年，以專業經驗與創新技術，協助診所突破成長瓶頸
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
+            作為專注於<span className="text-primary font-medium">醫療產業</span>的數位行銷團隊，我們融合了臨床經驗、數位專業與創新技術，
+            致力於幫助診所建立<span className="text-primary font-medium">品牌價值</span>，吸引理想患者，實現穩健成長
           </p>
+          <p className="text-base text-gray-500 max-w-2xl mx-auto">
+            團隊由醫療背景與行銷專家組成，深入理解產業挑戰與機會，提供真正適合醫療環境的整合解決方案
+          </p>
+          
+
         </AnimatedSection>
 
+        {/* 桌面版網格排列 */}
+        <div className="hidden md:block">
         <motion.div 
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8"
           variants={animations.staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -660,34 +841,157 @@ function FeatureSection() {
             <motion.div 
               key={feature.title} 
               variants={animations.slideUp}
-              className="group bg-white p-4 sm:p-6 lg:p-8 border border-gray-100 hover:border-primary transition-all duration-300"
-            >
-              <div className="mb-4 sm:mb-6">
-                <div 
-                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-50 flex items-center justify-center group-hover:bg-primary transition-colors duration-300"
-                >
-                  <feature.icon 
-                    size={24} 
-                    strokeWidth={1.5} 
-                    className="text-primary group-hover:text-white transition-colors duration-300" 
+                className="group bg-white p-6 sm:p-7 lg:p-8 border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col h-full hover:border-primary relative overflow-hidden"
+              >
+                {/* 頂部裝飾線 - 刪除 */}
+                
+                <div className="mb-5 sm:mb-6">
+                  {React.createElement(feature.icon, { 
+                    size: 32, 
+                    strokeWidth: 1.5, 
+                    className: "text-primary" 
+                  })}
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-primary transition-colors duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 flex-grow">
+                  {feature.description}
+                </p>
+                
+                <div className="mt-5 pt-2 border-t border-gray-100">
+                  <div 
+                    className="w-16 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"
                   />
                 </div>
+              </motion.div>
+            ))}
+          </motion.div>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-4 group-hover:text-primary transition-colors duration-300">
+
+        {/* 行動裝置輪播版本 */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden">
+            <div 
+              ref={carouselRef}
+              className="transition-transform duration-300 ease-out"
+              style={{
+                display: 'flex',
+                transform: `translateX(-${currentFeature * 100}%)`
+              }}
+            >
+              {features.map((feature, index) => (
+                <div 
+                  key={feature.title}
+                  className="min-w-full px-2"
+                >
+                  <motion.div 
+                    className="group bg-white p-6 border border-gray-100 shadow-sm flex flex-col h-full hover:border-primary relative"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    {/* 行動版頂部裝飾線 - 刪除 */}
+                    
+                    <div className="mb-5 flex justify-center">
+                      {React.createElement(feature.icon, { 
+                        size: 36, 
+                        strokeWidth: 1.5, 
+                        className: "text-primary" 
+                      })}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
                 {feature.title}
               </h3>
-              <p className="text-sm sm:text-base text-gray-600 line-clamp-3 sm:line-clamp-none">
+                    <p className="text-gray-600 text-center">
                 {feature.description}
               </p>
               
-              <div className="mt-4 pt-2 border-t border-gray-100">
-                <div 
-                  className="w-6 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"
-                />
+                    <div className="mt-5 pt-2 border-t border-gray-100 flex justify-center">
+                      <div className="w-16 h-0.5 bg-primary" />
               </div>
             </motion.div>
-          ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* 輪播控制 */}
+          <div className="flex justify-between items-center mt-8">
+            <button 
+              onClick={handlePrev}
+              className="bg-white border border-gray-200 rounded-full p-2 shadow-sm hover:shadow-md transition-shadow hover:border-primary"
+              aria-label="上一個特色"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            <div className="flex space-x-2">
+              {features.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentFeature(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    currentFeature === index ? 'bg-primary' : 'bg-gray-300'
+                  }`}
+                  aria-label={`查看特色 ${index + 1}`}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={handleNext}
+              className="bg-white border border-gray-200 rounded-full p-2 shadow-sm hover:shadow-md transition-shadow hover:border-primary"
+              aria-label="下一個特色"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* 新增團隊簡介區塊 */}
+        <AnimatedSection className="mt-20 text-center" delay={0.3}>
+          <div className="bg-white border border-gray-100 p-6 sm:p-8 lg:p-10 max-w-4xl mx-auto relative">
+            {/* 左側裝飾線 - 保留但調整透明度 */}
+            <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/30"></div>
+            
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"><span className="text-primary">核心優勢</span>與多元背景</h3>
+            <p className="text-gray-600 mb-6">
+              Aidea:Med 匯集了醫療背景專家、數位行銷策略師、UI/UX 設計師、數據分析師及內容創作者，
+              建立一個能夠真正理解醫療產業需求的多元團隊。我們不僅了解數據與行銷，
+              更理解醫病關係的細微之處與醫療產業的獨特挑戰。
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 my-2 py-1">
+              {[
+                { id: 'medical', name: '#醫療專業背景' },
+                { id: 'marketing', name: '#數位行銷策略' },
+                { id: 'ai', name: '#AI技術應用' },
+                { id: 'brand', name: '#品牌設計' },
+                { id: 'uiux', name: '#UI/UX設計' },
+                { id: 'data', name: '#數據分析' }
+              ].map((tag, index) => (
+                <motion.div
+                  key={tag.id}
+                  className="border border-primary/70 text-primary text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4 py-1.5"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1, duration: 0.4 }}
+                  whileHover={{
+                    backgroundColor: "rgba(var(--color-primary-rgb), 0.05)",
+                    y: -2,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  {tag.name}
         </motion.div>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );
@@ -696,146 +1000,263 @@ function FeatureSection() {
 // 更新服務內容區塊 - 使用 Lucide 圖標
 const services = [
   {
-    title: '品牌策略與視覺識別',
-    description: '建立強大的牙醫診所品牌識別，從院所精神到視覺設計，創造一致性的品牌體驗',
-    features: ['品牌策略規劃', '視覺識別設計', '診所空間規劃', '品牌故事建立'],
+    title: '品牌蛻變',
+    description: '讓您的診所從同質化競爭中脫穎而出。我們深入挖掘您的獨特價值，打造令人難忘的品牌識別，讓每位患者在踏入診所的那一刻，就能感受到您與眾不同的專業與溫度。',
+    features: ['品牌故事梳理', '視覺形象重塑', '空間體驗設計', '診所文化建立', '差異化定位', '品牌語言系統'],
     icon: BuildingIcon,
     href: '/service#brand'
   },
   {
-    title: '數位行銷與媒體整合',
-    description: '透過精準的數位行銷策略，提升診所線上能見度，吸引目標客群，轉化為實際到診',
-    features: ['網站設計開發', 'SEO優化', '社群媒體策略', '內容行銷規劃'],
+    title: '數位突圍',
+    description: '在無數牙醫診所的網路戰場中脫穎而出。精準的數位行銷不只帶來流量，更能觸及真正需要您服務的患者。我們讓您的專業被看見，讓等待已久的患者找到您。',
+    features: ['精準廣告投放', 'SEO關鍵詞優化', '社群互動經營', '口碑行銷策略', '內容創作規劃', '轉換率提升'],
     icon: GlobeIcon,
     href: '/service#digital'
   },
   {
-    title: '整合行銷服務',
-    description: '結合線上線下資源，建立完整行銷漏斗，提升品牌知名度、患者轉換率與回診率',
-    features: ['整合行銷策略', '患者體驗優化', '回診系統建立', '績效分析報告'],
+    title: '全通路整合',
+    description: '線上吸引、線下感動，打造完整患者旅程。我們深知，真正的成功不只來自新客引流，更在於建立長期患者關係。整合式行銷讓您的每一分投入都能產生最大價值。',
+    features: ['線上線下整合', '患者旅程設計', '轉診系統建立', '複診召回機制', '忠誠度計畫', '口碑擴散策略'],
     icon: ChartIcon,
     href: '/service#marketing'
   },
+  {
+    title: '守護式客服',
+    description: '您專注於治療，我們守護您的每一位患者。專業醫療背景的24小時真人客服團隊，不只是接聽諮詢，更能理解患者需求，化解疑慮，將每次互動轉化為信任與預約。',
+    features: ['即時線上預約', '專業諮詢回覆', '全天候服務', '無縫轉接系統', '患者關係維護', '預約提醒服務'],
+    icon: Headset,
+    href: '/service#customer-service'
+  },
+  {
+    title: '數據智慧',
+    description: '讓數據說話，讓決策更明智。我們不只提供報表，更幫助您看見數字背後的洞察。透過先進分析工具，解讀患者行為模式，讓每一個營銷決策都建立在堅實的數據基礎上。',
+    features: ['行為數據分析', '患者偏好洞察', '競爭格局解析', '投資回報追蹤', '關鍵指標監控', '成長預測模型'],
+    icon: BarChart2,
+    href: '/service#data-strategy'
+  },
+  {
+    title: '醫療內容力',
+    description: '將複雜的醫療專業，轉化為引人共鳴的內容。我們的團隊結合醫療專業與內容創作才能，讓您的專業知識不只精準，更能觸動人心，建立權威形象的同時擴大影響力。',
+    features: ['醫療知識轉譯', '專業形象打造', '衛教內容設計', '影音腳本創作', '專家觀點系列', '受眾導向表達'],
+    icon: FileText,
+    href: '/service#content'
+  }
 ]
 
-// 更新服務內容區塊
+// 更新服務內容區塊 - 使用扁平化現代設計
 function ServiceSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 檢測視窗大小以決定是否為行動裝置
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // 手動控制輪播
+  const handleNext = useCallback(() => {
+    if (isMobile) {
+      setCurrentSlide(prev => (prev + 1) % services.length);
+    }
+  }, [isMobile]);
+  
+  const handlePrev = useCallback(() => {
+    if (isMobile) {
+      setCurrentSlide(prev => (prev - 1 + services.length) % services.length);
+    }
+  }, [isMobile]);
+  
+  // 自動輪播設定
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % services.length);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [isMobile]);
+  
   return (
-    <section className="relative py-24 bg-gray-50 overflow-hidden" role="region" aria-label="服務內容">
-      {/* 簡化的背景 */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-gray-50 to-white"></div>
-      
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <AnimatedSection className="text-center mb-16">
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">專業服務</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            為您提供的<span className="text-primary">整合服務</span>
+    <section className="relative py-20 bg-white overflow-hidden border-t border-gray-100" role="region" aria-label="服務內容">
+      <div className="container mx-auto px-4 sm:px-6">
+        <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            全方位<span className="text-red-600">診所成長</span>解決方案
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            從品牌策略到數位行銷，我們提供全方位診所成長方案，系統性解決經營痛點
+          <div className="w-24 h-1 bg-red-600 mx-auto mb-6 relative">
+            <div className="absolute -left-2 top-0 w-2 h-1 bg-red-600 animate-pulse"></div>
+            <div className="absolute -right-2 top-0 w-2 h-1 bg-red-600 animate-pulse"></div>
+          </div>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            結合十年以上醫療產業經驗，為診所打造專屬成長策略，從品牌建立到數位行銷全面支援
           </p>
         </AnimatedSection>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+        {/* 行動裝置輪播 */}
+        {isMobile ? (
+          <div className="relative px-6 md:px-0">
+            <AnimatedSection className="overflow-visible">
             <motion.div 
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ 
-                duration: 0.5,
-                delay: index * 0.1 
-              }}
+                className="bg-white shadow-sm p-6 rounded-lg flex flex-col"
               whileHover={{ 
                 y: -5,
                 transition: { duration: 0.2 }
               }}
-              className="bg-white rounded-lg border border-gray-100 hover:border-primary/20 p-8 shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <motion.div
-                className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 relative overflow-hidden"
-                initial={{ scale: 1, rotate: 0 }}
-                whileInView={{ 
-                  rotate: [0, 10, 0],
-                  transition: { 
-                    duration: 0.8, 
-                    delay: index * 0.1 + 0.2,
-                    ease: "easeInOut" 
-                  }
-                }}
-                whileHover={{
-                  scale: 1.08,
-                  boxShadow: "0 0 0 4px rgba(230, 39, 51, 0.15)"
-                }}
-                transition={{
-                  duration: 0.3,
-                  ease: "easeOut"
-                }}
               >
-                {/* 背景動畫效果 */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-tr from-primary to-primary-light opacity-0"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-                
-                {/* 圖標容器 */}
-                <motion.div
-                  className="relative z-10"
-                  whileHover={{ 
-                    scale: [1, 1.2, 1],
-                    transition: { 
-                      duration: 0.6,
-                      repeat: 0
-                    }
-                  }}
-                >
-                  <div className="flex items-center justify-center w-20 h-20 bg-primary/5 rounded-lg mb-6">
-                    {React.createElement(service.icon, { className: "w-10 h-10 text-primary" })}
+                <div className="flex items-start mb-6">
+                  <div className="mr-4">
+                    <div className="w-12 h-12 flex items-center justify-center bg-red-600 text-white rounded-lg">
+                      {React.createElement(services[currentSlide].icon, { 
+                        size: 24, 
+                        strokeWidth: 1.5
+                      })}
+                    </div>
                   </div>
-                </motion.div>
+                  
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors duration-300">
+                      {services[currentSlide].title}
+                    </h3>
+                    <div className="w-12 h-0.5 bg-red-600 mt-2 mb-2 transform origin-left transition-all duration-300 group-hover:w-16"></div>
+                  </div>
+                </div>
+                
+                <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
+                  {services[currentSlide].description}
+                </p>
+                
+                <div className="mt-auto">
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {services[currentSlide].features.map((feature, i) => (
+                      <motion.span
+                        key={i}
+                        className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-md"
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + i * 0.1, duration: 0.3 }}
+                      >
+                        {feature}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
               
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              {/* 輪播控制 */}
+              <div className="flex justify-center items-center mt-8 gap-2">
+                <button 
+                  onClick={handlePrev}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                <div className="flex gap-2">
+                  {services.map((_, index) => (
+                    <button 
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        currentSlide === index ? 'bg-red-600 w-6' : 'bg-gray-300 w-2 hover:bg-gray-400'
+                      }`}
+                      aria-label={`前往服務 ${index + 1}`}
+                    />
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={handleNext}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </AnimatedSection>
+          </div>
+        ) : (
+          // 桌面版網格顯示
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {services.map((service, index) => (
+              <AnimatedSection 
+                key={service.title} 
+                delay={index * 0.15} 
+                className="flex flex-col h-full"
+              >
+                <motion.div
+                  className="bg-white shadow-sm rounded-lg p-6 flex flex-col h-full group"
+                  whileHover={{ 
+                    y: -5,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <div className="flex items-start mb-6">
+                    <div className="mr-4">
+                      <div className="w-12 h-12 flex items-center justify-center bg-red-600 text-white rounded-lg">
+                        {React.createElement(service.icon, { 
+                          size: 24, 
+                          strokeWidth: 1.5
+                        })}
+                  </div>
+                    </div>
+              
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors duration-300">
                 {service.title}
               </h3>
-              <p className="text-gray-600 mb-8">
+                      <div className="w-12 h-0.5 bg-red-600 mt-2 mb-2 transform origin-left transition-all duration-300 group-hover:w-16"></div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6 leading-relaxed line-clamp-4 flex-grow">
                 {service.description}
               </p>
               
-              <ul className="space-y-3 mb-8">
-                {service.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className="text-primary mr-2 text-lg">✓</span>
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <div className="pt-4 mt-auto">
-                <Link 
-                  href={service.href as any} 
-                  className="inline-flex items-center text-primary font-medium group"
-                >
-                  了解更多服務細節
-                  <motion.svg 
-                    className="w-5 h-5 ml-2" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    initial={{ x: 0 }}
-                    animate={{ x: 0 }}
-                    whileHover={{ x: 3 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </motion.svg>
-                </Link>
-              </div>
-            </motion.div>
-          ))}
+                  <div className="mt-auto">
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {service.features.map((feature, i) => (
+                        <motion.span
+                          key={i}
+                          className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-md"
+                          initial={{ opacity: 0, x: -5 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 + i * 0.1, duration: 0.3 }}
+                        >
+                          {feature}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        )}
+        
+        <div className="mt-16 text-center">
+          <AnimatedSection delay={0.6}>
+            <Link 
+              href="/service" 
+              prefetch={true} 
+              className="service-cta-button px-8 py-3 text-base font-medium rounded-md transition-all duration-200"
+            >
+              查看完整服務內容
+              <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          </AnimatedSection>
         </div>
       </div>
     </section>
@@ -856,640 +1277,518 @@ type StatsSectionProps = {
 
 // 更新數據統計區塊
 function StatsSection({ className = '' }: StatsSectionProps) {
-  // 精簡的統計數據
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // 客戶端掛載處理
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  // 精選核心數據
   const stats: StatItem[] = [
     {
       value: 50,
       suffix: "+",
       label: "合作診所",
       description: "全台醫療網絡覆蓋",
-      icon: <Stethoscope className="w-10 h-10 text-white" strokeWidth={1.5} />
+      icon: <Stethoscope className="w-8 h-8 text-white" strokeWidth={1.5} />
     },
     {
       value: 700,
       suffix: "萬+",
       label: "月廣告投放",
       description: "精準投放策略",
-      icon: <ChartIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 12000,
-      suffix: "萬+",
-      label: "年廣告投放",
-      description: "持續成長動能",
-      icon: <GlobeIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
+      icon: <ChartIcon className="w-8 h-8 text-white" strokeWidth={1.5} />
     },
     {
       value: 98,
       suffix: "%",
       label: "客戶滿意度",
       description: "專業團隊品質保證",
-      icon: <Handshake className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 365,
-      suffix: "天",
-      label: "全年專業支援",
-      description: "無間斷的行銷服務",
-      icon: <Clock className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 200,
-      suffix: "%",
-      label: "平均ROI",
-      description: "投資回報率保證",
-      icon: <TrendingUp className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 30,
-      suffix: "%",
-      label: "新客戶增長",
-      description: "月平均成長數據",
-      icon: <Users className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 8,
-      suffix: "+",
-      label: "行業領域",
-      description: "專業醫療垂直領域",
-      icon: <BuildingIcon className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 85,
-      suffix: "%",
-      label: "回診率提升",
-      description: "有效病患維繫方案",
-      icon: <User className="w-10 h-10 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 10,
-      suffix: "年+",
-      label: "醫療行銷經驗",
-      description: "專注醫療產業經驗",
-      icon: <Award className="w-10 h-10 text-white" strokeWidth={1.5} />
+      icon: <Handshake className="w-8 h-8 text-white" strokeWidth={1.5} />
     }
   ];
 
-  // 設定輪播狀態
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [snapPosition, setSnapPosition] = useState({ start: 0, end: 0 });
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [activeCardIndexes, setActiveCardIndexes] = useState<number[]>([]);
-  const [animateCards, setAnimateCards] = useState(false);
-  
-  // 檢測視窗大小以決定是否為行動裝置
-  useEffect(() => {
-    setIsClient(true);
-    
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // 檢查卡片是否在當前可見區域
-  const isCardVisible = useCallback((index: number) => {
-    const visibleCount = isMobile ? 1 : 3;
-    return index >= currentSlide && index < currentSlide + visibleCount;
-  }, [currentSlide, isMobile]);
-  
-  // 觸發數字動畫
-  const triggerCountAnimation = useCallback(() => {
-    setAnimateCards(false);
-    // 使用 requestAnimationFrame 確保狀態更新和 DOM 渲染之間有足夠的時間
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setAnimateCards(true);
-      });
-    });
-  }, []);
-  
-  // 處理輪播控制
-  const handleNext = useCallback(() => {
-    if (!carouselRef.current) return;
-    const maxSlides = stats.length - (isMobile ? 1 : 3);
-    setCurrentSlide(prev => Math.min(prev + 1, maxSlides));
-    
-    // 重置計數動畫
-    const visibleCards = isMobile ? 1 : 3;
-    const newActiveIndexes = [];
-    for (let i = 0; i < visibleCards; i++) {
-      const index = currentSlide + 1 + i;
-      if (index < stats.length) {
-        newActiveIndexes.push(index);
-      }
-    }
-    setActiveCardIndexes(newActiveIndexes);
-    triggerCountAnimation();
-  }, [isMobile, currentSlide, stats.length, triggerCountAnimation]);
-  
-  const handlePrev = useCallback(() => {
-    setCurrentSlide(prev => Math.max(prev - 1, 0));
-    
-    // 重置計數動畫
-    const visibleCards = isMobile ? 1 : 3;
-    const newActiveIndexes = [];
-    for (let i = 0; i < visibleCards; i++) {
-      const index = Math.max(currentSlide - 1, 0) + i;
-      if (index < stats.length) {
-        newActiveIndexes.push(index);
-      }
-    }
-    setActiveCardIndexes(newActiveIndexes);
-    triggerCountAnimation();
-  }, [currentSlide, isMobile, stats.length, triggerCountAnimation]);
-  
-  // 自動輪播設定
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const maxSlides = stats.length - (isMobile ? 1 : 3);
-      if (currentSlide >= maxSlides) {
-        setCurrentSlide(0);
-        
-        // 重置為初始可見的卡片
-        const visibleCards = isMobile ? 1 : 3;
-        const newActiveIndexes = [];
-        for (let i = 0; i < visibleCards; i++) {
-          newActiveIndexes.push(i);
-        }
-        setActiveCardIndexes(newActiveIndexes);
-        triggerCountAnimation();
-      } else {
-        handleNext();
-      }
-    }, 6000); // 增加時間以便用戶有足夠時間閱讀
-    
-    return () => clearInterval(interval);
-  }, [currentSlide, isMobile, handleNext, stats.length, triggerCountAnimation]);
-  
-  // 計算滑動位置並添加平滑過渡
-  useEffect(() => {
-    if (!carouselRef.current) return;
-    
-    const carousel = carouselRef.current;
-    const cardWidth = carousel.querySelector('.stat-card')?.clientWidth || 0;
-    const gap = 32; // gap-8 = 2rem = 32px
-    
-    carousel.style.transform = `translateX(-${currentSlide * (cardWidth + gap)}px)`;
-  }, [currentSlide]);
-  
-  // 初始化可見卡片和動畫狀態
-  useEffect(() => {
-    const visibleCards = isMobile ? 1 : 3;
-    const initialActiveIndexes = [];
-    for (let i = 0; i < visibleCards; i++) {
-      initialActiveIndexes.push(i);
-    }
-    setActiveCardIndexes(initialActiveIndexes);
-    setAnimateCards(true);
-  }, [isMobile]);
-  
-  // 選擇適合當前卡片的動畫變體
-  const getCardAnimationVariant = useCallback((index: number) => {
-    if (isCardVisible(index)) {
-      return {
-        visible: {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotateY: 0,
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            delay: 0.1 * (index % 3),
-            duration: 0.6
-          }
-        }
-      };
-    } else {
-      const isLeft = index < currentSlide;
-      return {
-        hidden: {
-          opacity: 0.5,
-          y: 10,
-          scale: 0.9,
-          rotateY: isLeft ? -10 : 10,
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            duration: 0.4
-          }
-        }
-      };
-    }
-  }, [currentSlide, isCardVisible]);
-
   return (
-    <section className={`bg-primary py-20 ${className} overflow-hidden`}>
-      {/* 背景紋理 */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:20px_20px] opacity-40"></div>
-      
-      <div className="container-custom relative z-10">
+    <section 
+      ref={ref} 
+      className={`bg-red-600 py-16 ${className}`}
+    >
+      <div className="container mx-auto px-4 sm:px-6">
         {/* 標題區塊 */}
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-block text-white font-medium mb-4 px-5 py-1.5 border-l-2 border-white bg-white/5 backdrop-blur-sm">
-            <BarChart2 className="w-5 h-5 inline-block mr-2 -mt-0.5" /> 實證數據
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-5 heading-medical">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             顯著成效數據
           </h2>
-          <div className="w-16 h-1 bg-white/30 mx-auto mb-5"></div>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg">
             多年實證數據驅動診所業務增長，提供可量化的成功案例與投資回報
           </p>
         </motion.div>
 
-        {/* 統計數據橫向輪播 */}
-        <motion.div 
-          className="relative max-w-6xl mx-auto px-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* 輪播容器 */}
-          <div className="overflow-hidden rounded-lg backdrop-blur-sm">
+        {/* 統計數據卡片 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {stats.map((stat, idx) => (
             <motion.div 
-              ref={carouselRef}
-              className="flex space-x-8 transition-all duration-800 ease-out"
-              initial={{ x: 0 }}
-              animate={{ x: `-${currentSlide * 100}%` }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 150, 
-                damping: 20 
-              }}
+              key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
             >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="stat-card bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border-l-2 border-white/50 p-8 flex-shrink-0 w-full sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-16px)] rounded-lg shadow-lg"
-                  initial="hidden"
-                  animate={isCardVisible(index) ? "visible" : "hidden"}
-                  variants={{
-                    hidden: {
-                      opacity: 0.5,
-                      y: 30,
-                      scale: 0.95,
-                      transition: {
-                        duration: 0.3
-                      }
-                    },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: {
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 15,
-                        delay: index % 3 * 0.1,
-                        duration: 0.5
-                      }
-                    }
-                  }}
-                  whileHover={{ 
-                    y: -8,
-                    boxShadow: "0 15px 30px -10px rgba(0,0,0,0.3)",
-                    transition: { duration: 0.3 }
-                  }}
-                >
-                  <div className="flex flex-col h-full relative">
-                    {/* 背景裝飾元素 */}
-                    <div className="absolute -right-2 -top-2 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
-                    
-                    <div className="flex items-center mb-6">
-                      <motion.div
-                        className="p-3 bg-white/10 rounded-lg"
-                        animate={isCardVisible(index) ? { 
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 5, 0, -5, 0]
-                        } : { scale: 1, rotate: 0 }}
-                        transition={{ 
-                          duration: 2, 
-                          repeat: isCardVisible(index) ? Infinity : 0,
-                          repeatType: "reverse"
-                        }}
-                      >
+              <div className="p-6 rounded-lg h-full flex flex-col border border-white/20">
+                {/* 圖標 */}
+                <div className="mb-4">
                         {stat.icon}
-                      </motion.div>
                     </div>
                     
-                    <div className="stat-number text-white mb-3 text-5xl font-bold tracking-tight">
-                      {isClient && (
-                        <CountUp
-                          key={`countup-${index}-${isCardVisible(index) ? 'visible' : 'hidden'}-${currentSlide}-${animateCards ? 'animate' : 'static'}`}
-                          start={0}
-                          end={stat.value}
-                          duration={isCardVisible(index) ? 2.5 : 0}
-                          separator=","
-                          decimals={0}
-                          suffix={stat.suffix}
-                          className="tabular-nums"
-                          useEasing={true}
-                          redraw={true}
-                          preserveValue={false}
-                        />
-                      )}
-                      {!isClient && (
-                        <span className="tabular-nums">{stat.value}{stat.suffix}</span>
-                      )}
+                {/* 數據值 */}
+                <div className="flex items-baseline mb-3">
+                  <span className="text-4xl font-bold text-white tabular-nums">
+                    {inView && isMounted ? (
+                      <CountUp
+                        start={0}
+                        end={stat.value}
+                        duration={2}
+                        separator=","
+                        decimals={0}
+                        enableScrollSpy={false}
+                      />
+                    ) : (
+                      stat.value
+                    )}
+                  </span>
+                  <span className="text-xl font-bold text-white ml-1">{stat.suffix}</span>
                     </div>
                     
+                {/* 標題與描述 */}
                     <h3 className="text-xl font-bold text-white mb-2">
                       {stat.label}
                     </h3>
                     
-                    <p className="text-white/90 mt-auto">
+                <p className="text-white/90 text-sm">
                       {stat.description}
                     </p>
-                    
-                    {/* 底部裝飾線 */}
-                    <motion.div 
-                      className="w-0 h-0.5 bg-white/50 mt-4"
-                      animate={isCardVisible(index) ? { width: "100%" } : { width: 0 }}
-                      transition={{ duration: 0.8, delay: (index % 3) * 0.2 + 0.3 }}
-                    />
                   </div>
                 </motion.div>
               ))}
-            </motion.div>
-          </div>
-          
-          {/* 控制按鈕 - 改進設計 */}
-          <div className="flex justify-center mt-10 space-x-6">
-            <motion.button
-              onClick={handlePrev}
-              disabled={currentSlide === 0}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                currentSlide === 0 
-                  ? 'bg-white/10 text-white/40 cursor-not-allowed' 
-                  : 'bg-white text-primary hover:bg-white/90'
-              }`}
-              aria-label="上一組數據"
-              whileHover={currentSlide !== 0 ? { scale: 1.1, boxShadow: "0 5px 15px rgba(0,0,0,0.1)" } : {}}
-              whileTap={currentSlide !== 0 ? { scale: 0.95 } : {}}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </motion.button>
-            
-            {/* 進度指示器 - 改進為簡潔橫條 */}
-            <div className="flex items-center space-x-1.5 h-3">
-              {Array.from({ length: stats.length - (isMobile ? 0 : 3) }).map((_, i) => (
-                <motion.button
-                  key={i}
-                  onClick={() => {
-                    setCurrentSlide(i);
-                    
-                    // 更新可見卡片
-                    const visibleCards = isMobile ? 1 : 3;
-                    const newActiveIndexes = [];
-                    for (let j = 0; j < visibleCards; j++) {
-                      const index = i + j;
-                      if (index < stats.length) {
-                        newActiveIndexes.push(index);
-                      }
-                    }
-                    setActiveCardIndexes(newActiveIndexes);
-                    triggerCountAnimation();
-                  }}
-                  className="focus:outline-none"
-                  aria-label={`跳至第 ${i + 1} 組數據`}
-                >
-                  <motion.div 
-                    className={`h-1.5 rounded-sm transition-all ${
-                      currentSlide === i ? 'bg-white' : 'bg-white/30'
-                    }`}
-                    initial={{ width: 12 }}
-                    animate={{ 
-                      width: currentSlide === i ? 24 : 12,
-                      opacity: currentSlide === i ? 1 : 0.5
-                    }}
-                    whileHover={{ opacity: 0.8 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.button>
-              ))}
-            </div>
-            
-            <motion.button
-              onClick={handleNext}
-              disabled={currentSlide >= stats.length - (isMobile ? 1 : 4)}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                currentSlide >= stats.length - (isMobile ? 1 : 4)
-                  ? 'bg-white/10 text-white/40 cursor-not-allowed' 
-                  : 'bg-white text-primary hover:bg-white/90'
-              }`}
-              aria-label="下一組數據"
-              whileHover={currentSlide < stats.length - (isMobile ? 1 : 4) ? { scale: 1.1, boxShadow: "0 5px 15px rgba(0,0,0,0.1)" } : {}}
-              whileTap={currentSlide < stats.length - (isMobile ? 1 : 4) ? { scale: 0.95 } : {}}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </motion.button>
-          </div>
-        </motion.div>
-        
-        {/* 註釋 */}
-        <div className="text-center mt-16 text-white/60 text-sm border-t border-white/10 pt-6 max-w-xl mx-auto italic">
-          *數據基於過去三年合作診所的實際統計 | 2021-2023年度報告
         </div>
       </div>
     </section>
   );
 }
 
-// 更新案例展示區塊
+// 更新案例展示區塊 - 整合CaseStudiesSection和CaseShowcaseSection
 function CaseStudiesSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
   });
   
-  // 只使用具有完整數據且確認存在的案例，明確列出已知有效的ID
-  const validCases = useMemo(() => {
-    // 明確定義我們知道存在的有效ID列表
-    const validCaseIds = ['north-district-dental', 'east-district-dental', 'central-district-dental', 'south-district-dental'];
+  // 使用useReducer統一管理相關狀態
+  type CaseState = {
+    activeCategory: string;
+    currentSlide: number;
+    isMobile: boolean;
+  };
+
+  type CaseAction = 
+    | { type: 'SET_CATEGORY'; payload: string }
+    | { type: 'SET_SLIDE'; payload: number }
+    | { type: 'SET_MOBILE'; payload: boolean }
+    | { type: 'NEXT_SLIDE' }
+    | { type: 'PREV_SLIDE'; totalLength: number };
+
+  const initialState: CaseState = {
+    activeCategory: 'all',
+    currentSlide: 0,
+    isMobile: false
+  };
+
+  const caseReducer = (state: CaseState, action: CaseAction): CaseState => {
+    switch (action.type) {
+      case 'SET_CATEGORY':
+        return { ...state, activeCategory: action.payload, currentSlide: 0 };
+      case 'SET_SLIDE':
+        return { ...state, currentSlide: action.payload };
+      case 'SET_MOBILE':
+        return { ...state, isMobile: action.payload };
+      case 'NEXT_SLIDE': {
+        // 需要計算當前過濾後的案例長度
+        const currentCases = casesData.filter(cs => 
+          state.activeCategory === 'all' || cs.category === state.activeCategory
+        );
+        return { 
+          ...state, 
+          currentSlide: state.isMobile ? (state.currentSlide + 1) % currentCases.length : state.currentSlide 
+        };
+      }
+      case 'PREV_SLIDE': {
+        // 使用傳入的總長度參數
+        return { 
+          ...state, 
+          currentSlide: state.isMobile ? (state.currentSlide - 1 + action.totalLength) % action.totalLength : state.currentSlide 
+        };
+      }
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(caseReducer, initialState);
+  const { activeCategory, currentSlide, isMobile } = state;
+  
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const resizeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // 使用useMemo記憶過濾後的案例數據，避免重複計算
+  const filteredCases = useMemo(() => 
+    activeCategory === 'all' 
+      ? casesData 
+      : casesData.filter(cs => cs.category === activeCategory),
+    [activeCategory]
+  );
+  
+  // 使用useMemo記憶類別列表，避免重複計算
+  const categories = useMemo(() => 
+    ['all', ...Array.from(new Set(casesData.map(cs => cs.category)))],
+    [casesData]
+  );
+  
+  // 檢測視窗大小以決定是否為行動裝置，使用防抖處理
+  useEffect(() => {
+    const handleResize = () => {
+      // 清除之前的計時器
+      if (resizeTimerRef.current) {
+        clearTimeout(resizeTimerRef.current);
+      }
+      
+      // 設置新的計時器，實現防抖
+      resizeTimerRef.current = setTimeout(() => {
+        dispatch({ type: 'SET_MOBILE', payload: window.innerWidth < 768 });
+      }, 150);
+    };
     
-    // 只使用我們明確知道有效的案例ID
-    return casesData.filter(cs => 
-      // 檢查ID是否在我們的有效列表中 或 檢查案例是否有明確的圖片路徑
-      (validCaseIds.includes(cs.id) || cs.image) &&
-      // 確保有必要的基本數據
-      cs.name && 
-      cs.description && 
-      Array.isArray(cs.metrics) && 
-      cs.metrics.length > 0
-    );
+    // 初始檢查
+    handleResize();
+    
+    // 添加事件監聽
+    window.addEventListener('resize', handleResize);
+    
+    // 清理函數
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimerRef.current) {
+        clearTimeout(resizeTimerRef.current);
+      }
+    };
   }, []);
   
-  // 選擇一個精選案例
-  const featuredCase = useMemo(() => {
-    const featured = validCases.find(cs => cs.featured);
-    return featured || validCases[0]; // 如果沒有標記為精選的，使用第一個
-  }, [validCases]);
+  // 手動控制輪播 - 使用useCallback記憶函數
+  const handleNext = useCallback(() => {
+    dispatch({ type: 'NEXT_SLIDE' });
+  }, [filteredCases.length]);
   
-  // 選擇非精選的其他案例
-  const regularCases = useMemo(() => {
-    if (!featuredCase) return [];
-    return validCases
-      .filter(cs => cs.id !== featuredCase.id)
-      .slice(0, 3); // 只顯示最多3個案例
-  }, [validCases, featuredCase]);
+  const handlePrev = useCallback(() => {
+    dispatch({ type: 'PREV_SLIDE', totalLength: filteredCases.length });
+  }, [filteredCases.length]);
+  
+  // 自動輪播設定
+  useEffect(() => {
+    if (!isMobile || filteredCases.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      dispatch({ type: 'NEXT_SLIDE' });
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [isMobile, filteredCases.length]);
+  
+  // 切換分類 - 使用useCallback記憶函數
+  const handleCategoryChange = useCallback((category: string) => {
+    dispatch({ type: 'SET_CATEGORY', payload: category });
+  }, []);
 
-  // 建立從路由到案例詳情頁的函數
-  const getValidCaseUrl = useCallback((caseId: string) => {
-    return `/case/${caseId}`;
+  // 切換輪播項 - 使用useCallback記憶函數
+  const handleSlideChange = useCallback((index: number) => {
+    dispatch({ type: 'SET_SLIDE', payload: index });
   }, []);
 
   return (
-    <section ref={ref} className="relative py-20 md:py-28 bg-white">
-      {/* 裝飾元素 */}
-      <div className="absolute left-0 top-0 h-40 w-px bg-gray-100"></div>
-      <div className="absolute right-0 bottom-0 h-40 w-px bg-gray-100"></div>
-      
+    <section ref={ref} className="relative py-16 md:py-24 bg-white overflow-hidden border-t border-gray-100">
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-primary font-medium mb-4 px-4 py-1.5 bg-primary/10 rounded-full">成功案例</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            診所<span className="text-primary">成功案例</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            令人印象深刻的<span className="text-primary">成功案例</span>
           </h2>
-          <div className="w-12 h-1 bg-primary mx-auto mb-6"></div>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            探索我們如何幫助診所提升品牌價值、增加營業額，打造專屬數位行銷策略
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
+            探索我們如何協助醫療診所提升數位形象、打造專屬行銷策略，並獲得顯著的營運成果
           </p>
-        </motion.div>
-
-        <AnimatePresence>
-          {inView && (
-            <>
-              {/* 精選案例 */}
-              {featuredCase && (
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="grid grid-cols-12 gap-6 md:gap-8 mb-16"
-                >
-                  <div className="p-1 mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 flex items-center mb-6">
-                      <span className="block w-4 h-px bg-primary mr-3"></span>
-                      精選案例
-                    </h3>
-                  </div>
-                  
-                  {/* 包裝在Link中並添加prefetch */}
-                  <div className="col-span-12 lg:col-span-8">
-                    <Link href={`/case/${featuredCase.id}`} prefetch={true} className="block">
-                      <CaseCard
-                        caseStudy={featuredCase}
-                        index={0}
-                        hasParentLink={true}
-                      />
-                    </Link>
+          
+          {/* 分類標籤 - 扁平簡約設計 */}
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            <button
+              onClick={() => handleCategoryChange('all')}
+              className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                activeCategory === 'all'
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              全部案例
+            </button>
+            
+            {categories.filter(cat => cat !== 'all').map(category => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                  activeCategory === category
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
                   </div>
                 </motion.div>
-              )}
               
-              {/* 一般案例 */}
-              {regularCases.length > 0 && (
+        <AnimatePresence mode="wait">
+          {inView && (
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+              key={activeCategory}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              {filteredCases.length > 0 ? (
+                <>
+                  {/* 桌面版網格顯示 */}
+                  {!isMobile ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                      {filteredCases.slice(0, 6).map((caseStudy, index) => (
+                        <motion.div
+                          key={caseStudy.id}
+                          initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="mb-16"
-                >
-                  <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                      <span className="block w-4 h-px bg-primary mr-3"></span>
-                      更多成功案例
-                    </h3>
-                    <Link href="/case" prefetch={true} className="text-primary text-sm font-medium hover:underline">
-                      查看全部
-                    </Link>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    {regularCases.map((caseStudy, index) => (
-                      // 包裝在Link中並添加prefetch
+                          transition={{ duration: 0.4, delay: index * 0.1 }}
+                          className={`${caseStudy.featured ? 'md:col-span-2 lg:col-span-1' : ''} group`}
+                        >
                       <Link 
-                        key={caseStudy.id}
                         href={`/case/${caseStudy.id}`}
                         prefetch={true}
                         className="block h-full"
                       >
-                        <CaseCard
-                          caseStudy={caseStudy}
-                          index={index + 1}
-                          hasParentLink={true}
-                        />
-                      </Link>
+                            <div className="bg-white h-full p-6 hover:shadow-lg transition-all duration-300 rounded-lg flex flex-col items-center text-center">
+                              {/* 圓形圖片，作為視覺焦點 */}
+                              <div className="relative mb-5 transform group-hover:scale-105 transition-transform duration-300">
+                                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mx-auto relative">
+                                  <Image
+                                    src={caseStudy.image || `/images/case-placeholder.jpg`}
+                                    alt={caseStudy.name}
+                                    fill
+                                    sizes="(max-width: 768px) 160px, 192px"
+                                    className="object-cover"
+                                  />
+                  </div>
+                                
+                                {/* 圓形外環效果 */}
+                                <div className="absolute inset-0 border-4 border-primary/20 rounded-full -m-1"></div>
+                                
+                                {/* 精選案例標籤，放在圖片上方 */}
+                                {caseStudy.featured && (
+                                  <span className="absolute top-0 right-0 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full transform translate-x-1/4">
+                                    精選案例
+                                  </span>
+                                )}
+      </div>
+                              
+                              {/* 類別標籤，獨立於圖片 */}
+                              <span className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full mb-4">
+                                {caseStudy.category}
+                              </span>
+                              
+                              <h3 className="font-bold text-gray-900 text-xl mb-3">{caseStudy.name}</h3>
+                              
+                              {/* 績效指標，突出顯示 */}
+                              {caseStudy.metrics && caseStudy.metrics.length > 0 && (
+                                <div className="mb-5 flex justify-center space-x-6">
+                                  {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
+                                    <div key={idx} className="text-center">
+                                      <span className="block font-bold text-primary text-xl">{metric.value}</span>
+                                      <span className="text-xs text-gray-500">{metric.label}</span>
+        </div>
                     ))}
                   </div>
-                </motion.div>
+                              )}
+                              
+                              {/* 僅顯示摘要文字 */}
+                              <p className="text-gray-600 text-sm mb-5 line-clamp-2 flex-grow">
+                                {caseStudy.description}
+                              </p>
+                              
+                              {/* 查看案例按鈕 */}
+                              <div className="mt-auto pt-4 border-t border-gray-100 w-full">
+                                <span className="inline-flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform duration-300">
+                                  查看案例
+                                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="ml-1">
+                                    <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </span>
+                    </div>
+                  </div>
+                          </Link>
+                        </motion.div>
+                      ))}
+                </div>
+                  ) : (
+                    /* 行動版輪播顯示 - 所有案例使用同一輪播 */
+                    <div className="mb-12">
+                      {/* 當前案例卡片 */}
+                      <div ref={carouselRef} className="mb-6">
+                        <Link 
+                          href={`/case/${filteredCases[currentSlide].id}`}
+                          prefetch={true}
+                          className="block"
+                        >
+                          <div className="bg-white border border-gray-200">
+                            <div className="relative aspect-[4/3]">
+                      <Image
+                                src={filteredCases[currentSlide].image || `/images/case-placeholder.jpg`}
+                                alt={filteredCases[currentSlide].name}
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                        priority
+                      />
+                              <div className="absolute top-0 left-0 right-0 flex justify-between p-2">
+                                {filteredCases[currentSlide].featured && (
+                                  <span className="bg-primary text-white text-xs font-medium px-2 py-1">
+                                    精選案例
+                                  </span>
+                                )}
+                                <span className="bg-black text-white text-xs font-medium px-2 py-1 ml-auto">
+                                  {filteredCases[currentSlide].category}
+                                </span>
+                        </div>
+                            </div>
+                            
+                            <div className="p-4">
+                              <h3 className="font-bold text-gray-900 text-lg mb-2">
+                                {filteredCases[currentSlide].name}
+                              </h3>
+                              
+                              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                                {filteredCases[currentSlide].description}
+                              </p>
+                              
+                              {/* 績效指標 */}
+                              {filteredCases[currentSlide].metrics && filteredCases[currentSlide].metrics.length > 0 && (
+                                <div className="mb-3 grid grid-cols-2 gap-2">
+                                  {filteredCases[currentSlide].metrics.slice(0, 2).map((metric, idx) => (
+                                    <div key={idx} className="flex items-center border-l-2 border-primary pl-2">
+                                      <span className="font-bold text-primary text-sm">{metric.value}</span>
+                                      <span className="text-xs text-gray-500 ml-1">{metric.label}</span>
+                                    </div>
+                                  ))}
+                      </div>
+                    )}
+                              
+                              <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                                <span className="text-xs text-gray-500">
+                                  {filteredCases[currentSlide].solutions?.length || 0} 項解決方案
+                                </span>
+                                <span className="text-primary text-sm font-medium">查看案例</span>
+                  </div>
+                </div>
+               </div>
+                        </Link>
+                      </div>
+           
+                      {/* 輪播控制 */}
+                      <div className="flex items-center justify-between">
+              <button 
+                          onClick={handlePrev}
+                          className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          aria-label="上一個案例"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              
+                        <div className="flex items-center gap-1">
+                          {filteredCases.map((_, index) => (
+                <button
+                  key={index}
+                              onClick={() => handleSlideChange(index)}
+                              className={`w-2 h-2 transition-all duration-300 ${
+                                currentSlide === index ? 'bg-primary w-6' : 'bg-gray-300'
+                              }`}
+                              aria-label={`前往案例 ${index + 1}`}
+                />
+              ))}
+                        </div>
+              
+              <button 
+                          onClick={handleNext}
+                          className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          aria-label="下一個案例"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center p-10 bg-white border border-gray-200 mb-12">
+                  <p className="text-gray-500">目前沒有符合此類別的案例</p>
+        </div>
               )}
               
-              {/* 查看更多案例按鈕 */}
-              <div className="text-center mb-20">
-                <Link
-                  href="/case"
-                  prefetch={true}
-                  className="inline-flex items-center px-8 py-3 bg-primary text-white font-medium group transition-all duration-200 hover:bg-primary/90"
-                >
-                  查看更多案例
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transform transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </Link>
-              </div>
-              
-              {/* CTA 區塊 */}
+              {/* 查看更多按鈕 */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
                 className="text-center"
               >
-                <div className="border-t border-gray-100 pt-12 pb-4">
-                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                    我們擁有豐富的成功案例，展示如何協助不同類型的診所提升營運績效
-                  </p>
-                  <Link 
-                    href="/case"
-                    className="inline-flex items-center px-6 py-2 border-2 border-primary text-primary font-medium hover:bg-primary hover:text-white transition-colors duration-300"
-                  >
-                    探索所有成功案例
-                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
+                <Link 
+                  href="/case" 
+                  prefetch={true} 
+                  className="inline-flex items-center justify-center bg-primary text-white px-6 py-3 font-medium hover:bg-primary-dark transition-colors duration-300"
+                >
+                  查看全部案例
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="ml-2">
+                    <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
               </motion.div>
-            </>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
@@ -1497,197 +1796,113 @@ function CaseStudiesSection() {
   );
 }
 
-// 新增客戶評價區塊
-function TestimonialsSection({ activeIndex, handleChange }: { activeIndex: number; handleChange: (index: number) => void }) {
-  const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setViewportSize('mobile');
-      } else if (window.innerWidth < 1024) {
-        setViewportSize('tablet');
-      } else {
-        setViewportSize('desktop');
-      }
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+// 更新 FAQ 區塊 - 優化渲染和狀態管理
+function FAQSection() {
+  // 使用 useReducer 統一管理 FAQ 狀態
+  type FaqState = {
+    activeIndex: number | null;
+    activeCategory: string;
+  }
 
-  // Simple fade animation variants
-  const fadeVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } }
+  type FaqAction = 
+    | { type: 'SET_CATEGORY'; payload: string }
+    | { type: 'TOGGLE_FAQ'; payload: number };
+
+  const initialState: FaqState = {
+    activeIndex: null,
+    activeCategory: 'all'
   };
 
-  return (
-    <section className="relative py-20 md:py-28 bg-gray-50">
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-block bg-primary text-white py-1 px-4 mb-4">評價回饋</div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-            合作診所真實評價
-          </h2>
-          <div className="w-16 h-1 bg-primary mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            聽聽我們的合作夥伴怎麼說。這些是來自實際使用我們平台的診所和醫療專業人員的真實評價。
-          </p>
-        </div>
-        
-        <div className="max-w-6xl mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              variants={fadeVariants}
-              initial="hidden"
-              animate="visible"
-              className="bg-white border-t border-b border-gray-100 p-8 md:p-12"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                {/* 左側內容區 */}
-                <div className="md:col-span-8 order-2 md:order-1">
-                  <div className="flex mb-6">
-                    {[...Array(testimonials[activeIndex].rating || 5)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className="w-6 h-1 bg-primary mr-1" 
-                      />
-                    ))}
-                  </div>
-                  
-                  <blockquote className="text-gray-800 text-xl md:text-2xl font-light leading-relaxed mb-6">
-                    "{testimonials[activeIndex].content}"
-                  </blockquote>
-                  
-                  <div className="flex items-center">
-                    <div className="mr-4">
-                      <h3 className="font-semibold text-gray-900">{testimonials[activeIndex].name}</h3>
-                      <p className="text-gray-500">{testimonials[activeIndex].title}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* 右側圖片區 */}
-                <div className="md:col-span-4 order-1 md:order-2 relative h-[200px] md:h-[300px]">
-                  <div className="absolute inset-0 bg-gray-100 overflow-hidden">
-                    {/* 使用條件渲染代替動態路徑以避免 Next.js 圖片優化問題 */}
-                    {activeIndex === 0 && (
-                      <Image
-                        src="/testimonials/doctor1.jpg" 
-                        alt={testimonials[activeIndex].name}
-                        fill
-                        style={{ 
-                          objectFit: 'cover',
-                          objectPosition: 'center 25%' // 更精確聚焦於臉部
-                        }}
-                        sizes="(max-width: 768px) 100vw, 30vw"
-                        className="transition-transform duration-500"
-                        priority
-                      />
-                    )}
-                    {activeIndex === 1 && (
-                      <Image
-                        src="/testimonials/doctor2.jpg" 
-                        alt={testimonials[activeIndex].name}
-                        fill
-                        style={{ 
-                          objectFit: 'cover',
-                          objectPosition: 'center 30%' // 更精確聚焦於臉部
-                        }}
-                        sizes="(max-width: 768px) 100vw, 30vw"
-                        className="transition-transform duration-500"
-                        priority
-                      />
-                    )}
-                    {/* 對於空檔案的情況使用備用圖片 */}
-                    {(activeIndex > 1) && (
-                      <div className="w-full h-full flex items-center justify-center bg-primary-light">
-                        <div className="text-5xl text-white font-bold">
-                          {testimonials[activeIndex].name.charAt(0)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-               </div>
-             </motion.div>
-           </AnimatePresence>
-           
-          <div className="flex items-center justify-center mt-10">
-            <div className="flex items-center space-x-6">
-              <button 
-                onClick={() => handleChange((activeIndex - 1 + testimonials.length) % testimonials.length)}
-                className="w-12 h-12 bg-white border border-gray-200 flex items-center justify-center hover:border-primary transition-colors"
-                aria-label="上一個評價"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="butt" strokeLinejoin="miter" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleChange(index)}
-                  className={`w-3 h-3 ${activeIndex === index ? 'bg-primary' : 'bg-gray-300'} rounded-none transition-all duration-200 hover:bg-primary-light`}
-                  aria-label={`轉到評價 ${index + 1}`}
-                />
-              ))}
-              
-              <button 
-                onClick={() => handleChange((activeIndex + 1) % testimonials.length)}
-                className="w-12 h-12 bg-white border border-gray-200 flex items-center justify-center hover:border-primary transition-colors"
-                aria-label="下一個評價"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="butt" strokeLinejoin="miter" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  const faqReducer = (state: FaqState, action: FaqAction): FaqState => {
+    switch (action.type) {
+      case 'SET_CATEGORY':
+        return { activeCategory: action.payload, activeIndex: null };
+      case 'TOGGLE_FAQ':
+        return { 
+          ...state, 
+          activeIndex: state.activeIndex === action.payload ? null : action.payload 
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(faqReducer, initialState);
+  const { activeIndex, activeCategory } = state;
+  
+  // 使用 useMemo 記憶類別列表，避免重複計算
+  const categories = useMemo(() => 
+    Array.from(new Set(faqs.map(faq => faq.category))),
+    [faqs]
   );
-}
-
-// 更新 FAQ Section 樣式
-function FAQSection({ activeIndex, toggleFaq }: { activeIndex: number | null, toggleFaq: (index: number) => void }) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('全部');
   
-  // 從FAQ資料中提取所有類別
-  const categories = ['全部', ...Array.from(new Set(faqs.map(faq => faq.category)))];
-  
-  // 根據選定的類別過濾FAQ
-  const filteredFaqs = selectedCategory === '全部' 
+  // 使用 useMemo 記憶過濾後的 FAQ 列表，避免重複計算
+  const filteredFaqs = useMemo(() => 
+    activeCategory === 'all' 
     ? faqs 
-    : faqs.filter(faq => faq.category === selectedCategory);
+      : faqs.filter(faq => faq.category === activeCategory),
+    [activeCategory, faqs]
+  );
+
+  // 使用 useCallback 記憶函數，減少不必要的重新渲染
+  const handleTabChange = useCallback((category: string) => {
+    React.startTransition(() => {
+      dispatch({ type: 'SET_CATEGORY', payload: category });
+    });
+  }, []);
+  
+  const toggleFaq = useCallback((index: number) => {
+    dispatch({ type: 'TOGGLE_FAQ', payload: index });
+  }, []);
+
+  // 使用 useRef 追蹤元素
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
 
   return (
-    <section id="faq" className="py-16 md:py-24 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">常見問題</h2>
-          <div className="h-1 w-16 bg-red-600 mx-auto mb-6"></div>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-            專業的醫療行銷顧問，解答您最關心的問題，協助您的診所在數位時代脫穎而出
+    <section ref={sectionRef} className="py-20 bg-white overflow-hidden border-t border-gray-100">
+      <div ref={ref} className="container mx-auto px-4 sm:px-6 relative z-10">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-primary font-medium mb-3 px-4 py-1.5 bg-primary/10 rounded-md text-sm">解答您的疑問</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            常見<span className="text-primary">問答集</span>
+          </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
+            以下是診所院長常問的問題，如果您有其他疑問，歡迎隨時與我們聯繫
           </p>
-        </div>
+        </motion.div>
         
-        {/* 分類標籤列 */}
-        <div className="flex flex-wrap justify-center mb-10 gap-2 md:gap-3">
-          {categories.map((category, index) => (
+        {/* 分類標籤 - 扁平簡約設計，與案例區保持一致 */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
             <button
-              key={index}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                selectedCategory === category
-                  ? 'bg-red-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            onClick={() => handleTabChange('all')}
+            className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              activeCategory === 'all'
+                ? 'bg-primary text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            全部問題
+          </button>
+          
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => handleTabChange(category)}
+              className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                activeCategory === category
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {category}
@@ -1695,23 +1910,57 @@ function FAQSection({ activeIndex, toggleFaq }: { activeIndex: number | null, to
           ))}
         </div>
         
-        {/* FAQ列表 */}
+        {/* FAQ列表 - 優化載入 */}
         <div className="max-w-3xl mx-auto">
-          <AnimatePresence>
+          <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                {filteredFaqs.length > 0 ? (
+                  <div className="space-y-4">
             {filteredFaqs.map((faq, index) => (
-              <FaqItem key={faq.question} faq={faq} index={index} isOpen={activeIndex === index} toggle={() => toggleFaq(index)} />
-            ))}
+                      <FaqItem 
+                        key={`${activeCategory}-${faq.question}`} 
+                        faq={faq} 
+                        index={index} 
+                        isOpen={activeIndex === index} 
+                        toggle={() => toggleFaq(index)} 
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center p-10 bg-white border border-gray-200 mb-12">
+                    <p className="text-gray-500">此分類下暫無常見問題</p>
+                  </div>
+                )}
+              </motion.div>
           </AnimatePresence>
+          </Suspense>
           
-          {filteredFaqs.length === 0 && (
+          {/* 聯絡我們按鈕 */}
             <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center p-8 bg-white rounded-md shadow-sm"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="text-center mt-10"
+          >
+            <Link 
+              href="/contact" 
+              prefetch={true} 
+              className="inline-flex items-center justify-center bg-primary text-white px-6 py-3 font-medium hover:bg-primary-dark transition-colors duration-300"
             >
-              <p className="text-gray-500">此分類下暫無常見問題</p>
+              更多問題諮詢
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="ml-2">
+                <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
             </motion.div>
-          )}
         </div>
       </div>
     </section>
@@ -1729,30 +1978,23 @@ interface FaqItemProps {
   toggle: () => void;
 }
 
-const FaqItem = ({ faq, index, isOpen, toggle }: FaqItemProps) => {
+// 優化 FAQ 項目以減少不必要的渲染
+const FaqItem = memo(({ faq, index, isOpen, toggle }: FaqItemProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { delay: index * 0.05 } }}
-      exit={{ opacity: 0 }}
-      className="mb-4"
-    >
-      <div 
-        className={`bg-white rounded-md shadow-sm border-l-4 ${
-          isOpen ? 'border-red-600' : 'border-gray-200'
-        } transition-colors duration-200`}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      className="bg-white border border-gray-200 hover:border-gray-300 transition-colors duration-200"
+      layout
       >
         <button
           onClick={toggle}
           className="w-full px-5 py-4 text-left flex items-center justify-between focus:outline-none"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center">
-            <h3 className="font-medium text-base md:text-lg">{faq.question}</h3>
-            <span className="text-xs text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full mt-2 sm:mt-0 sm:ml-3 inline-block w-fit">
-              {faq.category}
-            </span>
-          </div>
-          <div className={`text-gray-400 transition-transform duration-200 transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
+        aria-expanded={isOpen}
+      >
+        <h3 className="font-medium text-base md:text-lg text-gray-900">{faq.question}</h3>
+        <div className={`text-primary transition-transform duration-200 transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -1765,54 +2007,138 @@ const FaqItem = ({ faq, index, isOpen, toggle }: FaqItemProps) => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
               className="overflow-hidden"
             >
-              <div className="px-5 pb-4 pt-0 text-gray-600">
+            <div className="px-5 pb-5 pt-0">
+              <div className="pt-3 border-t border-gray-100">
+                <div className="prose prose-sm max-w-none text-gray-600">
                 {faq.answer.split('\n\n').map((paragraph, i) => (
-                  <p key={i} className={`${i > 0 ? 'mt-3' : ''} text-sm md:text-base`}>
+                    <p key={i} className={`${i > 0 ? 'mt-3' : ''}`}>
                     {paragraph}
                   </p>
                 ))}
+                </div>
+                <div className="mt-3 flex items-center">
+                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                    {faq.category}
+                  </span>
+                </div>
+              </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
     </motion.div>
   );
-};
+});
 
-// 聯絡區塊
+// 聯絡區塊 - 使用 Suspense 優化載入
 const ContactSection = () => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
   return (
-    <section id="contact" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">立即獲得專屬診所行銷解決方案</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+    <section id="contact" className="py-20 bg-white overflow-hidden border-t border-gray-100">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            立即獲得<span className="text-primary">專屬診所</span>行銷解決方案
+          </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
             填寫下方表單，我們將為您提供免費診所行銷策略諮詢，為您的診所找到最合適的解決方案
           </p>
-        </div>
+        </motion.div>
         
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3">
+        <div ref={ref} className="max-w-6xl mx-auto">
+          <motion.div 
+            className="grid grid-cols-1 lg:grid-cols-5 gap-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, staggerChildren: 0.1 }}
+          >
+            <motion.div 
+              className="lg:col-span-3 bg-white rounded-lg shadow-sm overflow-hidden transition-shadow duration-300 hover:shadow-md"
+              initial={{ opacity: 0, x: -20 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <div className="p-1.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20">
+                <div className="bg-white p-6 md:p-8">
+                  <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
               <ContactForm animation={true} />
+                  </Suspense>
             </div>
+              </div>
+            </motion.div>
             
-            <div className="lg:col-span-2">
+            <motion.div 
+              className="lg:col-span-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <div className="bg-white p-8 rounded-lg flex flex-col h-full relative border border-gray-100 shadow-sm">
+                {/* 移除圓形裝飾元素 */}
+                
+                <div className="relative z-10">
+                  <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
               <ContactInfo animation={true} />
+                  </Suspense>
             </div>
           </div>
+            </motion.div>
+          </motion.div>
+          
+          {/* 簡化信任徽章區域 */}
+          <motion.div 
+            className="flex flex-wrap justify-center items-center gap-6 md:gap-10 mt-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <div className="text-center">
+              <span className="block text-gray-400 text-sm mb-6">我們值得您的信任</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-3xl">
+              {['安全支付', '專業團隊', '免費諮詢', '滿意保證'].map((text, index) => (
+                <motion.div 
+                  key={text}
+                  className="flex flex-col items-center"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 * index }}
+                >
+                  <div className="text-primary text-2xl mb-3">
+                    {index === 0 && <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /><line x1="7" x2="7" y1="15" y2="15" /></svg>}
+                    {index === 1 && <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>}
+                    {index === 2 && <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>}
+                    {index === 3 && <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" /><path d="m9 12 2 2 4-4" /></svg>}
+                  </div>
+                  <p className="text-sm text-gray-700 font-medium">{text}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-// 特性卡片組件 - 抽離並優化以減少重複渲染
-const FeatureCard = React.memo(({ feature, index }: { feature: any, index: number }) => {
+// 特性卡片組件 - 優化並移除不必要的 memo
+const FeatureCard = ({ feature, index }: { feature: any, index: number }) => {
   return (
     <AnimatedSection delay={index} className="bg-white rounded-xl p-6 md:p-8 shadow-lg border border-gray-100 h-full flex flex-col">
       <div className="mb-4 text-primary">
@@ -1825,12 +2151,11 @@ const FeatureCard = React.memo(({ feature, index }: { feature: any, index: numbe
       <h3 className="text-xl font-bold mb-2 text-gray-800">{feature.title}</h3>
       <p className="text-gray-600 leading-relaxed">{feature.description}</p>
     </AnimatedSection>
-  )
-})
-FeatureCard.displayName = 'FeatureCard'
+  );
+};
 
 // 優化的統計數字組件
-const StatItem = React.memo(({ value, title, symbol, delay }: { 
+const StatItem = ({ value, title, symbol, delay }: { 
   value: number, 
   title: string, 
   symbol?: string,
@@ -1839,7 +2164,7 @@ const StatItem = React.memo(({ value, title, symbol, delay }: {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
-  })
+  });
 
   return (
     <div ref={ref} className="text-center">
@@ -1859,50 +2184,287 @@ const StatItem = React.memo(({ value, title, symbol, delay }: {
       </div>
       <p className="text-gray-600">{title}</p>
     </div>
-  )
-})
-StatItem.displayName = 'StatItem'
+  );
+};
 
-// HomePage組件 - 優化渲染
-const HomePage = () => {
-  // 使用useState並確保初始值合理避免水合不匹配問題
-  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0)
-  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null)
-  
-  // 使用useMemo減少不必要的重複計算
-  const filteredCases = useMemo(() => 
-    casesData.slice(0, 3),
-    []
-  )
-  
-  // 使用useCallback優化事件處理函數
-  const handleTestimonialChange = useCallback((index: number) => {
-    setActiveTestimonialIndex(index)
-  }, [])
-  
-  const toggleFaq = useCallback((index: number) => {
-    setActiveFaqIndex(prevIndex => prevIndex === index ? null : index)
-  }, [])
+// 錯誤邊界組件
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode, fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode, fallback?: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-  // 優化渲染 - 使用React 19的更好記憶體模型
-  return (
-    <div className="flex flex-col min-h-screen">
-      <HeroSection />
-      <MarketingStatement />
-      <StatsSection />
-      <FeatureSection />
-      <ServiceSection />
-      <TestimonialsSection 
-        activeIndex={activeTestimonialIndex}
-        handleChange={handleTestimonialChange}
-      />
-      <FAQSection 
-        activeIndex={activeFaqIndex}
-        toggleFaq={toggleFaq}
-      />
-      <ContactSection />
-    </div>
-  )
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Error in component:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="p-8 text-center">
+          <h2 className="text-xl text-red-600 mb-2">發生錯誤</h2>
+          <p className="text-gray-700">載入內容時發生問題，請重新整理頁面</p>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
 }
 
-export default React.memo(HomePage) 
+
+// 客戶見證資料定義
+interface ClientTestimonial {
+  id: string;
+  content: string;
+  author: string;
+  role: string;
+  imageUrl: string;
+}
+
+// 客戶見證數據
+const clientTestimonials: ClientTestimonial[] = [
+  {
+    id: 'testimonial1',
+    content: 'Aidea:Med 團隊對醫療產業的理解讓我們感到非常驚喜，他們不僅提供數位行銷服務，更理解診所經營者的真正需求，為我們打造真正符合專業形象又能吸引患者的品牌。',
+    author: '張醫師',
+    role: '微笑牙醫診所 院長',
+    imageUrl: '/images/testimonial-1.jpg'
+  },
+  {
+    id: 'testimonial2',
+    content: '與 Aidea:Med 合作讓我們診所的數位轉型過程非常順利，他們提供的 24 小時客服代營運服務，讓我們能夠專注於臨床治療，同時不錯過任何潛在客戶的諮詢。',
+    author: '李醫師',
+    role: '康橋植牙中心 創辦人',
+    imageUrl: '/images/testimonial-2.jpg'
+  },
+  {
+    id: 'testimonial3',
+    content: '從品牌重塑到數位行銷策略的執行，Aidea:Med 都展現了極高的專業度。他們的團隊真正理解醫療產業的獨特挑戰，並提供了定制化的解決方案，幫助我們在競爭激烈的市場中脫穎而出。',
+    author: '王醫師',
+    role: '美學牙醫診所 負責人',
+    imageUrl: '/images/testimonial-3.jpg'
+  }
+];
+
+// 客戶見證區塊 - 使用與案例區相同的設計語言
+function TestimonialSection() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+  
+  // 輪播狀態管理
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const testimonialRef = useRef<HTMLDivElement>(null);
+  
+  // 處理輪播控制
+  const handleNext = useCallback(() => {
+    setCurrentSlide(prev => (prev + 1) % clientTestimonials.length);
+  }, []);
+  
+  const handlePrev = useCallback(() => {
+    setCurrentSlide(prev => (prev - 1 + clientTestimonials.length) % clientTestimonials.length);
+  }, []);
+  
+  const handleSlideChange = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+  
+  // 自動輪播
+  useEffect(() => {
+    if (!inView) return;
+    
+    const interval = setInterval(() => {
+      handleNext();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [inView, handleNext]);
+
+  return (
+    <section ref={ref} className="py-20 bg-white overflow-hidden border-t border-gray-100">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block text-primary font-medium mb-3 px-4 py-1.5 bg-primary/10 rounded-md text-sm">真實心聲</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            來自診所<span className="text-primary">客戶的評價</span>
+          </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
+            我們引以為傲的不只是我們的專業，更是每位客戶的成功與肯定
+          </p>
+        </motion.div>
+
+        <div className="max-w-4xl mx-auto">
+          {/* 輪播區域 */}
+          <div ref={testimonialRef} className="mb-10 overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`testimonial-${currentSlide}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-white p-8 sm:p-10 rounded-lg flex flex-col items-center text-center relative shadow-sm border border-gray-100"
+              >
+                {/* 引號裝飾 */}
+                <div className="absolute top-4 left-4 text-gray-100 text-5xl sm:text-6xl font-serif">"</div>
+                <div className="absolute bottom-4 right-4 text-gray-100 text-5xl sm:text-6xl font-serif rotate-180">"</div>
+                
+                {/* 圓形圖片 */}
+                <div className="relative mb-6 z-10">
+                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mx-auto relative">
+                    <Image
+                      src={clientTestimonials[currentSlide].imageUrl}
+                      alt={clientTestimonials[currentSlide].author}
+                      fill
+                      sizes="(max-width: 768px) 96px, 128px"
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                  <div className="absolute inset-0 border-4 border-primary/10 rounded-full -m-1"></div>
+                </div>
+                
+                {/* 內容 */}
+                <p className="text-gray-600 text-base md:text-lg mb-8 relative z-10 max-w-2xl mx-auto">
+                  {clientTestimonials[currentSlide].content}
+                </p>
+                
+                {/* 作者 */}
+                <div className="mt-auto">
+                  <h4 className="font-bold text-gray-900 text-lg md:text-xl">{clientTestimonials[currentSlide].author}</h4>
+                  <p className="text-sm md:text-base text-gray-500">{clientTestimonials[currentSlide].role}</p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          
+          {/* 輪播控制區 */}
+          <div className="flex items-center justify-between max-w-md mx-auto">
+            <button
+              onClick={handlePrev}
+              className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-primary hover:text-white rounded-full transition-colors"
+              aria-label="上一個見證"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            
+            {/* 輪播指示器 */}
+            <div className="flex space-x-2">
+              {clientTestimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSlideChange(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    currentSlide === index 
+                      ? 'bg-primary w-6' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  aria-label={`切換到第 ${index + 1} 個見證`}
+                  aria-current={currentSlide === index ? 'true' : 'false'}
+                />
+              ))}
+            </div>
+            
+            <button
+              onClick={handleNext}
+              className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-primary hover:text-white rounded-full transition-colors"
+              aria-label="下一個見證"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// HomePage組件 - 使用 Suspense 和 ErrorBoundary 優化整體渲染
+const HomePage = () => {
+  // 使用 useState 進行狀態管理但避免不必要的初始化
+  const [state, setState] = useState({
+    activeTestimonialIndex: 0,
+    activeFaqIndex: null as number | null
+  });
+  
+  // 簡化狀態更新函數
+  const handleTestimonialChange = (index: number) => {
+    React.startTransition(() => {
+      setState(prev => ({ ...prev, activeTestimonialIndex: index }));
+    });
+  };
+  
+  const toggleFaq = (index: number) => {
+    setState(prev => ({ 
+      ...prev, 
+      activeFaqIndex: prev.activeFaqIndex === index ? null : index 
+    }));
+  };
+
+  // 優化渲染使用 ErrorBoundary 和 Suspense
+  return (
+    <div className="flex flex-col min-h-screen">
+      <ErrorBoundary>
+      <HeroSection />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+      <MarketingStatement />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+      <FeatureSection />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <StatsSection />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+      <ServiceSection />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
+          <CaseStudiesSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
+          <TestimonialSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <FAQSection />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+      <ContactSection />
+      </ErrorBoundary>
+    </div>
+  );
+};
+
+export default HomePage; 

@@ -534,6 +534,7 @@
   
   .btn-flat-primary {
     @apply bg-primary text-white hover:bg-red-dark;
+    color: white !important; /* 強制使用白色文字 */
   }
   
   .btn-flat-black {
@@ -687,6 +688,25 @@
   /* 主色調陰影 */
   .shadow-primary {
     box-shadow: 0 2px 8px rgba(230, 39, 51, 0.15);
+  }
+
+  /* 服務內容區塊按鈕樣式 - 確保紅底白字 */
+  .service-cta-button {
+    background-color: var(--color-red) !important;
+    color: white !important; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+  }
+
+  .service-cta-button:hover {
+    background-color: var(--color-red-dark) !important;
+  }
+
+  .service-cta-button svg {
+    color: white !important;
   }
 }
 
