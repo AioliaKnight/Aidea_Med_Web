@@ -144,7 +144,21 @@ const CountUp = dynamic(() => import('react-countup'), {
   ssr: false
 })
 
-// 建立新的MarketingSection組件
+// 1. 定義塊內容類型
+interface MarketingBlock {
+  en: {
+    title: string;
+    subtitle: string;
+  };
+  zh: {
+    title: string;
+    subtitle: string;
+  };
+  delay: number;
+  className: string;
+}
+
+// 修改MarketingSection組件，優化代碼架構和排版
 const MarketingSection = memo(function MarketingSection() {
   // 使用React.useRef和useInView偵測元素進入視窗
   const ref = useRef<HTMLElement | null>(null);
@@ -165,7 +179,7 @@ const MarketingSection = memo(function MarketingSection() {
   );
 
   // 階梯式行銷文案數據
-  const contentBlocks = [
+  const contentBlocks: MarketingBlock[] = [
     {
       en: {
         title: "THE MARKETING PARTNER",
@@ -204,156 +218,169 @@ const MarketingSection = memo(function MarketingSection() {
     }
   ];
 
+  // 渲染單個內容塊的函數
+  const renderContentBlock = (block: MarketingBlock, index: number) => {
+    const isLastBlock = index === contentBlocks.length - 1;
+
+    return (
+      <motion.div
+        key={index}
+        className={`mb-8 ${block.className}`}
+        initial={{ opacity: 0, x: -20 }}
+        animate={inView ? 
+          { 
+            opacity: 1, 
+            x: 0,
+            transition: {
+              delay: block.delay,
+              duration: 0.4,
+              ease: "easeOut"
+            }
+          } : 
+          { opacity: 0, x: -20 }
+        }
+        style={{ willChange: 'transform' }}
+      >
+        {/* 內容區塊 - 左側英文右側中文 */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+          {/* 英文標題部分 */}
+          <motion.div 
+            className="w-full md:w-5/12"
+            initial={{ opacity: 0, x: -15 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ 
+              duration: 0.3, 
+              delay: Math.min(block.delay + 0.1, 0.4)
+            }}
+          >
+            <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
+              {block.en.title}
+            </h2>
+            {block.en.subtitle && (
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
+                {block.en.subtitle}
+              </h3>
+            )}
+          </motion.div>
+          
+          {/* 中文內容部分 */}
+          <motion.div 
+            className="mt-3 md:mt-0 w-full md:w-6/12"
+            initial={{ opacity: 0, x: 30 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ 
+              duration: 0.5, 
+              delay: block.delay + 0.2
+            }}
+          >
+            <div className="border-l-4 border-white/70 pl-4 md:pl-6">
+              <motion.p 
+                className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
+                initial={{ opacity: 0, y: 5 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ 
+                  duration: 0.3, 
+                  delay: Math.min(block.delay + 0.2, 0.5)
+                }}
+                whileHover={{ x: 3 }}
+              >
+                {block.zh.title}
+              </motion.p>
+              {block.zh.subtitle && (
+                <motion.p 
+                  className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ 
+                    duration: 0.3, 
+                    delay: Math.min(block.delay + 0.3, 0.6)
+                  }}
+                  whileHover={{ x: 3 }}
+                >
+                  {block.zh.subtitle}
+                </motion.p>
+              )}
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* 分隔線 - 最後一個塊沒有分隔線 */}
+        {!isLastBlock && renderDivider(block.delay)}
+      </motion.div>
+    );
+  };
+
+  // 渲染分隔線的函數
+  const renderDivider = (delay: number) => (
+    <motion.div 
+      className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
+      initial={{ scaleX: 0, opacity: 0 }}
+      animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
+      transition={{ 
+        duration: 0.8, 
+        delay: delay + 0.5
+      }}
+    >
+      <motion.div 
+        className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
+        initial={{ x: "-100%" }}
+        animate={inView ? { x: "400%" } : {}}
+        transition={{
+          duration: 2,
+          delay: delay + 1,
+          repeat: Infinity,
+          repeatDelay: 4
+        }}
+      />
+    </motion.div>
+  );
+
+  // 渲染向下滾動指示器
+  const renderScrollIndicator = () => (
+    <motion.div 
+      className="relative z-10 pb-8 flex justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.8 }}
+    >
+      <motion.div
+        className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+      >
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </motion.div>
+    </motion.div>
+  );
+
   return (
     <section 
       ref={setRefs}
       className="relative bg-primary overflow-hidden py-16 md:py-20"
       id="marketing-section"
     >
-      {/* 背景設計 - 與Hero區塊相同 */}
+      {/* 背景設計 */}
       <div className="absolute inset-0">
-        {/* 純色背景 */}
         <div className="absolute inset-0 bg-primary"></div>
-        
-        {/* 使用不透明的白色線條背景圖片 */}
-        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
-        
-        {/* 背景覆蓋 */}
+        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" 
+             style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
         <div className="absolute inset-0 bg-primary/20"></div>
       </div>
       
       {/* 階梯式行銷文案內容 */}
       <div className="container-custom relative z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {contentBlocks.map((block, index) => (
-            <motion.div
-              key={index}
-              className={`mb-8 ${block.className}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={inView ? 
-                { 
-                  opacity: 1, 
-                  x: 0,
-                  transition: {
-                    delay: block.delay,
-                    duration: 0.4,
-                    ease: "easeOut"
-                  }
-                } : 
-                { opacity: 0, x: -20 }
-              }
-              style={{ willChange: 'transform' }}
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
-                <motion.div 
-                  className="w-full md:w-5/12"
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-                    duration: 0.3, 
-                    delay: Math.min(block.delay + 0.1, 0.4)
-                  }}
-                >
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
-                    {block.en.title}
-                  </h2>
-                  {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
-                      {block.en.subtitle}
-                    </h3>
-                  )}
-                </motion.div>
-                
-                <motion.div 
-                  className="mt-3 md:mt-0 w-full md:w-6/12"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: block.delay + 0.2
-                  }}
-                >
-                  <div className="border-l-4 border-white/70 pl-4 md:pl-6">
-                    <motion.p 
-                      className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={inView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ 
-                        duration: 0.3, 
-                        delay: Math.min(block.delay + 0.2, 0.5)
-                      }}
-                      whileHover={{ x: 3 }}
-                    >
-                      {block.zh.title}
-                    </motion.p>
-                    {block.zh.subtitle && (
-                      <motion.p 
-                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={inView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ 
-                          duration: 0.3, 
-                          delay: Math.min(block.delay + 0.3, 0.6)
-                        }}
-                        whileHover={{ x: 3 }}
-                      >
-                        {block.zh.subtitle}
-                      </motion.p>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-              
-              {/* 分隔線 - 提高對比度 */}
-              {index < contentBlocks.length - 1 && (
-                <motion.div 
-                  className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
-                  transition={{ 
-                    duration: 0.8, 
-                    delay: block.delay + 0.5
-                  }}
-                >
-                  <motion.div 
-                    className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
-                    initial={{ x: "-100%" }}
-                    animate={inView ? { x: "400%" } : {}}
-                    transition={{
-                      duration: 2,
-                      delay: block.delay + 1,
-                      repeat: Infinity,
-                      repeatDelay: 4
-                    }}
-                  />
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
+          {contentBlocks.map(renderContentBlock)}
         </div>
       </div>
       
-      {/* 向下滾動指示器到Features區塊 */}
-      <motion.div 
-        className="relative z-10 pb-8 flex justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-      >
-        <motion.div
-          className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </motion.div>
-      </motion.div>
+      {renderScrollIndicator()}
     </section>
   );
-});
+})
 
 // 修改HeroSection組件，移除階梯式行銷文案部分
 const HeroSection = memo(function HeroSection() {
@@ -526,16 +553,6 @@ const HeroSection = memo(function HeroSection() {
                 <motion.span 
                   className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 transform-gpu"
                   initial={{ y: 0 }}
-                  whileHover={{ 
-                    y: -3,
-                    boxShadow: '0 3px 0 rgba(255,255,255,0.3)',
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ 
-                    y: 0,
-                    boxShadow: '0 0px 0 rgba(255,255,255,0)',
-                    transition: { duration: 0.1 }
-                  }}
                 >
                   <motion.span 
                     className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90"
@@ -547,27 +564,13 @@ const HeroSection = memo(function HeroSection() {
                     A:
                   </motion.span>
                   <span className="font-medium">免費30分鐘專業顧問</span>
-                  <motion.span
-                    className="ml-1.5 sm:ml-2 text-white/90"
-                    initial={{ x: 0 }}
-                    animate={{ 
-                      x: [0, 4, 0],
-                      transition: { 
-                        repeat: Infinity, 
-                        repeatType: "reverse", 
-                        duration: 1.2 
-                      }
-                    }}
-                  >
-                    →
-                  </motion.span>
                 </motion.span>
               </Link>
             </motion.div>
             
             {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection */}
             <motion.div 
-              className="mt-2 flex justify-center"
+              className="mt-20 flex justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
