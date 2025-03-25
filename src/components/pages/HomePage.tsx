@@ -284,32 +284,41 @@ function HeroSection() {
       role="banner"
       aria-label="網站主要橫幅"
     >
-      {/* 波浪背景 */}
+      {/* 背景層 - 優化扁平化設計 */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark opacity-90"></div>
+        {/* 純色背景基底 */}
+        <div className="absolute inset-0 bg-primary"></div>
+        
+        {/* 紋理圖樣疊加 */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+        
+        {/* 背景圖片 */}
         <Image
           src="/images/bgline-w.webp"
-          alt="背景波浪線條"
+          alt="背景紋理"
           fill
           priority
-          quality={90}
+          quality={100}
           sizes="100vw"
-          className="object-cover mix-blend-soft-light opacity-50"
+          className="object-cover mix-blend-soft-light opacity-40"
           loading="eager"
           fetchPriority="high"
         />
+        
+        {/* 漸層覆蓋 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/50 to-primary"></div>
       </div>
       
       <div className="container-custom relative z-20 py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
             className="text-center px-4 sm:px-6"
           >
             <h1 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6"
               suppressHydrationWarning
             >
               數位精準驅動<br/>
@@ -324,19 +333,19 @@ function HeroSection() {
               tailored for authentic healthcare services.
             </p>
             
-            {/* 扁平化標籤設計 - 一行顯示版本 */}
-            <div className="flex flex-nowrap justify-center overflow-x-auto scrollbar-hide gap-2 sm:gap-3 my-10 px-2 py-1 max-w-full mx-auto">
-              <div className="flex items-center space-x-2 sm:space-x-3 min-w-max mx-auto">
+            {/* 扁平化標籤設計 - 簡化邊框並提高對比 */}
+            <div className="flex flex-nowrap justify-center overflow-x-auto scrollbar-hide gap-3 sm:gap-4 my-10 px-2 py-1 max-w-full mx-auto">
+              <div className="flex items-center space-x-3 sm:space-x-4 min-w-max mx-auto">
                 {tags.map((tag, index) => (
                   <motion.div
                     key={tag.id}
-                    className="tag-outline tag-outline-white text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4"
+                    className="border border-white/70 text-white text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4 py-1.5"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                    transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                     whileHover={{
-                      scale: 1.05,
-                      borderWidth: '2px',
+                      backgroundColor: "rgba(255,255,255,0.15)",
+                      y: -2,
                       transition: { duration: 0.2 }
                     }}
                   >
@@ -347,25 +356,25 @@ function HeroSection() {
             </div>
           </motion.div>
           
-          {/* 預約按鈕 - 黑底白字扁平化設計 */}
+          {/* 預約按鈕 - 純黑底白字扁平化設計 */}
           <motion.div
-            className="mt-10 text-center"
+            className="mt-12 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
           >
             <Link href="/contact">
               <motion.span 
-                className="inline-flex items-center bg-black text-white px-8 py-4 text-lg font-medium border border-transparent"
+                className="inline-flex items-center bg-black text-white px-8 py-4 text-lg font-medium border-0"
                 initial={{ y: 0 }}
                 whileHover={{ 
                   y: -3,
-                  boxShadow: '0 3px 0 rgba(255,255,255,0.2)',
+                  boxShadow: '0 3px 0 rgba(255,255,255,0.3)',
                   transition: { duration: 0.2 }
                 }}
                 whileTap={{ 
                   y: 0,
-                  boxShadow: '0 0px 0 rgba(255,255,255,0.2)',
+                  boxShadow: '0 0px 0 rgba(255,255,255,0)',
                   transition: { duration: 0.1 }
                 }}
               >
@@ -399,12 +408,12 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* 向下滾動指示器 */}
+      {/* 向下滾動指示器 - 簡化設計 */}
       <motion.div 
         className="absolute bottom-8 left-0 right-0 flex justify-center"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.5 }}
+        transition={{ delay: 1.2, duration: 0.5 }}
       >
         <motion.div 
           className="flex flex-col items-center cursor-pointer"
@@ -412,11 +421,11 @@ function HeroSection() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
-          <span className="text-white text-sm mb-2">探索更多</span>
+          <span className="text-white text-sm mb-2 font-medium">探索更多</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-8 h-8 flex items-center justify-center text-white"
+            className="w-8 h-8 flex items-center justify-center text-white bg-white/10"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -478,18 +487,25 @@ function MarketingStatement() {
   return (
     <section 
       id="marketing-statement" 
-      className="relative py-12 md:py-16 bg-primary overflow-hidden"
+      className="relative py-16 md:py-24 bg-primary overflow-hidden"
       ref={ref}
     >
-      {/* 背景線條裝飾 */}
-      <div className="absolute inset-0 opacity-20">
+      {/* 背景設計 - 扁平化並增加視覺層次 */}
+      <div className="absolute inset-0">
+        {/* 純色背景 */}
+        <div className="absolute inset-0 bg-primary"></div>
+        
+        {/* 網格圖案覆蓋 */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[length:40px_40px]"></div>
+        
+        {/* 背景圖片覆蓋 */}
         <Image
-          src="/images/bgline-w_sm.png"
-          alt="背景線條"
+          src="/images/bgline-w.webp"
+          alt="背景紋理"
           fill
-          className="object-cover mix-blend-soft-light"
-          quality={75}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          className="object-cover mix-blend-overlay opacity-30"
+          quality={90}
+          sizes="100vw"
           loading="lazy"
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAADNJREFUCJmNzrENACAMA0E/eyjYfwQqKDINj5IsnO7FIklFbMUUupnTNdKp7kOzBf+KCw1oBBzpaAHVAAAAAElFTkSuQmCC"
@@ -501,7 +517,7 @@ function MarketingStatement() {
           {contentBlocks.map((block, index) => (
             <motion.div
               key={index}
-              className={`${block.className} mb-8 md:mb-14 text-selection-inverted`}
+              className={`${block.className} mb-10 md:mb-16 text-selection-inverted`}
               initial={{ opacity: 0, x: -50 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ 
@@ -539,7 +555,7 @@ function MarketingStatement() {
                     delay: block.delay + 0.2
                   }}
                 >
-                  <div className="border-l-4 md:border-l-4 border-white/40 pl-4 md:pl-6">
+                  <div className="border-l-4 border-white pl-4 md:pl-6">
                     <motion.p 
                       className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight"
                       initial={{ opacity: 0, y: 10 }}
@@ -553,7 +569,7 @@ function MarketingStatement() {
                     </motion.p>
                     {block.zh.subtitle && (
                       <motion.p 
-                        className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight"
+                        className="text-lg md:text-xl text-white/90 mt-1 md:mt-2 font-medium leading-tight"
                         initial={{ opacity: 0, y: 10 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ 
@@ -568,12 +584,12 @@ function MarketingStatement() {
                 </motion.div>
               </div>
               
-              {/* 分隔線 - 只在區塊之間顯示 */}
+              {/* 分隔線 - 提高對比度 */}
               {index < contentBlocks.length - 1 && (
                 <motion.div 
-                  className="w-full h-px bg-white/20 mt-6 md:mt-12"
+                  className="w-full h-px bg-white/30 mt-6 md:mt-12"
                   initial={{ scaleX: 0, opacity: 0 }}
-                  animate={inView ? { scaleX: 1, opacity: 0.2 } : {}}
+                  animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
                   transition={{ 
                     duration: 0.8, 
                     delay: block.delay + 0.5
@@ -584,7 +600,7 @@ function MarketingStatement() {
           ))}
         </div>
         
-        {/* 底部箭頭指示 */}
+        {/* 底部箭頭指示 - 扁平化設計 */}
         <motion.div 
           className="mt-6 flex justify-center"
           initial={{ opacity: 0 }}
@@ -592,7 +608,7 @@ function MarketingStatement() {
           transition={{ duration: 0.5, delay: 1.3 }}
         >
           <motion.div
-            className="text-white cursor-pointer hover:opacity-80 transition-opacity"
+            className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
