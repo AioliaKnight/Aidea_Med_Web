@@ -132,7 +132,7 @@ const withPWA = require('next-pwa')({
 })
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: true,
+  enabled: false,
 })
 
 /** @type {import('next').NextConfig} */

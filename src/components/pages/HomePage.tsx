@@ -273,6 +273,9 @@ const HeroSection = memo(function HeroSection() {
                   >
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
                       {titles[currentTitleIndex].main}
+                      <span className="block mt-2 font-extrabold text-white relative after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:h-[3px] after:w-full after:bg-white/50">
+                        {titles[currentTitleIndex].sub}
+                      </span>
                     </h1>
                   </motion.div>
                 </AnimatePresence>
