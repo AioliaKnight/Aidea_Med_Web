@@ -290,17 +290,17 @@ const HeroSection = memo(function HeroSection() {
                   style={{ willChange: 'transform, opacity' }}
                 >
                   {/* 中文主副標題 */}
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl leading-tight">
                     {titles[currentTitleIndex].main}
-                    <span className="block mt-1 mb-2 font-extrabold text-white">
+                    <span className="block mt-1 mb-4 font-extrabold text-white">
                       {titles[currentTitleIndex].sub}
                     </span>
                   </h1>
                   
-                  {/* 英文主副標題 - 緊接著中文標題 */}
-                  <div className="mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/90 leading-tight">
+                  {/* 英文主副標題 - 視覺上分隔但保持關聯性 */}
+                  <div className="mt-3 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
                     {titles[currentTitleIndex].enMain},
-                    <div className="font-extrabold text-white mt-1">
+                    <div className="font-extrabold text-white mt-2">
                       {titles[currentTitleIndex].enSub}.
                     </div>
                   </div>
@@ -308,24 +308,38 @@ const HeroSection = memo(function HeroSection() {
               </AnimatePresence>
             </div>
             
-            {/* 扁平化標籤設計 - 移至預約按鈕上方 */}
-            <div className="flex flex-wrap justify-center gap-3 my-6" style={{ willChange: 'transform' }}>
-              {tags.map((tag, index) => (
-                <motion.span
-                  key={tag.id}
-                  variants={tagAnimationVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  custom={index}
-                  className="rounded-full text-xs sm:text-sm px-4 py-1.5 
-                             bg-white/10 border border-white/20 
-                             cursor-pointer hover:bg-white/15 transition-colors"
-                  style={{ willChange: 'transform, opacity' }}
-                >
-                  {tag.name}
-                </motion.span>
-              ))}
+            {/* 單行白框線條標籤設計 */}
+            <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
+              <div className="flex justify-between items-center border-t border-b border-white/40 py-4 px-1 my-8">
+                {tags.map((tag, index) => (
+                  <motion.span
+                    key={tag.id}
+                    variants={{
+                      initial: { opacity: 0, y: 10 },
+                      animate: { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { 
+                          duration: 0.3,
+                          delay: 0.1 * index 
+                        }
+                      },
+                      hover: { 
+                        scale: 1.05, 
+                        color: "rgba(255, 255, 255, 1)",
+                        transition: { duration: 0.2 } 
+                      }
+                    }}
+                    initial="initial"
+                    animate="animate"
+                    whileHover="hover"
+                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide cursor-pointer hover:text-white transition-all whitespace-nowrap"
+                    style={{ willChange: 'transform, opacity' }}
+                  >
+                    {tag.name}
+                  </motion.span>
+                ))}
+              </div>
             </div>
 
             {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 */}
