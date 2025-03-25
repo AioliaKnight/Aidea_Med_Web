@@ -63,7 +63,6 @@ const NavItem = React.memo(({
   isActive: boolean; 
   navMode: 'default' | 'scrolled'; 
 }) => {
-  // 使用useMemo緩存計算結果
   const activeStyle = useMemo(() => 
     isActive ? textStyles[navMode].active : textStyles[navMode].normal,
     [isActive, navMode]
@@ -81,6 +80,8 @@ const NavItem = React.memo(({
         "relative px-3 py-2 group transition-colors duration-300",
         activeStyle
       )}
+      aria-current={isActive ? 'page' : undefined}
+      role="menuitem"
     >
       <span className="block text-base font-medium">{item.name}</span>
       <span className={cn(
@@ -97,10 +98,10 @@ const NavItem = React.memo(({
             "absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 w-1/2",
             textStyles[navMode].indicator
           )}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, width: '0%' }}
+          animate={{ opacity: 1, width: '50%' }}
+          exit={{ opacity: 0, width: '0%' }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         />
       )}
     </Link>
@@ -172,15 +173,21 @@ export default function Navbar() {
         </div>
 
         {/* 桌面導航項目 */}
-        <nav className="hidden lg:flex items-center space-x-2">
-          {navigation.map((item) => (
-            <NavItem 
-              key={item.href}
-              item={item}
-              isActive={pathname === item.href}
-              navMode={navMode}
-            />
-          ))}
+        <nav 
+          className="hidden lg:flex items-center space-x-2"
+          role="navigation"
+          aria-label="主導航選單"
+        >
+          <div role="menubar" className="flex items-center space-x-2">
+            {navigation.map((item) => (
+              <NavItem 
+                key={item.href}
+                item={item}
+                isActive={pathname === item.href}
+                navMode={navMode}
+              />
+            ))}
+          </div>
         </nav>
 
         {/* 聯絡按鈕 */}
@@ -188,9 +195,10 @@ export default function Navbar() {
           <Link
             href="/contact"
             className={cn(
-              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300",
+              "rounded-lg py-2.5 px-5 text-sm font-medium transition-all duration-300 hover:scale-105",
               currentButtonStyle
             )}
+            aria-label="預約專屬顧問諮詢"
           >
             預約專屬顧問
           </Link>
@@ -199,12 +207,13 @@ export default function Navbar() {
         {/* 移動設備菜單按鈕 */}
         <button
           type="button"
-          className="lg:hidden rounded-md p-2"
+          className="lg:hidden rounded-md p-2 hover:bg-black/5 transition-colors duration-300"
           onClick={toggleMobileMenu}
           aria-controls="mobile-menu"
           aria-expanded={mobileMenuOpen}
+          aria-label={mobileMenuOpen ? "關閉選單" : "開啟選單"}
         >
-          <span className="sr-only">打開主菜單</span>
+          <span className="sr-only">{mobileMenuOpen ? "關閉主選單" : "開啟主選單"}</span>
           <div className="relative w-6 h-5">
             <span
               className={cn(
@@ -236,22 +245,25 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className={cn(
-              "lg:hidden overflow-hidden",
+              "lg:hidden overflow-hidden shadow-lg",
               scrolled ? "bg-white" : "bg-primary"
             )}
+            role="dialog"
+            aria-modal="true"
+            aria-label="行動版選單"
           >
-            <div className="px-4 pt-2 pb-4 space-y-1">
+            <nav className="px-4 pt-2 pb-4 space-y-1" role="menu">
               {navigation.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "block px-3 py-2.5 font-medium rounded-lg",
+                    "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
                     pathname === item.href
                       ? scrolled
                         ? "bg-primary/10 text-primary"
@@ -261,23 +273,27 @@ export default function Navbar() {
                       : "text-white/90 hover:bg-white/5"
                   )}
                   onClick={toggleMobileMenu}
+                  role="menuitem"
+                  aria-current={pathname === item.href ? 'page' : undefined}
                 >
-                  {item.name}
+                  <span className="block">{item.name}</span>
+                  <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
                 </Link>
               ))}
               <Link
                 href="/contact"
                 className={cn(
-                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg",
+                  "block px-3 py-2.5 mt-2 text-center font-medium rounded-lg transition-all duration-300 hover:scale-105",
                   scrolled
-                    ? "bg-primary text-white"
-                    : "bg-white text-primary"
+                    ? "bg-primary text-white hover:bg-primary/90"
+                    : "bg-white text-primary hover:bg-white/95"
                 )}
                 onClick={toggleMobileMenu}
+                role="menuitem"
               >
                 預約顧問諮詢
               </Link>
-            </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
