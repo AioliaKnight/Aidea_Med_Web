@@ -30,6 +30,9 @@ export { default as WebsiteChat } from './WebsiteChat';
 // 添加ErrorBoundary組件導出
 export { default as ErrorBoundary } from './ErrorBoundary'
 
+// 添加AnimatedSection組件導出
+export { default as AnimatedSection } from './AnimatedSection'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

@@ -1,5 +1,7 @@
 import type { Transition, Variants } from 'framer-motion'
 
+// 以下是所有動畫變數的宣告，確保所有變數先宣告後使用
+
 // 基本動畫變體定義
 const defaultEasing = [0.6, 0.05, 0.01, 0.9]
 
@@ -449,123 +451,6 @@ export const buttonAnimations = {
   }
 };
 
-// 整合兼容性配置（與現有代碼兼容）
-export const animations = {
-  fadeIn: {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: defaultEasing
-      }
-    },
-    // 兼容舊格式
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.4, ease: defaultEasing }
-  },
-  scaleIn: {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: defaultEasing
-      }
-    },
-    // 兼容舊格式
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.3, ease: defaultEasing }
-  },
-  slideIn: {
-    hidden: { opacity: 0, x: -10 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        duration: 0.3,
-        ease: defaultEasing
-      }
-    },
-    // 兼容舊格式
-    initial: { opacity: 0, x: -10 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.3, ease: defaultEasing }
-  },
-  slideUp,
-  staggerContainer,
-  stagger: {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    },
-    // 兼容舊格式
-    initial: {},
-    animate: { transition: { staggerChildren: 0.1 } }
-  },
-  // 新增標籤動畫
-  tagHover,
-  underlineExpand,
-  // 添加 CSS 動畫辭典
-  css: CSS_ANIMATIONS,
-  delays: CSS_DELAYS,
-  textShadows: TEXT_SHADOWS,
-  getClasses: getAnimationClasses,
-  getCssAnimation,
-  // 新增按鈕動畫
-  button: buttonAnimations,
-  // 文字漸顯動畫 - 逐字母/逐詞顯示效果
-  textReveal: {
-    hidden: { 
-      opacity: 0,
-      y: 20 
-    },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.4,
-        ease: defaultEasing
-      }
-    })
-  },
-  // 邊框展開動畫
-  borderExpand: {
-    hidden: { 
-      width: '0%',
-      opacity: 0 
-    },
-    visible: { 
-      width: '100%',
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: defaultEasing
-      }
-    }
-  },
-  // 交互反饋動畫
-  feedback: {
-    success: { 
-      scale: [1, 1.1, 1],
-      backgroundColor: ['transparent', 'rgba(34, 197, 94, 0.2)', 'transparent'],
-      transition: { duration: 0.6 }
-    },
-    error: { 
-      x: [0, -10, 10, -10, 10, 0],
-      backgroundColor: ['transparent', 'rgba(239, 68, 68, 0.2)', 'transparent'],
-      transition: { duration: 0.6 }
-    }
-  }
-}; 
-
 // 標題動畫變體
 export const headingVariants: Variants = {
   initial: {
@@ -998,6 +883,237 @@ export const buttonVariants: Variants = {
   }
 }
 
+// 標籤動畫效果 (從 HomePage 整合)
+export const tagAnimationVariants: Variants = {
+  initial: { opacity: 0, x: -20 },
+  animate: (index: number = 0) => ({ 
+    opacity: 1, 
+    x: 0,
+    transition: { 
+      delay: 0.4 + index * 0.1, 
+      duration: 0.5 
+    }
+  }),
+  hover: {
+    backgroundColor: "rgba(255,255,255,0.15)",
+    y: -2,
+    transition: { duration: 0.2 }
+  }
+}
+
+// 更新標籤動畫配置 (適用於不同顏色的標籤)
+export const createTagAnimations = (isLight: boolean = true) => {
+  const hoverBgColor = isLight 
+    ? "rgba(255,255,255,0.15)" 
+    : "rgba(var(--color-primary-rgb), 0.05)";
+    
+  return {
+    initial: { opacity: 0, x: -10 },
+    animate: (index: number = 0) => ({ 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        delay: 0.2 + index * 0.1, 
+        duration: 0.4 
+      }
+    }),
+    hover: {
+      backgroundColor: hoverBgColor,
+      y: -2,
+      transition: { duration: 0.2 }
+    }
+  };
+};
+
+// 按鈕懸停動畫 (從 HomePage 整合)
+export const buttonHoverVariants: Variants = {
+  initial: { y: 0 },
+  hover: { 
+    y: -3,
+    boxShadow: '0 3px 0 rgba(255,255,255,0.3)',
+    transition: { duration: 0.2 }
+  },
+  tap: { 
+    y: 0,
+    boxShadow: '0 0px 0 rgba(255,255,255,0)',
+    transition: { duration: 0.1 }
+  }
+}
+
+// 箭頭圖標動畫 (從 HomePage 整合)
+export const arrowIconVariants: Variants = {
+  initial: { x: 0 },
+  animate: { 
+    x: [0, 5, 0],
+    transition: { 
+      duration: 2, 
+      repeat: Infinity 
+    }
+  }
+}
+
+// AnimatedSection 動畫區塊配置
+export const animatedSectionVariants: Variants = {
+  initial: { 
+    opacity: 0, 
+    y: 30 
+  },
+  animate: (delay: number = 0) => ({ 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6, 
+      delay: delay * 0.2,
+      ease: defaultEasing
+    }
+  })
+}
+
+/**
+ * 創建統一的 AnimatedSection 配置
+ * 用於替換各頁面中重複的 AnimatedSection 組件邏輯
+ */
+export const createAnimatedSection = () => {
+  return {
+    initial: { opacity: 0, y: 30 },
+    animate: (controls: any, inView: boolean, delay: number = 0) => {
+      if (inView) {
+        controls.start({ 
+          opacity: 1, 
+          y: 0,
+          transition: { duration: 0.6, delay: delay * 0.2 }
+        });
+      }
+    }
+  };
+}
+
+// 整合兼容性配置（與現有代碼兼容）
+export const animations = {
+  fadeIn: {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: defaultEasing
+      }
+    },
+    // 兼容舊格式
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: defaultEasing }
+  },
+  scaleIn: {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: defaultEasing
+      }
+    },
+    // 兼容舊格式
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.3, ease: defaultEasing }
+  },
+  slideIn: {
+    hidden: { opacity: 0, x: -10 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.3,
+        ease: defaultEasing
+      }
+    },
+    // 兼容舊格式
+    initial: { opacity: 0, x: -10 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.3, ease: defaultEasing }
+  },
+  slideUp,
+  staggerContainer,
+  stagger: {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    },
+    // 兼容舊格式
+    initial: {},
+    animate: { transition: { staggerChildren: 0.1 } }
+  },
+  // 新增標籤動畫
+  tagHover,
+  underlineExpand,
+  // 添加 CSS 動畫辭典
+  css: CSS_ANIMATIONS,
+  delays: CSS_DELAYS,
+  textShadows: TEXT_SHADOWS,
+  getClasses: getAnimationClasses,
+  getCssAnimation,
+  // 新增按鈕動畫
+  button: buttonAnimations,
+  // 文字漸顯動畫 - 逐字母/逐詞顯示效果
+  textReveal: {
+    hidden: { 
+      opacity: 0,
+      y: 20 
+    },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.4,
+        ease: defaultEasing
+      }
+    })
+  },
+  // 邊框展開動畫
+  borderExpand: {
+    hidden: { 
+      width: '0%',
+      opacity: 0 
+    },
+    visible: { 
+      width: '100%',
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: defaultEasing
+      }
+    }
+  },
+  // 交互反饋動畫
+  feedback: {
+    success: { 
+      scale: [1, 1.1, 1],
+      backgroundColor: ['transparent', 'rgba(34, 197, 94, 0.2)', 'transparent'],
+      transition: { duration: 0.6 }
+    },
+    error: { 
+      x: [0, -10, 10, -10, 10, 0],
+      backgroundColor: ['transparent', 'rgba(239, 68, 68, 0.2)', 'transparent'],
+      transition: { duration: 0.6 }
+    }
+  },
+  // 通用動畫
+  common: {
+    button: buttonAnimations,
+    card: cardHoverVariants,
+    createTagAnimations: createTagAnimations,
+    bounce: bounceVariants,
+    slideUp: slideUpVariants,
+    optimizedSlideUp: optimizedSlideUpVariants
+  }
+};
+
 // 整合首頁所有動畫，用於統一管理和調用
 export const homePageAnimations = {
   // HeroSection 動畫
@@ -1006,7 +1122,10 @@ export const homePageAnimations = {
     subtitle: heroSubtitleVariants,
     stats: statsNumberVariants,
     countUp: countUpConfig,
-    scrollIndicator: scrollIndicatorVariants
+    scrollIndicator: scrollIndicatorVariants,
+    tag: tagAnimationVariants,
+    button: buttonHoverVariants,
+    arrow: arrowIconVariants
   },
   
   // MarketingStatement 動畫
@@ -1047,6 +1166,7 @@ export const homePageAnimations = {
   common: {
     button: buttonVariants,
     card: cardHoverVariants,
+    createTagAnimations: createTagAnimations,
     bounce: bounceVariants,
     slideUp: slideUpVariants,
     optimizedSlideUp: optimizedSlideUpVariants

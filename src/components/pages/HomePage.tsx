@@ -35,7 +35,7 @@ import {
   Headset,
   FileText
 } from 'lucide-react'
-import { Logo, CTASection } from '@/components/common'
+import { Logo, CTASection, AnimatedSection } from '@/components/common'
 import { caseStudies as casesData } from '@/components/pages/CasePage'
 import { animations, homePageAnimations } from '@/utils/animations'
 
@@ -79,76 +79,7 @@ const features = [
   }
 ]
 
-// 服務流程數據
-const serviceProcess = [
-  {
-    step: '01',
-    title: '深入了解',
-    description: '傾聽您的故事與願景，了解診所的特色和困境，共同規劃最適合的成長方向',
-    emoji: '👂'
-  },
-  {
-    step: '02',
-    title: '策略規劃',
-    description: '結合數據分析與在地特色，為您量身打造專屬的品牌策略與行銷計畫',
-    emoji: '📋'
-  },
-  {
-    step: '03',
-    title: '執行優化',
-    description: '專業團隊全程陪伴，持續追蹤成效並即時調整，確保每一步都朝著目標前進',
-    emoji: '🚀'
-  },
-  {
-    step: '04',
-    title: '成長茁壯',
-    description: '不只是短期成效，更要建立長期競爭力，讓診所能持續穩定成長',
-    emoji: '📈'
-  }
-]
-
-// 動畫區塊組件
-interface AnimatedSectionProps {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-  suppressHydrationWarning?: boolean
-}
-
-// 使用memo優化AnimatedSection
-const AnimatedSection = memo(({ className = '', delay = 0, children, suppressHydrationWarning }: AnimatedSectionProps) => {
-  const controls = useAnimation()
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  })
-
-  useEffect(() => {
-    if (inView) {
-      controls.start({ 
-        opacity: 1, 
-        y: 0,
-        transition: { duration: 0.6, delay: delay * 0.2 }
-      })
-    }
-  }, [controls, inView, delay])
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={controls}
-      className={className}
-      suppressHydrationWarning={suppressHydrationWarning}
-    >
-      {children}
-    </motion.div>
-  )
-})
-
-AnimatedSection.displayName = 'AnimatedSection'
-
-// 更新常見問題數據
+// 常見問題數據
 const faqs = [
   {
     question: '為什麼專科診所需要專業的行銷顧問？',
