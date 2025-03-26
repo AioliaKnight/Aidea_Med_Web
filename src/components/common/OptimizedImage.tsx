@@ -3,6 +3,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import Image, { ImageProps } from 'next/image';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   /**
@@ -43,6 +44,21 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
    * 當圖片載入完成時的回調
    */
   onLoadComplete?: () => void;
+  /**
+   * 是否啟用動畫效果
+   * @default true
+   */
+  withAnimation?: boolean;
+  /**
+   * 動畫持續時間（秒）
+   * @default 0.3
+   */
+  animationDuration?: number;
+  /**
+   * 錯誤時的替代圖片
+   * @default '/images/testimonials/default-avatar.jpg'
+   */
+  fallbackSrc?: string;
 }
 
 /**
@@ -55,6 +71,8 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
  * 4. 自適應圖片大小 (responsive sizes)
  * 5. 自動優化圖片格式 (WebP/AVIF)
  * 6. 記憶化 (memoization) 以避免不必要重新渲染
+ * 7. 支援動畫效果
+ * 8. 錯誤處理和替代圖片
  */
 export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
   src,
@@ -67,6 +85,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
   quality = 75,
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   onLoadComplete,
+  withAnimation = true,
+  animationDuration = 0.3,
+  fallbackSrc = '/images/testimonials/default-avatar.jpg',
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -90,7 +111,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
       
       tempImg.onerror = () => {
         setError(true);
-        // 移除console.error，避免生產環境中顯示錯誤日誌
         tempImg.onerror = null;
       };
       
@@ -148,19 +168,22 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
 
   const handleError = () => {
     setError(true);
-    // 移除console.error，避免生產環境中顯示錯誤日誌
   };
 
-  // 替代圖片路徑
-  const fallbackImage = '/images/placeholder.webp';
+  const Container = withAnimation ? motion.div : 'div';
 
   return (
-    <div 
+    <Container
       id={`img-container-${src.replace(/\W/g, '')}`}
       className={cn(
         'relative overflow-hidden', 
         className
       )}
+      {...(withAnimation && {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        transition: { duration: animationDuration }
+      })}
     >
       {error ? (
         // 圖片加載失敗時顯示替代內容
@@ -174,7 +197,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
         // 使用標準HTML img標籤代替Next.js的Image組件
         // 避免Next.js 15中的Image API變更帶來的兼容性問題
         <img
-          src={src}
+          src={error ? fallbackSrc : src}
           alt={alt || ''}
           className={cn(
             'w-full h-full object-cover',
@@ -201,7 +224,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
-    </div>
+    </Container>
   );
 });
 

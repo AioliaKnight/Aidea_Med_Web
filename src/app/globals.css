@@ -714,6 +714,31 @@
   .service-cta-button svg {
     color: white !important;
   }
+
+  /* 圖片容器基礎樣式 */
+  .image-container {
+    @apply relative overflow-hidden;
+  }
+
+  /* 圓形圖片容器 */
+  .image-circle {
+    @apply rounded-full overflow-hidden;
+  }
+
+  /* 圖片遮罩效果 */
+  .image-mask {
+    @apply absolute inset-0 bg-gradient-to-t from-black/20 to-transparent;
+  }
+
+  /* 圖片載入動畫 */
+  .image-loading {
+    @apply animate-pulse bg-gray-200;
+  }
+
+  /* 圖片懸停效果 */
+  .image-hover {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
 }
 
 /* 文字動畫效果 */
@@ -883,16 +908,24 @@
 
 /* 添加全局覆蓋樣式，確保扁平化設計 */
 @layer utilities {
-  /* 移除所有圓角 */
+  /* 移除所有圓角 (保留 rounded-full) */
   .rounded,
   .rounded-sm,
   .rounded-md,
   .rounded-lg,
   .rounded-xl,
   .rounded-2xl,
-  .rounded-3xl,
-  .rounded-full {
+  .rounded-3xl {
     border-radius: 0 !important;
+  }
+  
+  /* 確保圖片在圓形容器內正確顯示 */
+  .rounded-full {
+    border-radius: 9999px !important;
+  }
+  
+  .rounded-full img {
+    border-radius: inherit !important;
   }
   
   /* 移除所有陰影 */
@@ -930,11 +963,11 @@
     border-radius: 0 !important;
   }
   
-  /* 確保圖片保持方形 */
-  img {
+  /* 圖片默認方形，除非在圓形容器內 */
+  img:not(.rounded-full img) {
     border-radius: 0 !important;
   }
-  
+
   /* 強制使用標準過渡效果 */
   .transition-all {
     transition-property: background-color, color, border-color !important;

@@ -155,6 +155,14 @@ module.exports = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
         },
+        imageLoad: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        imageFade: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -166,6 +174,8 @@ module.exports = {
         'pulse-primary': 'pulse-primary 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'scale-up': 'scale-up 0.4s ease-out',
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
+        'image-load': 'imageLoad 0.5s ease-in-out',
+        'image-fade': 'imageFade 0.3s ease-in-out',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(to right, var(--color-primary), var(--color-primary-dark))',
@@ -220,6 +230,19 @@ module.exports = {
         '400': '400ms',
         '600': '600ms',
         '2000': '2000ms',
+      },
+      image: {
+        sizes: {
+          'avatar-sm': '2rem',
+          'avatar-md': '3rem',
+          'avatar-lg': '4rem',
+          'avatar-xl': '5rem',
+        },
+        aspectRatio: {
+          'avatar': '1 / 1',
+          'card': '4 / 3',
+          'banner': '16 / 9',
+        },
       },
     },
   },

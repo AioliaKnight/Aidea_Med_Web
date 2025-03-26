@@ -1,13 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { caseAnimations } from '@/utils/animations'
 import { CaseStudy } from '@/components/pages/CasePage'
-
-interface CaseTestimonialsProps {
-  caseStudy: CaseStudy
-}
 
 // 客戶見證介面
 interface Testimonial {
@@ -16,6 +13,11 @@ interface Testimonial {
   company: string
   content: string
   avatar?: string
+}
+
+// 修改組件的 props 類型名稱以避免衝突
+interface TestimonialProps {
+  caseStudy: CaseStudy
 }
 
 // 生成客戶見證
@@ -38,87 +40,107 @@ function generateTestimonials(caseStudy: CaseStudy): Testimonial[] {
   ]
 }
 
-const CaseTestimonials: React.FC<CaseTestimonialsProps> = ({ caseStudy }) => {
-  // 使用 useMemo 緩存見證資料
-  const testimonials = React.useMemo(() => generateTestimonials(caseStudy), [caseStudy])
-  const [imageErrors, setImageErrors] = React.useState<Record<string, boolean>>({})
+const CaseTestimonials: React.FC<TestimonialProps> = ({ caseStudy }) => {
+  // 如果沒有見證資料則不顯示組件
+  if (!caseStudy.testimonial) {
+    return null
+  }
 
-  // 處理圖片載入錯誤
-  const handleImageError = React.useCallback((url: string) => {
-    setImageErrors(prev => ({
-      ...prev,
-      [url]: true
-    }))
-  }, [])
-
-  // 獲取圖片URL，如果載入錯誤則返回預設圖片
-  const getImageUrl = React.useCallback((url: string) => {
-    return imageErrors[url] ? '/images/testimonials/default-avatar.jpg' : url
-  }, [imageErrors])
+  // 使用 useState 追蹤圖片載入狀態
+  const [imgStatus, setImgStatus] = useState({
+    loading: true,
+    error: false
+  });
 
   return (
-    <div className="space-y-8">
-      {testimonials.map((testimonial, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: index * 0.2 }}
-          className="bg-white p-6 rounded-lg border-l-4 border-primary relative shadow-sm"
-        >
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <div className="flex-shrink-0">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 mx-auto md:mx-0">
-                {testimonial.avatar ? (
-                  <Image
-                    src={getImageUrl(testimonial.avatar)}
-                    alt={testimonial.name}
-                    width={96}
-                    height={96}
-                    className="object-cover"
-                    onError={() => handleImageError(testimonial.avatar!)}
-                    priority={index === 0}
-                    quality={85}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary text-white text-2xl font-bold">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                )}
-              </div>
+    <section className="py-8">
+      <div className="max-w-4xl mx-auto">
+        <h3 className="text-2xl font-bold mb-6 text-center">客戶回饋</h3>
+        
+        {/* 見證卡片 - 重新設計布局 */}
+        <div className="relative bg-white border border-gray-100 overflow-hidden shadow-sm">
+          {/* 左側裝飾 */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+          
+          <div className="p-6 sm:p-8">
+            {/* 引號圖標 */}
+            <div className="absolute top-4 right-4 text-primary/10">
+              <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
+              </svg>
             </div>
-            <div className="flex-grow">
-              <div className="absolute -top-4 -left-2 text-primary opacity-30 text-6xl">&ldquo;</div>
-              <p className="text-gray-700 italic mb-4 relative z-10">
-                {testimonial.content}
-              </p>
-              <div className="flex flex-col">
-                <span className="font-bold text-gray-800">{testimonial.name}</span>
-                <span className="text-sm text-gray-600">{testimonial.role}, {testimonial.company}</span>
+            
+            <div className="flex flex-col sm:flex-row gap-6 items-start">
+              {/* 客戶頭像 - 放大並置於左側 */}
+              <div className="mx-auto sm:mx-0 sm:mt-2">
+                <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-primary/20">
+                  {/* 載入狀態顯示 */}
+                  {imgStatus.loading && (
+                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center animate-pulse">
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                  
+                  <Image
+                    src={imgStatus.error ? '/images/testimonials/default-avatar.jpg' : '/images/testimonials/default-avatar.jpg'}
+                    alt={caseStudy.testimonial.author}
+                    fill
+                    sizes="96px"
+                    className={`
+                      object-cover
+                      transition-all duration-300
+                      ${imgStatus.loading ? 'opacity-0' : 'opacity-100'}
+                    `}
+                    priority
+                    quality={90}
+                    onLoad={() => setImgStatus({ loading: false, error: false })}
+                    onError={() => setImgStatus({ loading: false, error: true })}
+                  />
+                </div>
+                
+                {/* 客戶資料 - 僅在小螢幕時顯示在頭像下方 */}
+                <div className="mt-3 text-center sm:hidden">
+                  <h4 className="font-semibold text-gray-900 text-lg">
+                    {caseStudy.testimonial.author}
+                  </h4>
+                  <p className="text-sm text-gray-500">
+                    {caseStudy.testimonial.title}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                {/* 客戶資料 - 在大螢幕時顯示在內容上方 */}
+                <div className="hidden sm:block mb-3">
+                  <h4 className="font-semibold text-gray-900 text-xl">
+                    {caseStudy.testimonial.author}
+                  </h4>
+                  <p className="text-sm text-gray-500">
+                    {caseStudy.testimonial.title}
+                  </p>
+                </div>
+                
+                {/* 見證內容 */}
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  "{caseStudy.testimonial.content}"
+                </p>
               </div>
             </div>
           </div>
-        </motion.div>
-      ))}
-
-      <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
-        <h3 className="text-xl font-bold mb-4 text-center text-gray-800">您也想成為我們的成功案例嗎？</h3>
-        <p className="text-center text-gray-600 mb-6">
-          立即預約免費諮詢，讓我們為您的診所打造專屬行銷策略
-        </p>
-        <div className="flex justify-center">
-          <a
-            href="/contact"
-            className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
-          >
-            預約免費諮詢
-            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </a>
+          
+          {/* 底部裝飾 */}
+          <div className="bg-gray-50 px-8 py-4 flex justify-between items-center border-t border-gray-100">
+            <span className="text-sm text-gray-500">專案合作夥伴</span>
+            <button className="text-primary text-sm font-medium flex items-center gap-1 hover:underline">
+              預約諮詢
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

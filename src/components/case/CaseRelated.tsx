@@ -4,18 +4,19 @@ import React, { useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { caseStudies, CaseStudy } from '@/components/pages/CasePage'
-
-interface CaseRelatedProps {
-  currentId: string
-  category: string
-}
+import { caseAnimations } from '@/utils/animations'
+import { handleCaseImageError } from '@/utils/case'
+import type { CaseRelatedProps } from '@/types/case'
+import { caseStudies } from '@/components/pages/CasePage'
 
 const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
   // 使用 useMemo 緩存相關案例
   const relatedCases = useMemo(() => {
     return caseStudies
-      .filter(c => c.id !== currentId && (c.category === category || c.featured))
+      .filter(caseStudy => 
+        caseStudy.id !== currentId && 
+        caseStudy.category === category
+      )
       .slice(0, 3)
   }, [currentId, category])
   
@@ -24,7 +25,12 @@ const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
   }
 
   return (
-    <div className="space-y-4">
+    <motion.div
+      variants={caseAnimations.related}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
       {relatedCases.map((relatedCase, index) => (
         <motion.div
           key={relatedCase.id}
@@ -46,7 +52,7 @@ const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
                 className="object-cover group-hover:scale-110 transition-transform duration-500"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
-                  target.src = '/images/case-placeholder.jpg'
+                  target.src = handleCaseImageError(target.src)
                 }}
               />
             </div>
@@ -79,7 +85,7 @@ const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
           </svg>
         </Link>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

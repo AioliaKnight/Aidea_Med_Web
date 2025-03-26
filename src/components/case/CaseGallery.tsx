@@ -3,13 +3,9 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface CaseGalleryProps {
-  caseId: string
-  name: string
-  hasVideo?: boolean
-  videoUrl?: string
-}
+import { caseAnimations } from '@/utils/animations'
+import { generateCaseImageUrl, handleCaseImageError } from '@/utils/case'
+import type { CaseGalleryProps } from '@/types/case'
 
 // 案例圖片介面
 interface CaseImage {
@@ -25,40 +21,20 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
   const [showModal, setShowModal] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   
-  // 使用useMemo緩存圖片列表，避免重新渲染時重複生成
+  // 優化圖片列表生成邏輯
   const caseImages = useMemo(() => {
     const images: CaseImage[] = []
-    
-    // 如果有影片，加入影片作為第一個項目
-    if (hasVideo && videoUrl) {
+    const imageCount = 5
+    for (let i = 1; i <= imageCount; i++) {
+      const url = generateCaseImageUrl(caseId, i)
       images.push({
-        url: videoUrl,
-        alt: `${name} - 廣告影片`,
-        caption: '廣告投放案例',
-        type: 'video'
-      })
-    }
-    
-    // 加入其他圖片
-    const imageTypes = [
-      { id: '', title: '案例主圖' },
-      { id: '_website', title: '網站設計' },
-      { id: '_social', title: '社群經營' },
-      { id: '_ads', title: '廣告投放' }
-    ]
-    
-    imageTypes.forEach(({ id, title }) => {
-      const imageUrl = `/images/cases/Case_${caseId}${id}.jpg`
-      images.push({
-        url: imageUrl,
-        alt: `${name} - ${title}`,
-        caption: title,
+        url,
+        alt: `${name} - 案例圖片 ${i}`,
         type: 'image'
       })
-    })
-    
+    }
     return images
-  }, [caseId, name, hasVideo, videoUrl])
+  }, [caseId, name])
 
   // 使用useCallback緩存事件處理函數
   const openModal = useCallback((index: number) => {
@@ -80,6 +56,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
     })
   }, [caseImages.length])
 
+  // 優化圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
     setImageErrors(prev => ({
       ...prev,
@@ -87,29 +64,43 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
     }))
   }, [])
 
-  // 檢查圖片是否已載入錯誤
-  const isImageError = useCallback((url: string) => {
-    return imageErrors[url] || false
+  // 優化圖片URL獲取
+  const getImageUrl = useCallback((url: string) => {
+    return imageErrors[url] ? handleCaseImageError(url) : url
   }, [imageErrors])
 
-  // 獲取圖片URL，如果載入錯誤則返回預設圖片
-  const getImageUrl = useCallback((url: string) => {
-    return isImageError(url) ? '/images/case-placeholder.jpg' : url
-  }, [isImageError])
+  // 優化圖片載入策略
+  const getImageLoadingStrategy = useCallback((index: number) => {
+    if (index === 0) return 'eager'
+    if (index === 1) return 'lazy'
+    return 'lazy'
+  }, [])
+
+  // 優化圖片品質策略
+  const getImageQuality = useCallback((index: number) => {
+    if (index === 0) return 90
+    if (index === 1) return 85
+    return 75
+  }, [])
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {caseImages.map((image, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="group relative cursor-pointer"
-            onClick={() => openModal(index)}
+            className="group cursor-pointer"
+            onClick={() => {
+              setActiveImage(index)
+              setShowModal(true)
+            }}
           >
-            <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm border border-gray-100">
+            <motion.div
+              variants={caseAnimations.gallery}
+              initial="hidden"
+              animate="visible"
+              className="relative aspect-[4/3] rounded-lg overflow-hidden"
+            >
               {image.type === 'video' ? (
                 <div className="absolute inset-0 bg-gray-100">
                   <iframe
@@ -131,9 +122,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
                     onError={() => handleImageError(image.url)}
-                    loading={index <= 1 ? 'eager' : 'lazy'}
+                    loading={getImageLoadingStrategy(index)}
                     fetchPriority={index === 0 ? 'high' : 'auto'}
-                    quality={index <= 1 ? 85 : 75}
+                    quality={getImageQuality(index)}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSAyVC08MTY3LjIyOUVFRTlBNj9BNj5LUlJSUlJSUlJSUlJSUlJSUlL/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAb/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
                 </>
               )}
@@ -145,11 +138,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
                   </svg>
                 </div>
               </div>
-            </div>
+            </motion.div>
             {image.caption && (
               <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
             )}
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -157,11 +150,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
       <AnimatePresence>
         {showModal && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm"
-            onClick={closeModal}
+            variants={caseAnimations.galleryModal}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -208,13 +201,19 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name, hasVideo, video
               </div>
 
               {/* 圖片說明 */}
-              {caseImages[activeImage].caption && (
-                <div className="p-4 bg-white border-t border-gray-100">
+              <motion.div
+                variants={caseAnimations.galleryImage}
+                initial="hidden"
+                animate="visible"
+                custom={activeImage}
+                className="p-4 bg-white border-t border-gray-100"
+              >
+                {caseImages[activeImage].caption && (
                   <p className="text-center text-gray-900 font-medium">
                     {caseImages[activeImage].caption}
                   </p>
-                </div>
-              )}
+                )}
+              </motion.div>
 
               {/* 導航按鈕 */}
               <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">

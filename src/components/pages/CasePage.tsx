@@ -189,7 +189,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     color: '#4A6CF7',
     image: '/images/cases/Case_中華.jpg',
-    featured: true,
+    featured: false,
     publishedDate: '2024-01-15T00:00:00Z',
     updatedDate: '2024-02-20T00:00:00Z',
     testimonial: {
@@ -229,7 +229,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     color: '#2ECC71',
     image: '/images/cases/Case_品誠.jpg',
-    featured: true,
+    featured: false,
     publishedDate: '2024-01-20T00:00:00Z',
     updatedDate: '2024-02-25T00:00:00Z',
     testimonial: {
@@ -269,7 +269,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     color: '#E74C3C',
     image: '/images/cases/Case_春生.jpg',
-    featured: true,
+    featured: false,
     publishedDate: '2024-01-25T00:00:00Z',
     updatedDate: '2024-02-28T00:00:00Z',
     testimonial: {
@@ -309,7 +309,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     color: '#3498DB',
     image: '/images/cases/Case_家源.jpg',
-    featured: true,
+    featured: false,
     publishedDate: '2024-02-01T00:00:00Z',
     updatedDate: '2024-03-05T00:00:00Z',
     testimonial: {
@@ -349,7 +349,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     color: '#9B59B6',
     image: '/images/cases/Case_海蒂.jpg',
-    featured: true,
+    featured: false,
     publishedDate: '2024-02-05T00:00:00Z',
     updatedDate: '2024-03-10T00:00:00Z',
     testimonial: {
@@ -843,80 +843,53 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
 const MainContent = memo(function MainContent() {
   const [activeCategory, setActiveCategory] = useState('全部案例')
   const [isLoading, setIsLoading] = useState(true)
-  // 新增視圖模式狀態
   const [viewMode, setViewMode] = useState<'standard' | 'compact'>('standard')
-  
-  // 判斷是否為手機尺寸
   const [isMobileView, setIsMobileView] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   
   // 監聽視窗尺寸變化
   useEffect(() => {
     const checkMobileView = () => {
       setIsMobileView(window.innerWidth < 768)
+      if (window.innerWidth < 640) {
+        setViewMode('compact')
+      }
     }
     
-    // 初始檢查
     checkMobileView()
-    
-    // 監聽變化
     window.addEventListener('resize', checkMobileView)
-    
-    // 如果是手機自動切換到緊湊模式
-    if (window.innerWidth < 640) {
-      setViewMode('compact')
-    }
-    
-    return () => {
-      window.removeEventListener('resize', checkMobileView)
-    }
+    return () => window.removeEventListener('resize', checkMobileView)
   }, [])
   
-  // 優化：使用useMemo計算類別列表並排序，避免重複計算
+  // 優化：使用useMemo計算類別列表
   const categories = useMemo(() => {
-    const allCategories = Array.from(new Set(caseStudies.map(item => item.category)))
-    return allCategories
+    return Array.from(new Set(caseStudies.map(item => item.category)))
   }, [])
   
   // 優化：使用useMemo過濾案例
   const filteredCases = useMemo(() => {
-    // 如果是全部案例直接返回全部
-    if (activeCategory === '全部案例') {
-      return caseStudies;
-    }
-    
-    // 過濾出指定類別的案例
-    return caseStudies.filter(caseStudy => caseStudy.category === activeCategory);
-  }, [activeCategory])
+    return caseStudies.filter(caseStudy => {
+      const matchesCategory = activeCategory === '全部案例' || caseStudy.category === activeCategory
+      const matchesSearch = searchQuery === '' || 
+        caseStudy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        caseStudy.category.toLowerCase().includes(searchQuery.toLowerCase())
+      return matchesCategory && matchesSearch
+    })
+  }, [activeCategory, searchQuery])
   
-  // 使用useMemo緩存精選案例
+  // 優化：使用useMemo緩存精選案例
   const featuredCase = useMemo(() => {
-    const featured = caseStudies.find(item => item.featured)
-    return featured || caseStudies[0]
-  }, [])
-  
-  // 使用useEffect處理初始加載狀態
-  useEffect(() => {
-    // 模擬載入延遲
-    let isMounted = true;
-    const timer = setTimeout(() => {
-      if (isMounted) {
-        setIsLoading(false);
-      }
-    }, 500)
-    
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    }
+    return caseStudies.find(item => item.featured) || caseStudies[0]
   }, [])
   
   // 優化：使用useCallback包裝類別切換處理函數
   const handleCategoryChange = useCallback((category: string) => {
-    setActiveCategory(category);
-    // 類別切換時顯示短暫的加載狀態，提升用戶體驗
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 300);
-  }, []);
+    setActiveCategory(category)
+    setIsLoading(true)
+    setIsInitialLoad(false)
+    setTimeout(() => setIsLoading(false), 300)
+  }, [])
   
   // 切換視圖模式
   const toggleViewMode = useCallback(() => {
@@ -926,9 +899,9 @@ const MainContent = memo(function MainContent() {
   // 根據視圖模式設置網格佈局
   const gridLayoutClass = useMemo(() => {
     if (viewMode === 'compact') {
-      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3'
+      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3'
     }
-    return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'
+    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
   }, [viewMode])
   
   return (
@@ -936,14 +909,42 @@ const MainContent = memo(function MainContent() {
       {featuredCase && !isMobileView && <FeaturedCase caseStudy={featuredCase} />}
       
       <div className="container mx-auto px-4 pb-16 md:pb-24">
+        {/* 頁面標題和搜尋區塊 */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-10">
           <div className="mb-4 sm:mb-0">
             <h1 className="text-2xl sm:text-3xl font-bold mb-1">成功案例</h1>
             <p className="text-gray-600 text-sm">了解我們如何幫助客戶達成業務目標</p>
           </div>
           
+          {/* 搜尋框 */}
+          <div className="relative w-full sm:w-64 mb-4 sm:mb-0">
+            <input
+              type="text"
+              placeholder="搜尋案例..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+            <svg
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+        </div>
+        
+        {/* 視圖切換和類別過濾器 */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-10">
           {/* 視圖切換按鈕 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mb-4 sm:mb-0">
             <button
               onClick={toggleViewMode}
               className="flex items-center justify-center p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
@@ -960,14 +961,38 @@ const MainContent = memo(function MainContent() {
               )}
             </button>
           </div>
+          
+          {/* 類別過濾器 */}
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex gap-2 md:gap-3 md:flex-wrap md:justify-center min-w-max">
+              <button
+                onClick={() => handleCategoryChange('全部案例')}
+                className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeCategory === '全部案例'
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                全部案例
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeCategory === category
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
         
-        <CaseFilter 
-          activeCategory={activeCategory} 
-          setActiveCategory={handleCategoryChange} 
-          categories={categories} 
-        />
-        
+        {/* 案例列表 */}
         {isLoading ? (
           <LoadingState />
         ) : filteredCases.length > 0 ? (
@@ -975,6 +1000,7 @@ const MainContent = memo(function MainContent() {
             <motion.div 
               variants={staggerContainer}
               initial="hidden"
+              animate={isInitialLoad ? "visible" : "hidden"}
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
               className={gridLayoutClass}
