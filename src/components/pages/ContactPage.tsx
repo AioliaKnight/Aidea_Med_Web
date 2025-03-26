@@ -68,8 +68,10 @@ export default function ContactPage() {
         title="讓我們聆聽您的故事" 
         description="每間診所都有獨特的挑戰與願景，讓我們一同探索適合您的成長路徑"
         variant="red"
-        size="lg"
-        backgroundImage="/images/bgline-w.png"
+        size="md"
+        alignment="center"
+        backgroundImage="/images/bgline-w.webp"
+        className="border-b border-red-700"
       />
       
       {/* 聯絡表單區 */}
