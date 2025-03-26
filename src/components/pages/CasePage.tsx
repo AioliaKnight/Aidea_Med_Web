@@ -159,151 +159,323 @@ export const caseStudies: CaseStudy[] = [
     }
   },
   {
-    id: 'central-district-dental',
-    name: '中區牙醫診所C',
-    category: '社群經營',
-    description: '針對都會區年輕族群特性，打造科技感與人性化並存的診所形象，運用社群媒體分享專業口腔保健知識，建立專業且親切的品牌定位',
+    id: 'chinese',
+    name: '中華牙醫診所',
+    category: '品牌重塑',
+    description: '透過專業的品牌重塑服務，打造現代化且親切的診所形象，提升品牌價值與患者信任感',
     metrics: [
-      { value: '200%', label: '年輕客群成長' },
-      { value: '35%', label: '社群互動率' },
-      { value: '10K+', label: '知識文章分享數' },
-      { value: '45%', label: '有機流量增長' }
+      { value: '180%', label: '品牌知名度提升' },
+      { value: '45%', label: '新患者增長' },
+      { value: '85%', label: '患者滿意度' },
+      { value: '60%', label: '回診率提升' }
     ],
     solutions: [
       {
-        title: '社群內容策略',
-        description: '根據目標客群興趣與需求，規劃系列實用衛教內容，透過生動插圖與淺顯解說，提升互動與分享，建立診所專業形象。'
+        title: '品牌識別系統建立',
+        description: '設計現代化且專業的品牌識別系統，包含標誌、色彩計畫與視覺元素，建立一致的品牌形象。'
       },
       {
-        title: '品牌聲音建立',
-        description: '建立統一的品牌語調與溝通風格，在各平台保持一致的專業親切形象，增強品牌識別與記憶點。'
+        title: '診所空間改造',
+        description: '重新規劃診所空間，打造舒適且專業的診療環境，提升患者就醫體驗。'
       },
       {
-        title: '多平台經營優化',
-        description: '全面分析 Instagram、Facebook、LINE 等平台效益，針對不同族群調整內容策略，提升觸及與轉換率。'
+        title: '數位行銷策略',
+        description: '制定完整的數位行銷計畫，透過社群媒體與網站優化，提升線上能見度。'
       },
       {
-        title: '員工參與計畫',
-        description: '培訓診所人員共同參與社群經營，分享真實診所日常與專業知識，增加品牌真實性與親近感。'
+        title: '患者服務優化',
+        description: '導入數位化管理系統，優化預約流程與患者服務，提升營運效率。'
       }
     ],
-    color: '#FF6C6C',
-    image: '/images/case-placeholder.jpg',
-    featured: false,
-    publishedDate: '2023-05-20T00:00:00Z',
-    updatedDate: '2023-08-10T00:00:00Z',
+    color: '#4A6CF7',
+    image: '/images/cases/Case_中華.jpg',
+    featured: true,
+    publishedDate: '2024-01-15T00:00:00Z',
+    updatedDate: '2024-02-20T00:00:00Z',
     testimonial: {
-      content: '社群經營策略徹底改變了我們與患者的互動方式，年輕族群大幅增加，也提升了診所整體形象。',
-      author: '張醫師',
-      title: '中區診所創辦人'
+      content: '品牌重塑後，診所的整體形象更加專業現代化，患者回饋也相當正面。',
+      author: '林醫師',
+      title: '中華牙醫診所院長'
     }
   },
   {
-    id: 'south-district-dental',
-    name: '南區牙醫診所D',
+    id: 'pincheng',
+    name: '品誠牙醫診所',
     category: '數位轉型',
-    description: '30年老字號診所導入數位化管理系統，優化看診流程，同時保留溫暖的個人化服務，實現傳統價值與現代效率的完美結合',
+    description: '導入數位化管理系統，優化診所營運流程，提升服務效率與患者體驗',
     metrics: [
-      { value: '60%', label: '行政工作時間減少' },
-      { value: '95%', label: '老患者回診率' },
-      { value: '75%', label: '新患者成長率' },
-      { value: '30%', label: '營運成本降低' }
+      { value: '70%', label: '行政效率提升' },
+      { value: '90%', label: '患者滿意度' },
+      { value: '50%', label: '營運成本降低' },
+      { value: '40%', label: '新患者成長' }
     ],
     solutions: [
       {
         title: '數位管理系統導入',
-        description: '客製化整合預約、病歷、收費、庫存等管理系統，提升診所營運效率，減少人為錯誤。'
+        description: '整合預約、病歷、收費等管理系統，提升診所營運效率。'
       },
       {
-        title: '員工數位培訓',
-        description: '為診所團隊提供全面數位工具培訓，確保系統順利導入，並維持優質服務品質。'
+        title: '線上預約系統優化',
+        description: '建置便捷的線上預約系統，提供24小時預約服務。'
       },
       {
-        title: '患者溝通系統建立',
-        description: '導入智慧化提醒與回饋系統，增強醫患溝通，提升診療過程透明度與患者滿意度。'
+        title: '患者資料管理',
+        description: '導入電子病歷系統，提升病歷管理效率與安全性。'
       },
       {
-        title: '傳統價值數位化',
-        description: '將診所長期累積的專業經驗與價值觀融入數位系統，確保轉型過程中不失原有的人情味與專業態度。'
+        title: '員工培訓計畫',
+        description: '提供完整的系統使用培訓，確保團隊順利適應新系統。'
       }
     ],
-    color: '#3498DB',
-    image: '/images/cases/south-district-dental.jpg',
-    featured: true,
-    publishedDate: '2023-07-05T00:00:00Z',
-    updatedDate: '2023-10-18T00:00:00Z',
-    testimonial: {
-      content: '數位轉型讓我們從繁瑣的行政工作中解放，能更專注於病患照護。新系統不僅提升效率，老病患也感受到服務品質的提升。',
-      author: '陳醫師',
-      title: '南區診所第二代負責人'
-    }
-  },
-  {
-    id: 'smile-dental',
-    name: 'Smile牙醫診所',
-    category: '數位行銷',
-    description: '專注於美容牙科的專業診所，透過精準的數位行銷策略，提升品牌知名度與高價值客戶轉換率',
-    metrics: [
-      { value: '150%', label: '美容牙科療程成長' },
-      { value: '45%', label: '廣告投資報酬率提升' },
-      { value: '70%', label: '目標族群轉換率' },
-      { value: '65%', label: '品牌搜尋量增長' }
-    ],
-    solutions: [
-      '精準目標族群分析與定位',
-      '多管道整合數位行銷策略',
-      '專業內容創作與衛教資訊分享',
-      '數據導向的行銷效益優化'
-    ],
     color: '#2ECC71',
-    image: '/images/cases/smile-dental.jpg',
-    featured: false,
-    publishedDate: '2023-09-12T00:00:00Z',
-    updatedDate: '2023-12-05T00:00:00Z',
+    image: '/images/cases/Case_品誠.jpg',
+    featured: true,
+    publishedDate: '2024-01-20T00:00:00Z',
+    updatedDate: '2024-02-25T00:00:00Z',
     testimonial: {
-      content: '數位行銷策略精準觸及我們的目標客群，大幅提升了高價值療程的詢問度與轉換率，投資報酬率遠超預期。',
-      author: '黃醫師',
-      title: 'Smile牙醫診所創辦人'
+      content: '數位轉型後，診所的營運更加順暢，患者服務品質也大幅提升。',
+      author: '陳醫師',
+      title: '品誠牙醫診所院長'
     }
   },
   {
-    id: 'cloud-sky-dental',
-    name: '雲天牙醫診所',
-    category: '整合行銷',
-    description: '幫助都會區牙醫診所從激烈競爭中脫穎而出，透過精準的SEO與社群媒體策略吸引理想客群，建立專業品牌形象',
+    id: 'chunsheng',
+    name: '春生牙醫診所',
+    category: '社群經營',
+    description: '透過專業的社群媒體經營，建立診所專業形象，提升品牌知名度',
     metrics: [
-      { value: '258%', label: '診所網站流量成長' },
-      { value: '68%', label: '新客戶預約增加率' },
-      { value: '4.8', label: '客戶平均滿意度' },
-      { value: '152%', label: '社群互動率提升' }
+      { value: '250%', label: '社群追蹤成長' },
+      { value: '45%', label: '互動率提升' },
+      { value: '35%', label: '新患者來源' },
+      { value: '80%', label: '品牌認知度' }
     ],
     solutions: [
       {
-        title: '全面SEO優化與本地搜尋排名提升',
-        description: '針對關鍵字「信義區植牙」、「台北牙醫推薦」等進行優化，提升Google本地搜尋排名，讓診所在地區搜尋中脫穎而出。'
+        title: '社群內容策略',
+        description: '規劃專業的口腔衛教內容，建立診所專業形象。'
       },
       {
-        title: '客製化社群媒體內容策略',
-        description: '建立符合診所品牌調性的社群內容計畫，定期發布專業口腔健康知識與診所動態，增加與潛在客戶互動機會。'
+        title: '多平台經營',
+        description: '整合 Facebook、Instagram、LINE 等平台，擴大品牌觸及。'
       },
       {
-        title: '患者旅程改善與預約流程優化',
-        description: '重新設計線上預約系統與自動化提醒機制，簡化患者預約流程，提高轉換率與降低預約取消比例。'
+        title: '互動活動規劃',
+        description: '設計線上互動活動，提升社群參與度。'
       },
       {
-        title: '專業醫療內容製作與權威建立',
-        description: '透過高品質的部落格文章與影片內容，建立診所在特定治療領域的專業權威，提升患者信任感與專業形象。'
+        title: '口碑行銷',
+        description: '鼓勵患者分享就醫體驗，建立良好口碑。'
       }
     ],
     color: '#E74C3C',
-    image: '/images/cases/cloud-sky-dental.jpg',
+    image: '/images/cases/Case_春生.jpg',
     featured: true,
-    publishedDate: '2023-12-15T00:00:00Z',
-    updatedDate: '2024-01-30T00:00:00Z',
+    publishedDate: '2024-01-25T00:00:00Z',
+    updatedDate: '2024-02-28T00:00:00Z',
     testimonial: {
-      content: '自從實施了整合行銷策略後，我們診所的新患數量顯著增加，尤其是對於我們主打的植牙和隱形矯正治療特別有興趣的患者。專業團隊的服務讓我們能專注於診療，同時擴大診所影響力。',
+      content: '社群經營讓我們能更直接地與患者互動，也幫助診所建立更親切的形象。',
+      author: '王醫師',
+      title: '春生牙醫診所院長'
+    }
+  },
+  {
+    id: 'jiayuan',
+    name: '家源牙醫診所',
+    category: '整合行銷',
+    description: '透過全方位的整合行銷策略，提升診所品牌價值與市場競爭力',
+    metrics: [
+      { value: '200%', label: '品牌知名度' },
+      { value: '55%', label: '新患者成長' },
+      { value: '40%', label: '回診率提升' },
+      { value: '85%', label: '患者滿意度' }
+    ],
+    solutions: [
+      {
+        title: '品牌定位策略',
+        description: '建立清晰的品牌定位，突出診所特色與優勢。'
+      },
+      {
+        title: '多管道行銷',
+        description: '整合線上線下行銷管道，擴大品牌影響力。'
+      },
+      {
+        title: '內容行銷',
+        description: '製作專業的衛教內容，建立診所權威形象。'
+      },
+      {
+        title: '患者服務優化',
+        description: '優化診所服務流程，提升患者體驗。'
+      }
+    ],
+    color: '#3498DB',
+    image: '/images/cases/Case_家源.jpg',
+    featured: true,
+    publishedDate: '2024-02-01T00:00:00Z',
+    updatedDate: '2024-03-05T00:00:00Z',
+    testimonial: {
+      content: '整合行銷策略幫助我們在競爭激烈的市場中脫穎而出，建立穩固的品牌形象。',
       author: '李醫師',
-      title: '雲天牙醫診所院長'
+      title: '家源牙醫診所院長'
+    }
+  },
+  {
+    id: 'haidi',
+    name: '海蒂牙醫診所',
+    category: '品牌重塑',
+    description: '重新打造診所品牌形象，建立專業且親切的診所風格',
+    metrics: [
+      { value: '150%', label: '品牌認知度' },
+      { value: '40%', label: '新患者增長' },
+      { value: '75%', label: '患者回饋' },
+      { value: '60%', label: '社群互動率' }
+    ],
+    solutions: [
+      {
+        title: '視覺識別設計',
+        description: '設計現代化的品牌視覺系統，提升品牌識別度。'
+      },
+      {
+        title: '空間規劃',
+        description: '重新規劃診所空間，打造舒適的診療環境。'
+      },
+      {
+        title: '服務流程優化',
+        description: '改善診所服務流程，提升患者體驗。'
+      },
+      {
+        title: '社群經營',
+        description: '建立活躍的社群平台，增加品牌互動。'
+      }
+    ],
+    color: '#9B59B6',
+    image: '/images/cases/Case_海蒂.jpg',
+    featured: true,
+    publishedDate: '2024-02-05T00:00:00Z',
+    updatedDate: '2024-03-10T00:00:00Z',
+    testimonial: {
+      content: '品牌重塑後，診所的整體形象更加專業且親切，患者回饋相當正面。',
+      author: '張醫師',
+      title: '海蒂牙醫診所院長'
+    }
+  },
+  {
+    id: 'haohao',
+    name: '皓皓牙醫診所',
+    category: '數位行銷',
+    description: '透過精準的數位行銷策略，提升診所線上能見度與患者轉換率',
+    metrics: [
+      { value: '300%', label: '網站流量成長' },
+      { value: '50%', label: '線上預約率' },
+      { value: '65%', label: '廣告投資報酬率' },
+      { value: '45%', label: '新患者來源' }
+    ],
+    solutions: [
+      {
+        title: 'SEO優化',
+        description: '優化網站搜尋引擎排名，提升自然流量。'
+      },
+      {
+        title: '社群廣告投放',
+        description: '精準投放社群廣告，提升品牌曝光度。'
+      },
+      {
+        title: '內容行銷',
+        description: '製作專業的衛教內容，建立診所權威形象。'
+      },
+      {
+        title: '數據分析',
+        description: '透過數據分析優化行銷策略，提升投資報酬率。'
+      }
+    ],
+    color: '#F1C40F',
+    image: '/images/cases/Case_皓皓.jpg',
+    featured: true,
+    publishedDate: '2024-02-10T00:00:00Z',
+    updatedDate: '2024-03-15T00:00:00Z',
+    testimonial: {
+      content: '數位行銷策略幫助我們精準觸及目標客群，大幅提升新患者數量。',
+      author: '黃醫師',
+      title: '皓皓牙醫診所院長'
+    }
+  },
+  {
+    id: 'qinmei',
+    name: '勤美民生牙醫診所',
+    category: '整合行銷',
+    description: '透過全方位的整合行銷策略，建立診所專業形象與市場競爭力',
+    metrics: [
+      { value: '180%', label: '品牌知名度' },
+      { value: '50%', label: '新患者成長' },
+      { value: '70%', label: '患者滿意度' },
+      { value: '45%', label: '回診率提升' }
+    ],
+    solutions: [
+      {
+        title: '品牌策略規劃',
+        description: '制定完整的品牌發展策略，建立診所特色。'
+      },
+      {
+        title: '多管道整合',
+        description: '整合線上線下行銷管道，擴大品牌影響力。'
+      },
+      {
+        title: '社群經營',
+        description: '經營活躍的社群平台，增加品牌互動。'
+      },
+      {
+        title: '服務優化',
+        description: '優化診所服務流程，提升患者體驗。'
+      }
+    ],
+    color: '#1ABC9C',
+    image: '/images/cases/Case_勤美民生.jpg',
+    featured: true,
+    publishedDate: '2024-02-15T00:00:00Z',
+    updatedDate: '2024-03-20T00:00:00Z',
+    testimonial: {
+      content: '整合行銷策略幫助我們在市場中建立穩固的品牌形象，提升診所競爭力。',
+      author: '吳醫師',
+      title: '勤美民生牙醫診所院長'
+    }
+  },
+  {
+    id: 'classic',
+    name: '經典聯合牙醫診所',
+    category: '品牌重塑',
+    description: '重新打造診所品牌形象，建立專業且現代的診所風格',
+    metrics: [
+      { value: '200%', label: '品牌認知度' },
+      { value: '55%', label: '新患者增長' },
+      { value: '80%', label: '患者滿意度' },
+      { value: '65%', label: '社群互動率' }
+    ],
+    solutions: [
+      {
+        title: '品牌識別設計',
+        description: '設計現代化的品牌識別系統，提升品牌形象。'
+      },
+      {
+        title: '空間改造',
+        description: '重新規劃診所空間，打造舒適的診療環境。'
+      },
+      {
+        title: '服務流程優化',
+        description: '改善診所服務流程，提升患者體驗。'
+      },
+      {
+        title: '數位行銷',
+        description: '建立完整的數位行銷策略，提升線上能見度。'
+      }
+    ],
+    color: '#E67E22',
+    image: '/images/cases/Case_經典聯合.jpg',
+    featured: true,
+    publishedDate: '2024-02-20T00:00:00Z',
+    updatedDate: '2024-03-25T00:00:00Z',
+    testimonial: {
+      content: '品牌重塑後，診所的整體形象更加專業現代化，患者回饋相當正面。',
+      author: '劉醫師',
+      title: '經典聯合牙醫診所院長'
     }
   }
 ]

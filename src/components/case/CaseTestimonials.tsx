@@ -26,20 +26,35 @@ function generateTestimonials(caseStudy: CaseStudy): Testimonial[] {
       role: '院長',
       company: caseStudy.name,
       content: `與Aidea:Med合作後，我們的網路預約人數增加了${Math.floor(Math.random() * 40 + 60)}%，新患者轉換率顯著提升。他們不只提供行銷服務，更能深入了解牙醫診所的特殊需求，提供專業且有效的解決方案。`,
-      avatar: '/images/avatars/doctor.jpg'
+      avatar: '/images/testimonials/doctor-avatar.jpg'
     },
     {
       name: '劉經理',
       role: '營運總監',
       company: caseStudy.name,
       content: `Aidea:Med團隊的專業度讓我們印象深刻，從市場分析到執行細節都非常到位。我們的品牌形象煥然一新，診所的數位足跡也大幅提升，是值得長期合作的夥伴。`,
-      avatar: '/images/avatars/manager.jpg'
+      avatar: '/images/testimonials/manager-avatar.jpg'
     }
   ]
 }
 
 const CaseTestimonials: React.FC<CaseTestimonialsProps> = ({ caseStudy }) => {
-  const testimonials = generateTestimonials(caseStudy)
+  // 使用 useMemo 緩存見證資料
+  const testimonials = React.useMemo(() => generateTestimonials(caseStudy), [caseStudy])
+  const [imageErrors, setImageErrors] = React.useState<Record<string, boolean>>({})
+
+  // 處理圖片載入錯誤
+  const handleImageError = React.useCallback((url: string) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [url]: true
+    }))
+  }, [])
+
+  // 獲取圖片URL，如果載入錯誤則返回預設圖片
+  const getImageUrl = React.useCallback((url: string) => {
+    return imageErrors[url] ? '/images/testimonials/default-avatar.jpg' : url
+  }, [imageErrors])
 
   return (
     <div className="space-y-8">
@@ -56,15 +71,14 @@ const CaseTestimonials: React.FC<CaseTestimonialsProps> = ({ caseStudy }) => {
               <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 mx-auto md:mx-0">
                 {testimonial.avatar ? (
                   <Image
-                    src={testimonial.avatar}
+                    src={getImageUrl(testimonial.avatar)}
                     alt={testimonial.name}
                     width={96}
                     height={96}
                     className="object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = '/images/avatars/default.jpg'
-                    }}
+                    onError={() => handleImageError(testimonial.avatar!)}
+                    priority={index === 0}
+                    quality={85}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-primary text-white text-2xl font-bold">
