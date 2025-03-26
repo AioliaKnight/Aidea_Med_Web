@@ -77,32 +77,32 @@ const NavItem = React.memo(({
     <Link
       href={item.href}
       className={cn(
-        "relative px-3 py-2.5 group transition-colors duration-300 flex flex-col items-center justify-center",
+        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105",
         activeStyle
       )}
       aria-current={isActive ? 'page' : undefined}
       role="menuitem"
     >
-      <div className="flex flex-col items-center pt-0.5">
-        <span className="text-base font-medium text-center">{item.name}</span>
+      <div className="flex flex-col items-center">
+        <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
         <span className={cn(
-          "text-xs mt-0.5 mb-1 font-light tracking-wide transition-colors duration-300 text-center",
+          "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
           secondaryStyle
         )}>
           {item.nameEn}
         </span>
       </div>
       
-      <div className="absolute -bottom-1 inset-x-0 h-0.5 flex justify-center">
+      <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
         {isActive && (
           <motion.div
             layoutId="navIndicator"
             className={cn(
-              "h-0.5 rounded-full",
+              "h-[2px] rounded-full",
               textStyles[navMode].indicator
             )}
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: '24px', opacity: 1 }}
+            animate={{ width: '28px', opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ 
               duration: 0.4, 
@@ -167,13 +167,13 @@ export default function Navbar() {
   return (
     <header 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-16 md:h-18",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-14 md:h-[4rem]",
         currentNavStyle
       )}
       id="main-header"
     >
       {/* 導航內容 */}
-      <div className="container mx-auto px-4 flex justify-between items-center py-3 md:py-4">
+      <div className="container mx-auto px-4 flex justify-between items-center py-2 md:py-3">
         {/* Logo區域 */}
         <div className="flex-shrink-0">
           <Link href="/" aria-label="回到首頁">
@@ -187,7 +187,7 @@ export default function Navbar() {
           role="navigation"
           aria-label="主導航選單"
         >
-          <div role="menubar" className="flex items-center space-x-4">
+          <div role="menubar" className="flex items-center space-x-6 xl:space-x-8">
             {navigation.map((item) => (
               <NavItem 
                 key={item.href}
@@ -204,7 +204,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             className={cn(
-              "rounded-lg py-2.5 px-6 ml-3 text-sm font-medium transition-all duration-300 hover:scale-105",
+              "rounded-lg py-2.5 px-6 ml-5 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md",
               currentButtonStyle
             )}
             aria-label="預約專屬顧問諮詢"

@@ -132,8 +132,8 @@ export default function RootLayout({
         {/* 導航欄 */}
         <Navbar />
         
-        {/* 主要內容區域 - 使用React 19的優化Suspense設計 */}
-        <main className="min-h-screen pt-16">
+        {/* 主要內容區域 - 使用React 19的優化Suspense設計，調整頂部間距以配合更緊湊的導航欄 */}
+        <main className="min-h-screen pt-14 md:pt-[4rem]">
           <Suspense
             fallback={
               <Loading
