@@ -104,7 +104,7 @@ export const CaseCard = React.memo(({
           )}
           
           <Image
-            src={imgStatus.error ? '/cases/case-placeholder.jpg' : imgSrc}
+            src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
             alt={caseStudy.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

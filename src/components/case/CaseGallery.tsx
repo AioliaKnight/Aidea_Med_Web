@@ -24,28 +24,33 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
   // 使用useMemo緩存圖片列表，避免重新渲染時重複生成
   const caseImages = useMemo(() => {
     // 根據案例ID生成一張主要圖片和相關視覺效果圖片
-    return [
+    const images = [
       {
-        url: `/cases/${caseId}.jpg`,
-        alt: `${name}主視覺`,
-        caption: '全新品牌視覺設計'
+        id: 'main',
+        title: '案例主圖',
+        url: `/images/cases/gallery/${caseId}.jpg`,
       },
       {
-        url: `/cases/${caseId}-website.jpg`,
-        alt: `${name}網站設計`,
-        caption: '響應式網站設計'
+        id: 'website',
+        title: '網站設計',
+        url: `/images/cases/gallery/${caseId}-website.jpg`,
       },
       {
-        url: `/cases/${caseId}-social.jpg`,
-        alt: `${name}社群經營`,
-        caption: '社群媒體內容規劃'
+        id: 'social',
+        title: '社群經營',
+        url: `/images/cases/gallery/${caseId}-social.jpg`,
       },
       {
-        url: `/cases/${caseId}-ads.jpg`,
-        alt: `${name}廣告投放`,
-        caption: '數位廣告成效分析'
+        id: 'ads',
+        title: '廣告投放',
+        url: `/images/cases/gallery/${caseId}-ads.jpg`,
       }
-    ]
+    ];
+    return images.map((image) => ({
+      url: image.url,
+      alt: image.title,
+      caption: image.title
+    }))
   }, [caseId, name])
 
   // 使用useCallback緩存事件處理函數
@@ -70,7 +75,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({ caseId, name }) => {
 
   const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const target = e.target as HTMLImageElement
-    target.src = '/cases/case-placeholder.jpg'
+    target.src = '/images/case-placeholder.jpg'
   }, [])
 
   return (

@@ -108,7 +108,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#4A6CF7',
-    image: '/images/cases/case_artisticdc.jpg',
+    image: '/images/cases/Case_artisticdc.jpg',
     featured: true,
     publishedDate: '2023-08-15T00:00:00Z',
     updatedDate: '2023-11-20T00:00:00Z',
@@ -148,7 +148,7 @@ export const caseStudies: CaseStudy[] = [
       }
     ],
     color: '#8D72E1',
-    image: '/images/cases/case_ytdentalcare.jpg',
+    image: '/images/cases/Case_ytdentalcare.jpg',
     featured: true,
     publishedDate: '2023-06-10T00:00:00Z',
     updatedDate: '2023-09-15T00:00:00Z',
@@ -841,13 +841,13 @@ export default memo(function CasePage(): React.ReactElement {
   return (
     <>
       <PageHeader
-        title="客戶成功案例"
-        description="見證醫療診所的數位行銷轉型與品牌成長"
-        alignment="center"
-        backgroundImage="/images/bgline-r.png"
-        variant="black"
+        title="成功案例展示"
+        description="探索我們如何協助醫療診所提升品牌價值與患者轉換率，實現業務成長目標"
+        variant="red"
         size="md"
-        withBottomBorder={false}
+        alignment="center"
+        backgroundImage="/images/bgline-w.webp"
+        className="border-b border-red-700"
       />
       
       <Suspense fallback={<LoadingState />}>

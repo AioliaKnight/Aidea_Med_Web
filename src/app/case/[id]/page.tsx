@@ -280,7 +280,7 @@ export default function CaseDetailPage() {
           {/* 主要圖片展示 */}
           <div className="relative aspect-[21/9] w-full mb-6 overflow-hidden rounded-lg shadow-sm">
             <Image
-              src={caseStudy.image || `/cases/${caseStudy.id}.jpg`}
+              src={caseStudy.image || `/images/cases/${caseStudy.id}.jpg`}
               alt={caseStudy.name}
               fill
               sizes="100vw"

@@ -39,14 +39,14 @@ const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
           >
             <div className="relative h-16 w-16 flex-shrink-0 bg-gray-200 overflow-hidden">
               <Image
-                src={relatedCase.image || `/cases/${relatedCase.id}.jpg`}
+                src={relatedCase.image || `/images/cases/${relatedCase.id}.jpg`}
                 alt={relatedCase.name}
                 fill
                 sizes="64px"
                 className="object-cover group-hover:scale-110 transition-transform duration-500"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
-                  target.src = '/cases/case-placeholder.jpg'
+                  target.src = '/images/case-placeholder.jpg'
                 }}
               />
             </div>

@@ -223,8 +223,8 @@ const MarketingSection = memo(function MarketingSection() {
     const isLastBlock = index === contentBlocks.length - 1;
 
     return (
-      <motion.div
-        key={index}
+            <motion.div
+              key={index}
         className={`mb-8 ${block.className}`}
         initial={{ opacity: 0, x: -20 }}
         animate={inView ? 
@@ -232,7 +232,7 @@ const MarketingSection = memo(function MarketingSection() {
             opacity: 1, 
             x: 0,
             transition: {
-              delay: block.delay,
+                delay: block.delay,
               duration: 0.4,
               ease: "easeOut"
             }
@@ -242,68 +242,68 @@ const MarketingSection = memo(function MarketingSection() {
         style={{ willChange: 'transform' }}
       >
         {/* 內容區塊 - 左側英文右側中文 */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
           {/* 英文標題部分 */}
-          <motion.div 
-            className="w-full md:w-5/12"
+                <motion.div 
+                  className="w-full md:w-5/12"
             initial={{ opacity: 0, x: -15 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ 
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ 
               duration: 0.3, 
               delay: Math.min(block.delay + 0.1, 0.4)
-            }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
-              {block.en.title}
-            </h2>
-            {block.en.subtitle && (
+                  }}
+                >
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
+                    {block.en.title}
+                  </h2>
+                  {block.en.subtitle && (
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
-                {block.en.subtitle}
-              </h3>
-            )}
-          </motion.div>
-          
+                      {block.en.subtitle}
+                    </h3>
+                  )}
+                </motion.div>
+                
           {/* 中文內容部分 */}
-          <motion.div 
-            className="mt-3 md:mt-0 w-full md:w-6/12"
-            initial={{ opacity: 0, x: 30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ 
-              duration: 0.5, 
-              delay: block.delay + 0.2
-            }}
-          >
-            <div className="border-l-4 border-white/70 pl-4 md:pl-6">
-              <motion.p 
+                <motion.div 
+                  className="mt-3 md:mt-0 w-full md:w-6/12"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: block.delay + 0.2
+                  }}
+                >
+                  <div className="border-l-4 border-white/70 pl-4 md:pl-6">
+                    <motion.p 
                 className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
                 initial={{ opacity: 0, y: 5 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ 
+                      animate={inView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ 
                   duration: 0.3, 
                   delay: Math.min(block.delay + 0.2, 0.5)
-                }}
+                      }}
                 whileHover={{ x: 3 }}
-              >
-                {block.zh.title}
-              </motion.p>
-              {block.zh.subtitle && (
-                <motion.p 
+                    >
+                      {block.zh.title}
+                    </motion.p>
+                    {block.zh.subtitle && (
+                      <motion.p 
                   className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
                   initial={{ opacity: 0, y: 5 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ 
+                        animate={inView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ 
                     duration: 0.3, 
                     delay: Math.min(block.delay + 0.3, 0.6)
-                  }}
+                        }}
                   whileHover={{ x: 3 }}
-                >
-                  {block.zh.subtitle}
-                </motion.p>
-              )}
-            </div>
-          </motion.div>
-        </div>
-        
+                      >
+                        {block.zh.subtitle}
+                      </motion.p>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+              
         {/* 分隔線 - 最後一個塊沒有分隔線 */}
         {!isLastBlock && renderDivider(block.delay)}
       </motion.div>
@@ -312,27 +312,27 @@ const MarketingSection = memo(function MarketingSection() {
 
   // 渲染分隔線的函數
   const renderDivider = (delay: number) => (
-    <motion.div 
-      className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
-      initial={{ scaleX: 0, opacity: 0 }}
-      animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
-      transition={{ 
-        duration: 0.8, 
+                <motion.div 
+                  className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
+                  transition={{ 
+                    duration: 0.8, 
         delay: delay + 0.5
-      }}
-    >
-      <motion.div 
-        className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
-        initial={{ x: "-100%" }}
-        animate={inView ? { x: "400%" } : {}}
-        transition={{
-          duration: 2,
+                  }}
+                >
+                  <motion.div 
+                    className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
+                    initial={{ x: "-100%" }}
+                    animate={inView ? { x: "400%" } : {}}
+                    transition={{
+                      duration: 2,
           delay: delay + 1,
-          repeat: Infinity,
-          repeatDelay: 4
-        }}
-      />
-    </motion.div>
+                      repeat: Infinity,
+                      repeatDelay: 4
+                    }}
+                  />
+                </motion.div>
   );
 
   // 渲染向下滾動指示器
@@ -352,7 +352,7 @@ const MarketingSection = memo(function MarketingSection() {
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-      </motion.div>
+            </motion.div>
     </motion.div>
   );
 
@@ -540,10 +540,10 @@ const HeroSection = memo(function HeroSection() {
                   </motion.span>
                 ))}
               </div>
-            </div>
-
+        </div>
+        
             {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 */}
-            <motion.div
+        <motion.div 
               className="mt-4 mb-5"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -571,22 +571,22 @@ const HeroSection = memo(function HeroSection() {
             {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection */}
             <motion.div 
               className="mt-20 flex justify-center"
-              initial={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
-            >
-              <motion.div
-                className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
+        >
+          <motion.div
+            className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
                 animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
-              >
+          >
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
               </motion.div>
-            </motion.div>
           </motion.div>
+        </motion.div>
         </div>
       </div>
     </section>
@@ -1117,11 +1117,37 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
   });
   
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
   
   // 客戶端掛載處理
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  
+  // 響應式處理
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // 自動輪播
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % stats.length);
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [isMobile]);
   
   // 精選核心數據
   const stats: StatItem[] = [
@@ -1130,97 +1156,158 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
       suffix: "+",
       label: "合作診所",
       description: "全台醫療網絡覆蓋",
-      icon: <Stethoscope className="w-8 h-8 text-white" strokeWidth={1.5} />
+      icon: <Stethoscope className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
     },
     {
       value: 700,
       suffix: "萬+",
       label: "月廣告投放",
       description: "精準投放策略",
-      icon: <ChartIcon className="w-8 h-8 text-white" strokeWidth={1.5} />
+      icon: <ChartIcon className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
     },
     {
       value: 98,
       suffix: "%",
       label: "客戶滿意度",
       description: "專業團隊品質保證",
-      icon: <Handshake className="w-8 h-8 text-white" strokeWidth={1.5} />
+      icon: <Handshake className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
     }
   ];
 
   return (
     <section 
       ref={ref} 
-      className={`bg-red-600 py-16 ${className}`}
+      className={`bg-red-600 py-8 md:py-16 ${className}`}
     >
       <div className="container mx-auto px-4 sm:px-6">
         {/* 標題區塊 */}
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 md:mb-4">
             顯著成效數據
           </h2>
-          <p className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg">
+          <p className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
             多年實證數據驅動診所業務增長，提供可量化的成功案例與投資回報
           </p>
         </motion.div>
 
         {/* 統計數據卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {stats.map((stat, idx) => (
-            <motion.div 
-              key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.1 }}
+        <div className="relative">
+          {/* 桌面版網格顯示 */}
+          <div className="hidden md:grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {stats.map((stat, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+              >
+                <div className="p-6 rounded-lg h-full flex flex-col border border-white/20">
+                  {/* 圖標與數據值並排 */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div>{stat.icon}</div>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold text-white tabular-nums">
+                        {inView && isMounted ? (
+                          <CountUp
+                            start={0}
+                            end={stat.value}
+                            duration={2}
+                            separator=","
+                            decimals={0}
+                            enableScrollSpy={false}
+                          />
+                        ) : (
+                          stat.value
+                        )}
+                      </span>
+                      <span className="text-xl font-bold text-white ml-1">{stat.suffix}</span>
+                    </div>
+                  </div>
+                  
+                  {/* 標題與描述 */}
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">{stat.label}</h3>
+                    <p className="text-white/90 text-sm">{stat.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* 移動端輪播顯示 */}
+          <div className="md:hidden">
+            <div 
+              ref={carouselRef}
+              className="relative overflow-hidden"
             >
-              <div className="p-6 rounded-lg h-full flex flex-col border border-white/20">
-                {/* 圖標 */}
-                <div className="mb-4">
-                        {stat.icon}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full"
+                >
+                  <div className="p-6 rounded-lg flex flex-col border border-white/20">
+                    {/* 圖標與數據值並排 */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div>{stats[currentIndex].icon}</div>
+                      <div className="flex items-baseline">
+                        <span className="text-4xl font-bold text-white tabular-nums">
+                          {inView && isMounted ? (
+                            <CountUp
+                              start={0}
+                              end={stats[currentIndex].value}
+                              duration={2}
+                              separator=","
+                              decimals={0}
+                              enableScrollSpy={false}
+                            />
+                          ) : (
+                            stats[currentIndex].value
+                          )}
+                        </span>
+                        <span className="text-xl font-bold text-white ml-1">{stats[currentIndex].suffix}</span>
+                      </div>
                     </div>
                     
-                {/* 數據值 */}
-                <div className="flex items-baseline mb-3">
-                  <span className="text-4xl font-bold text-white tabular-nums">
-                    {inView && isMounted ? (
-                      <CountUp
-                        start={0}
-                        end={stat.value}
-                        duration={2}
-                        separator=","
-                        decimals={0}
-                        enableScrollSpy={false}
-                      />
-                    ) : (
-                      stat.value
-                    )}
-                  </span>
-                  <span className="text-xl font-bold text-white ml-1">{stat.suffix}</span>
+                    {/* 標題與描述 */}
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">{stats[currentIndex].label}</h3>
+                      <p className="text-white/90 text-sm">{stats[currentIndex].description}</p>
                     </div>
-                    
-                {/* 標題與描述 */}
-                    <h3 className="text-xl font-bold text-white mb-2">
-                      {stat.label}
-                    </h3>
-                    
-                <p className="text-white/90 text-sm">
-                      {stat.description}
-                    </p>
                   </div>
                 </motion.div>
-              ))}
+              </AnimatePresence>
+
+              {/* 輪播指示器 */}
+              <div className="flex justify-center mt-4 gap-2">
+                {stats.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      currentIndex === idx ? 'bg-white w-4' : 'bg-white/50'
+                    }`}
+                    aria-label={`切換到第 ${idx + 1} 張卡片`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
-})
+});
 
 // 更新案例展示區塊 - 整合CaseStudiesSection和CaseShowcaseSection
 const CaseStudiesSection = memo(function CaseStudiesSection() {
@@ -2264,13 +2351,13 @@ const HomePage = () => {
         <MarketingSection />
         
         <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-          <FeatureSection />
+        <FeatureSection />
         </Suspense>
         
         <StatsSection />
         
         <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
-          <ServiceSection />
+        <ServiceSection />
         </Suspense>
         
         {/* 次要區塊 - 使用Suspense進行懶加載 */}
@@ -2283,11 +2370,11 @@ const HomePage = () => {
         </Suspense>
         
         <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-          <FAQSection />
+        <FAQSection />
         </Suspense>
         
         <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-          <ContactSection />
+        <ContactSection />
         </Suspense>
       </div>
     </ErrorBoundary>

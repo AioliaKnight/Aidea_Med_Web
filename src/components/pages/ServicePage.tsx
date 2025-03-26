@@ -580,12 +580,13 @@ export default function ServicePage() {
         {/* 背景組件 */}
         <div className="relative">
           <PageHeader
-            title="懂你的醫療行銷專家"
-            description="全方位行銷顧問級服務，提供客製化的行銷成長方案"
+            title="專業服務項目"
+            description="為醫療診所打造全方位的數位行銷解決方案，從品牌故事到數位轉型，助您實現業務成長"
             variant="red"
-            size="lg"
+            size="md"
             alignment="center"
-            backgroundImage="/images/bgline-w.png"
+            backgroundImage="/images/bgline-w.webp"
+            className="border-b border-red-700"
           />
         </div>
         
@@ -1176,7 +1177,7 @@ export default function ServicePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-8 mb-16">
             {pricingPlans.map((plan, index) => (
               <PricingPlan key={plan.title} plan={plan} index={index} />
             ))}
