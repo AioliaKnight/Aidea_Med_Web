@@ -202,6 +202,18 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // 將非www網域重定向到www網域
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'aideamed.com',
+          },
+        ],
+        destination: 'https://www.aideamed.com/:path*',
+        permanent: true,
+      },
       {
         source: '/services',
         destination: '/service',

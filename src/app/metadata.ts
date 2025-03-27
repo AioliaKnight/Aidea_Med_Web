@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 // 網站基本配置
 const siteConfig = {
-  name: 'Aidea:Med 醫療行銷顧問',
-  description: '讓專業的醫師專注於醫療品質，行銷交給我們。Aidea:Med 運用創新科技與人性化服務，協助診所打造溫暖而專業的品牌形象，建立長期且穩固的病患信任。',
+  name: 'AideaMed 醫美牙醫行銷',
+  description: 'AideaMed是專業的牙醫診所與醫療診所行銷顧問公司，我們提供全方位的數位行銷解決方案，幫助醫療機構提升品牌形象與增加病患數量。',
   slogan: '為醫療診所注入數位活力，專業行銷解決方案',
   url: 'https://www.aideamed.com',
   ogImage: 'https://www.aideamed.com/og-image.jpg',

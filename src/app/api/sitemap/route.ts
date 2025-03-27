@@ -13,7 +13,7 @@ interface SitemapItem {
 }
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://aideamed.com';
+  const baseUrl = 'https://www.aideamed.com';
   
   try {
     // 靜態頁面
