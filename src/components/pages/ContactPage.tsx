@@ -2,16 +2,21 @@
 
 import { PageHeader } from '@/components/common'
 import { motion } from 'framer-motion'
-import { animations } from '@/utils/animations'
 import ContactForm from '@/components/contact/ContactForm'
 import ContactInfo from '@/components/contact/ContactInfo'
 
 export default function ContactPage() {
   return (
     <div className="bg-white">
+      {/* 頁面標題區 */}
       <PageHeader 
-        title="聯絡我們" 
-        description="我們期待與您展開對話，為您的診所打造最適合的行銷策略"
+        title="讓我們聆聽您的故事" 
+        description="每間診所都有獨特的挑戰與願景，讓我們一同探索適合您的成長路徑"
+        variant="red"
+        size="md"
+        alignment="center"
+        backgroundImage="/images/bgline-w.webp"
+        className="border-b border-red-700"
       />
       
       <div className="container mx-auto px-4 py-12 lg:py-16">

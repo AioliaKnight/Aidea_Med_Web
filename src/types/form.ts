@@ -17,6 +17,12 @@ export interface ContactFormData {
   message?: string;     // 諮詢內容
   plan?: string;        // 添加 plan 欄位以儲存來源方案資訊
   source?: string;      // 添加 source 欄位以追蹤流量來源
+
+  // 擴展欄位 - 全新的表單選項
+  clinicSize?: string;  // 診所規模
+  contactTime?: string; // 偏好聯絡時段
+  competitors?: string; // 主要競爭對手
+  budget?: string;      // 月行銷預算
 }
 
 /**
