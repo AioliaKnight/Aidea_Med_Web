@@ -1,7 +1,7 @@
 import { caseMetadata } from '../metadata'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-import { ErrorBoundary } from '@/components/common'
+import { ErrorBoundary, CaseErrorBoundary } from '@/components/common'
 
 // 使用動態導入代替直接導入，增加加載提示
 const CasePage = dynamic(() => import('@/components/pages/CasePage'), {
@@ -12,7 +12,7 @@ const CasePage = dynamic(() => import('@/components/pages/CasePage'), {
 // 骨架組件，顯示加載中的外觀
 function CasePageSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 py-16">
+    <div className="min-h-screen bg-gray-50 py-16">src\app\case\page.tsx
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 標題區域骨架 */}
         <div className="text-center mb-16">
@@ -54,36 +54,14 @@ function CasePageSkeleton() {
   )
 }
 
-// 錯誤處理組件
-function CasePageError({ error, reset }: { error: Error; reset: () => void }) {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          載入案例時發生錯誤
-        </h2>
-        <p className="text-gray-600 mb-8">
-          {error.message || '請稍後再試或聯繫我們尋求協助'}
-        </p>
-        <button
-          onClick={reset}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
-          重新載入
-        </button>
-      </div>
-    </div>
-  )
-}
-
 export const metadata = caseMetadata
 
 export default function Page() {
   return (
-    <ErrorBoundary fallback={<CasePageError error={new Error()} reset={() => {}} />}>
+    <CaseErrorBoundary>
       <Suspense fallback={<CasePageSkeleton />}>
         <CasePage />
       </Suspense>
-    </ErrorBoundary>
+    </CaseErrorBoundary>
   )
 } 

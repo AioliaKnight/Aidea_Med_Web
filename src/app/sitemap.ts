@@ -19,12 +19,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   )
   
   // 動態案例頁面 - 使用實際案例資料
-  const caseRoutes = caseStudies.map(caseStudy => ({
-    url: `${baseUrl}/case/${caseStudy.id}`,
-    lastModified: caseStudy.updatedDate ? new Date(caseStudy.updatedDate) : new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  const caseRoutes = Array.isArray(caseStudies) 
+    ? caseStudies.map(caseStudy => ({
+        url: `${baseUrl}/case/${caseStudy.id}`,
+        lastModified: caseStudy.updatedDate ? new Date(caseStudy.updatedDate) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+    : []
   
   // 組合所有路由
   return [...staticRoutes, ...caseRoutes]

@@ -11,7 +11,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from 'react-countup'
 import { staggerContainer, fadeInUp } from '@/utils/animations'
-import { ErrorBoundary } from '@/components/common'
+import { ErrorBoundary, CaseDetailErrorBoundary } from '@/components/common'
 
 // 時間軸和案例詳情組件
 const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'))
@@ -65,35 +65,10 @@ function CaseDetailSkeleton() {
   );
 }
 
-// 錯誤處理組件
-function CaseDetailError({ error, reset }: { error: Error; reset: () => void }) {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          載入案例詳情時發生錯誤
-        </h2>
-        <p className="text-gray-600 mb-8">
-          {error.message || '請稍後再試或聯繫我們尋求協助'}
-        </p>
-        <button
-          onClick={reset}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
-          重新載入
-        </button>
-      </div>
-    </div>
-  )
-}
-
 // 案例詳情頁面
-export default async function CaseDetailPage({ params }: { params: { id: string } }) {
-  const caseStudy = caseStudies.find(c => c.id === params.id) || caseStudies[0];
-  
-  // 從同一函數生成結構化資料
-  const caseStructuredData = generateCaseStudyMetadata(caseStudy);
-  
+export default function CaseDetailPage() {
+  const { id } = useParams<{ id: string }>()
+  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null)
   const [loading, setLoading] = useState(true)
   const [isLiked, setIsLiked] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
@@ -101,25 +76,26 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
   
   // 使用 useMemo 緩存案例資料
   const currentCase = useMemo(() => {
-    return caseStudies.find(c => c.id === params.id) || null
-  }, [params.id])
+    return caseStudies.find(c => c.id === id) || null
+  }, [id])
   
   // 優化 useEffect 邏輯
   useEffect(() => {
     let isMounted = true
     
     const loadCaseData = async () => {
-      if (params.id && currentCase) {
+      if (id && currentCase) {
         try {
           // 使用 Promise.resolve().then 確保在微任務隊列中執行
           await Promise.resolve().then(() => {
             if (isMounted) {
+              setCaseStudy(currentCase)
               setLoading(false)
               
               // 從 localStorage 中讀取案例收藏狀態
               try {
                 const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]')
-                setIsLiked(likedCases.includes(params.id))
+                setIsLiked(likedCases.includes(id))
               } catch (e) {
                 console.error('Error reading liked cases from localStorage', e)
               }
@@ -139,7 +115,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
     return () => {
       isMounted = false
     }
-  }, [params.id, currentCase])
+  }, [id, currentCase])
   
   // 優化圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
@@ -178,8 +154,8 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
       try {
         const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]');
         const updatedCases = newState 
-          ? [...likedCases, params.id]
-          : likedCases.filter((caseId: string) => caseId !== params.id);
+          ? [...likedCases, id]
+          : likedCases.filter((caseId: string) => caseId !== id);
         
         localStorage.setItem('likedCases', JSON.stringify(updatedCases));
       } catch (e) {
@@ -187,7 +163,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
       }
       return newState;
     });
-  }, [params.id]);
+  }, [id]);
   
   // 當找不到案例或正在加載時顯示骨架屏
   if (loading) {
@@ -213,15 +189,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
   }
   
   return (
-    <>
-      {/* 注入結構化資料 */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ 
-          __html: JSON.stringify(caseStructuredData) 
-        }}
-      />
-      
+    <CaseDetailErrorBoundary>
       <div className="min-h-screen bg-gray-50">
         {/* 頂部導航區域 */}
         <div className="bg-white border-b border-gray-100">
@@ -605,6 +573,6 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
           </div>
         </div>
       </div>
-    </>
+    </CaseDetailErrorBoundary>
   );
 } 

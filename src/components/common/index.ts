@@ -28,7 +28,11 @@ export { default as BackToTopButton } from './BackToTopButton';
 export { default as WebsiteChat } from './WebsiteChat';
 
 // 添加ErrorBoundary組件導出
-export { default as ErrorBoundary } from './ErrorBoundary'
+export { 
+  default as ErrorBoundary,
+  CaseErrorBoundary,
+  CaseDetailErrorBoundary 
+} from './ErrorBoundary'
 
 // 添加AnimatedSection組件導出
 export { default as AnimatedSection } from './AnimatedSection'

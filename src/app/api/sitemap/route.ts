@@ -57,12 +57,14 @@ export async function GET() {
     ];
 
     // 處理案例頁面 - 自動從 caseStudies 取得最新資料
-    const caseSitemap: SitemapItem[] = caseStudies.map(caseItem => ({
-      loc: `${baseUrl}/case/${caseItem.id}`,
-      lastmod: caseItem.updatedDate || new Date().toISOString(),
-      changefreq: 'monthly',
-      priority: '0.7',
-    }));
+    const caseSitemap: SitemapItem[] = Array.isArray(caseStudies) 
+      ? caseStudies.map(caseItem => ({
+          loc: `${baseUrl}/case/${caseItem.id}`,
+          lastmod: caseItem.updatedDate || new Date().toISOString(),
+          changefreq: 'monthly',
+          priority: '0.7',
+        }))
+      : [];
     
     // 部落格文章 (可以從 API 或資料庫動態獲取)
     // 這裡示範如何整合外部資料源
