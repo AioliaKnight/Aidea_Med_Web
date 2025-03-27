@@ -69,7 +69,7 @@
     "gsap": "^3.12.7",
     "lenis": "^1.2.3",
     "locomotive-scroll": "^5.0.0-beta.11",
-    "lru-cache": "^11.0.2",
+    "lru-cache": "^11.1.0",
     "lucide-react": "^0.484.0",
     "next": "^15.3.0-canary.21",
     "next-pwa": "^5.6.0",
@@ -130,6 +130,7 @@
     "react-is": "^19.0.0",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
+    "to-ico": "^1.1.5",
     "typescript": "^5.8.2"
   },
   "description": "醫療行銷與牙醫診所行銷的整合行銷顧問公司網站",
