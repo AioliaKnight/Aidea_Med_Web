@@ -832,17 +832,41 @@ CTASection.displayName = 'CTASection';
 
 // 生成頁面metadata (Server Component可使用)
 export const generateCasePageMetadata = (): Metadata => {
-  return {
-    title: '成功案例 | Aidea:Med 牙醫行銷專家',
-    description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
-    openGraph: {
+  // 引用主要metadata中的基礎設定
+  try {
+    // 動態引入主metadata配置
+    const { caseMetadata } = require('@/app/metadata');
+    
+    // 返回擴展後的設定，保留特定頁面的自定義內容
+    return {
+      ...caseMetadata,
+      // 此處覆寫特定設定
       title: '成功案例 | Aidea:Med 牙醫行銷專家',
       description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
-      url: 'https://www.aideamed.com/case',
-      siteName: 'Aidea:Med 牙醫行銷專家',
-      locale: 'zh_TW',
-      type: 'website',
-    }
+      openGraph: {
+        ...caseMetadata.openGraph,
+        title: '成功案例 | Aidea:Med 牙醫行銷專家',
+        description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
+        url: 'https://www.aideamed.com/case',
+        siteName: 'Aidea:Med 牙醫行銷專家',
+        locale: 'zh_TW',
+        type: 'website',
+      }
+    };
+  } catch (e) {
+    // 若引入失敗則使用原始設定
+    return {
+      title: '成功案例 | Aidea:Med 牙醫行銷專家',
+      description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
+      openGraph: {
+        title: '成功案例 | Aidea:Med 牙醫行銷專家',
+        description: '探索我們協助牙醫診所提升品牌價值與病患轉換率的成功案例，包含品牌重塑、數位行銷、空間規劃等多元服務。',
+        url: 'https://www.aideamed.com/case',
+        siteName: 'Aidea:Med 牙醫行銷專家',
+        locale: 'zh_TW',
+        type: 'website',
+      }
+    };
   }
 }
 

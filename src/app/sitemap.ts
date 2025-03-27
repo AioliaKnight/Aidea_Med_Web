@@ -5,7 +5,7 @@ import { MetadataRoute } from 'next'
  * 包含所有重要的頁面與動態路由
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aideamed.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'
   
   // 基本靜態路由
   const staticRoutes = ['', '/service', '/team', '/case', '/contact'].map(
