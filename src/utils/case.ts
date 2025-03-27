@@ -1,16 +1,22 @@
-import { CaseStudy, ArticleStructuredData } from '@/types/case'
+import { CaseStudy, ArticleStructuredData, CaseImage } from '@/types/case'
 
 // 常數定義
 const CONSTANTS = {
   BASE_URL: 'https://www.aideamed.com',
   DEFAULT_FALLBACK_IMAGE: '/images/testimonials/default-avatar.jpg',
   STORAGE_KEYS: {
-    LIKED_CASES: 'likedCases'
+    LIKED_CASES: 'likedCases',
+    VIEWED_CASES: 'viewedCases'
   },
   IMAGE_PATHS: {
     CASES: '/images/cases',
     THUMBNAILS: '/images/cases/thumbnails',
     PLACEHOLDER: '/images/case-placeholder.jpg'
+  },
+  VARIANTS: {
+    PRIMARY_COLOR: '#E53E3E',
+    SECONDARY_COLOR: '#1A202C',
+    ACCENT_COLOR: '#F6AD55'
   }
 } as const
 
@@ -88,6 +94,33 @@ export const handleCaseImageError = (url: string, fallbackUrl: string = CONSTANT
   return fallbackUrl;
 }
 
+// 新增：生成案例圖片集
+export const generateCaseGallery = (caseId: string, count: number = 6): CaseImage[] => {
+  const images: CaseImage[] = [];
+  
+  for (let i = 1; i <= count; i++) {
+    images.push({
+      url: generateCaseImageUrl(caseId, i),
+      alt: `案例圖片 ${i}`,
+      priority: i === 1 // 首張圖優先載入
+    });
+  }
+  
+  return images;
+}
+
+// 新增：優化圖片尺寸
+export const getOptimizedImageSize = (viewportWidth: number): {width: number, height: number} => {
+  // 根據視窗寬度動態計算最佳圖片尺寸
+  if (viewportWidth < 640) {
+    return { width: 400, height: 300 }; // 行動裝置
+  } else if (viewportWidth < 1024) {
+    return { width: 640, height: 480 }; // 平板
+  } else {
+    return { width: 1280, height: 720 }; // 桌面
+  }
+}
+
 // 日期格式化工具函數
 export const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('zh-TW', {
@@ -134,6 +167,35 @@ const setLikedCases = (cases: string[]): void => {
   }
 }
 
+// 新增：追蹤已瀏覽案例
+export const trackViewedCases = (caseId: string): void => {
+  if (typeof window === 'undefined') return
+  
+  try {
+    const viewedCases = JSON.parse(localStorage.getItem(CONSTANTS.STORAGE_KEYS.VIEWED_CASES) || '[]')
+    
+    // 如果已經在瀏覽記錄中，則移除再添加到最前面
+    const filteredCases = viewedCases.filter((id: string) => id !== caseId)
+    const updatedCases = [caseId, ...filteredCases].slice(0, 10) // 最多保存10筆
+    
+    localStorage.setItem(CONSTANTS.STORAGE_KEYS.VIEWED_CASES, JSON.stringify(updatedCases))
+  } catch (e) {
+    console.error('Error tracking viewed cases:', e)
+  }
+}
+
+// 新增：獲取最近瀏覽的案例ID
+export const getRecentlyViewedCases = (): string[] => {
+  if (typeof window === 'undefined') return []
+  
+  try {
+    return JSON.parse(localStorage.getItem(CONSTANTS.STORAGE_KEYS.VIEWED_CASES) || '[]')
+  } catch (e) {
+    console.error('Error getting viewed cases:', e)
+    return []
+  }
+}
+
 export const isCaseLiked = (caseId: string): boolean => {
   return getLikedCases().includes(caseId)
 }
@@ -145,4 +207,28 @@ export const updateCaseLikeStatus = (caseId: string, isLiked: boolean): void => 
     : likedCases.filter((id: string) => id !== caseId)
   
   setLikedCases(updatedCases)
+}
+
+// 新增：篩選和排序輔助函數
+export const sortCasesByPriority = (cases: CaseStudy[]): CaseStudy[] => {
+  return [...cases].sort((a, b) => {
+    // 優先顯示精選案例
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    
+    // 接著依照優先級排序
+    const priorityA = a.priority || 0;
+    const priorityB = b.priority || 0;
+    if (priorityA !== priorityB) return priorityB - priorityA;
+    
+    // 最後依照更新日期排序
+    const dateA = a.updatedDate || a.publishedDate || '';
+    const dateB = b.updatedDate || b.publishedDate || '';
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  });
+}
+
+// 新增：數值格式化函數
+export const formatMetricValue = (value: string, prefix?: string, suffix?: string): string => {
+  return `${prefix || ''}${value}${suffix || ''}`;
 } 
