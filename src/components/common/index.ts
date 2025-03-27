@@ -33,6 +33,9 @@ export { default as ErrorBoundary } from './ErrorBoundary'
 // 添加AnimatedSection組件導出
 export { default as AnimatedSection } from './AnimatedSection'
 
+// Google Tag Manager初始化組件
+export { default as GoogleTagManager } from './GoogleTagManager'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

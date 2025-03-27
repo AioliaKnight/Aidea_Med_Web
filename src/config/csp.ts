@@ -26,6 +26,11 @@ export const getDefaultDirectives = () => {
       'https://*.googleapis.com',
       'https://*.gstatic.com',
       'https://cdn.respond.io',
+      // GTM和GA相關
+      'https://www.googletagmanager.com',
+      'https://www.google-analytics.com',
+      'https://ssl.google-analytics.com',
+      'https://tagmanager.google.com',
     ],
     
     // 允許載入的樣式
@@ -35,6 +40,7 @@ export const getDefaultDirectives = () => {
       'https://fonts.googleapis.com',
       'https://*.googleapis.com',
       'https://cdn.respond.io',
+      'https://tagmanager.google.com',
     ],
     
     // 允許連接的來源
@@ -44,6 +50,7 @@ export const getDefaultDirectives = () => {
       'https://*.vercel-insights.com',
       'https://*.googleapis.com',
       'https://*.google-analytics.com',
+      'https://stats.g.doubleclick.net',
       'https://vercel.com',
       'https://vercel.live',
       'https://*.respond.io',
@@ -62,6 +69,9 @@ export const getDefaultDirectives = () => {
       'https://*.googleapis.com',
       'https://*.gstatic.com',
       'https://*.respond.io',
+      'https://www.google-analytics.com',
+      'https://stats.g.doubleclick.net',
+      'https://www.googletagmanager.com',
     ],
     
     // 允許載入字體的來源
@@ -89,6 +99,7 @@ export const getDefaultDirectives = () => {
       'https://*.google.com',
       'https://www.google.com/maps/',
       'https://*.respond.io',
+      'https://www.googletagmanager.com',
     ],
     
     // 禁止顯示此網頁於iframe中

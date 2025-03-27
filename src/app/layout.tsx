@@ -10,7 +10,12 @@ import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Navbar from '@/components/layout/Navbar'
-import { Loading, BackToTopButton, WebsiteChat } from '@/components/common'
+import { 
+  Loading, 
+  BackToTopButton, 
+  WebsiteChat,
+  GoogleTagManager 
+} from '@/components/common'
 
 import '@/app/globals.css'
 import '@/app/fonts.css'
@@ -129,6 +134,11 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans antialiased transition-colors overflow-x-hidden selection:bg-primary/20 selection:text-primary">
+        {/* Google Tag Manager (noscript) */}
+        <Suspense fallback={null}>
+          <GoogleTagManager />
+        </Suspense>
+        
         {/* 導航欄 */}
         <Navbar />
         

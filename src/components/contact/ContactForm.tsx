@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { animations } from '@/utils/animations'
 import { ContactFormData, FormResponse, FormStatus } from '@/types/form'
 import SubmitButton from '@/components/common/SubmitButton'
+import { trackFormSubmission } from '@/lib/analytics'
 
 // 在文件頂部添加 Google Analytics 類型聲明
 declare global {
@@ -146,7 +147,10 @@ const ContactForm = React.memo(({
           setFormData(initialFormData)
           toast.success(data.message || '感謝您的訊息！我們將盡快與您聯繫。')
           
-          // 添加追蹤事件
+          // 使用新的分析工具庫追蹤表單提交事件
+          trackFormSubmission('contact_form', submissionData)
+          
+          // 舊版GA事件跟踪方法保留以兼容現有設置
           if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'form_submission', {
               'event_category': 'contact',
