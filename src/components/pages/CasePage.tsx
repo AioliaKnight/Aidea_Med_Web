@@ -926,24 +926,7 @@ export const generateCaseMetadata = (caseStudy: CaseStudy): Metadata => {
 const MainContent = memo(function MainContent() {
   const [activeCategory, setActiveCategory] = useState('全部案例')
   const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'standard' | 'compact'>('standard')
-  const [isMobileView, setIsMobileView] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [isInitialLoad, setIsInitialLoad] = useState(true)
-  
-  // 監聽視窗尺寸變化
-  useEffect(() => {
-    const checkMobileView = () => {
-      setIsMobileView(window.innerWidth < 768)
-      if (window.innerWidth < 640) {
-        setViewMode('compact')
-      }
-    }
-    
-    checkMobileView()
-    window.addEventListener('resize', checkMobileView)
-    return () => window.removeEventListener('resize', checkMobileView)
-  }, [])
   
   // 優化：使用useMemo計算類別列表
   const categories = useMemo(() => {
@@ -953,13 +936,9 @@ const MainContent = memo(function MainContent() {
   // 優化：使用useMemo過濾案例
   const filteredCases = useMemo(() => {
     return caseStudies.filter(caseStudy => {
-      const matchesCategory = activeCategory === '全部案例' || caseStudy.category === activeCategory
-      const matchesSearch = searchQuery === '' || 
-        caseStudy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        caseStudy.category.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesCategory && matchesSearch
+      return activeCategory === '全部案例' || caseStudy.category === activeCategory
     })
-  }, [activeCategory, searchQuery])
+  }, [activeCategory])
   
   // 優化：使用useMemo緩存精選案例
   const featuredCases = useMemo(() => {
@@ -973,19 +952,6 @@ const MainContent = memo(function MainContent() {
     setIsInitialLoad(false)
     setTimeout(() => setIsLoading(false), 300)
   }, [])
-  
-  // 切換視圖模式
-  const toggleViewMode = useCallback(() => {
-    setViewMode(prev => prev === 'standard' ? 'compact' : 'standard')
-  }, [])
-  
-  // 根據視圖模式設置網格佈局
-  const gridLayoutClass = useMemo(() => {
-    if (viewMode === 'compact') {
-      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3'
-    }
-    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-  }, [viewMode])
   
   return (
     <>
@@ -1017,164 +983,32 @@ const MainContent = memo(function MainContent() {
             </motion.p>
           </motion.div>
           
-          {/* 特色案例區 - 僅在桌面顯示 */}
-          {featuredCases.length > 0 && !isMobileView && (
-            <div className="mb-16">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold border-l-4 border-primary pl-4">精選案例</h2>
-                <Link 
-                  href="/case"
-                  className="text-primary font-medium hover:bg-primary/5 px-4 py-2 transition-colors"
+          {/* 類別過濾器 */}
+          <div className="mb-12">
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => handleCategoryChange('全部案例')}
+                className={`px-6 py-2.5 font-medium text-sm border transition-colors ${
+                  activeCategory === '全部案例'
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                全部案例
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`px-6 py-2.5 font-medium text-sm border transition-colors ${
+                    activeCategory === category
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                  }`}
                 >
-                  查看所有案例
-                </Link>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                {featuredCases.map((featuredCase, idx) => (
-                  <motion.div
-                    key={featuredCase.id}
-                    variants={fadeInUp}
-                    custom={idx}
-                    className="bg-white border-t-4 border-primary"
-                  >
-                    <div className="p-0">
-                      <div className="relative aspect-[16/9] overflow-hidden">
-                        <Image
-                          src={featuredCase.image}
-                          alt={featuredCase.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          className="object-cover"
-                          quality={90}
-                        />
-                        <div className="absolute inset-x-0 bottom-0 bg-black/60 p-4">
-                          <h3 className="text-white font-bold text-xl">
-                            {featuredCase.name}
-                          </h3>
-                          <p className="text-white/80 text-sm">
-                            {featuredCase.category}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <p className="text-gray-600 mb-4 line-clamp-2">
-                          {featuredCase.description}
-                        </p>
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                          {featuredCase.metrics.slice(0, 2).map((metric, midx) => (
-                            <div key={midx} className="border border-gray-200 p-3">
-                              <div className="text-xl font-bold text-primary">
-                                <AnimatedNumber value={metric.value} />
-                              </div>
-                              <div className="text-xs text-gray-500">{metric.label}</div>
-                            </div>
-                          ))}
-                        </div>
-                        <Link
-                          href={`/case/${featuredCase.id}`}
-                          className="inline-flex items-center bg-primary text-white py-2 px-4 font-medium"
-                        >
-                          查看詳情
-                          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* 搜尋與過濾區 */}
-          <div className="mb-8 bg-white p-6 border-l-4 border-primary">
-            {/* 搜尋框 */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-              <div>
-                <h2 className="font-bold text-xl mb-2">案例搜尋</h2>
-                <p className="text-gray-600 text-sm">從各個類別尋找適合您的成功案例參考</p>
-              </div>
-              <div className="relative w-full md:w-64">
-                <input
-                  type="text"
-                  placeholder="搜尋案例..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 focus:border-primary focus:ring-0 transition-colors"
-                />
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-            
-            {/* 視圖切換和類別過濾器 */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              {/* 視圖切換按鈕 */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">視圖：</span>
-                <div className="flex border border-gray-200">
-                  <button
-                    onClick={() => setViewMode('standard')}
-                    className={`p-2 ${viewMode === 'standard' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
-                    aria-label="標準視圖"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => setViewMode('compact')}
-                    className={`p-2 ${viewMode === 'compact' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
-                    aria-label="緊湊視圖"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18M3 18h18M3 6h18" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              
-              {/* 類別過濾器 */}
-              <div className="flex-1 overflow-x-auto">
-                <div className="flex gap-2 min-w-max">
-                  <button
-                    onClick={() => handleCategoryChange('全部案例')}
-                    className={`px-4 py-2 font-medium text-sm border ${
-                      activeCategory === '全部案例'
-                        ? 'bg-primary text-white border-primary'
-                        : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    全部案例
-                  </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => handleCategoryChange(category)}
-                      className={`px-4 py-2 font-medium text-sm border ${
-                        activeCategory === category
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  {category}
+                </button>
+              ))}
             </div>
           </div>
           
@@ -1183,42 +1017,48 @@ const MainContent = memo(function MainContent() {
             <LoadingState />
           ) : filteredCases.length > 0 ? (
             <Suspense fallback={<LoadingState />}>
-              <div className="mb-12">
-                <motion.div 
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate={isInitialLoad ? "visible" : "hidden"}
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  className={gridLayoutClass}
-                >
-                  {filteredCases.map((caseStudy, index) => (
-                    <motion.div
-                      key={caseStudy.id}
-                      variants={fadeInUp}
-                      custom={index}
-                      className="group h-full"
-                    >
-                      <CaseCard 
-                        caseStudy={caseStudy} 
-                        index={index} 
-                        isCompact={viewMode === 'compact'}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-                
-                {/* 分頁提示 */}
-                {filteredCases.length > 9 && (
-                  <div className="flex justify-center mt-10">
-                    <div className="flex border border-gray-200">
-                      <button className="min-w-[40px] h-10 flex items-center justify-center bg-primary text-white">1</button>
-                      <button className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50">2</button>
-                      <button className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50">3</button>
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredCases.map((caseStudy, index) => (
+                  <motion.div
+                    key={caseStudy.id}
+                    variants={fadeInUp}
+                    custom={index}
+                    className="group h-full"
+                  >
+                    <CaseCard 
+                      caseStudy={caseStudy} 
+                      index={index} 
+                      variant={index < 2 ? 'featured' : 'standard'}
+                      showMetrics={true}
+                      priority={index < 3}
+                      aspectRatio="16/9"
+                    />
+                  </motion.div>
+                ))}
               </div>
+              
+              {/* 分頁控制 */}
+              {filteredCases.length > 9 && (
+                <div className="flex justify-center mt-12">
+                  <div className="flex border border-gray-200">
+                    <button 
+                      className="min-w-[40px] h-10 flex items-center justify-center bg-primary text-white"
+                    >
+                      1
+                    </button>
+                    <button 
+                      className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50"
+                    >
+                      2
+                    </button>
+                    <button 
+                      className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50"
+                    >
+                      3
+                    </button>
+                  </div>
+                </div>
+              )}
             </Suspense>
           ) : (
             <EmptyState 
