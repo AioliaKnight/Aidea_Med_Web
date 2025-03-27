@@ -85,7 +85,7 @@ export const caseStudies: CaseStudy[] = [
     description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 2 個月內實現顯著成長：',
     metrics: [
       { value: '200%', label: '新患預約成長' },
-      { value: '9億+', label: '年營業額' },
+      { value: '900000000+', label: '年營業額' },
       { value: '300%', label: '品牌知名度提升' },
       { value: '50%', label: '每月穩定回診率成長' }
     ],

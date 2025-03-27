@@ -217,8 +217,8 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
             </div>
           )}
           {/* 基本資訊遮罩 - hover 時顯示 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end rounded-full transform scale-100 group-hover:scale-105 transition-transform duration-300">
-            <div className="text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-center p-2">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end rounded-full transform scale-100 group-hover:scale-105">
+            <div className="text-white transform translate-y-2 group-hover:translate-y-0 transition duration-300 text-center p-2">
               <p className="text-xs text-white/90 font-medium">{member.education}</p>
             </div>
           </div>
