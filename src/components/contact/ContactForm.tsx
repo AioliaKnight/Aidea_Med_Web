@@ -8,21 +8,7 @@ import { ContactFormData, FormResponse, FormStatus } from '@/types/form'
 import SubmitButton from '@/components/common/SubmitButton'
 import { trackFormSubmission } from '@/lib/analytics'
 
-// 在文件頂部添加 Google Analytics 類型聲明
-declare global {
-  interface Window {
-    gtag?: (
-      command: 'event',
-      action: string,
-      params: {
-        event_category: string;
-        event_label: string;
-        value?: string;
-        [key: string]: any;
-      }
-    ) => void;
-  }
-}
+// 注意：全局 gtag 類型已在 analytics.ts 中定義，此處不再重複定義
 
 interface ContactFormProps {
   className?: string
@@ -116,7 +102,7 @@ const ContactForm = React.memo(({
     setFormData((prev) => ({ ...prev, [name]: value }))
   }, []);
 
-  // 使用useCallback和useTransition優化表單提交
+  // 處理表單提交
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setFormStatus(FormStatus.SUBMITTING)
@@ -124,6 +110,21 @@ const ContactForm = React.memo(({
     // 使用useTransition處理非UI阻塞操作
     startTransition(async () => {
       try {
+        // 進行表單基本驗證
+        if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+          setFormStatus(FormStatus.ERROR)
+          toast.error('請填寫所有必填欄位')
+          return
+        }
+
+        // 驗證電子郵件格式
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailPattern.test(formData.email)) {
+          setFormStatus(FormStatus.ERROR)
+          toast.error('請輸入有效的電子郵件地址')
+          return
+        }
+        
         // 確保方案信息被包含在提交的數據中
         const submissionData = {
           ...formData,
@@ -147,17 +148,8 @@ const ContactForm = React.memo(({
           setFormData(initialFormData)
           toast.success(data.message || '感謝您的訊息！我們將盡快與您聯繫。')
           
-          // 使用新的分析工具庫追蹤表單提交事件
+          // 使用統一的分析工具庫追蹤表單提交事件
           trackFormSubmission('contact_form', submissionData)
-          
-          // 舊版GA事件跟踪方法保留以兼容現有設置
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'form_submission', {
-              'event_category': 'contact',
-              'event_label': submissionData.plan || '一般諮詢',
-              'value': submissionData.source
-            });
-          }
         } else {
           setFormStatus(FormStatus.ERROR)
           toast.error(data.message || '提交失敗，請稍後再試。')

@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
+import { initDataLayer, pushEvent } from '@/lib/analytics'
 
 // GTM ID從環境變數獲取
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-P5XLZB6F'
@@ -22,10 +23,15 @@ declare global {
 const GoogleTagManager = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [isInitialized, setIsInitialized] = useState(false)
+  const lastPathRef = useRef<string>('')
   
   // 初始化dataLayer
   useEffect(() => {
-    window.dataLayer = window.dataLayer || []
+    if (typeof window === 'undefined') return;
+    
+    // 使用集中管理的初始化函數
+    initDataLayer();
     
     // 添加基本頁面信息到dataLayer
     window.dataLayer.push({
@@ -38,30 +44,35 @@ const GoogleTagManager = () => {
     
     // 標記訪客為回訪訪客
     localStorage.setItem('returning_visitor', 'true')
+    setIsInitialized(true)
   }, [])
 
   // 頁面瀏覽追蹤
   const handlePageView = useCallback(() => {
+    if (!isInitialized || typeof window === 'undefined') return;
+    
     const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
     
-    // 防止重複觸發
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        event: 'page_view',
+    // 防止重複觸發：比較目前路徑與上一次記錄的路徑
+    if (lastPathRef.current !== url) {
+      lastPathRef.current = url;
+      
+      // 使用集中管理的事件推送函數
+      pushEvent('page_view', {
         page_path: pathname,
         page_url: url,
         page_title: document.title
-      })
+      });
     }
-  }, [pathname, searchParams])
+  }, [pathname, searchParams, isInitialized])
 
   // 監聽路徑變化，觸發頁面瀏覽事件
   useEffect(() => {
-    // 初始頁面加載時追蹤
-    handlePageView()
-    
-    // 路徑變化時追蹤
-  }, [pathname, searchParams, handlePageView])
+    // 只有在初始化完成後才執行追蹤
+    if (isInitialized) {
+      handlePageView();
+    }
+  }, [pathname, searchParams, handlePageView, isInitialized])
   
   return (
     <>

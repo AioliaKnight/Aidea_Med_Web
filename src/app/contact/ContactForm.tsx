@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { ContactFormData, FormResponse } from '@/types/form'
+import { trackFormSubmission } from '@/lib/analytics'
 
 interface FormData {
   name: string
@@ -46,8 +47,16 @@ export default function ContactForm() {
     setIsSubmitting(true)
 
     // 驗證表單
-    if (!formData.name || !formData.email || !formData.phone) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       toast.error('請填寫所有必填欄位')
+      setIsSubmitting(false)
+      return
+    }
+
+    // 驗證電子郵件格式
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(formData.email)) {
+      toast.error('請輸入有效的電子郵件地址')
       setIsSubmitting(false)
       return
     }
@@ -72,6 +81,9 @@ export default function ContactForm() {
         toast.success(data.message || '感謝您的訊息，我們會盡快回覆！')
         // 清空表單
         setFormData(initialFormData)
+        
+        // 追蹤表單提交事件
+        trackFormSubmission('contact_page_form', contactFormData)
       } else {
         // 顯示錯誤訊息
         toast.error(data.message || '提交失敗，請稍後再試。')
