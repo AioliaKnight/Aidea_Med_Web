@@ -34,10 +34,10 @@ interface TeamMember {
 // 團隊成員數據
 const teamMembers: TeamMember[] = [
   {
-    name: '陳維鈞',
+    name: '陳維鈞 Wilson',
     role: '創辦人暨策略總監',
     image: '/images/team/member-1.png',
-    description: '擁有十年以上醫療行銷經驗，曾協助超過50家診所完成品牌轉型。曾任大型牙醫連鎖集團行銷總監，深諳醫療領域的病患心理與行銷策略。她相信，真正有溫度的醫療體驗，始於醫者的用心與良好的溝通橋樑。',
+    description: '擁有十五年以上行銷經驗，曾協助超過50家診所完成品牌轉型。曾任大型牙醫連鎖集團行銷總監，深諳醫療領域的病患心理與行銷策略。她相信，真正有溫度的醫療體驗，始於醫者的用心與良好的溝通橋樑。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' },
@@ -48,7 +48,7 @@ const teamMembers: TeamMember[] = [
     quote: '每位醫師都有獨特的故事與價值，我的使命是讓這些故事被更多人看見與理解。'
   },
   {
-    name: '陳俊宏',
+    name: 'Mike',
     role: '數位行銷總監',
     image: '/images/team/member-2.jpg',
     description: '數位行銷專家，擅長診所網站優化與搜尋引擎行銷，過去五年成功幫助30多家牙醫與皮膚科診所提升40%以上的新客數量。他深信數據與溫度不是對立的，透過精準的數據分析，能更準確地回應病患的真實需求。',
@@ -61,7 +61,7 @@ const teamMembers: TeamMember[] = [
     quote: '每一個數據背後都是一個尋求幫助的人，我們的工作是讓對的醫師被對的病患找到。'
   },
   {
-    name: '黃雅芳',
+    name: 'Leo',
     role: '創意內容總監',
     image: '/images/team/member-3.jpg',
     description: '資深醫療內容創作者，曾任健康雜誌主編，擅長將艱澀的醫療知識轉化為溫暖易懂的內容。她帶領的創意團隊每月為診所客戶產出超過200篇精彩內容，從專業文章到暖心故事，讓醫療不再冰冷距離。',
@@ -74,7 +74,7 @@ const teamMembers: TeamMember[] = [
     quote: '最動人的醫療故事往往是最簡單的真實分享，我們的文字是連結醫師熱忱與病患信任的橋樑。'
   },
   {
-    name: '張志遠',
+    name: 'Chloe',
     role: '視覺設計總監',
     image: '/images/team/member-4.jpg',
     description: '擁有十年以上設計經驗，專注於醫療環境與品牌視覺設計。他理解醫療環境設計的獨特需求，如何在保持專業的同時，創造溫暖舒適的空間體驗。他的設計作品曾獲得多項國際設計大獎。',
@@ -87,9 +87,9 @@ const teamMembers: TeamMember[] = [
     quote: '好的設計是無形的，它讓病患在不知不覺中感到安心與信任，這在醫療環境中格外重要。'
   },
   {
-    name: '劉心怡',
+    name: 'Queena',
     role: '顧客關係總監',
-    image: '/images/team/member-1.png',
+    image: '/images/team/member-5.jpg',
     description: '專注於優化診所病患體驗與建立忠誠度系統。她擁有心理諮商背景，深入理解病患心理需求與疑慮，協助診所建立完善的溝通系統與顧客旅程。她帶領的團隊成功幫助客戶提升30%以上的回診率。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
@@ -100,9 +100,9 @@ const teamMembers: TeamMember[] = [
     quote: '每位走進診所的人都帶著自己的故事與擔憂，我們的使命是讓他們感受到：這裡有人真正在乎你。'
   },
   {
-    name: '王建中',
+    name: '西裝哥',
     role: '技術開發總監',
-    image: '/images/team/member-2.jpg',
+    image: '/images/team/member-6.jpg',
     description: '資深技術專家，專注於醫療相關數位工具開發。他帶領的技術團隊為診所開發便捷的預約管理系統、病患關係管理工具等，提升診所營運效率的同時，也創造更好的病患數位體驗。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
@@ -188,10 +188,11 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
 
   return (
     <AnimatedSection delay={delay}>
-      <div className="group bg-white border border-gray-100 hover:border-primary hover:shadow-md overflow-hidden transition-all duration-300">
-        <div className="relative overflow-hidden aspect-[1/1] sm:aspect-[4/3]">
+      <div className="group bg-white hover:bg-gray-50 border border-gray-100 hover:border-primary hover:shadow-lg rounded-lg overflow-hidden transition-all duration-300">
+        {/* 頭像區域 */}
+        <div className="relative overflow-hidden aspect-square rounded-full mx-auto w-[70%] sm:w-[65%] mt-6 mb-2 border-4 border-white shadow-md">
           {imageLoading && !imageError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full">
               <Spinner />
             </div>
           )}
@@ -200,81 +201,88 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               src={member.image}
               alt={member.name}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+              className="object-cover group-hover:scale-110 transition-transform duration-500 rounded-full"
+              sizes="(max-width: 480px) 33vw, (max-width: 768px) 50vw, 33vw"
               onLoadComplete={() => setImageLoading(false)}
               onError={() => setImageError(true)}
               priority={delay === 0}
-              quality={85}
+              quality={90}
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-full">
               <div className="flex flex-col items-center">
                 <span className="text-4xl mb-2">👤</span>
                 <span className="text-xs text-gray-500">圖片無法載入</span>
               </div>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-            <div className="text-white">
-              <p className="text-xs opacity-80">{member.education}</p>
+          {/* 基本資訊遮罩 - hover 時顯示 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end rounded-full transform scale-100 group-hover:scale-105 transition-transform duration-300">
+            <div className="text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-center p-2">
+              <p className="text-xs text-white/90 font-medium">{member.education}</p>
             </div>
           </div>
         </div>
-        <div className="p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
-                {member.name}
-              </h3>
-              <p className="text-sm text-gray-500 mb-2">
-                {member.role}
-              </p>
-            </div>
-            <div className="flex space-x-2">
-              {member.socialLinks.map((link: SocialLink, i) => (
-                <a
-                  key={i}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-primary transition-colors"
-                  aria-label={`${member.name}的${link.platform}個人檔案`}
-                >
-                  <span className="sr-only">{link.platform}</span>
-                  {link.platform === 'facebook' ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
-                    </svg>
-                  ) : link.platform === 'instagram' ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-                    </svg>
-                  ) : link.platform === 'line' ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.819 4.588 8.845 10.784 9.613.421.097 1.003.3 1.141.692.13.36.084.921.043 1.273 0 0-.171 1.063-.208 1.29-.063.218-.292.874 1.01.477 1.303-.397 7.02-4.131 9.575-7.072 1.766-1.935 2.645-3.874 2.645-6.273zm-17.339 4.292h-1.961v-3.634a.48.48 0 0 0-.48-.48h-.084a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h2.525a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479zm1.872-3.646a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h.084a.48.48 0 0 0 .48-.48v-4.226a.48.48 0 0 0-.48-.48h-.084zm4.261 2.158c0-.266-.216-.48-.48-.48h-.084a.48.48 0 0 0-.48.48v2.07h-1.969v-2.07a.48.48 0 0 0-.48-.48h-.084a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h.084a.48.48 0 0 0 .48-.48v-1.182h1.969v1.182a.48.48 0 0 0 .48.48h.084a.48.48 0 0 0 .48-.48v-4.226zm3.071-1.488h-2.525a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h2.525a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479h-1.961v-.773h1.961a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479h-1.961v-.773h1.961a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.483z" />
-                    </svg>
-                  ) : link.platform === 'linkedin' ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.06 10.06 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                    </svg>
-                  )}
-                </a>
-              ))}
-            </div>
+        
+        {/* 內容區域 */}
+        <div className="p-4 sm:p-5 text-center">
+          <div className="mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-1">
+              {member.name}
+            </h3>
+            <p className="text-sm text-primary/80 font-medium">
+              {member.role}
+            </p>
           </div>
           
-          <p className="text-gray-600 line-clamp-3 text-sm mt-2">{member.description}</p>
+          {/* 社交媒體圖標 */}
+          <div className="flex justify-center space-x-3 my-3">
+            {member.socialLinks.map((link: SocialLink, i) => (
+              <a
+                key={i}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-primary transition-colors transform hover:-translate-y-1 hover:scale-110 duration-300"
+                aria-label={`${member.name}的${link.platform}個人檔案`}
+              >
+                <span className="sr-only">{link.platform}</span>
+                {link.platform === 'facebook' ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
+                  </svg>
+                ) : link.platform === 'instagram' ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  </svg>
+                ) : link.platform === 'line' ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.819 4.588 8.845 10.784 9.613.421.097 1.003.3 1.141.692.13.36.084.921.043 1.273 0 0-.171 1.063-.208 1.29-.063.218-.292.874 1.01.477 1.303-.397 7.02-4.131 9.575-7.072 1.766-1.935 2.645-3.874 2.645-6.273zm-17.339 4.292h-1.961v-3.634a.48.48 0 0 0-.48-.48h-.084a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h2.525a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479zm1.872-3.646a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h.084a.48.48 0 0 0 .48-.48v-4.226a.48.48 0 0 0-.48-.48h-.084zm4.261 2.158c0-.266-.216-.48-.48-.48h-.084a.48.48 0 0 0-.48.48v2.07h-1.969v-2.07a.48.48 0 0 0-.48-.48h-.084a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h.084a.48.48 0 0 0 .48-.48v-1.182h1.969v1.182a.48.48 0 0 0 .48.48h.084a.48.48 0 0 0 .48-.48v-4.226zm3.071-1.488h-2.525a.48.48 0 0 0-.48.48v4.226c0 .266.216.48.48.48h2.525a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479h-1.961v-.773h1.961a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.479h-1.961v-.773h1.961a.48.48 0 0 0 .48-.48v-.113a.48.48 0 0 0-.48-.483z" />
+                  </svg>
+                ) : link.platform === 'linkedin' ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.06 10.06 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                )}
+              </a>
+            ))}
+          </div>
           
-          <div className="flex flex-wrap gap-2 mt-3">
+          {/* 專業描述文字 */}
+          <div className="bg-gray-50 p-3 rounded-md mb-3">
+            <p className="text-gray-600 line-clamp-3 text-xs sm:text-sm leading-relaxed">{member.description}</p>
+          </div>
+          
+          {/* 專業領域標籤 */}
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
             {member.expertise.slice(0, 2).map((skill, i) => (
               <span 
                 key={i} 
-                className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-full"
+                className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full"
               >
                 {skill}
               </span>
@@ -299,11 +307,11 @@ export default function TeamPage() {
         className="border-b border-red-700"
       />
       
-      <main className="py-16 md:py-20">
+      <main className="py-12 md:py-20">
         {/* 團隊成員 */}
-        <section className="py-20">
+        <section className="py-12 sm:py-20">
           <div className="container-custom">
-            <AnimatedSection className="text-center mb-12 sm:mb-16">
+            <AnimatedSection className="text-center mb-10 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-primary">
                 認識我們的專業團隊
               </h2>
@@ -313,7 +321,7 @@ export default function TeamPage() {
               <div className="w-20 h-1 bg-primary mx-auto"></div>
             </AnimatedSection>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto">
               {teamMembers.map((member, index) => (
                 <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
               ))}
@@ -322,7 +330,7 @@ export default function TeamPage() {
         </section>
 
         {/* 團隊工作環境展示 */}
-        <section className="py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="container-custom">
             <AnimatedSection className="mb-12">
               <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
