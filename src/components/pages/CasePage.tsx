@@ -7,6 +7,7 @@ import { Metadata } from 'next'
 import { animations, fadeInUp, fadeInLeft, fadeInRight, staggerContainer } from '@/utils/animations'
 import { CaseCard } from '@/components/case/CaseCard'
 import { PageHeader } from '@/components/common'
+import Image from 'next/image'
 
 // 定義案例資料類型
 export interface CaseMetric {
@@ -594,99 +595,93 @@ export interface FeaturedCaseProps {
 
 // 使用React.memo優化特色案例組件
 export const FeaturedCase = memo(({ caseStudy }: FeaturedCaseProps): React.ReactElement => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={staggerContainer}
-      className="mb-20"
+      className="mb-20 bg-gray-50 py-16"
     >
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
+        {/* 區塊標題 */}
+        <div className="text-center mb-16">
+          <motion.div 
+            variants={fadeInUp}
+            className="w-16 h-1 bg-primary mx-auto mb-6"
+          />
           <motion.h2 
             variants={fadeInUp}
-            className="text-2xl md:text-3xl font-bold"
+            className="text-3xl md:text-4xl font-bold mb-4"
           >
             特色案例
           </motion.h2>
-          <motion.div variants={fadeInUp}>
-            <Link 
-              href={`/case/${caseStudy.id}`}
-              className="text-primary font-medium hover:underline transition-all flex items-center"
-            >
-              查看所有案例
-              <svg 
-                className="w-4 h-4 ml-1 transform transition-transform group-hover:translate-x-1" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M9 5l7 7-7 7" 
-                />
-              </svg>
-            </Link>
-          </motion.div>
+          <motion.p
+            variants={fadeInUp}
+            className="text-gray-600 max-w-2xl mx-auto"
+          >
+            探索我們如何幫助牙醫診所提升品牌價值與患者轉換率
+          </motion.p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div 
             variants={fadeInLeft}
             className="order-2 md:order-1"
           >
-            <div className="flex items-center mb-4">
-              <span className="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
-                {caseStudy.category}
-              </span>
-              {caseStudy.featured && (
-                <span className="ml-3 bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
-                  精選案例
+            <div className="bg-white p-8 border-t-4 border-primary">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="bg-primary/10 text-primary text-sm px-3 py-1">
+                  {caseStudy.category}
                 </span>
-              )}
-            </div>
-            
-            <h2 className="text-3xl font-bold mb-4">
-              {caseStudy.name}
-            </h2>
-            
-            <p className="text-gray-600 mb-6">
-              {caseStudy.description}
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {caseStudy.metrics.slice(0, 4).map((metric, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-2xl font-bold text-primary mb-1">
-                    <AnimatedNumber value={metric.value} />
+                {caseStudy.featured && (
+                  <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1">
+                    精選案例
+                  </span>
+                )}
+              </div>
+              
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                {caseStudy.name}
+              </h2>
+              
+              <p className="text-gray-600 mb-6">
+                {caseStudy.description}
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {caseStudy.metrics.slice(0, 4).map((metric, index) => (
+                  <div key={index} className="border border-gray-200 p-4">
+                    <div className="text-2xl font-bold text-primary mb-1">
+                      <AnimatedNumber value={metric.value} />
+                    </div>
+                    <div className="text-sm text-gray-500">{metric.label}</div>
                   </div>
-                  <div className="text-sm text-gray-500">{metric.label}</div>
-                </div>
-              ))}
-            </div>
-            
-            <Link 
-              href={`/case/${caseStudy.id}`}
-              className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-md hover:bg-primaryDark transition-colors group"
-            >
-              查看詳細案例
-              <svg 
-                className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
+                ))}
+              </div>
+              
+              <Link 
+                href={`/case/${caseStudy.id}`}
+                className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M14 5l7 7-7 7" 
-                />
-              </svg>
-            </Link>
+                查看詳細案例
+                <svg 
+                  className="w-4 h-4 ml-2" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M14 5l7 7-7 7" 
+                  />
+                </svg>
+              </Link>
+            </div>
           </motion.div>
           
           <motion.div 
@@ -694,16 +689,32 @@ export const FeaturedCase = memo(({ caseStudy }: FeaturedCaseProps): React.React
             className="order-1 md:order-2"
           >
             <Link href={`/case/${caseStudy.id}`} className="block relative">
-              <div className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200 relative">
-                <div 
-                  className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent z-10"
-                ></div>
-                <img 
-                  src={caseStudy.image} 
-                  alt={caseStudy.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+              <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
+                {!imgError ? (
+                  <Image 
+                    src={caseStudy.image} 
+                    alt={caseStudy.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
+                    onError={() => setImgError(true)}
+                    priority
+                    quality={90}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
+                
+                {/* 扁平化覆蓋層 */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div className="bg-primary text-white px-4 py-2 font-medium">
+                    查看案例詳情
+                  </div>
+                </div>
               </div>
             </Link>
           </motion.div>
@@ -717,30 +728,102 @@ FeaturedCase.displayName = 'FeaturedCase';
 // 使用React.memo優化CTA部分
 export const CTASection = memo((): React.ReactElement => {
   return (
-    <section className="bg-primary py-20">
+    <section className="bg-primary py-24 text-white">
+      {/* 上部裝飾線 */}
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="text-center max-w-4xl mx-auto relative"
+        >
+          {/* 上方裝飾線 */}
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: 120 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="h-1 bg-white w-0 mx-auto mb-10"
+          ></motion.div>
+          
+          <motion.h2 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-3xl md:text-4xl font-bold mb-6"
+          >
             準備好開始您的診所行銷升級了嗎？
-          </h2>
-          <p className="text-white/90 text-lg mb-8">
+          </motion.h2>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-xl mb-10 max-w-2xl mx-auto"
+          >
             我們的專業團隊擁有豐富的牙醫診所行銷經驗，能為您打造專屬的行銷策略，提升品牌價值與病患轉換率。
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex flex-wrap justify-center gap-6 mb-10"
+          >
             <Link 
               href="/contact"
-              className="px-8 py-3 bg-white text-primary font-medium rounded-md hover:bg-gray-100 transition-colors"
+              className="inline-block text-center min-w-[160px] px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300"
             >
               免費諮詢
             </Link>
             <Link 
               href="/service"
-              className="px-8 py-3 bg-transparent text-white border border-white font-medium rounded-md hover:bg-white/10 transition-colors"
+              className="inline-block text-center min-w-[160px] px-8 py-4 bg-black text-white font-medium hover:bg-black/90 transition-all duration-300"
             >
               探索服務方案
             </Link>
-          </div>
-        </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex justify-center gap-8 text-sm"
+          >
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              專業診斷分析
+            </div>
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              量身定制方案
+            </div>
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              持續支援服務
+            </div>
+          </motion.div>
+          
+          {/* 下方裝飾線 */}
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: 80 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="h-1 bg-white w-0 mx-auto mt-10"
+          ></motion.div>
+        </motion.div>
       </div>
     </section>
   )
@@ -879,8 +962,8 @@ const MainContent = memo(function MainContent() {
   }, [activeCategory, searchQuery])
   
   // 優化：使用useMemo緩存精選案例
-  const featuredCase = useMemo(() => {
-    return caseStudies.find(item => item.featured) || caseStudies[0]
+  const featuredCases = useMemo(() => {
+    return caseStudies.filter(item => item.featured).slice(0, 2)
   }, [])
   
   // 優化：使用useCallback包裝類別切換處理函數
@@ -899,133 +982,251 @@ const MainContent = memo(function MainContent() {
   // 根據視圖模式設置網格佈局
   const gridLayoutClass = useMemo(() => {
     if (viewMode === 'compact') {
-      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3'
+      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3'
     }
-    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
+    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
   }, [viewMode])
   
   return (
     <>
-      {featuredCase && !isMobileView && <FeaturedCase caseStudy={featuredCase} />}
-      
-      <div className="container mx-auto px-4 pb-16 md:pb-24">
-        {/* 頁面標題和搜尋區塊 */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-10">
-          <div className="mb-4 sm:mb-0">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-1">成功案例</h1>
-            <p className="text-gray-600 text-sm">了解我們如何幫助客戶達成業務目標</p>
-          </div>
-          
-          {/* 搜尋框 */}
-          <div className="relative w-full sm:w-64 mb-4 sm:mb-0">
-            <input
-              type="text"
-              placeholder="搜尋案例..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+      {/* 統一的頁面容器 */}
+      <div className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4 pb-16">
+          {/* 頁面標題區塊 */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="text-center mb-16"
+          >
+            <motion.div 
+              variants={fadeInUp}
+              className="w-16 h-1 bg-primary mx-auto mb-6"
             />
-            <svg
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <motion.h1 
+              variants={fadeInUp}
+              className="text-3xl sm:text-4xl font-bold mb-4"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-        
-        {/* 視圖切換和類別過濾器 */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-10">
-          {/* 視圖切換按鈕 */}
-          <div className="flex items-center space-x-2 mb-4 sm:mb-0">
-            <button
-              onClick={toggleViewMode}
-              className="flex items-center justify-center p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
-              aria-label={viewMode === 'standard' ? '切換到緊湊視圖' : '切換到標準視圖'}
+              成功案例
+            </motion.h1>
+            <motion.p
+              variants={fadeInUp}
+              className="text-gray-600 max-w-2xl mx-auto"
             >
-              {viewMode === 'standard' ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18M3 18h18M3 6h18" />
-                </svg>
-              )}
-            </button>
-          </div>
+              了解我們如何幫助診所提升品牌價值與轉換率
+            </motion.p>
+          </motion.div>
           
-          {/* 類別過濾器 */}
-          <div className="overflow-x-auto pb-2 -mx-4 px-4">
-            <div className="flex gap-2 md:gap-3 md:flex-wrap md:justify-center min-w-max">
-              <button
-                onClick={() => handleCategoryChange('全部案例')}
-                className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeCategory === '全部案例'
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                全部案例
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeCategory === category
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+          {/* 特色案例區 - 僅在桌面顯示 */}
+          {featuredCases.length > 0 && !isMobileView && (
+            <div className="mb-16">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-2xl font-bold border-l-4 border-primary pl-4">精選案例</h2>
+                <Link 
+                  href="/case"
+                  className="text-primary font-medium hover:bg-primary/5 px-4 py-2 transition-colors"
                 >
-                  {category}
-                </button>
-              ))}
+                  查看所有案例
+                </Link>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                {featuredCases.map((featuredCase, idx) => (
+                  <motion.div
+                    key={featuredCase.id}
+                    variants={fadeInUp}
+                    custom={idx}
+                    className="bg-white border-t-4 border-primary"
+                  >
+                    <div className="p-0">
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <Image
+                          src={featuredCase.image}
+                          alt={featuredCase.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover"
+                          quality={90}
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-black/60 p-4">
+                          <h3 className="text-white font-bold text-xl">
+                            {featuredCase.name}
+                          </h3>
+                          <p className="text-white/80 text-sm">
+                            {featuredCase.category}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <p className="text-gray-600 mb-4 line-clamp-2">
+                          {featuredCase.description}
+                        </p>
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          {featuredCase.metrics.slice(0, 2).map((metric, midx) => (
+                            <div key={midx} className="border border-gray-200 p-3">
+                              <div className="text-xl font-bold text-primary">
+                                <AnimatedNumber value={metric.value} />
+                              </div>
+                              <div className="text-xs text-gray-500">{metric.label}</div>
+                            </div>
+                          ))}
+                        </div>
+                        <Link
+                          href={`/case/${featuredCase.id}`}
+                          className="inline-flex items-center bg-primary text-white py-2 px-4 font-medium"
+                        >
+                          查看詳情
+                          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* 搜尋與過濾區 */}
+          <div className="mb-8 bg-white p-6 border-l-4 border-primary">
+            {/* 搜尋框 */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+              <div>
+                <h2 className="font-bold text-xl mb-2">案例搜尋</h2>
+                <p className="text-gray-600 text-sm">從各個類別尋找適合您的成功案例參考</p>
+              </div>
+              <div className="relative w-full md:w-64">
+                <input
+                  type="text"
+                  placeholder="搜尋案例..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 focus:border-primary focus:ring-0 transition-colors"
+                />
+                <svg
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            
+            {/* 視圖切換和類別過濾器 */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              {/* 視圖切換按鈕 */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-600">視圖：</span>
+                <div className="flex border border-gray-200">
+                  <button
+                    onClick={() => setViewMode('standard')}
+                    className={`p-2 ${viewMode === 'standard' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
+                    aria-label="標準視圖"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('compact')}
+                    className={`p-2 ${viewMode === 'compact' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
+                    aria-label="緊湊視圖"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18M3 18h18M3 6h18" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              {/* 類別過濾器 */}
+              <div className="flex-1 overflow-x-auto">
+                <div className="flex gap-2 min-w-max">
+                  <button
+                    onClick={() => handleCategoryChange('全部案例')}
+                    className={`px-4 py-2 font-medium text-sm border ${
+                      activeCategory === '全部案例'
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    全部案例
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategoryChange(category)}
+                      className={`px-4 py-2 font-medium text-sm border ${
+                        activeCategory === category
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        {/* 案例列表 */}
-        {isLoading ? (
-          <LoadingState />
-        ) : filteredCases.length > 0 ? (
-          <Suspense fallback={<LoadingState />}>
-            <motion.div 
-              variants={staggerContainer}
-              initial="hidden"
-              animate={isInitialLoad ? "visible" : "hidden"}
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              className={gridLayoutClass}
-            >
-              {filteredCases.map((caseStudy, index) => (
-                <motion.div
-                  key={caseStudy.id}
-                  variants={fadeInUp}
-                  custom={index}
+          
+          {/* 案例列表 */}
+          {isLoading ? (
+            <LoadingState />
+          ) : filteredCases.length > 0 ? (
+            <Suspense fallback={<LoadingState />}>
+              <div className="mb-12">
+                <motion.div 
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate={isInitialLoad ? "visible" : "hidden"}
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                  className={gridLayoutClass}
                 >
-                  <CaseCard 
-                    caseStudy={caseStudy} 
-                    index={index} 
-                    isCompact={viewMode === 'compact'}
-                  />
+                  {filteredCases.map((caseStudy, index) => (
+                    <motion.div
+                      key={caseStudy.id}
+                      variants={fadeInUp}
+                      custom={index}
+                      className="group h-full"
+                    >
+                      <CaseCard 
+                        caseStudy={caseStudy} 
+                        index={index} 
+                        isCompact={viewMode === 'compact'}
+                      />
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          </Suspense>
-        ) : (
-          <EmptyState 
-            category={activeCategory} 
-            message="目前尚無此類別的案例，請嘗試其他類別或聯繫我們了解更多資訊。" 
-          />
-        )}
+                
+                {/* 分頁提示 */}
+                {filteredCases.length > 9 && (
+                  <div className="flex justify-center mt-10">
+                    <div className="flex border border-gray-200">
+                      <button className="min-w-[40px] h-10 flex items-center justify-center bg-primary text-white">1</button>
+                      <button className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50">2</button>
+                      <button className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50">3</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Suspense>
+          ) : (
+            <EmptyState 
+              category={activeCategory} 
+              message="目前尚無此類別的案例，請嘗試其他類別或聯繫我們了解更多資訊。" 
+            />
+          )}
+        </div>
       </div>
       
       <CTASection />
