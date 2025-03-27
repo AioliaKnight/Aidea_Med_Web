@@ -4,17 +4,20 @@ import React, { useEffect, useState, useMemo, Suspense, useCallback } from 'reac
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { caseStudies, CaseStudy, generateCaseStudyMetadata } from '@/components/pages/CasePage'
+import { caseStudies, generateCaseStudyMetadata } from '@/components/pages/CasePage'
+import type { CaseStudy } from '@/types/case'
 import { ArrowLeftIcon, ShareIcon, ChartBarIcon, HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from 'react-countup'
+import { staggerContainer, fadeInUp } from '@/utils/animations'
+import { ErrorBoundary } from '@/components/common'
 
 // 時間軸和案例詳情組件
-const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'));
-const CaseGallery = React.lazy(() => import('@/components/case/CaseGallery'));
-const CaseTestimonials = React.lazy(() => import('@/components/case/CaseTestimonials'));
-const CaseRelated = React.lazy(() => import('@/components/case/CaseRelated'));
+const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'))
+const CaseGallery = React.lazy(() => import('@/components/case/CaseGallery'))
+const CaseTestimonials = React.lazy(() => import('@/components/case/CaseTestimonials'))
+const CaseRelated = React.lazy(() => import('@/components/case/CaseRelated'))
 
 // 詳情頁骨架屏
 function CaseDetailSkeleton() {
@@ -62,50 +65,79 @@ function CaseDetailSkeleton() {
   );
 }
 
-// 案例詳情頁
+// 錯誤處理組件
+function CaseDetailError({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          載入案例詳情時發生錯誤
+        </h2>
+        <p className="text-gray-600 mb-8">
+          {error.message || '請稍後再試或聯繫我們尋求協助'}
+        </p>
+        <button
+          onClick={reset}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
+          重新載入
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// 案例詳情頁面
 export default function CaseDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
-  const [showShareMenu, setShowShareMenu] = useState(false);
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const { id } = useParams<{ id: string }>()
+  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [isLiked, setIsLiked] = useState(false)
+  const [showShareMenu, setShowShareMenu] = useState(false)
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   
   // 使用 useMemo 緩存案例資料
   const currentCase = useMemo(() => {
-    return caseStudies.find(c => c.id === id) || null;
-  }, [id]);
+    return caseStudies.find(c => c.id === id) || null
+  }, [id])
   
   // 優化 useEffect 邏輯
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true
     
     const loadCaseData = async () => {
       if (id && currentCase) {
-        // 使用 Promise.resolve().then 確保在微任務隊列中執行
-        await Promise.resolve().then(() => {
-          if (isMounted) {
-            setCaseStudy(currentCase);
-            setLoading(false);
-            
-            // 從 localStorage 中讀取案例收藏狀態
-            try {
-              const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]');
-              setIsLiked(likedCases.includes(id));
-            } catch (e) {
-              console.error('Error reading liked cases from localStorage', e);
+        try {
+          // 使用 Promise.resolve().then 確保在微任務隊列中執行
+          await Promise.resolve().then(() => {
+            if (isMounted) {
+              setCaseStudy(currentCase)
+              setLoading(false)
+              
+              // 從 localStorage 中讀取案例收藏狀態
+              try {
+                const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]')
+                setIsLiked(likedCases.includes(id))
+              } catch (e) {
+                console.error('Error reading liked cases from localStorage', e)
+              }
             }
+          })
+        } catch (error) {
+          console.error('Error loading case data:', error)
+          if (isMounted) {
+            setLoading(false)
           }
-        });
+        }
       }
-    };
+    }
     
-    loadCaseData();
+    loadCaseData()
     
     return () => {
-      isMounted = false;
-    };
-  }, [id, currentCase]);
+      isMounted = false
+    }
+  }, [id, currentCase])
   
   // 優化圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
@@ -357,19 +389,30 @@ export default function CaseDetailPage() {
               </div>
             </motion.section>
             
-            {/* 執行過程 */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white p-8"
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">執行過程</h2>
-              <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
-                <CaseTimeline caseStudy={caseStudy} />
-              </Suspense>
-            </motion.section>
+            {/* 時間軸區塊 */}
+            {caseStudy.timeline && caseStudy.timeline.length > 0 && (
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="bg-white rounded-xl shadow-sm p-8"
+              >
+                <motion.div 
+                  variants={fadeInUp}
+                  className="text-center mb-12"
+                >
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    專案執行歷程
+                  </h2>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    了解我們如何協助診所完成品牌轉型，實現業務成長目標
+                  </p>
+                </motion.div>
+                
+                <CaseTimeline items={caseStudy.timeline} />
+              </motion.div>
+            )}
             
             {/* 案例圖片 */}
             <motion.section

@@ -945,6 +945,17 @@ const MainContent = memo(function MainContent() {
     return caseStudies.filter(item => item.featured).slice(0, 2)
   }, [])
   
+  // 添加 useEffect 處理初始載入
+  useEffect(() => {
+    // 在組件掛載後，設置一個短暫的延遲，使頁面流暢過渡
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 200);
+    
+    // 清理定時器
+    return () => clearTimeout(timer);
+  }, []); // 空依賴數組確保只在掛載時執行一次
+  
   // 優化：使用useCallback包裝類別切換處理函數
   const handleCategoryChange = useCallback((category: string) => {
     setActiveCategory(category)
@@ -963,35 +974,35 @@ const MainContent = memo(function MainContent() {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
             <motion.div 
               variants={fadeInUp}
-              className="w-16 h-1 bg-primary mx-auto mb-6"
+              className="w-12 sm:w-16 h-1 bg-primary mx-auto mb-4 sm:mb-6"
             />
             <motion.h1 
               variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-bold mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
             >
               成功案例
             </motion.h1>
             <motion.p
               variants={fadeInUp}
-              className="text-gray-600 max-w-2xl mx-auto"
+              className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto"
             >
               了解我們如何幫助診所提升品牌價值與轉換率
             </motion.p>
           </motion.div>
           
           {/* 類別過濾器 */}
-          <div className="mb-12">
-            <div className="flex flex-wrap justify-center gap-3">
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               <button
                 onClick={() => handleCategoryChange('全部案例')}
-                className={`px-6 py-2.5 font-medium text-sm border transition-colors ${
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-colors rounded-md ${
                   activeCategory === '全部案例'
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 全部案例
@@ -1000,10 +1011,10 @@ const MainContent = memo(function MainContent() {
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`px-6 py-2.5 font-medium text-sm border transition-colors ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium transition-colors rounded-md ${
                     activeCategory === category
-                      ? 'bg-primary text-white border-primary'
-                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {category}
@@ -1017,7 +1028,39 @@ const MainContent = memo(function MainContent() {
             <LoadingState />
           ) : filteredCases.length > 0 ? (
             <Suspense fallback={<LoadingState />}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* 移動設備水平滾動視圖 */}
+              <div className="md:hidden overflow-x-auto pb-6 -mx-4 px-4">
+                <div className="flex space-x-4 min-w-max px-1 py-2">
+                  {filteredCases.map((caseStudy, index) => (
+                    <div 
+                      key={caseStudy.id} 
+                      className="w-[250px] sm:w-[280px] flex-shrink-0"
+                    >
+                      <CaseCard 
+                        caseStudy={caseStudy} 
+                        index={index} 
+                        variant="standard"
+                        showMetrics={false}
+                        priority={index < 3}
+                        aspectRatio="16/9"
+                        isCircular={true}
+                      />
+                    </div>
+                  ))}
+                </div>
+                
+                {/* 滾動指示器 */}
+                <div className="mt-4 flex justify-center">
+                  <div className="flex space-x-1">
+                    <span className="w-8 h-1 bg-primary rounded-full"></span>
+                    <span className="w-2 h-1 bg-gray-300 rounded-full"></span>
+                    <span className="w-2 h-1 bg-gray-300 rounded-full"></span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 桌面網格視圖 */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {filteredCases.map((caseStudy, index) => (
                   <motion.div
                     key={caseStudy.id}
@@ -1032,6 +1075,7 @@ const MainContent = memo(function MainContent() {
                       showMetrics={true}
                       priority={index < 3}
                       aspectRatio="16/9"
+                      isCircular={true}
                     />
                   </motion.div>
                 ))}
@@ -1078,20 +1122,8 @@ MainContent.displayName = 'MainContent';
 // 使用React.memo優化主頁面組件
 export default memo(function CasePage(): React.ReactElement {
   return (
-    <>
-      <PageHeader
-        title="成功案例展示"
-        description="探索我們如何協助醫療診所提升品牌價值與患者轉換率，實現業務成長目標"
-        variant="red"
-        size="md"
-        alignment="center"
-        backgroundImage="/images/bgline-w.webp"
-        className="border-b border-red-700"
-      />
-      
-      <Suspense fallback={<LoadingState />}>
-        <MainContent />
-      </Suspense>
-    </>
+    <Suspense fallback={<LoadingState />}>
+      <MainContent />
+    </Suspense>
   )
 }) 

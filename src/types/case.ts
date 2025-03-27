@@ -118,7 +118,7 @@ export interface CaseGalleryProps {
 }
 
 export interface CaseTimelineProps {
-  caseStudy: CaseStudy;
+  items: TimelineItem[];
   variant?: 'vertical' | 'horizontal'; // 時間軸方向
 }
 
@@ -142,4 +142,5 @@ export interface CaseCardProps {
   showMetrics?: boolean; // 是否顯示指標
   aspectRatio?: string; // 圖片縱橫比
   priority?: boolean; // 圖片是否優先載入
+  isCircular?: boolean; // 是否使用圓形圖片顯示
 } 

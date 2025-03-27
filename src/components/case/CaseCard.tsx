@@ -16,7 +16,8 @@ export const CaseCard = React.memo(({
   variant = 'standard',
   showMetrics = true,
   aspectRatio = '16/9',
-  priority = false
+  priority = false,
+  isCircular = false
 }: CaseCardProps): React.ReactElement => {
   // 圖片源計算邏輯
   const imgSrc = useMemo(() => {
@@ -42,7 +43,21 @@ export const CaseCard = React.memo(({
   
   const handleImageError = useCallback(() => {
     setImgStatus({ loading: false, error: true });
-  }, []);
+    console.log(`圖片載入失敗: ${imgSrc}`);
+  }, [imgSrc]);
+
+  // 預先載入圖片 - 添加這段代碼確保圖片預載入
+  useEffect(() => {
+    const preloadImage = new window.Image();
+    preloadImage.src = imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc;
+    preloadImage.onload = () => handleImageLoad();
+    preloadImage.onerror = () => handleImageError();
+    
+    return () => {
+      preloadImage.onload = null;
+      preloadImage.onerror = null;
+    };
+  }, [imgSrc, imgStatus.error, handleImageLoad, handleImageError]);
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
@@ -63,7 +78,7 @@ export const CaseCard = React.memo(({
   const cardStyle = useMemo(() => {
     switch (variant) {
       case 'featured':
-        return 'bg-white border-t-4 border-primary';
+        return 'bg-white border-l-4 border-primary';
       case 'minimal':
         return 'bg-white';
       default: // standard
@@ -76,17 +91,35 @@ export const CaseCard = React.memo(({
       className={`
         h-full transition-all duration-300 group
         ${cardStyle}
-        ${isHovered ? 'shadow-md' : 'shadow-sm'}
+        ${isCircular ? 'pt-3 text-center' : ''}
+        hover:translate-y-[-4px] hover:shadow-md shadow-sm
+        rounded-lg overflow-hidden
       `}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col bg-white">
+        {/* 類別標籤 - 移至圖片外部頂部 */}
+        <div className="flex justify-between items-center px-3 py-2">
+          {caseStudy.category && (
+            <div className="text-primary font-medium text-xs tracking-wide">
+              {caseStudy.category}
+            </div>
+          )}
+          
+          {caseStudy.featured && (
+            <div className="text-gray-900 font-medium text-xs tracking-wide flex items-center">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full mr-1"></span>
+              精選案例
+            </div>
+          )}
+        </div>
+        
         {/* 圖片區域 */}
-        <div className={`
-          relative overflow-hidden
-          ${`aspect-[${aspectRatio}]`}
-        `}>
+        <div className={isCircular 
+          ? "relative overflow-hidden rounded-full aspect-square mx-auto w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] border-4 border-white" 
+          : `relative overflow-hidden aspect-[${aspectRatio}]`
+        }>
           {/* 載入中狀態 */}
           {imgStatus.loading && (
             <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
@@ -99,10 +132,15 @@ export const CaseCard = React.memo(({
             src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
             alt={caseStudy.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes={isCircular 
+              ? "(max-width: 640px) 160px, (max-width: 768px) 180px, 200px"
+              : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            }
             className={`
-              object-cover transition-all duration-500
+              object-cover ${isCircular ? 'object-center' : ''}
+              transition-all duration-500
               ${imgStatus.loading ? 'opacity-0' : 'opacity-100'}
+              group-hover:scale-105
             `}
             priority={priority || index <= 2}
             loading={imageLoadingStrategy}
@@ -113,53 +151,42 @@ export const CaseCard = React.memo(({
           />
           
           {/* 圖片覆蓋層 - 扁平化設計 */}
-          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div className="bg-primary text-white px-4 py-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-              查看案例詳情
-            </div>
-          </div>
-          
-          {/* 類別標籤 */}
-          <div className="absolute top-3 left-3 right-3 flex justify-between z-10">
-            {caseStudy.category && (
-              <div className="bg-primary/90 text-white font-medium px-3 py-1 text-xs">
-                {caseStudy.category}
-              </div>
-            )}
-            
-            {caseStudy.featured && (
-              <div className="bg-amber-500/90 text-white font-medium px-3 py-1 text-xs">
-                精選
-              </div>
-            )}
+          <div className={
+            `absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 
+            transition-all duration-300 flex items-center justify-center
+            ${isCircular ? 'rounded-full' : ''}`
+          }>
+            <span className="text-white px-3 py-1.5 text-sm font-medium">
+              查看案例
+            </span>
           </div>
         </div>
         
         {/* 內容區域 */}
-        <div className="flex-1 flex flex-col p-5">
-          <h3 className="font-bold text-gray-900 text-lg mb-2">
+        <div className="flex-1 flex flex-col p-3 sm:p-4">
+          <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-tight mb-2">
             {caseStudy.name}
           </h3>
           
           {caseStudy.description && (
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
               {caseStudy.description}
             </p>
           )}
           
-          {/* 績效指標 */}
+          {/* 績效指標 - 扁平化設計 */}
           {showMetrics && Array.isArray(caseStudy.metrics) && caseStudy.metrics.length > 0 && (
             <div className="mt-auto">
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
                 {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
                   <div 
                     key={idx} 
-                    className="border border-gray-200 px-3 py-2"
+                    className="bg-gray-50 px-2 sm:px-3 py-2 sm:py-3"
                   >
-                    <div className="font-bold text-primary text-lg">
+                    <div className="font-bold text-primary text-base sm:text-lg leading-none mb-1">
                       {formatMetricValue(metric.value, metric.prefix, metric.suffix)}
                     </div>
-                    <div className="text-gray-500 text-xs">
+                    <div className="text-gray-600 text-xs">
                       {metric.label}
                     </div>
                   </div>
@@ -168,19 +195,14 @@ export const CaseCard = React.memo(({
             </div>
           )}
           
-          {/* 標籤和類別 */}
-          {(caseStudy.badges || caseStudy.category) && (
-            <div className="flex flex-wrap gap-2 mt-auto pt-3 border-t border-gray-100">
-              {caseStudy.badges?.map((badge, idx) => (
-                <span key={idx} className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1">
+          {/* 標籤顯示 */}
+          {caseStudy.badges && caseStudy.badges.length > 0 && (
+            <div className="flex flex-wrap gap-1 sm:gap-2 mt-auto pt-2 sm:pt-3">
+              {caseStudy.badges.slice(0, 2).map((badge, idx) => (
+                <span key={idx} className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 sm:py-1 rounded-sm">
                   {badge}
                 </span>
               ))}
-              {caseStudy.category && !caseStudy.badges?.includes(caseStudy.category) && (
-                <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1">
-                  {caseStudy.category}
-                </span>
-              )}
             </div>
           )}
         </div>
