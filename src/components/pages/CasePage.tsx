@@ -927,6 +927,7 @@ const MainContent = memo(function MainContent() {
   const [activeCategory, setActiveCategory] = useState('全部案例')
   const [isLoading, setIsLoading] = useState(true)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [displayLimit, setDisplayLimit] = useState(9) // 控制顯示的案例數量
   
   // 優化：使用useMemo計算類別列表
   const categories = useMemo(() => {
@@ -939,6 +940,16 @@ const MainContent = memo(function MainContent() {
       return activeCategory === '全部案例' || caseStudy.category === activeCategory
     })
   }, [activeCategory])
+  
+  // 限制顯示的案例數量
+  const displayedCases = useMemo(() => {
+    return filteredCases.slice(0, displayLimit)
+  }, [filteredCases, displayLimit])
+  
+  // 是否還有更多案例可以加載
+  const hasMoreCases = useMemo(() => {
+    return displayedCases.length < filteredCases.length
+  }, [displayedCases.length, filteredCases.length])
   
   // 優化：使用useMemo緩存精選案例
   const featuredCases = useMemo(() => {
@@ -961,7 +972,13 @@ const MainContent = memo(function MainContent() {
     setActiveCategory(category)
     setIsLoading(true)
     setIsInitialLoad(false)
+    setDisplayLimit(9) // 重置顯示限制
     setTimeout(() => setIsLoading(false), 300)
+  }, [])
+  
+  // 處理加載更多案例
+  const handleLoadMore = useCallback(() => {
+    setDisplayLimit(prev => prev + 6) // 每次多加載6個案例
   }, [])
   
   return (
@@ -1026,12 +1043,12 @@ const MainContent = memo(function MainContent() {
           {/* 案例列表 */}
           {isLoading ? (
             <LoadingState />
-          ) : filteredCases.length > 0 ? (
+          ) : displayedCases.length > 0 ? (
             <Suspense fallback={<LoadingState />}>
               {/* 移動設備水平滾動視圖 */}
               <div className="md:hidden overflow-x-auto pb-6 -mx-4 px-4">
                 <div className="flex space-x-4 min-w-max px-1 py-2">
-                  {filteredCases.map((caseStudy, index) => (
+                  {displayedCases.map((caseStudy, index) => (
                     <div 
                       key={caseStudy.id} 
                       className="w-[250px] sm:w-[280px] flex-shrink-0"
@@ -1061,7 +1078,7 @@ const MainContent = memo(function MainContent() {
               
               {/* 桌面網格視圖 */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                {filteredCases.map((caseStudy, index) => (
+                {displayedCases.map((caseStudy, index) => (
                   <motion.div
                     key={caseStudy.id}
                     variants={fadeInUp}
@@ -1081,26 +1098,18 @@ const MainContent = memo(function MainContent() {
                 ))}
               </div>
               
-              {/* 分頁控制 */}
-              {filteredCases.length > 9 && (
-                <div className="flex justify-center mt-12">
-                  <div className="flex border border-gray-200">
-                    <button 
-                      className="min-w-[40px] h-10 flex items-center justify-center bg-primary text-white"
-                    >
-                      1
-                    </button>
-                    <button 
-                      className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50"
-                    >
-                      2
-                    </button>
-                    <button 
-                      className="min-w-[40px] h-10 flex items-center justify-center text-gray-700 hover:bg-gray-50"
-                    >
-                      3
-                    </button>
-                  </div>
+              {/* 查看更多案例按鈕 */}
+              {hasMoreCases && (
+                <div className="flex justify-center mt-10 md:mt-16">
+                  <button
+                    onClick={handleLoadMore}
+                    className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-md hover:bg-primary-dark transition-colors"
+                  >
+                    <span>載入更多案例</span>
+                    <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
                 </div>
               )}
             </Suspense>
