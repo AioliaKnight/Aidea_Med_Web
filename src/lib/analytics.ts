@@ -92,6 +92,28 @@ export const trackServiceView = (serviceName: string, serviceCategory: string) =
 };
 
 /**
+ * 追蹤圖片載入事件
+ * @param imageType 圖片類型，例如 'logo', 'hero', 'banner'
+ * @param imageVariant 圖片變體，例如 'white', 'black', 'primary'
+ * @param format 圖片格式，例如 'webp', 'png', 'jpg'
+ * @param loadTime 載入時間（毫秒），可選
+ */
+export const trackImageLoad = (
+  imageType: string, 
+  imageVariant: string, 
+  format: string, 
+  loadTime?: number
+) => {
+  pushEvent('image_load', {
+    image_type: imageType,
+    image_variant: imageVariant,
+    image_format: format,
+    load_time: loadTime,
+    page_path: typeof window !== 'undefined' ? window.location.pathname : '',
+  });
+};
+
+/**
  * 追蹤案例查看事件
  * @param caseName 案例名稱
  * @param caseId 案例ID

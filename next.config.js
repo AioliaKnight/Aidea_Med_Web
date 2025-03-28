@@ -175,6 +175,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/**',
+      },
     ],
     formats: ['image/webp'],
     // 根據環境使用不同的尺寸配置
