@@ -393,7 +393,7 @@ const HeroSection = memo(function HeroSection() {
   const ref = useRef<HTMLElement | null>(null);
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
-    triggerOnce: false,
+    triggerOnce: true, // 改為true以減少計算
   });
   
   // 使用callback ref合併兩個ref
@@ -435,6 +435,14 @@ const HeroSection = memo(function HeroSection() {
   // 追蹤當前顯示的標題
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   
+  // 預加載背景圖片 - 修正為使用window.Image
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const preloadHeroImage = new window.Image();
+      preloadHeroImage.src = '/images/bgline-w-optimized.webp';
+    }
+  }, []);
+  
   // 定期切換標題
   useEffect(() => {
     const interval = setInterval(() => {
@@ -442,7 +450,7 @@ const HeroSection = memo(function HeroSection() {
     }, 4000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [titles.length]);
   
   // 標籤數據
   const tags = [
@@ -460,13 +468,27 @@ const HeroSection = memo(function HeroSection() {
       aria-label="網站主要橫幅"
       id="hero"
     >
-      {/* 背景設計 */}
+      {/* 背景設計 - 優化版本 */}
       <div className="absolute inset-0">
-        {/* 純色背景 */}
+        {/* 純色背景 - 立即呈現 */}
         <div className="absolute inset-0 bg-primary"></div>
         
-        {/* 使用不透明的白色線條背景圖片 */}
-        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
+        {/* 使用Next.js Image組件優化背景加載 */}
+        <div className="absolute inset-0 overflow-hidden">
+          <Image 
+            src="/images/bgline-w-optimized.webp" 
+            alt=""
+            fill
+            priority={true}
+            sizes="100vw"
+            quality={85}
+            className="object-cover opacity-70"
+            style={{
+              objectPosition: 'center',
+              transform: 'translateZ(0)', // 強制硬體加速
+            }}
+          />
+        </div>
         
         {/* 背景覆蓋 */}
         <div className="absolute inset-0 bg-primary/20"></div>
@@ -475,12 +497,16 @@ const HeroSection = memo(function HeroSection() {
       {/* 主要標題內容區 */}
       <div className="container-custom relative z-20 py-6 md:py-8">
         <div className="max-w-5xl mx-auto">
-          {/* 標題區塊 - 置中對齊 */}
+          {/* 標題區塊 - 置中對齊 - 優化動畫 */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="px-4 sm:px-6 flex flex-col items-center text-center transform-gpu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="px-4 sm:px-6 flex flex-col items-center text-center"
+            style={{ 
+              willChange: 'opacity',
+              transform: 'translateZ(0)' // 強制硬體加速
+            }}
           >
             {/* 統一標題結構 - 中文主副標題下方緊接英文主副標題 */}
             <div className="w-full max-w-4xl mx-auto">
@@ -492,7 +518,6 @@ const HeroSection = memo(function HeroSection() {
                   exit="exit"
                   variants={heroTitleVariants}
                   className="font-bold text-white text-center"
-                  style={{ willChange: 'transform, opacity' }}
                 >
                   {/* 中文主副標題 */}
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl leading-tight">
@@ -513,85 +538,60 @@ const HeroSection = memo(function HeroSection() {
               </AnimatePresence>
             </div>
             
-            {/* 單行白框線條標籤設計 */}
+            {/* 單行白框線條標籤設計 - 簡化動畫 */}
             <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
               <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6">
                 {tags.map((tag, index) => (
                   <motion.span
                     key={tag.id}
-                    variants={{
-                      initial: { opacity: 0, y: 10 },
-                      animate: { 
-                        opacity: 1, 
-                        y: 0,
-                        transition: { 
-                          duration: 0.3,
-                          delay: 0.1 * index 
-                        }
-                      },
-                      hover: { 
-                        scale: 1.05, 
-                        color: "rgba(255, 255, 255, 1)",
-                        transition: { duration: 0.2 } 
-                      }
-                    }}
-                    initial="initial"
-                    animate="animate"
-                    whileHover="hover"
-                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide cursor-pointer hover:text-white transition-all whitespace-nowrap"
-                    style={{ willChange: 'transform, opacity' }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.05 * index }}
+                    whileHover={{ color: "#ffffff" }}
+                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide cursor-pointer hover:text-white transition-colors whitespace-nowrap"
                   >
                     {tag.name}
                   </motion.span>
                 ))}
               </div>
-        </div>
+            </div>
         
-            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 */}
-        <motion.div 
+            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 - 簡化動畫 */}
+            <motion.div 
               className="mt-4 mb-5"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
             >
-              <Link href="/contact" prefetch={true}>
-                <motion.span 
-                  className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 transform-gpu"
-                  initial={{ y: 0 }}
-                >
-                  <motion.span 
-                    className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90"
-                    animate={{ 
-                      opacity: [0.7, 1, 0.7],
-                      transition: { duration: 2, repeat: Infinity }
-                    }}
-                  >
+              <Link href="/contact" prefetch={false}> {/* 改為false，因這不是立即需要的資源 */}
+                <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10">
+                  <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
                     A:
-                  </motion.span>
+                  </span>
                   <span className="font-medium">免費30分鐘專業顧問</span>
-                </motion.span>
+                </span>
               </Link>
             </motion.div>
             
-            {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection */}
+            {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection - 簡化動畫 */}
             <motion.div 
               className="mt-20 flex justify-center"
-          initial={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1 }}
-        >
-          <motion.div
-            className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
+              transition={{ duration: 0.3, delay: 0.4 }}
+            >
+              <motion.div
+                className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
                 animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
-          >
+              >
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+                  <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </motion.div>
+            </motion.div>
           </motion.div>
-        </motion.div>
         </div>
       </div>
     </section>
@@ -2320,67 +2320,57 @@ const TestimonialSection = memo(function TestimonialSection() {
   );
 })
 
-// HomePage組件 - 使用 React.lazy 進行代碼分割與 Suspense 優化整體渲染
+// HomePage組件 - 使用直接的Suspense實現代碼分割
 const HomePage = () => {
-  // 使用useState進行狀態管理 - 使用最小需要的狀態
-  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
-  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
+  // 客戶端水合狀態追蹤
+  const [hydrated, setHydrated] = useState(false);
   
-  // 使用useCallback優化處理函數
-  const handleTestimonialChange = useCallback((index: number) => {
-    React.startTransition(() => {
-      setActiveTestimonialIndex(index);
-    });
+  // 確保只在客戶端渲染後進行高級操作
+  useEffect(() => {
+    setHydrated(true);
   }, []);
-  
-  const toggleFaq = useCallback((index: number) => {
-    setActiveFaqIndex(prev => prev === index ? null : index);
-  }, []);
-
-  // 使用useMemo來提供狀態值，避免不必要的重新渲染
-  const testimonialProps = useMemo(() => ({
-    activeIndex: activeTestimonialIndex,
-    onChange: handleTestimonialChange
-  }), [activeTestimonialIndex, handleTestimonialChange]);
-
-  const faqProps = useMemo(() => ({
-    activeIndex: activeFaqIndex,
-    onToggle: toggleFaq
-  }), [activeFaqIndex, toggleFaq]);
 
   return (
     <ErrorBoundary>
       <div className="flex flex-col min-h-screen">
-        {/* 核心區塊 - 不使用懶加載以加速首屏渲染 */}
+        {/* 立即渲染的核心區塊 */}
         <HeroSection />
-        <MarketingSection />
         
-        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-        <FeatureSection />
+        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          <MarketingSection />
         </Suspense>
         
-        <StatsSection />
-        
-        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
-        <ServiceSection />
+        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          <FeatureSection />
         </Suspense>
         
-        {/* 次要區塊 - 使用Suspense進行懶加載 */}
-        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
+        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          <StatsSection />
+        </Suspense>
+        
+        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          <ServiceSection />
+        </Suspense>
+        
+        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
           <CaseStudiesSection />
         </Suspense>
         
-        <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
-          <TestimonialSection />
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-        <FAQSection />
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse rounded-lg"></div>}>
-        <ContactSection />
-        </Suspense>
+        {hydrated && (
+          <>
+            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+              <TestimonialSection />
+            </Suspense>
+            
+            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+              <FAQSection />
+            </Suspense>
+            
+            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+              <ContactSection />
+            </Suspense>
+          </>
+        )}
       </div>
     </ErrorBoundary>
   );
