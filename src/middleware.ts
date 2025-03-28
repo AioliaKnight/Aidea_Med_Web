@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import { getContentSecurityPolicy } from './config/csp'
 
 // 建構安全標頭
-const constructSecurityHeaders = () => {
+const constructSecurityHeaders = (pathname: string) => {
   const isDev = process.env.NODE_ENV === 'development'
   
   // 使用類型斷言定義標頭物件
@@ -22,8 +22,10 @@ const constructSecurityHeaders = () => {
     // 預存 DNS 查詢
     'X-DNS-Prefetch-Control': 'on',
     
-    // 添加 CSP (無論是開發環境還是生產環境)
-    'Content-Security-Policy': getContentSecurityPolicy()
+    // 添加 CSP，對聯絡頁面特殊處理確保 GTM 正確加載
+    'Content-Security-Policy': pathname === '/contact' 
+      ? getContentSecurityPolicy() + "; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com tagmanager.google.com"
+      : getContentSecurityPolicy()
   }
   
   return headers
@@ -36,7 +38,7 @@ export function middleware(request: NextRequest) {
   
   // 應用安全標頭(不應用於API路徑)
   if (!pathname.startsWith('/api/')) {
-    const securityHeaders = constructSecurityHeaders()
+    const securityHeaders = constructSecurityHeaders(pathname)
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value)
     })

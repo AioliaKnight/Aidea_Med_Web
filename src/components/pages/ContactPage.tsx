@@ -4,8 +4,15 @@ import { PageHeader } from '@/components/common'
 import { motion } from 'framer-motion'
 import ContactForm from '@/components/contact/ContactForm'
 import ContactInfo from '@/components/contact/ContactInfo'
+import { useEffect } from 'react'
+import { trackPageView } from '@/lib/analytics'
 
 export default function ContactPage() {
+  // 明確追蹤聯絡頁面瀏覽
+  useEffect(() => {
+    trackPageView('聯絡我們 - Aidea:Med 醫療行銷顧問', '/contact')
+  }, [])
+  
   return (
     <div className="bg-white">
       {/* 頁面標題區 */}
