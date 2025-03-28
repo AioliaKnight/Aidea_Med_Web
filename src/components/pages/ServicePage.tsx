@@ -134,7 +134,7 @@ const serviceProcess: ProcessItem[] = [
 const pricingPlans: PricingPlan[] = [
   {
     title: '品牌啟航方案',
-    price: '$ 88,000',
+    price: '$ 108,000',
     period: '/月',
     features: [
       '診所品牌定位與故事梳理',
@@ -143,14 +143,14 @@ const pricingPlans: PricingPlan[] = [
       '基礎在地SEO優化',
       '每週診所數據健檢報告',
       '醫師個人品牌經營指導',
-      '專屬客戶經理每週追蹤'
+      '專屬客戶經理每月追蹤'
     ],
     btnText: '了解方案',
     isPopular: false
   },
   {
     title: '全面成長方案',
-    price: '$ 168,000',
+    price: '$ 198,000',
     period: '/月',
     features: [
       '全方位品牌戰略規劃執行',
@@ -167,11 +167,11 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     title: '卓越突破方案',
-    price: '$ 380,000',
+    price: '$ 398,000',
     period: '/月',
     features: [
       '頂級品牌戰略全面規劃',
-      '無限量專業內容創作',
+      '專業社群代操與內容創作',
       '多平台整合行銷策略',
       '專業影音團隊拍攝製作',
       '產業實戰級顧問一對一服務',
@@ -1206,95 +1206,6 @@ export default function ServicePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* 服務流程 */}
-      <section className="py-16 sm:py-24 bg-gray-50">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <span className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-primary/10 text-primary rounded-full">
-              專業行銷流程
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
-              透明高效的<span className="text-primary">合作流程</span>
-            </h2>
-            <p className="text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-6 text-gray-600 leading-relaxed">
-              從需求確認到執行監測，我們建立系統化流程，確保每個診所的行銷計畫都能有效實施
-            </p>
-          </motion.div>
-
-          <div className="px-4 sm:px-8 relative">
-            <motion.div 
-              className="absolute top-0 bottom-0 left-5 sm:left-9 w-1 bg-gradient-to-b from-primary/80 via-primary/50 to-primary/20 rounded-full hidden sm:block" 
-              initial={{ height: 0 }}
-              whileInView={{ height: '100%' }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-            />
-            <div className="space-y-6 sm:space-y-8">
-              {serviceProcess.map((step, index) => (
-                <ProcessStep key={step.step} step={step} index={index} />
-              ))}
-            </div>
-          </div>
-          
-          <motion.div
-            className="flex justify-center mt-8"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.4 }}
-          >
-            <Link 
-              href="/contact" 
-              className="btn-flat btn-flat-primary flex items-center group"
-            >
-              <span className="text-white">立即諮詢</span>
-              <svg className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
-          </motion.div>
-          
-          <div className="mt-6 text-center">
-            <motion.p 
-              className="text-xs text-caption italic"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 0.8 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8 }}
-            >
-              每個流程由專業團隊全程參與，確保最佳效果
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <CTASection
-        title="開始您的品牌成長之旅"
-        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
-        sectionId="cta-title"
-        primaryButton={{
-          href: "/contact",
-          text: "預約諮詢",
-          variant: "primary"
-        }}
-        secondaryButton={{
-          href: "/case",
-          text: "查看案例",
-          variant: "secondary"
-        }}
-      />
-
-      {/* Service Feature Section */}
-      <ServiceFeature />
-      
       {/* 數位醫療廣告策略區塊 */}
       <section className="py-24 bg-white relative overflow-hidden">
         {/* 背景紋理 */}
@@ -1524,6 +1435,95 @@ export default function ServicePage() {
           </div>
         </div>
       </section>
+      {/* 服務流程 */}
+      <section className="py-16 sm:py-24 bg-gray-50">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-block text-xs sm:text-sm font-medium mb-4 px-4 py-1.5 bg-primary/10 text-primary rounded-full">
+              專業行銷流程
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
+              透明高效的<span className="text-primary">合作流程</span>
+            </h2>
+            <p className="text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-6 text-gray-600 leading-relaxed">
+              從需求確認到執行監測，我們建立系統化流程，確保每個診所的行銷計畫都能有效實施
+            </p>
+          </motion.div>
+
+          <div className="px-4 sm:px-8 relative">
+            <motion.div 
+              className="absolute top-0 bottom-0 left-5 sm:left-9 w-1 bg-gradient-to-b from-primary/80 via-primary/50 to-primary/20 rounded-full hidden sm:block" 
+              initial={{ height: 0 }}
+              whileInView={{ height: '100%' }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+            />
+            <div className="space-y-6 sm:space-y-8">
+              {serviceProcess.map((step, index) => (
+                <ProcessStep key={step.step} step={step} index={index} />
+              ))}
+            </div>
+          </div>
+          
+          <motion.div
+            className="flex justify-center mt-8"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+          >
+            <Link 
+              href="/contact" 
+              className="btn-flat btn-flat-primary flex items-center group"
+            >
+              <span className="text-white">立即諮詢</span>
+              <svg className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          </motion.div>
+          
+          <div className="mt-6 text-center">
+            <motion.p 
+              className="text-xs text-caption italic"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 0.8 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.8 }}
+            >
+              每個流程由專業團隊全程參與，確保最佳效果
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <CTASection
+        title="開始您的品牌成長之旅"
+        description="立即預約免費諮詢，讓我們為您打造專屬的醫療行銷策略"
+        sectionId="cta-title"
+        primaryButton={{
+          href: "/contact",
+          text: "預約諮詢",
+          variant: "primary"
+        }}
+        secondaryButton={{
+          href: "/case",
+          text: "查看案例",
+          variant: "secondary"
+        }}
+      />
+
+      {/* Service Feature Section */}
+      <ServiceFeature />
+      
+
 
       {/* 快速預約CTA和表單 */}
       <section className="py-24 bg-gray-50 relative overflow-hidden">
