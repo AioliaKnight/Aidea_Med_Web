@@ -112,29 +112,6 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   // 提前定義函數類型，解決循環引用問題
   type TryFallbackImagesType = (image: CaseImage, currentIndex: number) => void;
   
-  // 圖片錯誤處理
-  const handleImageError = useCallback((url: string) => {
-    setErrorImages(prev => ({
-      ...prev,
-      [url]: true
-    }))
-    
-    // 在完成初始化後才嘗試使用備用圖片
-    // 找到對應的圖片並使用備用 URL
-    const image = caseImages.find(img => img.url === url);
-    if (image && image.fallbackUrls) {
-      const currentIndex = image.fallbackUrls.indexOf(url);
-      // 如果是第一個URL，從索引0開始嘗試
-      if (currentIndex === -1) {
-        tryFallbackImages(image, 0);
-      } else if (currentIndex < image.fallbackUrls.length - 1) {
-        // 如果不是最後一個URL，嘗試下一個
-        tryFallbackImages(image, currentIndex);
-      }
-    }
-  // 暫時不要在此處添加 tryFallbackImages 作為依賴項，以避免循環引用
-  }, [caseImages]);
-  
   // 嘗試載入圖片的備用格式
   const tryFallbackImages = useCallback<TryFallbackImagesType>((image: CaseImage, currentIndex: number = 0) => {
     if (!image.fallbackUrls || currentIndex >= (image.fallbackUrls.length - 1)) return;
@@ -157,6 +134,25 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     };
     img.src = fallbackUrl;
   }, [handleImageLoad]); // 只依賴於 handleImageLoad
+  
+  // 圖片錯誤處理
+  const handleImageError = useCallback((url: string) => {
+    setErrorImages(prev => ({
+      ...prev,
+      [url]: true
+    }));
+    
+    // 在完成初始化後才嘗試使用備用圖片
+    const image = caseImages.find(img => img.url === url);
+    if (image && image.fallbackUrls) {
+      const currentIndex = image.fallbackUrls.indexOf(url);
+      if (currentIndex === -1) {
+        tryFallbackImages(image, 0);
+      } else if (currentIndex < image.fallbackUrls.length - 1) {
+        tryFallbackImages(image, currentIndex);
+      }
+    }
+  }, [caseImages, tryFallbackImages]);
   
   // 使用WebP格式預載入圖片
   const preloadImages = useCallback(() => {
@@ -303,12 +299,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const hasError = errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]));
     const imgUrl = getImageUrl(image);
     
-    // 使用極為直接的渲染方式，無需等待載入
     return (
-      <div className="absolute inset-0 flex items-center justify-center" style={{background: `linear-gradient(to bottom, #e5e7eb, #f3f4f6)`}}>
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
         {/* 圖片容器 */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* 1. 預設靜態背景圖 - 實際佔位 */}
+          {/* 預設背景 */}
           <div 
             className="absolute inset-0 bg-center bg-cover" 
             style={{
@@ -318,31 +313,36 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             }}
           />
 
-          {/* 2. 實際圖片 - 已設置立即顯示 */}
+          {/* 實際圖片 */}
           <img 
             src={imgUrl}
             alt={image.alt || `案例圖片 ${index + 1}`}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: isInModal ? fitMode : 'cover', 
-              opacity: isLoaded ? 1 : 0.7,
-              transition: 'opacity 0.3s ease'
-            }}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              isLoaded ? 'opacity-100' : 'opacity-70'
+            }`}
             onError={() => handleImageError(image.url)}
             onLoad={() => handleImageLoad(image.url)}
           />
         </div>
         
-        {/* 加載指示器 - 僅在圖片加載過程顯示 */}
-        {!isLoaded && (
+        {/* 加載指示器 */}
+        {!isLoaded && !hasError && (
           <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         )}
+        
+        {/* 錯誤指示器 */}
+        {hasError && (
+          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        )}
       </div>
     )
-  }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode])
+  }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name])
 
   // 手機版圖片項目
   const renderMobileImageItem = (image: CaseImage, index: number) => (
