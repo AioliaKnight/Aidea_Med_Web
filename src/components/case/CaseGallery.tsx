@@ -223,11 +223,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const hasError = errorImages[image.url]
     const imgUrl = getImageUrl(image.url)
     
-    // 純HTML方式渲染圖片，確保最大兼容性
+    // 使用更直接的渲染方法，確保圖片立即可見
     return (
       <>
-        {/* 始終顯示的背景圖層 - 不會消失 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center">
+        {/* 固定背景 - 不使用動畫 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-200 to-gray-100 flex items-center justify-center">
           {!isLoaded && (
             <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -235,68 +235,45 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
           )}
         </div>
         
-        {/* 使用div包裹，確保正確的層疊關係 */}
-        <div className="absolute inset-0 bg-transparent">
-          <Image
+        {/* 圖片層 - 默認有一定不透明度 */}
+        <div className="absolute inset-0 z-[1]">
+          <img 
             src={imgUrl}
             alt={image.alt || `案例圖片 ${index + 1}`}
-            fill
             className={`
-              transition-opacity duration-700
-              ${isLoaded ? 'opacity-100' : 'opacity-0'}
-              ${isInModal 
-                ? `object-${fitMode}` 
-                : 'object-cover group-hover:scale-[1.03] transition-transform duration-500'}
+              w-full h-full object-cover
+              ${isInModal ? `object-${fitMode}` : 'object-cover group-hover:scale-[1.03]'}
+              ${isLoaded ? 'opacity-100' : 'opacity-60'}
+              transition-all duration-300
             `}
-            sizes={isInModal 
-              ? "(max-width: 1280px) 100vw, 1280px" 
-              : isMobile
-                ? "85vw"
-                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            }
-            priority={true}
-            loading="eager"
-            quality={isInModal ? 95 : index < 3 ? 85 : 75}
             onError={() => handleImageError(image.url)}
             onLoad={() => handleImageLoad(image.url)}
-            unoptimized={isInModal} // 在模態框中顯示原始圖片，保持最高品質
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
           />
         </div>
       </>
     )
-  }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode, isMobile])
+  }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode])
 
   // 手機版圖片項目
   const renderMobileImageItem = (image: CaseImage, index: number) => (
     <div
       key={`case-image-${caseId}-${index}`}
       className="flex-none w-[85vw] snap-center snap-always"
-      // 使用更簡單的點擊處理，不依賴複雜的觸控事件
       onClick={() => openModal(index)}
     >
       <div 
         className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200"
-        // 添加多種觸控事件處理
-        onTouchStart={() => {}} // 空函數確保觸控事件被捕獲
-        onTouchEnd={() => openModal(index)}
+        // 簡化觸控處理，只保留點擊事件
       >
         {renderImage(image, index)}
         
         {/* 圖片指示器 */}
-        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-[5]">
           {index + 1}/{caseImages.length}
         </div>
         
-        {/* 懸停/觸控效果 - 簡化 */}
-        <div className="absolute inset-0 bg-black/10 hover:bg-black/20 active:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-          <div className="text-white opacity-70">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
+        {/* 觸控效果 - 始終有輕微陰影 */}
+        <div className="absolute inset-0 bg-black/5 z-[2]"></div>
       </div>
       {image.caption && (
         <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
@@ -316,24 +293,21 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         initial="hidden"
         animate="visible"
         custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-gray-100 to-gray-200 ${
+        className={`relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-gray-200 to-gray-100 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
-        onTouchStart={() => {}} // 空函數確保觸控事件被捕獲
-        onTouchEnd={(e) => {
-          e.stopPropagation()
-          openModal(index)
-        }}
       >
         {renderImage(image, index)}
         
-        {/* 統一懸停/觸控效果 */}
-        <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 group-active:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-          <div className="text-white opacity-0 group-hover:opacity-70 transition-opacity duration-300">
-            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+        {/* 簡化懸停效果 */}
+        <div className="absolute inset-0 z-[2] bg-black/5 group-hover:bg-black/20 transition-colors duration-300">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-white opacity-0 group-hover:opacity-70 transition-opacity duration-300">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -403,7 +377,30 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                 {/* 添加額外的背景保證 */}
                 <div className="absolute inset-0 bg-gradient-to-b from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-700" />
                 
-                {renderImage(caseImages[activeImage], activeImage, true)}
+                {/* 模態框使用普通img標籤，確保兼容性和立即顯示 */}
+                {caseImages[activeImage].type === 'video' ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <iframe
+                      src={caseImages[activeImage].url}
+                      className="w-full h-full"
+                      style={{ border: 'none', overflow: 'hidden' }}
+                      scrolling="no"
+                      frameBorder="0"
+                      allowFullScreen
+                      title={`${name} - 案例視頻`}
+                    />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <img
+                      src={getImageUrl(caseImages[activeImage].url)}
+                      alt={caseImages[activeImage].alt || `案例圖片 ${activeImage + 1}`}
+                      className={`max-h-full max-w-full object-${fitMode}`}
+                      onError={() => handleImageError(caseImages[activeImage].url)}
+                      onLoad={() => handleImageLoad(caseImages[activeImage].url)}
+                    />
+                  </div>
+                )}
                 
                 {/* 切換顯示模式按鈕 */}
                 <button
@@ -503,18 +500,12 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                         </div>
                       ) : (
                         <div className="absolute inset-0 z-10">
-                          <Image
+                          <img
                             src={getImageUrl(image.url)}
                             alt={image.alt || `縮圖 ${idx + 1}`}
-                            fill
-                            className="object-cover"
-                            priority={true}
-                            loading="eager"
-                            sizes="56px"
-                            quality={40}
+                            className="w-full h-full object-cover"
                             onError={() => handleImageError(image.url)}
-                            placeholder="blur"
-                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
+                            onLoad={() => handleImageLoad(image.url)}
                           />
                         </div>
                       )}
