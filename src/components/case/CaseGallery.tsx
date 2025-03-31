@@ -35,7 +35,25 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({})
   const [errorImages, setErrorImages] = useState<Record<string, boolean>>({})
   const [fitMode, setFitMode] = useState<'contain' | 'cover'>('contain')
+  const [isMobile, setIsMobile] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
+  
+  // 偵測手機瀏覽器
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    // 初始檢查
+    checkMobile()
+    
+    // 監聽視窗大小變化
+    window.addEventListener('resize', checkMobile)
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile)
+    }
+  }, [])
   
   // 使用 useMemo 生成圖片集，避免重複計算
   const caseImages = useMemo(() => {
@@ -255,6 +273,17 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     setFitMode(prev => prev === 'contain' ? 'cover' : 'contain')
   }, [])
   
+  // 圖片網格樣式 - 優化手機顯示
+  const gridLayout = useMemo(() => {
+    if (isMobile) {
+      // 手機上使用水平滾動，而不是網格
+      return "flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x snap-mandatory"
+    }
+    return layout === 'masonry' 
+      ? "columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5"
+      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+  }, [layout, isMobile])
+  
   // 渲染圖片元素
   const renderImage = useCallback((image: CaseImage, index: number, isInModal = false) => {
     if (image.type === 'video') {
@@ -278,36 +307,35 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const imgUrl = getImageUrl(image);
     
     return (
-      <div className="relative w-full h-full bg-gray-100">
-        {/* 實際圖片 */}
-        <img 
-          src={imgUrl}
-          alt={image.alt || `案例圖片 ${index + 1}`}
-          className={`relative z-5 w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-70'
-          }`}
-          onError={() => handleImageError(image.url)}
-          onLoad={() => handleImageLoad(image.url)}
-          loading={index === 0 ? "eager" : "lazy"}
-        />
+      <div className="absolute inset-0">
+        {/* 圖片容器 */}
+        <div className="absolute inset-0">
+          {/* 實際圖片 */}
+          <img 
+            src={imgUrl}
+            alt={image.alt || `案例圖片 ${index + 1}`}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              isLoaded ? 'opacity-100' : 'opacity-70'
+            }`}
+            onError={() => handleImageError(image.url)}
+            onLoad={() => handleImageLoad(image.url)}
+            loading={index === 0 ? "eager" : "lazy"}
+          />
+        </div>
         
-        {/* 加載指示器 */} 
+        {/* 加載指示器 */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-100/80">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
+          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         )}
         
         {/* 錯誤指示器 */}
         {hasError && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-100/80">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
+          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
           </div>
         )}
       </div>
@@ -354,8 +382,40 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
-        {/* 使用統一的 renderImage 函數 */}
-        {renderImage(image, index)}
+        {/* 預設背景 */}
+        <div className="absolute inset-0 bg-gray-200"></div>
+        
+        {/* 圖片 */}
+        <img 
+          src={getImageUrl(image)}
+          alt={image.alt || `案例圖片 ${index + 1}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            loadedImages[image.url] ? 'opacity-100' : 'opacity-70'
+          }`}
+          onError={() => handleImageError(image.url)}
+          onLoad={() => handleImageLoad(image.url)}
+          loading={index === 0 ? "eager" : "lazy"}
+        />
+        
+        {/* 加載指示器 */}
+        {!loadedImages[image.url] && !errorImages[image.url] && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          </div>
+        )}
+        
+        {/* 錯誤指示器 */}
+        {errorImages[image.url] && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+          </div>
+        )}
         
         {/* 懸停效果覆蓋層 */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300">
@@ -431,41 +491,28 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
 
   return (
     <>
-      {/* 圖片輪播/網格區域 */}
-      <div className={`
-        ${layout === 'masonry' 
-          ? 'md:columns-2 lg:columns-3 md:gap-5 md:space-y-5' // Desktop masonry
-          : 'md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5' // Desktop grid
-        }
-        flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x snap-mandatory // Mobile flex scroll
-        md:flex-none md:overflow-visible md:pb-0 md:snap-none // Reset mobile styles for desktop
-      `}>
+      {/* 圖片輪播區域 */}
+      <div className={gridLayout}>
         {caseImages.map((image, index) => (
-          // Render both, hide/show with CSS
-          <React.Fragment key={`case-item-wrapper-${caseId}-${index}`}>
-            {/* Mobile Item - Hidden on md and up */} 
-            <div className="md:hidden">
-              {renderMobileImageItem(image, index)}
-            </div>
-            {/* Desktop Item - Hidden below md */} 
-            <div className="hidden md:block">
-              {renderDesktopImageItem(image, index)}
-            </div>
-          </React.Fragment>
+          isMobile 
+            ? renderMobileImageItem(image, index) 
+            : renderDesktopImageItem(image, index)
         ))}
       </div>
       
-      {/* 手機版輪播指示器 - Hidden on md and up */}
-      <div className="flex justify-center gap-1 mt-4 md:hidden">
-        {caseImages.map((_, idx) => (
-          <div 
-            key={`indicator-${idx}`}
-            className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-              idx === activeImage ? 'bg-primary' : 'bg-gray-300'
-            }`}
-          />
-        ))}
-      </div>
+      {/* 手機版輪播指示器 */}
+      {isMobile && (
+        <div className="flex justify-center gap-1 mt-4">
+          {caseImages.map((_, idx) => (
+            <div 
+              key={`indicator-${idx}`}
+              className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                idx === activeImage ? 'bg-primary' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 圖片模態框 */}
       <AnimatePresence>
@@ -483,7 +530,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className={`relative w-full ${layout === 'masonry' ? 'h-[90vh] max-w-full mx-2' : 'max-w-6xl mx-auto h-[85vh]'} bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden`}
+              className={`relative w-full ${isMobile ? 'h-[90vh] max-w-full mx-2' : 'max-w-6xl mx-auto h-[85vh]'} bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden`}
               onClick={(e) => e.stopPropagation()}
             >
               {/* 關閉按鈕 */}
@@ -498,7 +545,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               </button>
 
               {/* 主圖區 */}
-              <div className={`relative ${layout === 'masonry' ? 'h-[65vh]' : 'h-[70vh]'} bg-gray-100 dark:bg-gray-800`}>
+              <div className={`relative ${isMobile ? 'h-[65vh]' : 'h-[70vh]'} bg-gray-100 dark:bg-gray-800`}>
                 {renderModalImage()}
                 
                 {/* 切換顯示模式按鈕 */}
@@ -622,7 +669,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                       )}
                       
                       {/* 縮圖索引指示器 - 僅在手機上顯示 */}
-                      {layout === 'masonry' && (
+                      {isMobile && (
                         <div className="absolute bottom-0 right-0 bg-black/60 text-white text-[8px] px-1 z-10">
                           {idx + 1}
                         </div>
