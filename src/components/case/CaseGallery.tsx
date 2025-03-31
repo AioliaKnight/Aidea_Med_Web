@@ -4,7 +4,11 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { caseAnimations } from '@/utils/animations'
-import { generateCaseImageUrl, handleCaseImageError } from '@/utils/case'
+import { 
+  generateCaseImageUrl, 
+  generateCaseImageUrlWithFallbacks, 
+  handleCaseImageError 
+} from '@/utils/case'
 import type { CaseGalleryProps, CaseImage } from '@/types/case'
 
 /**
@@ -64,10 +68,13 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     
     for (let i = 1; i <= imageCount; i++) {
       const url = generateCaseImageUrl(caseId, i)
+      const fallbackUrls = generateCaseImageUrlWithFallbacks(caseId, i)
+      
       images.push({
         url,
         alt: `${name} - 案例圖片 ${i}`,
-        type: 'image'
+        type: 'image',
+        fallbackUrls
       })
     }
     
@@ -102,15 +109,56 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     }
   }, [])
   
+  // 提前定義函數類型，解決循環引用問題
+  type TryFallbackImagesType = (image: CaseImage, currentIndex: number) => void;
+  
   // 圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
     setErrorImages(prev => ({
       ...prev,
       [url]: true
     }))
-  }, [])
+    
+    // 在完成初始化後才嘗試使用備用圖片
+    // 找到對應的圖片並使用備用 URL
+    const image = caseImages.find(img => img.url === url);
+    if (image && image.fallbackUrls) {
+      const currentIndex = image.fallbackUrls.indexOf(url);
+      // 如果是第一個URL，從索引0開始嘗試
+      if (currentIndex === -1) {
+        tryFallbackImages(image, 0);
+      } else if (currentIndex < image.fallbackUrls.length - 1) {
+        // 如果不是最後一個URL，嘗試下一個
+        tryFallbackImages(image, currentIndex);
+      }
+    }
+  // 暫時不要在此處添加 tryFallbackImages 作為依賴項，以避免循環引用
+  }, [caseImages]);
   
-  // 使用WebP格式預載入圖片 (優先使用WebP格式以加快載入)
+  // 嘗試載入圖片的備用格式
+  const tryFallbackImages = useCallback<TryFallbackImagesType>((image: CaseImage, currentIndex: number = 0) => {
+    if (!image.fallbackUrls || currentIndex >= (image.fallbackUrls.length - 1)) return;
+    
+    const fallbackUrl = image.fallbackUrls[currentIndex + 1];
+    
+    // 創建圖片實例嘗試載入
+    const img = new window.Image();
+    img.onload = () => handleImageLoad(fallbackUrl);
+    img.onerror = () => {
+      setErrorImages(prev => ({
+        ...prev,
+        [fallbackUrl]: true
+      }));
+      
+      // 繼續嘗試下一個備用格式
+      if (image.fallbackUrls && currentIndex + 1 < image.fallbackUrls.length - 1) {
+        tryFallbackImages(image, currentIndex + 1);
+      }
+    };
+    img.src = fallbackUrl;
+  }, [handleImageLoad]); // 只依賴於 handleImageLoad
+  
+  // 使用WebP格式預載入圖片
   const preloadImages = useCallback(() => {
     if (isInitialized) return // 避免重複預載入
     
@@ -130,29 +178,41 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     caseImages.forEach((image, index) => {
       if (image.type !== 'image') return
       
-      // 創建圖片實例預載入
-      const img = new window.Image()
-      
-      // 載入完成處理
-      img.onload = () => handleImageLoad(image.url)
-      img.onerror = () => {
-        handleImageError(image.url)
+      // 如果有備用URL，嘗試按優先順序載入
+      if (image.fallbackUrls && image.fallbackUrls.length > 0) {
+        // 使用備用URL中的第一個（可能是WebP）
+        const primaryUrl = image.fallbackUrls[0];
+        const img = new window.Image();
+        img.onload = () => handleImageLoad(primaryUrl);
+        img.onerror = () => {
+          setErrorImages(prev => ({
+            ...prev,
+            [primaryUrl]: true
+          }));
+          // 嘗試後續格式
+          tryFallbackImages(image, 0);
+        };
+        img.src = primaryUrl;
+      } else {
+        // 創建圖片實例預載入
+        const img = new window.Image();
         
-        // 如果WebP載入失敗，嘗試載入原始圖片
-        if (image.url.includes('.webp')) {
-          const originalUrl = image.url.replace('.webp', '.jpg')
-          const imgOriginal = new window.Image()
-          imgOriginal.src = originalUrl
-          imgOriginal.onload = () => handleImageLoad(originalUrl)
-        }
+        // 載入完成處理
+        img.onload = () => handleImageLoad(image.url);
+        img.onerror = () => {
+          setErrorImages(prev => ({
+            ...prev,
+            [image.url]: true
+          }));
+        };
+        
+        // 開始載入
+        img.src = image.url;
       }
-      
-      // 開始載入
-      img.src = image.url
     })
     
     setIsInitialized(true)
-  }, [caseImages, handleImageLoad, handleImageError, isInitialized])
+  }, [caseImages, handleImageLoad, isInitialized, tryFallbackImages]);
   
   // 初始化圖片預載入
   useEffect(() => {
@@ -160,9 +220,29 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   }, [preloadImages])
   
   // 獲取圖片URL (處理錯誤情況)
-  const getImageUrl = useCallback((url: string) => {
-    return errorImages[url] ? handleCaseImageError(url) : url
-  }, [errorImages])
+  const getImageUrl = useCallback((image: CaseImage) => {
+    // 首先檢查主URL是否已載入
+    if (loadedImages[image.url]) {
+      return image.url;
+    }
+    
+    // 如果主URL有錯誤，檢查是否有任何已載入的備用URL
+    if (image.fallbackUrls) {
+      for (const fallbackUrl of image.fallbackUrls) {
+        if (loadedImages[fallbackUrl] && !errorImages[fallbackUrl]) {
+          return fallbackUrl;
+        }
+      }
+    }
+    
+    // 如果所有URL都失敗，使用預設圖片
+    if (errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]))) {
+      return handleCaseImageError(image.url);
+    }
+    
+    // 預設返回主URL
+    return image.url;
+  }, [loadedImages, errorImages]);
   
   // 模態框控制
   const openModal = useCallback((index: number) => {
@@ -219,9 +299,9 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       )
     }
     
-    const isLoaded = loadedImages[image.url]
-    const hasError = errorImages[image.url]
-    const imgUrl = getImageUrl(image.url)
+    const isLoaded = loadedImages[image.url] || (image.fallbackUrls && image.fallbackUrls.some(url => loadedImages[url]));
+    const hasError = errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]));
+    const imgUrl = getImageUrl(image);
     
     // 使用極為直接的渲染方式，無需等待載入
     return (
@@ -343,8 +423,8 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       )
     }
     
-    const isLoaded = loadedImages[image.url]
-    const imgUrl = getImageUrl(image.url)
+    const isLoaded = loadedImages[image.url] || (image.fallbackUrls && image.fallbackUrls.some(url => loadedImages[url]));
+    const imgUrl = getImageUrl(image);
     
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
@@ -548,7 +628,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                           {/* 實際縮圖 */}
                           <div className="absolute inset-0 z-10">
                             <img
-                              src={getImageUrl(image.url)}
+                              src={getImageUrl(image)}
                               alt={image.alt || `縮圖 ${idx + 1}`}
                               className="w-full h-full object-cover"
                               onError={() => handleImageError(image.url)}

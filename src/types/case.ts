@@ -85,6 +85,7 @@ export interface CaseImage {
   width?: number; // 圖片寬度
   height?: number; // 圖片高度
   priority?: boolean; // 是否優先載入
+  fallbackUrls?: string[]; // 備用圖片URL（多種格式）
 }
 
 // 案例時間軸項目介面

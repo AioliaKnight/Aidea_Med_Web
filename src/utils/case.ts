@@ -13,6 +13,7 @@ const CONSTANTS = {
     THUMBNAILS: '/images/cases/thumbnails',
     PLACEHOLDER: '/images/case-placeholder.jpg'
   },
+  IMAGE_EXTENSIONS: ['jpg', 'webp', 'png'], // 支援的圖片格式
   VARIANTS: {
     PRIMARY_COLOR: '#E53E3E',
     SECONDARY_COLOR: '#1A202C',
@@ -69,7 +70,21 @@ export const generateCaseImageUrl = (caseId: string, index: number): string => {
   if (!caseId || index < 1) {
     return CONSTANTS.IMAGE_PATHS.PLACEHOLDER;
   }
+  
+  // 預設使用 jpg 格式
   return `${CONSTANTS.IMAGE_PATHS.CASES}/${caseId}/${index}.jpg`;
+}
+
+// 嘗試多種格式的圖片 URL
+export const generateCaseImageUrlWithFallbacks = (caseId: string, index: number): string[] => {
+  if (!caseId || index < 1) {
+    return [CONSTANTS.IMAGE_PATHS.PLACEHOLDER];
+  }
+  
+  // 生成所有可能的格式的 URL
+  return CONSTANTS.IMAGE_EXTENSIONS.map(ext => 
+    `${CONSTANTS.IMAGE_PATHS.CASES}/${caseId}/${index}.${ext}`
+  );
 }
 
 export const generateCaseThumbnailUrl = (caseId: string): string => {
@@ -78,6 +93,18 @@ export const generateCaseThumbnailUrl = (caseId: string): string => {
     return CONSTANTS.IMAGE_PATHS.PLACEHOLDER;
   }
   return `${CONSTANTS.IMAGE_PATHS.THUMBNAILS}/${caseId}.jpg`;
+}
+
+// 嘗試多種格式的縮圖 URL
+export const generateCaseThumbnailUrlWithFallbacks = (caseId: string): string[] => {
+  if (!caseId) {
+    return [CONSTANTS.IMAGE_PATHS.PLACEHOLDER];
+  }
+  
+  // 生成所有可能的格式的 URL
+  return CONSTANTS.IMAGE_EXTENSIONS.map(ext => 
+    `${CONSTANTS.IMAGE_PATHS.THUMBNAILS}/${caseId}.${ext}`
+  );
 }
 
 export const handleCaseImageError = (url: string, fallbackUrl: string = CONSTANTS.DEFAULT_FALLBACK_IMAGE): string => {
@@ -102,7 +129,8 @@ export const generateCaseGallery = (caseId: string, count: number = 6): CaseImag
     images.push({
       url: generateCaseImageUrl(caseId, i),
       alt: `案例圖片 ${i}`,
-      priority: i === 1 // 首張圖優先載入
+      priority: i === 1, // 首張圖優先載入
+      fallbackUrls: generateCaseImageUrlWithFallbacks(caseId, i) // 添加備用 URL
     });
   }
   
