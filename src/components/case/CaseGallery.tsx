@@ -32,6 +32,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   const [errorImages, setErrorImages] = useState<Record<string, boolean>>({})
   const [fitMode, setFitMode] = useState<'contain' | 'cover'>('contain')
   const [isMobile, setIsMobile] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
   
   // 偵測手機瀏覽器
   useEffect(() => {
@@ -88,6 +89,17 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       ...prev,
       [url]: true
     }))
+    
+    // 嘗試將載入成功的圖片快取到localStorage
+    try {
+      const cachedImages = JSON.parse(localStorage.getItem('cachedImageUrls') || '{}')
+      localStorage.setItem('cachedImageUrls', JSON.stringify({
+        ...cachedImages,
+        [url]: true
+      }))
+    } catch (e) {
+      // 忽略localStorage錯誤
+    }
   }, [])
   
   // 圖片錯誤處理
@@ -98,18 +110,54 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     }))
   }, [])
   
-  // 緩存預載入方法，解決手機上可能的圖片載入問題
-  useEffect(() => {
-    // 預載入前三張圖片，確保在手機上能正確顯示
-    caseImages.slice(0, 3).forEach((image, index) => {
-      if (image.type === 'image') {
-        const img = new window.Image()
-        img.src = image.url
-        img.onload = () => handleImageLoad(image.url)
-        img.onerror = () => handleImageError(image.url)
+  // 使用WebP格式預載入圖片 (優先使用WebP格式以加快載入)
+  const preloadImages = useCallback(() => {
+    if (isInitialized) return // 避免重複預載入
+    
+    // 檢查本地緩存
+    try {
+      const cachedImages = JSON.parse(localStorage.getItem('cachedImageUrls') || '{}')
+      Object.keys(cachedImages).forEach(url => {
+        if (cachedImages[url]) {
+          handleImageLoad(url)
+        }
+      })
+    } catch (e) {
+      // 忽略localStorage錯誤
+    }
+    
+    // 預載入所有圖片
+    caseImages.forEach((image, index) => {
+      if (image.type !== 'image') return
+      
+      // 創建圖片實例預載入
+      const img = new window.Image()
+      
+      // 載入完成處理
+      img.onload = () => handleImageLoad(image.url)
+      img.onerror = () => {
+        handleImageError(image.url)
+        
+        // 如果WebP載入失敗，嘗試載入原始圖片
+        if (image.url.includes('.webp')) {
+          const originalUrl = image.url.replace('.webp', '.jpg')
+          const imgOriginal = new window.Image()
+          imgOriginal.src = originalUrl
+          imgOriginal.onload = () => handleImageLoad(originalUrl)
+        }
       }
+      
+      // 開始載入
+      img.src = image.url
     })
-  }, [caseImages, handleImageLoad, handleImageError])
+    
+    setIsInitialized(true)
+  }, [caseImages, handleImageLoad, handleImageError, isInitialized])
+  
+  // 初始化圖片預載入
+  useEffect(() => {
+    preloadImages()
+  }, [preloadImages])
   
   // 獲取圖片URL (處理錯誤情況)
   const getImageUrl = useCallback((url: string) => {
@@ -175,22 +223,25 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const hasError = errorImages[image.url]
     const imgUrl = getImageUrl(image.url)
     
+    // 確保即使圖片未加載完成也有內容顯示
     return (
       <>
-        {/* 載入指示器 */}
-        {!isLoaded && !hasError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        {/* 預設顯示的背景與佔位元素 - 始終顯示避免黑屏 */}
+        <div className={`absolute inset-0 bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center
+          ${isLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+          <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
-        )}
+        </div>
         
+        {/* 圖片元素 - 即使未載入完成也不會是完全透明的 */}
         <Image
           src={imgUrl}
           alt={image.alt || `案例圖片 ${index + 1}`}
           fill
           className={`
-            transition-all duration-300
-            ${isLoaded ? 'opacity-100' : 'opacity-0'}
+            transition-all duration-500
+            ${isLoaded ? 'opacity-100' : 'opacity-30'} 
             ${isInModal 
               ? `object-${fitMode}` 
               : 'object-cover group-hover:scale-[1.03] transition-transform duration-500'}
@@ -201,18 +252,15 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               ? "85vw"
               : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           }
-          priority={index < 3 || isInModal}
-          loading={index < 3 ? "eager" : "lazy"}
+          priority={index < 4 || isInModal}
+          loading="eager"
           quality={isInModal ? 95 : index < 3 ? 85 : 75}
           onError={() => handleImageError(image.url)}
           onLoad={() => handleImageLoad(image.url)}
           unoptimized={isInModal} // 在模態框中顯示原始圖片，保持最高品質
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
         />
-        
-        {/* 手機版增加霧面效果以防止黑屏 */}
-        {isMobile && !isInModal && !isLoaded && (
-          <div className="absolute inset-0 bg-white/30 backdrop-blur-sm" />
-        )}
       </>
     )
   }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode, isMobile])
@@ -224,7 +272,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       className="flex-none w-[85vw] snap-center snap-always"
       onClick={() => openModal(index)}
     >
-      <div className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gray-100">
+      <div className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200">
         {renderImage(image, index)}
         
         {/* 圖片指示器 */}
@@ -259,7 +307,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         initial="hidden"
         animate="visible"
         custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md ${
+        className={`relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-gray-100 to-gray-200 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
