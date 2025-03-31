@@ -307,25 +307,15 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const imgUrl = getImageUrl(image);
     
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+      <div className="absolute inset-0">
         {/* 圖片容器 */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* 預設背景 */}
-          <div 
-            className="absolute inset-0 bg-center bg-cover" 
-            style={{
-              backgroundImage: `url('/images/case-placeholder.jpg')`,
-              opacity: isLoaded ? 0 : 0.3,
-              transition: 'opacity 0.3s ease'
-            }}
-          />
-
+        <div className="absolute inset-0">
           {/* 實際圖片 */}
           <img 
             src={imgUrl}
             alt={image.alt || `案例圖片 ${index + 1}`}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
-              isLoaded ? 'opacity-100' : 'opacity-50'
+              isLoaded ? 'opacity-100' : 'opacity-70'
             }`}
             onError={() => handleImageError(image.url)}
             onLoad={() => handleImageLoad(image.url)}
@@ -387,7 +377,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         initial="hidden"
         animate="visible"
         custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md bg-gray-200 ${
+        className={`relative overflow-hidden rounded-lg shadow-md bg-gray-100 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
