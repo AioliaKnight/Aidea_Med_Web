@@ -376,7 +376,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   )
   
   // 桌面版圖片項目
-  const renderDesktopImageItem = (image: CaseImage, index: number) => (
+  const renderDesktopImageItem = (image: CaseImage, index: number) =>
     <div
       key={`case-image-${caseId}-${index}`}
       className={`group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid mb-5' : ''}`}
@@ -392,6 +392,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
+        {/* 使用與手機版相同的渲染邏輯 */}
         {renderImage(image, index)}
         
         {/* 懸停效果覆蓋層 */}
@@ -409,7 +410,6 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
       )}
     </div>
-  )
 
   // 模態框圖片渲染
   const renderModalImage = useCallback(() => {
