@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo } from 'react'
+import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo, lazy } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
@@ -435,14 +435,6 @@ const HeroSection = memo(function HeroSection() {
   // 追蹤當前顯示的標題
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   
-  // 預加載背景圖片 - 修正為使用window.Image
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const preloadHeroImage = new window.Image();
-      preloadHeroImage.src = '/images/bgline-w-optimized.webp';
-    }
-  }, []);
-  
   // 定期切換標題
   useEffect(() => {
     const interval = setInterval(() => {
@@ -468,30 +460,31 @@ const HeroSection = memo(function HeroSection() {
       aria-label="網站主要橫幅"
       id="hero"
     >
-      {/* 背景設計 - 優化版本 */}
+      {/* 優化背景 - 移除多餘裝飾，使用更簡潔的結構 */}
       <div className="absolute inset-0">
-        {/* 純色背景 - 立即呈現 */}
-        <div className="absolute inset-0 bg-primary"></div>
+        {/* 使用純色背景代替圖片，避免LCP問題 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
-        {/* 使用Next.js Image組件優化背景加載 */}
-        <div className="absolute inset-0 overflow-hidden">
-          <Image 
-            src="/images/bgline-w-optimized.webp" 
-            alt=""
-            fill
-            priority={true}
-            sizes="100vw"
-            quality={85}
-            className="object-cover opacity-70"
-            style={{
-              objectPosition: 'center',
-              transform: 'translateZ(0)', // 強制硬體加速
-            }}
-          />
-        </div>
-        
-        {/* 背景覆蓋 */}
-        <div className="absolute inset-0 bg-primary/20"></div>
+        {/* 簡化的背景紋理，使用懶加載和較低品質設定 */}
+        <Image 
+          src="/images/bgline-w-optimized.webp" 
+          alt=""
+          fill
+          priority={false}
+          loading="lazy"
+          sizes="100vw"
+          quality={60}
+          className="object-cover opacity-100 mix-blend-overlay"
+          style={{
+            objectPosition: 'center'
+          }}
+          onLoad={() => {
+            // 圖片載入完成後的處理
+            if (window.performance && window.performance.mark) {
+              window.performance.mark('hero-image-loaded');
+            }
+          }}
+        />
       </div>
       
       {/* 主要標題內容區 */}
@@ -503,10 +496,6 @@ const HeroSection = memo(function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="px-4 sm:px-6 flex flex-col items-center text-center"
-            style={{ 
-              willChange: 'opacity',
-              transform: 'translateZ(0)' // 強制硬體加速
-            }}
           >
             {/* 統一標題結構 - 中文主副標題下方緊接英文主副標題 */}
             <div className="w-full max-w-4xl mx-auto">
@@ -542,28 +531,19 @@ const HeroSection = memo(function HeroSection() {
             <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
               <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6">
                 {tags.map((tag, index) => (
-                  <motion.span
+                  <span
                     key={tag.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.05 * index }}
-                    whileHover={{ color: "#ffffff" }}
-                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide cursor-pointer hover:text-white transition-colors whitespace-nowrap"
+                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide whitespace-nowrap"
                   >
                     {tag.name}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
             </div>
         
-            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 - 簡化動畫 */}
-            <motion.div 
-              className="mt-4 mb-5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-            >
-              <Link href="/contact" prefetch={false}> {/* 改為false，因這不是立即需要的資源 */}
+            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 - 移除不必要的動畫 */}
+            <div className="mt-4 mb-5">
+              <Link href="/contact" prefetch={false}>
                 <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10">
                   <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
                     A:
@@ -571,26 +551,19 @@ const HeroSection = memo(function HeroSection() {
                   <span className="font-medium">免費30分鐘專業顧問</span>
                 </span>
               </Link>
-            </motion.div>
+            </div>
             
-            {/* 預約按鈕下方的向下滾動指示器 - 指向MarketingSection - 簡化動畫 */}
-            <motion.div 
-              className="mt-20 flex justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.4 }}
-            >
-              <motion.div
+            {/* 預約按鈕下方的向下滾動指示器 - 移除不必要的動畫 */}
+            <div className="mt-20 flex justify-center">
+              <div
                 className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -2320,60 +2293,123 @@ const TestimonialSection = memo(function TestimonialSection() {
   );
 })
 
-// HomePage組件 - 使用直接的Suspense實現代碼分割
+// 最終組合 - 使用異步導入與Suspense優化首頁效能
 const HomePage = () => {
-  // 客戶端水合狀態追蹤
-  const [hydrated, setHydrated] = useState(false);
+  // 使用useState監測組件掛載狀態
+  const [isComponentMounted, setIsComponentMounted] = useState(false);
   
-  // 確保只在客戶端渲染後進行高級操作
+  // 等待組件掛載後再載入非關鍵組件
   useEffect(() => {
-    setHydrated(true);
+    // 使用requestIdleCallback (如有支援) 或 setTimeout 延遲載入
+    if ('requestIdleCallback' in window) {
+      // @ts-ignore - requestIdleCallback 類型定義問題
+      window.requestIdleCallback(() => {
+        setIsComponentMounted(true);
+      }, { timeout: 2000 });
+    } else {
+      setTimeout(() => {
+        setIsComponentMounted(true);
+      }, 1500);
+    }
+    
+    // 初始化性能標記
+    if (window.performance && window.performance.mark) {
+      window.performance.mark('homepage-mounted');
+    }
   }, []);
 
   return (
-    <ErrorBoundary>
-      <div className="flex flex-col min-h-screen">
-        {/* 立即渲染的核心區塊 */}
+    <>
+      {/* 立即顯示的首屏關鍵內容 - 不使用Suspense */}
+      <ErrorBoundary fallback={<div className="min-h-screen flex items-center justify-center">載入中...</div>}>
         <HeroSection />
-        
-        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+      </ErrorBoundary>
+      
+      {/* 第二優先級內容 - 使用Suspense防止阻塞 */}
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-20 bg-white"></div>}>
           <MarketingSection />
         </Suspense>
-        
-        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
-          <FeatureSection />
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
-          <StatsSection />
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
-          <ServiceSection />
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
-          <CaseStudiesSection />
-        </Suspense>
-        
-        {hydrated && (
-          <>
-            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+      </ErrorBoundary>
+      
+      {/* 非關鍵內容 - 僅在組件掛載後載入 */}
+      {isComponentMounted && (
+        <>
+          {/* 功能區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-16 bg-white"></div>}>
+              <FeatureSection />
+            </Suspense>
+          </ErrorBoundary>
+          
+          {/* 服務區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-24 bg-gray-50"></div>}>
+              <ServiceSection />
+            </Suspense>
+          </ErrorBoundary>
+          
+          {/* 統計區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-white"></div>}>
+              <StatsSection />
+            </Suspense>
+          </ErrorBoundary>
+          
+          {/* 案例研究區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-gray-50"></div>}>
+              <CaseStudiesSection />
+            </Suspense>
+          </ErrorBoundary>
+          
+          {/* 評價區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-16 bg-white"></div>}>
               <TestimonialSection />
             </Suspense>
-            
-            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          </ErrorBoundary>
+          
+          {/* 常見問題區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-gray-50"></div>}>
               <FAQSection />
             </Suspense>
-            
-            <Suspense fallback={<div className="h-60 bg-gray-50"></div>}>
+          </ErrorBoundary>
+          
+          {/* 聯絡區塊 */}
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-16 bg-white"></div>}>
               <ContactSection />
             </Suspense>
-          </>
-        )}
-      </div>
-    </ErrorBoundary>
+          </ErrorBoundary>
+        </>
+      )}
+      
+      {/* 添加懶加載性能監測 */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            // 監測非關鍵內容載入
+            const observer = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting && window.performance && window.performance.mark) {
+                  window.performance.mark('non-critical-content-visible');
+                  observer.disconnect();
+                }
+              });
+            });
+            
+            // 監測首屏外元素
+            setTimeout(() => {
+              const elementsToObserve = document.querySelectorAll('#marketing-section, #features-section');
+              elementsToObserve.forEach(el => observer.observe(el));
+            }, 1000);
+          `
+        }}
+      />
+    </>
   );
-};
+}
 
 export default HomePage; 
