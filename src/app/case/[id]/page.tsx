@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from 'react-countup'
 import { staggerContainer, fadeInUp } from '@/utils/animations'
 import { ErrorBoundary, CaseDetailErrorBoundary } from '@/components/common'
+import { trackViewedCases } from '@/utils/case'
 
 // 時間軸和案例詳情組件
 const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'))
@@ -98,6 +99,14 @@ export default function CaseDetailPage() {
                 setIsLiked(likedCases.includes(id))
               } catch (e) {
                 console.error('Error reading liked cases from localStorage', e)
+              }
+              
+              // 追蹤已瀏覽案例
+              try {
+                // 更新瀏覽記錄
+                trackViewedCases(id)
+              } catch (e) {
+                console.error('Error tracking viewed case', e)
               }
             }
           })
@@ -403,7 +412,13 @@ export default function CaseDetailPage() {
               >
                 <h2 className="text-2xl font-bold text-gray-900 mb-8">案例圖片</h2>
                 <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
-                  <CaseGallery caseId={caseStudy.id} name={caseStudy.name} />
+                  <CaseGallery 
+                    caseId={caseStudy.id} 
+                    name={caseStudy.name}
+                    layout="grid"
+                    aspectRatio="4/3"
+                    images={caseStudy.gallery}
+                  />
                 </Suspense>
               </motion.section>
               
