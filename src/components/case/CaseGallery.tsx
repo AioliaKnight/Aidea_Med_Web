@@ -308,6 +308,9 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     
     return (
       <div className="absolute inset-0">
+        {/* 預設背景 */}
+        <div className="absolute inset-0 bg-gray-100" />
+        
         {/* 圖片容器 */}
         <div className="absolute inset-0">
           {/* 實際圖片 */}
@@ -325,17 +328,21 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         
         {/* 加載指示器 */}
         {!isLoaded && !hasError && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
           </div>
         )}
         
         {/* 錯誤指示器 */}
         {hasError && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
           </div>
         )}
       </div>
@@ -377,44 +384,13 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         initial="hidden"
         animate="visible"
         custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md ${
+        className={`relative overflow-hidden rounded-lg shadow-md bg-gray-100 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
-        {/* 預設背景 */}
-        <div className="absolute inset-0 bg-gray-100" />
-        
-        {/* 圖片容器 */}
-        <div className="absolute inset-0">
-          {/* 實際圖片 */}
-          <img 
-            src={getImageUrl(image)}
-            alt={image.alt || `案例圖片 ${index + 1}`}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
-              loadedImages[image.url] ? 'opacity-100' : 'opacity-70'
-            }`}
-            onError={() => handleImageError(image.url)}
-            onLoad={() => handleImageLoad(image.url)}
-            loading={index === 0 ? "eager" : "lazy"}
-          />
-        </div>
-        
-        {/* 加載指示器 */}
-        {!loadedImages[image.url] && !errorImages[image.url] && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
-        
-        {/* 錯誤指示器 */}
-        {errorImages[image.url] && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-        )}
+        {/* 使用統一的 renderImage 函數 */}
+        {renderImage(image, index)}
         
         {/* 懸停效果覆蓋層 */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300">
