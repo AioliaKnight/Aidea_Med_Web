@@ -217,27 +217,34 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   
   // 獲取圖片URL (處理錯誤情況)
   const getImageUrl = useCallback((image: CaseImage) => {
+    // 確保 URL 是絕對路徑
+    const ensureAbsoluteUrl = (url: string) => {
+      if (url.startsWith('http')) return url;
+      if (url.startsWith('//')) return `https:${url}`;
+      return url.startsWith('/') ? url : `/${url}`;
+    };
+
     // 首先檢查主URL是否已載入
     if (loadedImages[image.url]) {
-      return image.url;
+      return ensureAbsoluteUrl(image.url);
     }
     
     // 如果主URL有錯誤，檢查是否有任何已載入的備用URL
     if (image.fallbackUrls) {
       for (const fallbackUrl of image.fallbackUrls) {
         if (loadedImages[fallbackUrl] && !errorImages[fallbackUrl]) {
-          return fallbackUrl;
+          return ensureAbsoluteUrl(fallbackUrl);
         }
       }
     }
     
     // 如果所有URL都失敗，使用預設圖片
     if (errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]))) {
-      return handleCaseImageError(image.url);
+      return ensureAbsoluteUrl(handleCaseImageError(image.url));
     }
     
     // 預設返回主URL
-    return image.url;
+    return ensureAbsoluteUrl(image.url);
   }, [loadedImages, errorImages]);
   
   // 模態框控制
@@ -308,7 +315,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             className="absolute inset-0 bg-center bg-cover" 
             style={{
               backgroundImage: `url('/images/case-placeholder.jpg')`,
-              opacity: isLoaded ? 0 : 0.6,
+              opacity: isLoaded ? 0 : 0.3,
               transition: 'opacity 0.3s ease'
             }}
           />
@@ -318,10 +325,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             src={imgUrl}
             alt={image.alt || `案例圖片 ${index + 1}`}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
-              isLoaded ? 'opacity-100' : 'opacity-70'
+              isLoaded ? 'opacity-100' : 'opacity-50'
             }`}
             onError={() => handleImageError(image.url)}
             onLoad={() => handleImageLoad(image.url)}
+            loading={index === 0 ? "eager" : "lazy"}
           />
         </div>
         
