@@ -223,34 +223,44 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const hasError = errorImages[image.url]
     const imgUrl = getImageUrl(image.url)
     
-    // 使用更直接的渲染方法，確保圖片立即可見
+    // 使用極為直接的渲染方式，無需等待載入
     return (
-      <>
-        {/* 固定背景 - 不使用動畫 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-200 to-gray-100 flex items-center justify-center">
-          {!isLoaded && (
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          )}
-        </div>
-        
-        {/* 圖片層 - 默認有一定不透明度 */}
-        <div className="absolute inset-0 z-[1]">
+      <div className="absolute inset-0 flex items-center justify-center" style={{background: `linear-gradient(to bottom, #e5e7eb, #f3f4f6)`}}>
+        {/* 圖片容器 */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* 1. 預設靜態背景圖 - 實際佔位 */}
+          <div 
+            className="absolute inset-0 bg-center bg-cover" 
+            style={{
+              backgroundImage: `url('/images/case-placeholder.jpg')`,
+              opacity: isLoaded ? 0 : 0.6,
+              transition: 'opacity 0.3s ease'
+            }}
+          />
+
+          {/* 2. 實際圖片 - 已設置立即顯示 */}
           <img 
             src={imgUrl}
             alt={image.alt || `案例圖片 ${index + 1}`}
-            className={`
-              w-full h-full object-cover
-              ${isInModal ? `object-${fitMode}` : 'object-cover group-hover:scale-[1.03]'}
-              ${isLoaded ? 'opacity-100' : 'opacity-60'}
-              transition-all duration-300
-            `}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: isInModal ? fitMode : 'cover', 
+              opacity: isLoaded ? 1 : 0.7,
+              transition: 'opacity 0.3s ease'
+            }}
             onError={() => handleImageError(image.url)}
             onLoad={() => handleImageLoad(image.url)}
           />
         </div>
-      </>
+        
+        {/* 加載指示器 - 僅在圖片加載過程顯示 */}
+        {!isLoaded && (
+          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
     )
   }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode])
 
@@ -262,18 +272,14 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       onClick={() => openModal(index)}
     >
       <div 
-        className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200"
-        // 簡化觸控處理，只保留點擊事件
+        className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gray-200"
       >
         {renderImage(image, index)}
         
         {/* 圖片指示器 */}
-        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-[5]">
+        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-20">
           {index + 1}/{caseImages.length}
         </div>
-        
-        {/* 觸控效果 - 始終有輕微陰影 */}
-        <div className="absolute inset-0 bg-black/5 z-[2]"></div>
       </div>
       {image.caption && (
         <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
@@ -293,18 +299,18 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         initial="hidden"
         animate="visible"
         custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-gray-200 to-gray-100 ${
+        className={`relative overflow-hidden rounded-lg shadow-md bg-gray-200 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
         {renderImage(image, index)}
         
-        {/* 簡化懸停效果 */}
-        <div className="absolute inset-0 z-[2] bg-black/5 group-hover:bg-black/20 transition-colors duration-300">
+        {/* 懸停效果覆蓋層 */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-white opacity-0 group-hover:opacity-70 transition-opacity duration-300">
-              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -316,6 +322,62 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       )}
     </div>
   )
+
+  // 模態框圖片渲染
+  const renderModalImage = useCallback(() => {
+    const image = caseImages[activeImage]
+    
+    if (image.type === 'video') {
+      return (
+        <div className="w-full h-full flex items-center justify-center bg-gray-800">
+          <iframe
+            src={image.url}
+            className="w-full h-full"
+            style={{ border: 'none', overflow: 'hidden' }}
+            scrolling="no"
+            frameBorder="0"
+            allowFullScreen
+            title={`${name} - 案例視頻`}
+          />
+        </div>
+      )
+    }
+    
+    const isLoaded = loadedImages[image.url]
+    const imgUrl = getImageUrl(image.url)
+    
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+        {/* 預設圖片作為背景 */}
+        <div 
+          className="absolute inset-0 bg-center bg-cover opacity-40 dark:opacity-20 blur-sm" 
+          style={{
+            backgroundImage: `url('/images/case-placeholder.jpg')`,
+          }}
+        />
+        
+        {/* 實際圖片 */}
+        <img
+          src={imgUrl}
+          alt={image.alt || `案例圖片 ${activeImage + 1}`}
+          className={`relative z-10 ${
+            fitMode === 'contain' 
+              ? 'max-h-[95%] max-w-[95%] object-contain' 
+              : 'w-full h-full object-cover'
+          }`}
+          onError={() => handleImageError(image.url)}
+          onLoad={() => handleImageLoad(image.url)}
+        />
+        
+        {/* 載入指示器 */}
+        {!isLoaded && (
+          <div className="absolute z-20 w-16 h-16 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+    )
+  }, [caseImages, activeImage, loadedImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode])
 
   return (
     <>
@@ -374,33 +436,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
 
               {/* 主圖區 */}
               <div className={`relative ${isMobile ? 'h-[65vh]' : 'h-[70vh]'} bg-gray-100 dark:bg-gray-800`}>
-                {/* 添加額外的背景保證 */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-700" />
-                
-                {/* 模態框使用普通img標籤，確保兼容性和立即顯示 */}
-                {caseImages[activeImage].type === 'video' ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <iframe
-                      src={caseImages[activeImage].url}
-                      className="w-full h-full"
-                      style={{ border: 'none', overflow: 'hidden' }}
-                      scrolling="no"
-                      frameBorder="0"
-                      allowFullScreen
-                      title={`${name} - 案例視頻`}
-                    />
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <img
-                      src={getImageUrl(caseImages[activeImage].url)}
-                      alt={caseImages[activeImage].alt || `案例圖片 ${activeImage + 1}`}
-                      className={`max-h-full max-w-full object-${fitMode}`}
-                      onError={() => handleImageError(caseImages[activeImage].url)}
-                      onLoad={() => handleImageLoad(caseImages[activeImage].url)}
-                    />
-                  </div>
-                )}
+                {renderModalImage()}
                 
                 {/* 切換顯示模式按鈕 */}
                 <button
@@ -489,25 +525,37 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                       }}
                     >
                       {/* 始終顯示的背景圖層 */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800" />
+                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
                       
                       {image.type === 'video' ? (
                         <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center z-10">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
                       ) : (
-                        <div className="absolute inset-0 z-10">
-                          <img
-                            src={getImageUrl(image.url)}
-                            alt={image.alt || `縮圖 ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={() => handleImageError(image.url)}
-                            onLoad={() => handleImageLoad(image.url)}
+                        <>
+                          {/* 預設縮圖背景 */}
+                          <div 
+                            className="absolute inset-0 bg-center bg-cover z-5" 
+                            style={{
+                              backgroundImage: `url('/images/case-placeholder.jpg')`,
+                              opacity: 0.5
+                            }}
                           />
-                        </div>
+                          
+                          {/* 實際縮圖 */}
+                          <div className="absolute inset-0 z-10">
+                            <img
+                              src={getImageUrl(image.url)}
+                              alt={image.alt || `縮圖 ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={() => handleImageError(image.url)}
+                              onLoad={() => handleImageLoad(image.url)}
+                            />
+                          </div>
+                        </>
                       )}
                       
                       {/* 縮圖索引指示器 - 僅在手機上顯示 */}
