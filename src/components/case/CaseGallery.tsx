@@ -319,65 +319,62 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
   }, [layout, isMobile])
   
-  // 渲染圖片元素
-  const renderImage = useCallback((image: CaseImage, index: number, isInModal = false) => {
-    if (image.type === 'video') {
-      return (
-        <div className="absolute inset-0 bg-gray-100">
-          <iframe
-            src={image.url}
-            className="w-full h-full"
-            style={{ border: 'none', overflow: 'hidden' }}
-            scrolling="no"
-            frameBorder="0"
-            allowFullScreen
-            title={`${name} - 案例視頻`}
-          />
-        </div>
-      )
-    }
-    
-    const isLoaded = loadedImages[image.url] || (image.fallbackUrls && image.fallbackUrls.some(url => loadedImages[url]));
-    const hasError = errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]));
-    const imgUrl = getImageUrl(image);
-    
-    return (
-      <div className="absolute inset-0">
-        {/* 圖片容器 */}
-        <div className="absolute inset-0">
-          {/* 實際圖片 */}
-          <img 
-            src={imgUrl}
-            alt={image.alt || `案例圖片 ${index + 1}`}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
-              isLoaded ? 'opacity-100' : 'opacity-70'
-            }`}
-            onError={() => handleImageError(image.url)}
-            onLoad={() => handleImageLoad(image.url)}
-            loading={index === 0 ? "eager" : "lazy"}
-          />
-        </div>
+  // 桌面版圖片項目
+  const renderDesktopImageItem = (image: CaseImage, index: number) =>
+    <div
+      key={`case-image-${caseId}-${index}`}
+      className={`group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid mb-5' : ''}`}
+      onClick={() => openModal(index)}
+    >
+      <div
+        className={`relative overflow-hidden rounded-lg shadow-md ${
+          layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
+        }`}
+        style={layout === 'masonry' ? { aspectRatio } : undefined}
+      >
+        {/* 簡化圖片渲染邏輯 */}
+        <div className="absolute inset-0 bg-gray-100"></div>
         
-        {/* 加載指示器 */}
-        {!isLoaded && !hasError && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        {/* 直接渲染圖片，避免複雜層級結構 */}
+        <img 
+          key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
+          src={getImageUrl(image)}
+          alt={image.alt || `案例圖片 ${index + 1}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
+              ? 'opacity-100' : 'opacity-70'
+          }`}
+          onError={() => handleImageError(image.url)}
+          onLoad={() => {
+            handleImageLoad(image.url);
+            if (index === 0) {
+              // 立即更新狀態而不使用 setTimeout
+              setLoadedImages(prev => ({...prev}));
+            }
+          }}
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : "auto"}
+          decoding="async"
+        />
+        
+        {/* 載入指示器 */}
+        {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
           </div>
         )}
         
-        {/* 錯誤指示器 */}
-        {hasError && (
-          <div className="absolute z-10 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-        )}
+        {/* 簡化懸停效果 */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300"></div>
       </div>
-    )
-  }, [loadedImages, errorImages, getImageUrl, handleImageError, handleImageLoad, name])
+      {image.caption && (
+        <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
+      )}
+    </div>
 
-  // 手機版圖片項目
+  // 移動版圖片項目
   const renderMobileImageItem = (image: CaseImage, index: number) => (
     <div
       key={`case-image-${caseId}-${index}`}
@@ -385,9 +382,32 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       onClick={() => openModal(index)}
     >
       <div 
-        className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gray-200"
+        className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gray-100"
       >
-        {renderImage(image, index)}
+        {/* 直接渲染圖片，使用與桌面版相同的簡化邏輯 */}
+        <img 
+          key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
+          src={getImageUrl(image)}
+          alt={image.alt || `案例圖片 ${index + 1}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
+              ? 'opacity-100' : 'opacity-70'
+          }`}
+          onError={() => handleImageError(image.url)}
+          onLoad={() => handleImageLoad(image.url)}
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : "auto"}
+          decoding="async"
+        />
+        
+        {/* 載入指示器 */}
+        {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          </div>
+        )}
         
         {/* 圖片指示器 */}
         <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-20">
@@ -400,93 +420,6 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     </div>
   )
   
-  // 桌面版圖片項目
-  const renderDesktopImageItem = (image: CaseImage, index: number) =>
-    <div
-      key={`case-image-${caseId}-${index}`}
-      className={`group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid mb-5' : ''}`}
-      onClick={() => openModal(index)}
-    >
-      <motion.div
-        variants={caseAnimations.gallery}
-        initial="hidden"
-        animate="visible"
-        custom={index}
-        className={`relative overflow-hidden rounded-lg shadow-md ${
-          layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
-        }`}
-        style={layout === 'masonry' ? { aspectRatio } : undefined}
-      >
-        {/* 預設背景 */}
-        <div className="absolute inset-0 bg-gray-100"></div>
-        
-        {/* 圖片 */}
-        <img 
-          key={`desktop-img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
-          src={getImageUrl(image)}
-          alt={image.alt || `案例圖片 ${index + 1}`}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
-              ? 'opacity-100' : 'opacity-70'
-          }`}
-          onError={(e) => {
-            // 防止無限循環錯誤
-            const target = e.target as HTMLImageElement;
-            if (target.src === getImageUrl(image)) {
-              handleImageError(image.url);
-            }
-          }}
-          onLoad={() => {
-            handleImageLoad(image.url);
-            // 強制重新渲染，解決生產環境下可能的渲染問題
-            if (index === 0) {
-              setTimeout(() => {
-                setLoadedImages(prev => ({...prev}));
-              }, 50);
-            }
-          }}
-          loading={index === 0 ? "eager" : "lazy"}
-          fetchPriority={index === 0 ? "high" : "auto"}
-          decoding="async"
-        />
-        
-        {/* 加載指示器 - 僅在圖片未載入且無錯誤時顯示 */}
-        {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && 
-         !(errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]))) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          </div>
-        )}
-        
-        {/* 錯誤指示器 - 僅在所有可能的圖片源都出錯時顯示 */}
-        {errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url])) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-          </div>
-        )}
-        
-        {/* 懸停效果覆蓋層 */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-      {image.caption && (
-        <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
-      )}
-    </div>
-
   // 模態框圖片渲染
   const renderModalImage = useCallback(() => {
     const image = caseImages[activeImage]
