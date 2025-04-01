@@ -53,9 +53,9 @@
   --radius: 0;
   
   /* 文字系統變數 */
-  --font-base: 'GenYoGothicTW', sans-serif;
-  --font-heading: 'GenYoGothicTW', sans-serif;
-  --font-accent: 'Bageo', 'Century Gothic', sans-serif;
+  --font-base: 'GenYoGothicTW', 'Century Gothic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: 'GenYoGothicTW', 'Century Gothic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-accent: 'Bageo', 'Century Gothic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -381,37 +381,7 @@
 }
 
 /* 字體定義 */
-@font-face {
-  font-family: 'GenYoGothicTW';
-  src: url('/fonts/GenYoGothicTW-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GenYoGothicTW';
-  src: url('/fonts/GenYoGothicTW-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Century Gothic';
-  src: url('/fonts/Century Gothic 400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Bageo';
-  src: url('/fonts/Bageo.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+/* 移除重複的字體聲明，這些已在fonts.css中定義 */
 
 @layer components {
   /* 容器 */

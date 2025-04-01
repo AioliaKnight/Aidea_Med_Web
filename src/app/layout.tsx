@@ -94,17 +94,24 @@ export default function RootLayout({
         {/* 預加載字體以避免CSP問題 */}
         <link 
           rel="preload" 
-          href="/fonts/GenYoGothicTW-Regular.woff2" 
+          href="/fonts/GenYoGothicTW-Regular-subset.woff2" 
           as="font" 
           type="font/woff2" 
-          crossOrigin="anonymous" 
+          crossOrigin=""
         />
         <link 
           rel="preload" 
-          href="/fonts/GenYoGothicTW-Bold.woff2" 
+          href="/fonts/GenYoGothicTW-Bold-subset.woff2" 
           as="font" 
           type="font/woff2" 
-          crossOrigin="anonymous" 
+          crossOrigin=""
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/Century Gothic 400.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin=""
         />
         
         {/* 結構化資料 */}
