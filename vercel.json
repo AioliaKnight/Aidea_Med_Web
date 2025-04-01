@@ -132,7 +132,7 @@
     }
   ],
   "github": {
-    "silent": true,
+    "silent": false,
     "autoAlias": true
   }
 } 
