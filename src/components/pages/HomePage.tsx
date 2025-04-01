@@ -765,7 +765,7 @@ const FeatureSection = memo(function FeatureSection() {
           <div className="overflow-hidden">
             <div 
               ref={carouselRef}
-              className="transition-transform duration-300 ease-out"
+              className="transition-transform duration-300 ease-out will-change-transform"
               style={{
                 display: 'flex',
                 transform: `translateX(-${currentFeature * 100}%)`
@@ -776,66 +776,69 @@ const FeatureSection = memo(function FeatureSection() {
                   key={feature.title}
                   className="min-w-full px-2"
                 >
-                  <motion.div 
+                  <div 
                     className="group bg-white p-6 border border-gray-100 shadow-sm flex flex-col h-full hover:border-primary relative"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    style={{
+                      transform: index === currentFeature ? 'translateZ(0)' : 'none',
+                      backfaceVisibility: 'hidden',
+                      contain: 'layout style paint'
+                    }}
                   >
-                    {/* 行動版頂部裝飾線 - 刪除 */}
-                    
                     <div className="mb-5 flex justify-center">
                       {React.createElement(feature.icon, { 
-                        size: 36, 
+                        size: 32, 
                         strokeWidth: 1.5, 
                         className: "text-primary" 
                       })}
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
-                {feature.title}
-              </h3>
+                      {feature.title}
+                    </h3>
                     <p className="text-gray-600 text-center">
-                {feature.description}
-              </p>
-              
+                      {feature.description}
+                    </p>
+                    
                     <div className="mt-5 pt-2 border-t border-gray-100 flex justify-center">
                       <div className="w-16 h-0.5 bg-primary" />
-              </div>
-            </motion.div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           
-          {/* 輪播控制 */}
+          {/* 輪播控制 - 增加點擊區域和提升觸控體驗 */}
           <div className="flex justify-between items-center mt-8">
             <button 
               onClick={handlePrev}
-              className="bg-white border border-gray-200 rounded-full p-2 shadow-sm hover:shadow-md transition-shadow hover:border-primary"
+              className="bg-white border border-gray-200 rounded-full p-3 shadow-sm hover:shadow-md transition-shadow hover:border-primary touch-manipulation"
               aria-label="上一個特色"
+              style={{ touchAction: 'manipulation' }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
             
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               {memoizedFeatures.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentFeature(index)}
-                  className={`w-4 h-4 rounded-full transition-colors ${
+                  className={`w-6 h-6 rounded-full transition-colors ${
                     currentFeature === index ? 'bg-primary' : 'bg-gray-300'
                   }`}
-                  aria-label={`查看特色 ${index + 1}`}
+                  aria-label={`切換到特色 ${index + 1}`}
+                  style={{ touchAction: 'manipulation' }}
                 />
               ))}
             </div>
             
             <button 
               onClick={handleNext}
-              className="bg-white border border-gray-200 rounded-full p-2 shadow-sm hover:shadow-md transition-shadow hover:border-primary"
+              className="bg-white border border-gray-200 rounded-full p-3 shadow-sm hover:shadow-md transition-shadow hover:border-primary touch-manipulation"
               aria-label="下一個特色"
+              style={{ touchAction: 'manipulation' }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1050,29 +1053,34 @@ const ServiceSection = memo(function ServiceSection() {
               <div className="flex justify-center items-center mt-8 gap-2">
                 <button 
                   onClick={handlePrev}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                  aria-label="上一個服務"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   {services.map((_, index) => (
                     <button 
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        currentSlide === index ? 'bg-red-600 w-6' : 'bg-gray-300 w-2 hover:bg-gray-400'
+                      className={`h-3 rounded-full transition-all duration-300 ${
+                        currentSlide === index ? 'bg-red-600 w-7' : 'bg-gray-300 w-3 hover:bg-gray-400'
                       }`}
                       aria-label={`前往服務 ${index + 1}`}
+                      style={{ touchAction: 'manipulation' }}
                     />
                   ))}
                 </div>
                 
                 <button 
                   onClick={handleNext}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-red-600 border border-red-600 text-white hover:bg-red-700"
+                  aria-label="下一個服務"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -1183,6 +1191,31 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   
+  // 精選核心數據
+  const stats: StatItem[] = useMemo(() => [
+    {
+      value: 50,
+      suffix: "+",
+      label: "合作診所",
+      description: "全台醫療網絡覆蓋",
+      icon: <Stethoscope className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 700,
+      suffix: "萬+",
+      label: "月廣告投放",
+      description: "精準投放策略",
+      icon: <ChartIcon className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
+    },
+    {
+      value: 98,
+      suffix: "%",
+      label: "客戶滿意度",
+      description: "專業團隊品質保證",
+      icon: <Handshake className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
+    }
+  ], []);
+  
   // 客戶端掛載處理
   useEffect(() => {
     setIsMounted(true);
@@ -1209,33 +1242,8 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
     }, 3000);
     
     return () => clearInterval(interval);
-  }, [isMobile]);
+  }, [isMobile, stats.length]);
   
-  // 精選核心數據
-  const stats: StatItem[] = [
-    {
-      value: 50,
-      suffix: "+",
-      label: "合作診所",
-      description: "全台醫療網絡覆蓋",
-      icon: <Stethoscope className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 700,
-      suffix: "萬+",
-      label: "月廣告投放",
-      description: "精準投放策略",
-      icon: <ChartIcon className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-    },
-    {
-      value: 98,
-      suffix: "%",
-      label: "客戶滿意度",
-      description: "專業團隊品質保證",
-      icon: <Handshake className="w-6 h-6 md:w-8 md:h-8 text-white" strokeWidth={1.5} />
-    }
-  ];
-
   return (
     <section 
       ref={ref} 
@@ -1312,11 +1320,16 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
-                  initial={{ opacity: 0, x: 100 }}
+                  initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
+                  exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.3 }}
                   className="w-full"
+                  style={{ 
+                    willChange: 'transform, opacity',
+                    backfaceVisibility: 'hidden',
+                    transformStyle: 'preserve-3d' 
+                  }}
                 >
                   <div className="p-6 rounded-lg flex flex-col border border-white/20">
                     {/* 圖標與數據值並排 */}
@@ -1351,15 +1364,16 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
               </AnimatePresence>
 
               {/* 輪播指示器 */}
-              <div className="flex justify-center mt-4 gap-2">
+              <div className="flex justify-center mt-6 gap-3">
                 {stats.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                      currentIndex === idx ? 'bg-white w-6' : 'bg-white/50'
+                    className={`w-7 h-7 rounded-full transition-all duration-300 ${
+                      currentIndex === idx ? 'bg-white w-10' : 'bg-white/50'
                     }`}
-                    aria-label={`切換到第 ${idx + 1} 張卡片`}
+                    aria-label={`切換到第 ${idx + 1} 張統計卡片`}
+                    style={{ touchAction: 'manipulation' }}
                   />
                 ))}
               </div>
