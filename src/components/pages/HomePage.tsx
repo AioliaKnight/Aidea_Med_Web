@@ -163,188 +163,22 @@ interface MarketingBlock {
   className: string;
 }
 
-// 修改MarketingSection組件，優化代碼架構和排版
-const MarketingSection = memo(function MarketingSection() {
-  // 使用React.useRef和useInView偵測元素進入視窗
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const { ref: inViewRef, inView } = useInView({
+// 整合HeroSection與MarketingSection為單一組件
+const IntegratedHeroSection = memo(function IntegratedHeroSection() {
+  // Hero Section部分
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { ref: heroInViewRef, inView: heroInView } = useInView({
     threshold: 0.1,
-    triggerOnce: true, // 改為true，只觸發一次動畫，避免反覆計算
-    rootMargin: '0px 0px -10% 0px', // 提前觸發，增加流暢感
+    triggerOnce: true,
   });
   
   // 使用callback ref合併兩個ref
-  const setRefs = useCallback(
+  const setHeroRefs = useCallback(
     (node: HTMLElement | null) => {
-      // 保存DOM ref的引用
-      sectionRef.current = node;
-      // 設置inView ref
-      inViewRef(node);
+      heroRef.current = node;
+      heroInViewRef(node);
     },
-    [inViewRef]
-  );
-
-  // 階梯式行銷文案數據 - 使用useMemo避免重新創建
-  const contentBlocks = useMemo<MarketingBlock[]>(() => [
-    {
-      en: {
-        title: "THE MARKETING PARTNER",
-        subtitle: "THAT UNDERSTANDS HEALTHCARE BEST."
-      },
-      zh: {
-        title: "專業醫療行銷夥伴",
-        subtitle: "最了解醫療產業的最佳選擇"
-      },
-      delay: 0.1,
-      className: "ml-0"
-    },
-    {
-      en: {
-        title: "COMPREHENSIVE BRAND INTEGRATION",
-        subtitle: "START THE CONVERSATION"
-      },
-      zh: {
-        title: "全方位品牌整合策略",
-        subtitle: "啟動專業對話"
-      },
-      delay: 0.3, // 降低延遲時間
-      className: "ml-[5%]"
-    },
-    {
-      en: {
-        title: "WITH YOUR POTENTIAL PATIENTS.",
-        subtitle: ""
-      },
-      zh: {
-        title: "與您的潛在患者創造連結",
-        subtitle: "打造醫療品牌價值"
-      },
-      delay: 0.5, // 降低延遲時間
-      className: "ml-[10%]"
-    }
-  ], []);
-
-  // 優化性能監測
-  useEffect(() => {
-    if (inView && window.performance && window.performance.mark) {
-      window.performance.mark('marketing-section-visible');
-    }
-  }, [inView]);
-
-  return (
-    <section 
-      ref={setRefs}
-      className="relative bg-primary overflow-hidden py-16 md:py-20"
-      id="marketing-section"
-    >
-      {/* 背景設計 - 使用Image組件，背景線條改為完全不透明 */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-primary"></div>
-        {/* 使用更簡單的背景處理方式，避免LCP問題 */}
-        <div 
-          className="absolute inset-0 bg-no-repeat bg-cover opacity-100"
-          style={{ 
-            backgroundImage: 'url(/images/bgline-w-small.webp)',
-            backgroundPosition: 'center'
-          }}
-          aria-hidden="true"
-        ></div>
-      </div>
-      
-      {/* 階梯式行銷文案內容 */}
-      <div className="container-custom relative z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {contentBlocks.map((block, index) => {
-            return (
-              <motion.div
-                key={index}
-                className={`mb-16 md:mb-20 ${block.className}`} // 增加段落間距，取代分隔線
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? 
-                  { 
-                    opacity: 1, 
-                    y: 0,
-                    transition: {
-                      delay: block.delay,
-                      duration: 0.3,
-                      ease: "easeOut"
-                    }
-                  } : 
-                  { opacity: 0, y: 20 }
-                }
-                style={{ 
-                  willChange: 'opacity, transform',
-                  contain: 'content'
-                }}
-              >
-                {/* 內容區塊 - 左側英文右側中文，確保在各種尺寸下都保持這個結構 */}
-                <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-10">
-                  {/* 英文標題部分 - 固定在左側 */}
-                  <div className="w-full md:w-1/2 md:pr-4">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent">
-                      {block.en.title}
-                    </h2>
-                    {block.en.subtitle && (
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 leading-tight tracking-tight">
-                        {block.en.subtitle}
-                      </h3>
-                    )}
-                  </div>
-                  
-                  {/* 中文內容部分 - 固定在右側 */}
-                  <div className="w-full md:w-1/2 mt-6 md:mt-0">
-                    <div className="border-l-4 border-white pl-4 md:pl-6">
-                      <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
-                        {block.zh.title}
-                      </p>
-                      {block.zh.subtitle && (
-                        <p className="text-lg md:text-xl text-white/90 mt-2 font-medium leading-tight">
-                          {block.zh.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-      
-      {/* 向下滾動指示器 - 簡化設計 */}
-      <div className="relative z-10 pb-8 flex justify-center mt-4">
-        <motion.div
-          className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
-          whileHover={{ y: 3 }}
-          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </motion.div>
-      </div>
-    </section>
-  );
-})
-
-// 修改HeroSection組件，移除階梯式行銷文案部分
-const HeroSection = memo(function HeroSection() {
-  // 使用React.useRef和useInView偵測元素進入視窗
-  const ref = useRef<HTMLElement | null>(null);
-  const { ref: inViewRef, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true, // 改為true以減少計算
-  });
-  
-  // 使用callback ref合併兩個ref
-  const setRefs = useCallback(
-    (node: HTMLElement | null) => {
-      // 保存DOM ref的引用
-      ref.current = node;
-      // 設置inView ref
-      inViewRef(node);
-    },
-    [inViewRef]
+    [heroInViewRef]
   );
   
   // 標題數據
@@ -372,16 +206,27 @@ const HeroSection = memo(function HeroSection() {
     }
   ];
 
-  // 追蹤當前顯示的標題
+  // 追蹤當前顯示的標題與背景加載狀態
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
+  const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   
-  // 定期切換標題
+  // 避免標題切換過於頻繁，導致不必要的重繪
+  const titleInterval = useRef<NodeJS.Timeout | null>(null);
+  
+  // 優化定期切換標題 - 使用useRef儲存interval引用，防止效能問題
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
-    }, 4000);
+    // 確保只有在瀏覽器環境才運行
+    if (typeof window !== 'undefined') {
+      titleInterval.current = setInterval(() => {
+        setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+      }, 4000);
+    }
     
-    return () => clearInterval(interval);
+    return () => {
+      if (titleInterval.current) {
+        clearInterval(titleInterval.current);
+      }
+    };
   }, [titles.length]);
   
   // 標籤數據
@@ -391,125 +236,300 @@ const HeroSection = memo(function HeroSection() {
     { id: 'design', name: '#Design Thinking' },
     { id: 'insight', name: '#Insight' }
   ];
+
+  // Marketing Section部分
+  const marketingRef = useRef<HTMLElement | null>(null);
+  const { ref: marketingInViewRef, inView: marketingInView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+    rootMargin: '0px 0px -10% 0px',
+  });
   
+  // 使用callback ref合併兩個ref
+  const setMarketingRefs = useCallback(
+    (node: HTMLElement | null) => {
+      marketingRef.current = node;
+      marketingInViewRef(node);
+    },
+    [marketingInViewRef]
+  );
+
+  // 階梯式行銷文案數據 - 使用useMemo避免重新創建
+  const contentBlocks = useMemo<MarketingBlock[]>(() => [
+    {
+      en: {
+        title: "THE MARKETING PARTNER",
+        subtitle: "THAT UNDERSTANDS HEALTHCARE BEST."
+      },
+      zh: {
+        title: "專業醫療行銷夥伴",
+        subtitle: "最了解醫療產業的最佳選擇"
+      },
+      delay: 0.1,
+      className: "ml-0"
+    },
+    {
+      en: {
+        title: "COMPREHENSIVE BRAND INTEGRATION",
+        subtitle: "START THE CONVERSATION"
+      },
+      zh: {
+        title: "全方位品牌整合策略",
+        subtitle: "啟動專業對話"
+      },
+      delay: 0.2, // 降低延遲時間
+      className: "ml-[5%]"
+    },
+    {
+      en: {
+        title: "WITH YOUR POTENTIAL PATIENTS.",
+        subtitle: ""
+      },
+      zh: {
+        title: "與您的潛在患者創造連結",
+        subtitle: "打造醫療品牌價值"
+      },
+      delay: 0.3, // 降低延遲時間，減少等待
+      className: "ml-[10%]"
+    }
+  ], []);
+
+  // 優化性能監測
+  useEffect(() => {
+    if (heroInView && window.performance && window.performance.mark) {
+      window.performance.mark('hero-section-visible');
+    }
+    
+    if (marketingInView && window.performance && window.performance.mark) {
+      window.performance.mark('marketing-section-visible');
+    }
+  }, [heroInView, marketingInView]);
+
   return (
-    <section 
-      ref={setRefs}
-      className="relative flex flex-col bg-primary overflow-hidden pt-12 pb-10 md:pt-16 md:pb-14"
-      role="banner"
-      aria-label="網站主要橫幅"
-      id="hero"
-    >
-      {/* 優化背景 - 移除多餘裝飾，使用更簡潔的結構 */}
-      <div className="absolute inset-0">
-        {/* 使用純色背景代替圖片，避免LCP問題 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
+    <>
+      {/* Hero Section部分 */}
+      <section 
+        ref={setHeroRefs}
+        className="relative flex flex-col bg-primary overflow-hidden pt-12 pb-10 md:pt-16 md:pb-14"
+        role="banner"
+        aria-label="網站主要橫幅"
+        id="hero"
+      >
+        {/* 優化背景 - 使用漸變色作為初始背景，減少CLS */}
+        <div className="absolute inset-0">
+          {/* 首先顯示純色漸變背景 - 立即顯示提供視覺基礎 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
+          
+          {/* CSS背景替代Image組件 - 減少DOM節點與渲染時間 */}
+          <div 
+            className="absolute inset-0 bg-no-repeat bg-cover opacity-30 transition-opacity duration-700"
+            style={{ 
+              backgroundImage: 'url(/images/bgline-w-small.webp)',
+              backgroundPosition: 'center',
+              opacity: isBackgroundLoaded ? '0.3' : '0',
+              willChange: 'opacity'
+            }}
+            aria-hidden="true"
+          />
+          
+          {/* 非同步加載高質量背景 - 在後台加載以備用，只在需要時顯示 */}
+          {heroInView && (
+            <div 
+              className="hidden"
+              aria-hidden="true"
+            >
+              <img 
+                src="/images/bgline-w-optimized.webp" 
+                alt=""
+                onLoad={() => {
+                  setIsBackgroundLoaded(true);
+                  if (window.performance && window.performance.mark) {
+                    window.performance.mark('hero-bg-loaded');
+                  }
+                }}
+              />
+            </div>
+          )}
+        </div>
         
-        {/* 優化背景圖片加載，解決LCP問題 */}
-        <Image 
-          src="/images/bgline-w-optimized.webp" 
-          alt=""
-          fill
-          priority={true} // 使用priority確保優先加載
-          loading="eager" // 使用eager替代lazy loading
-          sizes="100vw"
-          quality={30} // 降低品質以減少檔案大小
-          className="object-cover opacity-30" // 降低不透明度，減少視覺依賴
-          style={{
-            objectPosition: 'center'
-          }}
-          onLoad={() => {
-            // 圖片載入完成後的處理
-            if (window.performance && window.performance.mark) {
-              window.performance.mark('hero-image-loaded');
-            }
-          }}
-        />
-      </div>
-      
-      {/* 主要標題內容區 */}
-      <div className="container-custom relative z-20 py-6 md:py-8">
-        <div className="max-w-5xl mx-auto">
-          {/* 標題區塊 - 標題置左對齊，其他元素保持居中 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="px-4 sm:px-6 flex flex-col items-center"
-          >
-            {/* 標題結構 - 中英文標題置左對齊 */}
-            <div className="w-full max-w-4xl mx-auto">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentTitleIndex}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={heroTitleVariants}
-                  className="font-bold text-white text-left" // 改為左對齊
-                >
-                  {/* 中文主副標題 */}
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl leading-tight">
-                    {titles[currentTitleIndex].main}
-                    <span className="block mt-1 mb-4 font-extrabold text-white">
-                      {titles[currentTitleIndex].sub}
+        {/* 主要標題內容區 */}
+        <div className="container-custom relative z-20 py-6 md:py-8">
+          <div className="max-w-5xl mx-auto">
+            {/* 標題區塊 - 標題置左對齊，其他元素保持居中 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="px-4 sm:px-6 flex flex-col items-center"
+              style={{ willChange: 'opacity' }} // 提示瀏覽器這個元素將發生動畫變化
+            >
+              {/* 標題結構 - 中英文標題置左對齊 */}
+              <div className="w-full max-w-4xl mx-auto">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentTitleIndex}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={heroTitleVariants}
+                    className="font-bold text-white text-left"
+                    style={{ willChange: 'opacity, transform' }} // 提示瀏覽器這個元素將發生動畫變化
+                  >
+                    {/* 中文主副標題 */}
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl leading-tight">
+                      {titles[currentTitleIndex].main}
+                      <span className="block mt-1 mb-4 font-extrabold text-white">
+                        {titles[currentTitleIndex].sub}
+                      </span>
+                    </h1>
+                    
+                    {/* 英文主副標題 - 視覺上分隔但保持關聯性 */}
+                    <div className="mt-3 mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
+                      {titles[currentTitleIndex].enMain},
+                      <div className="font-extrabold text-white mt-2">
+                        {titles[currentTitleIndex].enSub}.
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              
+              {/* 單行白框線條標籤設計 - 保持居中，具有適當高度預留 */}
+              <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden min-h-[70px]">
+                <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6 text-center">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide whitespace-nowrap"
+                    >
+                      {tag.name}
                     </span>
-                  </h1>
+                  ))}
+                </div>
+              </div>
+          
+              {/* 預約按鈕 - 黑底白字扁平化設計，預留固定高度避免CLS */}
+              <div className="mt-4 mb-5 flex justify-center w-full min-h-[60px]">
+                <Link href="/contact" prefetch={false}>
+                  <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 hover:bg-black/80 transition-colors">
+                    <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
+                      A:
+                    </span>
+                    <span className="font-medium">免費30分鐘專業顧問</span>
+                  </span>
+                </Link>
+              </div>
+              
+              {/* 預約按鈕下方的向下滾動指示器 - 保持置中，使用CSS動畫替代framer-motion */}
+              <div className="mt-16 sm:mt-20 flex justify-center w-full">
+                <div
+                  className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors animate-pulse"
+                  onClick={() => document.getElementById('marketing-content')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Marketing Section部分 */}
+      <section 
+        ref={setMarketingRefs}
+        className="relative bg-primary overflow-hidden py-16 md:py-20"
+        id="marketing-content"
+      >
+        {/* 背景設計 - 使用普通div和CSS背景替代Image組件 */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-primary"></div>
+          {/* 使用CSS背景圖片 - 減少DOM渲染負擔 */}
+          <div 
+            className="absolute inset-0 bg-no-repeat bg-cover opacity-100"
+            style={{ 
+              backgroundImage: 'url(/images/bgline-w-small.webp)',
+              backgroundPosition: 'center',
+              willChange: 'transform' // 提示瀏覽器這個元素與合成相關
+            }}
+            aria-hidden="true"
+          ></div>
+        </div>
+        
+        {/* 階梯式行銷文案內容 - 提高效能的容器 */}
+        <div className="container-custom relative z-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            {contentBlocks.map((block, index) => (
+              <motion.div
+                key={index}
+                className={`mb-16 md:mb-20 ${block.className}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={marketingInView ? 
+                  { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: {
+                      delay: block.delay,
+                      duration: 0.3,
+                      ease: "easeOut"
+                    }
+                  } : 
+                  { opacity: 0, y: 20 }
+                }
+                style={{ 
+                  willChange: 'opacity, transform',
+                  contain: 'content' // 提高效能的CSS屬性
+                }}
+              >
+                {/* 內容區塊 - 左側英文右側中文 */}
+                <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-10 content-visibility-auto"> {/* 使用content-visibility提高滾動效能 */}
+                  {/* 英文標題部分 - 固定在左側 */}
+                  <div className="w-full md:w-1/2 md:pr-4">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent">
+                      {block.en.title}
+                    </h2>
+                    {block.en.subtitle && (
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 leading-tight tracking-tight">
+                        {block.en.subtitle}
+                      </h3>
+                    )}
+                  </div>
                   
-                  {/* 英文主副標題 - 視覺上分隔但保持關聯性 */}
-                  <div className="mt-3 mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
-                    {titles[currentTitleIndex].enMain},
-                    <div className="font-extrabold text-white mt-2">
-                      {titles[currentTitleIndex].enSub}.
+                  {/* 中文內容部分 - 固定在右側 */}
+                  <div className="w-full md:w-1/2 mt-6 md:mt-0">
+                    <div className="border-l-4 border-white pl-4 md:pl-6">
+                      <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
+                        {block.zh.title}
+                      </p>
+                      {block.zh.subtitle && (
+                        <p className="text-lg md:text-xl text-white/90 mt-2 font-medium leading-tight">
+                          {block.zh.subtitle}
+                        </p>
+                      )}
                     </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            
-            {/* 單行白框線條標籤設計 - 保持居中 */}
-            <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
-              <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6 text-center">
-                {tags.map((tag, index) => (
-                  <span
-                    key={tag.id}
-                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide whitespace-nowrap"
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-        
-            {/* 預約按鈕 - 黑底白字扁平化設計 - 保持置中 */}
-            <div className="mt-4 mb-5 flex justify-center w-full">
-              <Link href="/contact" prefetch={false}>
-                <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10">
-                  <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
-                    A:
-                  </span>
-                  <span className="font-medium">免費30分鐘專業顧問</span>
-                </span>
-              </Link>
-            </div>
-            
-            {/* 預約按鈕下方的向下滾動指示器 - 保持置中 */}
-            <div className="mt-20 flex justify-center w-full">
-              <div
-                className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
-                onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+        
+        {/* 向下滾動指示器 - 使用CSS動畫替代framer-motion以提高效能 */}
+        <div className="relative z-10 pb-8 flex justify-center mt-4">
+          <div
+            className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors hover:translate-y-1"
+            onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+    </>
   );
-})
+});
 
 // 更新服務特色區塊
 const FeatureSection = memo(function FeatureSection() {
@@ -2260,16 +2280,9 @@ const HomePage = () => {
 
   return (
     <>
-      {/* 立即顯示的首屏關鍵內容 - 不使用Suspense */}
+      {/* 立即顯示的整合型首屏關鍵內容 - 不使用Suspense */}
       <ErrorBoundary fallback={<div className="min-h-screen flex items-center justify-center">載入中...</div>}>
-        <HeroSection />
-      </ErrorBoundary>
-      
-      {/* 第二優先級內容 - 使用Suspense防止阻塞 */}
-      <ErrorBoundary>
-        <Suspense fallback={<div className="py-20 bg-white"></div>}>
-          <MarketingSection />
-        </Suspense>
+        <IntegratedHeroSection />
       </ErrorBoundary>
       
       {/* 非關鍵內容 - 僅在組件掛載後載入 */}
@@ -2342,7 +2355,7 @@ const HomePage = () => {
             
             // 監測首屏外元素
             setTimeout(() => {
-              const elementsToObserve = document.querySelectorAll('#marketing-section, #features-section');
+              const elementsToObserve = document.querySelectorAll('#marketing-content, #features-section');
               elementsToObserve.forEach(el => observer.observe(el));
             }, 1000);
           `
