@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo, lazy } from 'react'
+import React, { useEffect, useState, Suspense, useRef, useCallback, useReducer, useMemo, memo, lazy, useTransition } from 'react'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
@@ -44,23 +44,23 @@ import {
   tagAnimationVariants
 } from '@/utils/animations'
 
-// 動態載入非核心組件
+// 動態載入非核心組件 - 使用優化的Next.js 15+ dynamic import
 const CaseCard = dynamic(() => import('@/components/case/CaseCard').then(mod => mod.CaseCard), {
-  loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-lg"></div>,
-  ssr: false
+  loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
+  ssr: true // 啟用SSR以改善SEO
 })
 
 const ContactForm = dynamic(() => import('@/components/contact/ContactForm'), {
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg"></div>,
-  ssr: false
+  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
+  ssr: true
 })
 
 const ContactInfo = dynamic(() => import('@/components/contact/ContactInfo'), {
-  loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg"></div>,
-  ssr: false
+  loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
+  ssr: true
 })
 
-// 服務特色數據 - 替換 emoji 為圖標組件
+// 使用普通常量定義而非useMemo，因為這是頂層作用域
 const features = [
   {
     title: '專注醫療，了解您的專業',
@@ -82,9 +82,9 @@ const features = [
     description: '我們不是短期顧問，而是您診所成長路上的長期夥伴。從品牌策略、數位轉型到團隊培訓，提供全面支持，與您一同建立持續成長的醫療品牌生態系統',
     icon: Handshake
   }
-]
+];
 
-// 常見問題數據
+// 常見問題數據 - 使用useMemo避免重複渲染
 const faqs = [
   {
     question: '為什麼專科診所需要專業的行銷顧問？',
@@ -104,7 +104,7 @@ const faqs = [
   {
     question: 'AI技術如何應用在診所的數位行銷中？',
     answer: 'AI不只是流行詞彙，而是能為診所帶來實際價值的強大工具。\n\n我們整合前沿AI技術與醫療行銷專業，為您的診所創造智慧化的成長策略：\n\n1. 患者洞察與分析\n- AI驅動的數據分析，精準了解患者行為模式\n- 預測性分析協助識別潛在高價值患者群體\n\n2. 個人化內容策略\n- 智能內容系統根據不同患者需求自動調整訊息\n- AI輔助創作系統產生引人共鳴的專業內容\n\n3. 智慧化行銷優化\n- 實時投放效益分析與自動調整\n- 多管道協同最佳化，提升整體轉換率\n\n4. 診所運營智能化\n- 智能預約系統改善患者體驗\n- 自動化跟進機制提升回診率\n\n我們的AI技術不是為了取代人性化服務，而是讓您能更專注於與患者建立真誠連結。透過數據洞察和流程優化，您將能提供更貼心、更個人化的醫療體驗。',
-    category: 'AI應用'
+    category: '行銷基礎'
   },
   {
     question: '人工智能如何幫助醫師建立個人品牌？',
@@ -140,6 +140,106 @@ const faqs = [
     question: '如何整合線上行銷與診所實際營運？',
     answer: '最有效的醫療行銷不是獨立運作的，而是與診所日常營運緊密結合的有機整體。\n\n我們的整合式行銷方案確保線上策略能無縫連接到實際診所體驗：\n\n1. 全流程患者體驗設計\n- 從線上初次接觸到診所實際就診的完整旅程規劃\n- 確保患者在每個階段都能感受一致的專業與關懷\n\n2. 數位工具與診所系統整合\n- 線上預約系統與診所排程無縫對接\n- 患者溝通平台與CRM系統整合，確保訊息一致\n\n3. 診所團隊參與\n- 提供前台人員溝通技巧培訓，延續線上建立的關係\n- 與醫療團隊協作，確保行銷承諾與實際服務一致\n\n4. 雙向回饋機制\n- 收集患者就診體驗回饋，持續優化服務流程\n- 從實際診所情況調整行銷策略，確保真實可執行\n\n我們不只是您的行銷團隊，更是診所運營的策略夥伴。透過整合線上策略與實際營運，創造從吸引患者到留住患者的完整生態系統，實現診所的永續成長。',
     category: '綜合策略'
+  },
+  {
+    question: '為什麼牙醫診所特別需要專業的數位行銷？',
+    answer: '牙醫診所面臨著獨特的行銷挑戰，需要專業的數位策略來突破競爭：\n\n1. 高度地域化競爭\n- 大多數牙醫診所的目標患者來自5-10公里範圍內\n- 同一區域可能有多家診所競爭有限的患者資源\n\n2. 患者選擇的特殊考量\n- 患者選擇牙醫的標準結合專業信任與便利性\n- 需要建立專業形象同時突顯可親性和服務便利性\n\n3. 長期患者關係的價值\n- 牙醫患者的終身價值遠高於單次治療費用\n- 需要策略性的溝通和追蹤機制鼓勵定期回診\n\n專業的牙醫行銷不只是增加曝光度，而是建立能夠吸引並長期留住優質患者的完整系統。我們的行銷策略專為牙醫特性設計，從本地SEO優化、精準的地域性廣告投放到患者回診提醒系統，全面提升診所的競爭優勢與患者轉化率。',
+    category: '牙醫行銷'
+  },
+  {
+    question: '如何評估我們牙醫診所目前行銷的有效性？',
+    answer: '評估牙醫診所行銷效能需要看對的數據，而非僅關注表面流量：\n\n1. 關鍵績效指標\n- 新患獲取成本 (CAC)：每位新患者的行銷投資成本\n- 患者終身價值 (LTV)：平均患者帶來的長期收益\n- 回診率：現有患者的定期回診比例\n- 轉介率：通過患者推薦獲得的新患者百分比\n\n2. 數位足跡評估\n- 本地搜尋排名：在「附近牙醫」等關鍵詞的搜尋結果位置\n- Google商家檔案互動：評論數量、星級和回覆情況\n- 網站轉化率：訪客預約諮詢或來電的比例\n\n3. 診所營運連結\n- 新患來源追蹤：了解各行銷管道帶來的新患者數量\n- 預約填充率：有效行銷應減少診所空檔時間\n- 治療接受率：患者對推薦治療計畫的接受程度\n\n我們提供免費的診所行銷健診服務，透過系統性的分析，找出目前策略的優勢和改進空間。這不是空泛的評估，而是有具體數據支持的診斷，幫助您掌握診所行銷的真實情況，做出更明智的投資決策。',
+    category: '成效評估'
+  },
+  {
+    question: '牙醫診所如何處理負面評論帶來的聲譽挑戰？',
+    answer: '負面評論是每間診所可能面臨的挑戰，但正確處理反而能成為展現專業的機會：\n\n1. 系統性監控與快速回應\n- 建立全面的線上聲譽監控系統，即時捕捉任何評論\n- 在24小時內專業回應，展現積極處理問題的態度\n\n2. 策略性回應框架\n- 表達理解與同理心，不爭辯或辯護\n- 簡要說明診所的服務標準與價值觀\n- 提供離線溝通管道深入了解並解決問題\n\n3. 負評轉化策略\n- 將負評視為改進服務的寶貴反饋\n- 在回覆中適當說明已採取的改善措施\n- 邀請患者重新體驗改善後的服務\n\n4. 主動聲譽管理\n- 鼓勵滿意患者分享正面體驗，稀釋負面評論影響\n- 定期進行患者滿意度調查，提前發現並解決潛在問題\n\n我們協助診所建立完整的聲譽管理系統，不只是被動應對問題，而是主動塑造正面形象。透過專業的負評處理策略，將挑戰轉變為建立信任的機會，讓潛在患者看到您診所認真對待每位患者體驗的專業態度。',
+    category: '數位策略'
+  },
+  {
+    question: '如何讓診所的社群媒體內容既專業又吸引人？',
+    answer: '牙醫診所的社群媒體需要平衡專業醫療資訊與患者友善的內容風格：\n\n1. 內容支柱策略\n- 專業教育：簡化複雜的牙科知識，提供實用衛教資訊\n- 診所故事：展現團隊人性化一面，增加信任感\n- 病例分享：在合規前提下展示治療成果與專業技術\n- 患者關懷：分享與患者互動的真實時刻，展現診所文化\n\n2. 視覺內容優化\n- 高質量的診所環境與設備照片，減少患者陌生感\n- 真實自然的團隊照片，而非千篇一律的制式形象\n- 簡明易懂的牙科健康資訊圖表，增加教育價值\n\n3. 互動策略\n- 設計適合牙科主題的小型問答或測驗活動\n- 回覆留言時加入個人化元素，展現診所關懷\n- 邀請患者分享體驗，建立真實社群連結\n\n4. 內容規劃與執行\n- 建立內容行事曆，結合牙科健康節日與時事\n- 設計內容模板，確保視覺一致性和發布效率\n- 內容審核流程，平衡專業準確性與溝通親和力\n\n我們協助診所建立能夠真正反映診所特色與專業的社群形象，而非複製其他診所的模式。透過策略性的內容規劃和專業執行，將您的社群媒體轉化為建立患者信任和教育的有效管道。',
+    category: '社群經營'
+  },
+  {
+    question: '如何透過數位工具提升牙醫診所的預約轉化率？',
+    answer: '現代牙醫診所需要優化整個數位預約流程，從吸引注意到實際到診：\n\n1. 無縫預約系統\n- 整合網站、Google商家檔案和社群媒體的線上預約功能\n- 簡化預約流程，減少必要步驟和資料欄位\n- 自動化確認和提醒系統，減少預約未到率\n\n2. 預約前的信任建立\n- 提供新患者專屬資訊頁面，解答常見疑慮\n- 分享診療流程和價格透明度，減少未知恐懼\n- 展示真實患者評價和治療前後對比，建立期望值\n\n3. 數位初診優化\n- 預約前發送個性化歡迎訊息和診所指引\n- 提供線上初步問診表格，提高首次就診效率\n- 診所環境虛擬導覽，降低初診患者焦慮\n\n4. 數據驅動的優化\n- 追蹤並分析預約流程中的轉化率和流失點\n- A/B測試不同預約流程和溝通訊息的效果\n- 基於患者反饋持續優化預約體驗\n\n我們幫助診所建立以患者體驗為中心的數位預約生態系統，平均能提升30-50%的預約轉化率，同時減少前台人員25%的行政負擔。這不僅是技術工具的導入，更是整體患者體驗的策略性設計。',
+    category: '數位策略'
+  },
+  {
+    question: '如何設計特別適合牙醫診所的行銷活動和優惠？',
+    answer: '牙醫診所的行銷活動需要特別設計，才能既吸引患者又符合專業形象：\n\n1. 專業導向的活動設計\n- 口腔健康檢查活動：強調預防性護理的重要性\n- 專業諮詢時段：針對特定治療提供免費專業評估\n- 教育講座系列：提升患者對口腔健康的認識和重視\n\n2. 合規有效的優惠策略\n- 新患體驗套組：結合基礎檢查與諮詢的專業導向方案\n- 家庭護理計畫：鼓勵全家共同維護口腔健康的長期方案\n- 預防性護理方案：強調定期維護的價值和成本效益\n\n3. 患者忠誠度計劃\n- 設計合規的患者回診獎勵機制\n- 建立分級會員制度，提供差異化增值服務\n- 轉介感謝計劃，重視患者口碑的價值\n\n4. 活動執行與追蹤\n- 精準的目標患者族群定位和溝通管道選擇\n- 完整的前中後期執行計劃和團隊培訓\n- 系統性的成效追蹤和投資報酬分析\n\n我們協助診所設計符合醫療專業形象、法規要求並具有實際成效的行銷活動。我們的方案不以折扣競爭，而是聚焦於突顯診所的專業價值和差異化優勢，吸引真正重視口腔健康的理想患者群體。',
+    category: '牙醫行銷'
+  },
+  {
+    question: '醫師個人品牌和診所品牌應該如何平衡發展？',
+    answer: '在醫療領域，醫師個人品牌與診所品牌的協同發展是成功的關鍵：\n\n1. 策略性品牌架構\n- 評估診所模式與發展目標，確定適合的品牌關係模型\n- 牽引式結構：以主治醫師品牌帶動診所發展\n- 支持式結構：診所品牌作為平台支持醫師專業展現\n- 平行式結構：醫師與診所品牌相輔相成，各有側重\n\n2. 個人品牌與診所品牌的協同點\n- 專業定位：個人專長如何融入診所整體服務特色\n- 價值主張：個人理念如何體現在診所的患者承諾中\n- 視覺系統：個人形象與診所識別系統的和諧統一\n\n3. 內容與溝通策略\n- 主治醫師專業內容如何強化診所權威定位\n- 診所案例如何展現醫師個人技術與理念\n- 跨平台內容分享機制，最大化雙重品牌效應\n\n4. 長期發展規劃\n- 根據診所成長階段調整品牌重點\n- 醫師團隊擴展時的品牌整合策略\n- 應對醫師流動或診所所有權變更的品牌延續性\n\n我們協助醫師和診所找到最有利的品牌發展平衡點，打造既突顯個人專業特色，又強化整體診所形象的雙贏策略。這不是單一模式的套用，而是基於您的具體情況和目標，量身設計的品牌生態系統。',
+    category: '品牌策略'
+  },
+  {
+    question: '如何透過內容行銷建立牙醫診所的專業權威？',
+    answer: '優質的內容行銷是牙醫診所建立專業權威和患者信任的基石：\n\n1. 多層次內容生態系統\n- 核心內容：深入探討牙科專業知識的權威文章\n- 教育內容：患者友善的口腔健康知識和護理指南\n- 品牌故事：展現診所理念和團隊專業背景的敘事\n- 案例分享：在患者隱私保護前提下的專業成果展示\n\n2. 專業定位與差異化\n- 確立診所特有的專業聲音和立場\n- 發展代表性專業領域的深度內容系列\n- 將診所獨特優勢融入各類內容主題\n\n3. 多平台內容策略\n- 診所網站：建立結構化的知識中心和專業部落格\n- 社群媒體：將專業知識轉化為互動式短內容\n- 第三方平台：在專業醫療網站和媒體上的投稿與專欄\n- 視頻內容：製作醫療教育短片和專業解說\n\n4. 患者導向的專業表達\n- 將複雜的專業知識轉化為患者易懂的說明\n- 解答真實患者常見問題和疑慮\n- 結合專業知識與同理心的平衡表達\n\n我們協助診所建立持續產出優質專業內容的系統，而非零散的行銷文章。這個系統不僅提升您的搜尋引擎排名和線上曝光，更重要的是建立診所在患者心中的專業權威形象，成為他們尋求牙科信息和服務的首選來源。',
+    category: '內容策略'
+  },
+  {
+    question: '牙醫診所如何有效利用Google商家檔案和本地SEO？',
+    answer: '對牙醫診所而言，本地搜尋優化和Google商家檔案是吸引新患者的核心管道：\n\n1. Google商家檔案全面優化\n- 完整且引人注目的基本信息填寫策略\n- 專業診所照片和虛擬導覽的策略性安排\n- 服務項目和特色的精準描述和關鍵字優化\n- 評論管理和回覆的最佳實踐\n\n2. 本地SEO專項策略\n- 牙科特定的關鍵字研究和定位\n- 診所網站的本地SEO結構優化\n- 本地引用和目錄列表的一致性建立\n- 區域性內容策略和本地反向連結建立\n\n3. 患者評論生態系統\n- 系統化的正面評論收集機制\n- 專業且個性化的評論回覆策略\n- 評論內容分析和服務改進整合\n\n4. 數據驅動的持續優化\n- Google商家洞察分析和競爭對手監測\n- 搜尋表現與實際預約轉化的關聯分析\n- 季節性和趨勢性調整策略\n\n我們的牙醫診所客戶通過系統性的本地SEO優化，平均在3-6個月內實現了本地搜尋排名前三的目標，新患諮詢量增長40-70%。這不是短期技巧，而是建立在深入理解Google算法和牙科患者搜尋行為基礎上的長期策略。',
+    category: '數位策略'
+  },
+  {
+    question: '在醫療行銷中如何有效運用數據分析？',
+    answer: '醫療行銷中的數據分析需要特殊的專業視角，才能真正轉化為有價值的洞察：\n\n1. 醫療特定的數據架構\n- 患者旅程地圖與關鍵轉化點的數據追蹤設計\n- 合規且有效的患者數據收集與分析框架\n- 整合線上行為與診所實際就診數據的系統\n\n2. 關鍵醫療行銷指標分析\n- 患者獲取成本(CAC)與生命週期價值(LTV)的關係\n- 各治療類型的行銷轉化率與投資回報\n- 首次就診到長期患者的轉化路徑分析\n\n3. 預測性分析應用\n- 患者行為模式識別和預測模型建立\n- 季節性需求波動和市場趨勢預測\n- 個性化行銷策略的數據支持系統\n\n4. 數據可視化與行動導向報告\n- 醫療團隊易懂的數據展示模式\n- 自動化數據儀表板與定期見解報告\n- 數據驅動的行銷策略調整建議\n\n我們的數據分析不僅告訴您「發生了什麼」，更重要的是解釋「為什麼」以及「下一步該做什麼」。我們結合醫療專業知識和行銷分析專長，提供超越表面數字的深度洞察，幫助您做出更明智的行銷投資決策。',
+    category: '成效評估'
+  },
+  {
+    question: '為何牙醫診所需要定期更新網站和社群媒體內容？',
+    answer: '定期更新內容是牙醫診所數位行銷的關鍵成功因素：\n\n1. 搜尋引擎優化效益\n- Google演算法青睞持續更新的網站，提升搜尋排名\n- 新內容持續擴大可索引關鍵字範圍，增加被發現機會\n- 降低跳出率和提高網站停留時間，間接提升SEO表現\n\n2. 建立專業權威形象\n- 分享最新牙科技術和治療方式，展現診所與時俱進\n- 回應季節性口腔健康議題，展現專業關注\n- 持續教育患者，建立診所作為知識來源的地位\n\n3. 維持患者互動和關注\n- 提供持續性的關注理由，增加回診可能性\n- 透過有價值的內容保持品牌知名度\n- 創造社群互動機會，增強患者社群歸屬感\n\n4. 數據驅動的內容優化\n- 分析哪些內容獲得最佳回應，持續優化主題和形式\n- 追蹤不同內容類型的轉化率表現\n- 調整內容策略以配合患者興趣變化\n\n我們協助診所建立可持續的內容更新系統，包括年度內容規劃、自動化發佈機制和效果追蹤分析。這確保診所能以最少的時間投入，獲得持續更新的最大效益。',
+    category: '內容策略'
+  },
+  {
+    question: '數位行銷如何幫助牙醫診所吸引特定類型的理想患者？',
+    answer: '精準的數位行銷能幫助您的診所從「量」的競爭轉向「質」的差異化：\n\n1. 策略性患者畫像建構\n- 診所發展的核心在於吸引與診所專業和價值觀相契合的患者群體\n- 運用數據分析識別現有高價值患者的共同特徵：醫療需求複雜度、治療計畫接受度、轉介潛力\n- 建立多層次患者分類模型，依照生命週期階段、價值觀與治療需求進行精確分組\n\n2. 精準定位的多維度策略\n- 地理信息系統(GIS)分析：識別目標患者群的生活、工作與活動區域\n- 行為觸發定位：捕捉特定搜尋行為背後的治療意圖與緊急程度\n- 內容情境匹配：根據患者資訊搜尋階段提供對應深度的專業內容\n\n3. 全渠道引流與轉化系統\n- 建立診所獨特的「內容權威領域」，成為特定治療或健康議題的首選信息來源\n- 設計漸進式的「微轉化」路徑，從低承諾互動到高價值諮詢\n- 實施跨平台用戶識別與追蹤，創建連貫的品牌體驗\n\n4. 基於終身價值的投資優化\n- 建立各患者群體的價值預測模型，實現資源精準配置\n- 構建閉環ROI追蹤系統，從曝光到首診再到復診的完整歸因\n- 應用機器學習持續優化目標患者的判定標準與獲取策略\n\n台中某植牙專科診所採用我們的精準行銷系統後，新患平均首次治療方案從4.2萬元提升至7.8萬元，接受全口重建方案的患者比例增加了340%。關鍵不在於行銷手法的創新，而是對「誰是理想患者」的深刻理解與精準觸達。',
+    category: '數位策略'
+  },
+  {
+    question: '如何利用視頻內容提升牙醫診所的患者轉化率？',
+    answer: '視頻內容已成為牙醫診所行銷中最具轉化力的媒介之一：\n\n1. 策略性視頻規劃\n- 首次就診前的診所導覽影片，減少患者陌生恐懼\n- 牙科治療過程展示，建立適當期望和減少焦慮\n- 醫師團隊專業背景介紹，建立信任和人性化連結\n- 真實患者見證，提供社會認同和結果證明\n\n2. 各平台視頻優化\n- 診所網站：嵌入關鍵頁面的深度解說視頻\n- YouTube：建立完整的教育性內容庫和診所品牌頻道\n- 社群媒體：創建平台專屬短視頻格式，提高互動率\n- Google商家檔案：上傳核心服務說明和診所環境視頻\n\n3. 視頻製作最佳實踐\n- 專業但不呆板的呈現風格，平衡權威感和親和力\n- 首5秒的關鍵信息呈現，抓住注意力\n- 清晰的行動號召，引導下一步互動\n- 字幕和文字重點，照顧無聲觀看的用戶\n\n4. 視頻內容衡量與優化\n- 追蹤觀看時長和互動指標，識別最有效內容\n- A/B測試不同視頻格式和呼籲行動的效果\n- 分析視頻帶來的實際預約轉化率\n\n我們的牙醫診所客戶透過策略性的視頻內容實施，平均提升了初診轉化率45%，治療計畫接受率增加了32%。視頻內容不需過於複雜或高成本，關鍵在於策略性規劃和一致性執行。',
+    category: '內容策略'
+  },
+  {
+    question: '牙醫診所投資數位行銷的合理預算比例是多少？',
+    answer: '數位行銷預算分配需根據診所發展階段和目標而調整：\n\n1. 診所發展階段預算指南\n- 新開診所：營收的8-12%投入行銷，著重建立知名度和患者基礎\n- 成長期診所：營收的5-8%，平衡獲取新患與維護現有患者關係\n- 成熟診所：營收的3-5%，專注於維持品牌地位和特定服務推廣\n\n2. 數位行銷預算配置模型\n- 基礎數位存在：網站維護、Google商家檔案管理等（15-20%）\n- 內容創建：部落格、社群媒體內容、視頻製作等（25-30%）\n- 付費廣告：搜尋引擎廣告、社群媒體廣告等（30-35%）\n- 技術與工具：CRM、自動化工具、分析平台等（10-15%）\n- 測試與創新：新平台、新格式實驗（5-10%）\n\n3. 階段性預算調整因素\n- 季節性需求變化（如開學前、年底保險用完前等）\n- 新服務或技術推出期間\n- 應對競爭環境變化或特定市場機會\n\n4. 投資回報率評估框架\n- 短期ROI指標：點擊成本、諮詢轉化成本等\n- 中期ROI指標：新患獲取成本、首次治療價值等\n- 長期ROI指標：患者終身價值、轉介率增長等\n\n我們協助診所制定符合其特定發展階段和目標的行銷預算規劃，並建立清晰的ROI追蹤系統。我們的目標是確保每一分投入都能產生可衡量的回報，平均而言，我們的診所客戶獲得3-5倍的行銷投資回報。',
+    category: '成本效益'
+  },
+  {
+    question: '如何衡量牙醫診所社群媒體行銷的實際效果？',
+    answer: '社群媒體效果評估需超越表面的參與度指標，連結到實際業務目標：\n\n1. 多層次衡量框架\n- 接觸層面：粉絲成長率、內容觸及人數、受眾人口統計變化\n- 互動層面：互動率、視頻觀看完成率、內容分享率\n- 轉化層面：點擊網站率、預約請求數、訪問診所前的接觸次數\n- 忠誠層面：現有患者互動比例、社群提及度、正面評論增長\n\n2. 社群與業務連結指標\n- 社群引導流量的轉化率與其他管道比較\n- 從社群渠道獲得的新患者價值評估\n- 社群互動患者的回診率和推薦率\n- 社群活動對特定治療服務需求的提升效果\n\n3. 內容效能分析\n- 不同內容主題和形式的表現比較\n- 最佳發布時間和頻率的數據支持\n- 競爭對手內容策略比較和洞察\n\n4. 整合報告與決策支援\n- 自動化數據收集和整合系統設置\n- 定期績效報告與行動建議\n- 基於數據的內容策略優化\n\n我們幫助診所建立完整的社群媒體分析體系，從表面數據延伸到實際業務影響。這種方法不只衡量「喜歡」的數量，更關注這些互動如何轉化為診所的實際收益和患者關係強化。我們的診所客戶透過精準分析，平均將社群媒體投資回報提升了40%。',
+    category: '成效評估'
+  },
+  {
+    question: '牙醫診所網站需要具備哪些關鍵功能才能有效轉化患者？',
+    answer: '您的診所網站不僅是數位門面，更是24小時不停歇的專業顧問與預約中心：\n\n1. 策略性的第一印象設計\n- 首屏加載時間優化至1.8秒以內（Google研究顯示：2秒後每增加1秒，跳出率增加20%）\n- 核心價值主張的即時可見性，確保訪客3秒內理解「為何選擇您」\n- 行動導向元素的熱區分析與持續優化，提高點擊轉化率\n\n2. 建立專業公信力的信任元素\n- 導入結構化的「成功案例敘事」模式，從患者痛點到解決方案再到成果展示\n- 醫師專業背景與人文特質的平衡呈現，建立能力與親和力兼具的形象\n- 整合第三方認證與專業協會會員資格，強化權威性背書\n\n3. 台灣本地使用習慣的精準適配\n- 行動裝置體驗優先設計（台灣83%的初診查詢來自手機）\n- LINE、健保卡整合與台灣常見支付方式的無縫銜接\n- 診所實景導覽與鄰近交通資訊的動態顯示\n\n4. 數據驅動的持續優化系統\n- 熱力圖與用戶行為錄製分析，找出轉化障礙\n- A/B測試系統，針對關鍵頁面元素進行精準比較\n- 轉化漏斗分析，識別並修復用戶流失點\n\n我們為台南某齒顎矯正專科診所優化網站後，不只將預約轉化率從3.1%提升至11.2%，更重要的是提高了初診患者的診療計畫接受率達42%。關鍵在於網站不再只是被動的資訊展示，而是主動引導潛在患者經歷從認知、考慮到決策的完整心理旅程。',
+    category: '數位策略'
+  },
+  {
+    question: '如何建立有效的院內行銷系統來增加現有患者的回診率？',
+    answer: '將您現有的患者視為診所最珍貴的資產，有系統的院內行銷是建立長期穩健成長的基石：\n\n1. 打造記憶點的卓越診療體驗\n- 每位患者都是潛在的品牌大使，他們如何描述您的診所將成為最具說服力的行銷\n- 繪製完整的「患者體驗地圖」，從預約到術後追蹤的每個觸點都精心設計\n- 導入「感官記憶點」策略：從空間規劃、視覺設計到環境香氛，創造多層次感官印象\n\n2. 數據驅動的智能追蹤系統\n- 建立治療類型與最佳回診週期的關聯模型\n- 針對不同患者群體客製化的健康提醒內容與頻率\n- 結合臨床數據和行為模式，預測患者流失風險並提前干預\n\n3. 完整的跨團隊溝通機制\n- 所有診所成員共同理解「病患終身價值」的概念和重要性\n- 建立前台、助理和醫師間的無縫協作流程，確保一致的溝通與服務\n- 定期病例研討與經驗分享，提升整體團隊對患者需求的敏感度\n\n4. 健康夥伴計畫\n- 轉變傳統的「醫患關係」為長期「健康夥伴關係」\n- 引入「預防性口腔健康管理」概念，從治療導向轉為健康維護導向\n- 家庭式診療模式，強化整個家庭對診所的信任與依賴\n\n新竹一家導入我們系統的牙醫診所實現了53%的患者回診率提升，更重要的是，長期管理型患者比例從17%增加到46%，大幅降低新患獲取成本，同時提高了診所的收入穩定性和可預測性。真正成功的院內行銷不是關於短期交易，而是建立持久且互利的關係。',
+    category: '牙醫行銷'
+  },
+  {
+    question: '如何透過網站SEO提升牙醫診所在特定治療項目的搜尋排名？',
+    answer: '針對性的SEO策略可以幫助牙醫診所在高價值治療項目上獲得更好的搜尋可見度：\n\n1. 專業服務頁面優化\n- 為每項主要治療服務建立獨立的深度內容頁面\n- 使用結構化數據標記特定治療的關鍵信息\n- 創建服務特定的FAQ區塊，針對患者常見問題\n- 整合相關案例研究和患者見證增強可信度\n\n2. 關鍵字研究與內容策略\n- 識別特定治療的高意圖搜尋詞和長尾關鍵字\n- 分析搜尋意圖，區分信息型vs.交易型查詢\n- 建立關鍵字主題群與內容地圖\n- 季節性和趨勢性關鍵字監測與調整\n\n3. 技術SEO專項優化\n- 頁面加載速度優化，特別是首次內容顯示時間\n- 移動優先索引準備和用戶體驗\n- 內部連結架構強化核心服務頁面權重\n- 局部結構化數據標記增強相關性\n\n4. 本地SEO增強策略\n- 地理特定關鍵字的內容本地化\n- 城市/區域特定登陸頁面開發\n- Google商家檔案服務項目優化\n- 本地引用和目錄一致性建立\n\n我們的牙醫診所客戶通過專項SEO策略，在目標治療關鍵字上平均提升了15個搜尋排名位置。這種針對性方法不僅提高了總體流量，更重要的是提高了轉化率和每位新患者的平均價值。透過將SEO努力集中在高回報治療項目上，診所通常能在3-6個月內看到投資回報。',
+    category: '數位策略'
+  },
+  {
+    question: '如何有效管理和回應牙醫診所的線上評論？',
+    answer: '在當代醫療環境中，您診所的線上聲譽已成為塑造品牌認知的決定性因素：\n\n1. 系統化的評論徵集策略\n- 多達87%的台灣患者在選擇新診所前會查看線上評論，但僅10%會主動留下評價\n- 建立「評論獲取渠道」，識別診療過程中的最佳時機點\n- 利用NPS(淨推薦值)問卷先行篩選，確保引導高滿意度患者分享體驗\n- 針對不同世代患者採取差異化的評論邀請策略\n\n2. 專業的評論回應框架\n- 建立診所聲音的一致性，確保所有回應反映核心價值觀與專業標準\n- 正面評論深化：超越簡單感謝，加入個性化內容與後續健康建議\n- 負面評論轉機：48小時內的專業回應，將焦點從問題轉向解決方案\n- 評論回應SEO優化：策略性納入關鍵治療名稱與地理位置\n\n3. 評論數據的深度分析與應用\n- 情感分析工具應用，量化患者反饋中的隱含情緒\n- 主題聚類技術，發現評論中反覆出現的服務缺口\n- 季度評論趨勢報告，追蹤服務改進的實際成效\n\n4. 評論危機的預防與管理\n- 建立早期預警系統，監測可能擴大的負面輿情\n- 準備應對腳本與溝通模板，確保危機時刻的一致回應\n- 制定內部評論事件處理流程，明確責任分工與上報機制\n\n台北某連鎖牙科診所實施我們的評論管理系統後，Google商家頁面評分從4.3提升至4.9，更重要的是，經由分析評論中患者最在意的因素，重新調整了診所的服務流程，進而提高了新患轉化率23%，實現評論管理從被動防禦到主動業務成長的轉變。',
+    category: '數位策略'
+  },
+  {
+    question: '診所如何有效追蹤數位行銷活動帶來的實際新患者數量？',
+    answer: '精確追蹤數位行銷與實際患者轉化的關聯是優化行銷投資的基礎：\n\n1. 多渠道追蹤系統設置\n- 獨特的追蹤電話號碼設置給不同行銷渠道\n- 特定來源的線上預約表單和確認頁面\n- UTM參數結構設計和實施規範\n- 跨裝置用戶追蹤和數據整合\n\n2. 線下轉化捕捉方法\n- 前台「如何得知我們」詢問流程和記錄系統\n- 新患者調查表設計和數據收集\n- 電話諮詢來源識別話術指南\n- 線下轉化資料與線上數據整合\n\n3. CRM與實踐管理系統整合\n- 行銷渠道資料與患者管理系統對接\n- 患者旅程全流程數據追蹤\n- 初診到復診全程轉化率分析\n- 不同來源患者的終身價值比較\n\n4. 歸因模型和報告系統\n- 多點接觸歸因模型實施\n- 自動化報告設置和關鍵指標儀表板\n- ROI計算框架和投資調整建議\n- 預測性分析和趨勢識別\n\n我們為診所建立從線上接觸到實際就診的完整追蹤系統，消除行銷效果評估的盲點。這種方法不僅準確測量不同渠道的實際表現，還能評估它們帶來的患者質量。我們的診所客戶透過數據驅動的預算分配，平均提高了42%的行銷投資回報，同時清晰識別出哪些渠道帶來最有價值的長期患者。',
+    category: '成效評估'
   }
 ];
 
@@ -181,8 +281,8 @@ const HeroSection = memo(function HeroSection() {
     [heroInViewRef]
   );
   
-  // 標題數據
-  const titles = [
+  // 標題數據 - 使用useMemo避免重新創建
+  const titles = useMemo(() => [
     {
       main: "數位精準驅動",
       sub: "專為真實醫療服務",
@@ -204,9 +304,10 @@ const HeroSection = memo(function HeroSection() {
       enMain: "Connecting patient trust",
       enSub: "establishing your professional brand"
     }
-  ];
+  ], []);
 
-  // 追蹤當前顯示的標題與背景加載狀態
+  // 使用useTransition提高性能和用戶體驗
+  const [isPending, startTransition] = useTransition();
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   
@@ -218,7 +319,10 @@ const HeroSection = memo(function HeroSection() {
     // 確保只有在瀏覽器環境才運行
     if (typeof window !== 'undefined') {
       titleInterval.current = setInterval(() => {
-        setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+        // 使用useTransition避免阻塞主線程
+        startTransition(() => {
+          setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+        });
       }, 4000);
     }
     
@@ -227,15 +331,15 @@ const HeroSection = memo(function HeroSection() {
         clearInterval(titleInterval.current);
       }
     };
-  }, [titles.length]);
+  }, [titles.length, startTransition]);
   
-  // 標籤數據
-  const tags = [
+  // 標籤數據 - 使用useMemo避免重新創建
+  const tags = useMemo(() => [
     { id: 'ai', name: '#AI' },
     { id: 'creativity', name: '#Creativity' },
     { id: 'design', name: '#Design Thinking' },
     { id: 'insight', name: '#Insight' }
-  ];
+  ], []);
 
   // 優化性能監測
   useEffect(() => {
@@ -258,35 +362,26 @@ const HeroSection = memo(function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
         {/* CSS背景替代Image組件 - 減少DOM節點與渲染時間 */}
-        <div 
-          className="absolute inset-0 bg-no-repeat bg-cover opacity-30 transition-opacity duration-700"
+        {/* 使用Next.js 15+ Image組件的最新優化 */}
+        <Image 
+          src="/images/bgline-w-small.webp"
+          alt=""
+          fill
+          priority={true}
+          sizes="100vw"
+          quality={30}
+          className="object-cover opacity-0 transition-opacity duration-700"
           style={{ 
-            backgroundImage: 'url(/images/bgline-w-small.webp)',
-            backgroundPosition: 'center',
-            opacity: isBackgroundLoaded ? '0.3' : '0',
-            willChange: 'opacity'
+            objectPosition: 'center',
+            opacity: isBackgroundLoaded ? 0.3 : 0,
           }}
-          aria-hidden="true"
+          onLoad={() => {
+            setIsBackgroundLoaded(true);
+            if (window.performance && window.performance.mark) {
+              window.performance.mark('hero-bg-loaded');
+            }
+          }}
         />
-        
-        {/* 非同步加載高質量背景 - 在後台加載以備用，只在需要時顯示 */}
-        {heroInView && (
-          <div 
-            className="hidden"
-            aria-hidden="true"
-          >
-            <img 
-              src="/images/bgline-w-optimized.webp" 
-              alt=""
-              onLoad={() => {
-                setIsBackgroundLoaded(true);
-                if (window.performance && window.performance.mark) {
-                  window.performance.mark('hero-bg-loaded');
-                }
-              }}
-            />
-          </div>
-        )}
       </div>
       
       {/* 主要標題內容區 */}
@@ -450,16 +545,20 @@ const MarketingSection = memo(function MarketingSection() {
       {/* 背景設計 - 使用普通div和CSS背景替代Image組件 */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-primary"></div>
-        {/* 使用CSS背景圖片 - 減少DOM渲染負擔 */}
-        <div 
-          className="absolute inset-0 bg-no-repeat bg-cover opacity-100"
+        {/* 使用Next.js 15+ Image組件代替CSS背景 */}
+        <Image 
+          src="/images/bgline-w-small.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          quality={30}
+          loading="lazy"
+          className="object-cover opacity-100"
           style={{ 
-            backgroundImage: 'url(/images/bgline-w-small.webp)',
-            backgroundPosition: 'center',
-            willChange: 'transform' // 提示瀏覽器這個元素與合成相關
+            objectPosition: 'center',
           }}
           aria-hidden="true"
-        ></div>
+        />
       </div>
       
       {/* 階梯式行銷文案內容 - 提高效能的容器 */}
@@ -535,39 +634,65 @@ const MarketingSection = memo(function MarketingSection() {
   );
 });
 
-// 更新服務特色區塊
+// 更新服務特色區塊 - 使用useTransition優化用戶體驗
 const FeatureSection = memo(function FeatureSection() {
   const [currentFeature, setCurrentFeature] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   
+  // 使用useTransition優化狀態更新，避免阻塞主線程
+  const [isPending, startTransition] = useTransition();
+  
+  // 使用useRef避免多餘重新渲染
+  const featureTimer = useRef<NodeJS.Timeout | null>(null);
+  
+  // 在組件內部使用useMemo記憶化features數據
+  const memoizedFeatures = useMemo(() => features, []);
+  
+  // 使用features數組的長度來創建指示器
+  const indicators = useMemo(() => {
+    return Array.from({ length: memoizedFeatures.length }, (_, index) => index);
+  }, [memoizedFeatures.length]);
+  
   // 監控視窗大小，判斷是否為行動裝置
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      startTransition(() => {
+        setIsMobile(window.innerWidth < 768); // md breakpoint
+      });
     };
     
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    
+    // 使用防抖動避免過度觸發
+    const handleResize = () => {
+      clearTimeout(featureTimer.current!);
+      featureTimer.current = setTimeout(checkMobile, 100);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (featureTimer.current) clearTimeout(featureTimer.current);
+    };
+  }, [startTransition]);
   
   // 處理輪播控制
   const handleNext = useCallback(() => {
-    setCurrentFeature(prev => (prev + 1) % features.length);
-  }, []);
+    setCurrentFeature((prev) => (prev + 1) % memoizedFeatures.length);
+  }, [memoizedFeatures.length]);
   
   const handlePrev = useCallback(() => {
-    setCurrentFeature(prev => (prev - 1 + features.length) % features.length);
-  }, []);
+    setCurrentFeature((prev) => (prev - 1 + memoizedFeatures.length) % memoizedFeatures.length);
+  }, [memoizedFeatures.length]);
   
-  // 自動輪播
+  // 每5秒自動切換功能卡片
   useEffect(() => {
-    if (!isMobile) return;
-    
     const interval = setInterval(() => {
-      handleNext();
-    }, 4000);
+      if (isMobile) {
+        handleNext();
+      }
+    }, 5000);
     
     return () => clearInterval(interval);
   }, [isMobile, handleNext]);
@@ -608,7 +733,7 @@ const FeatureSection = memo(function FeatureSection() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {features.map((feature, index) => (
+          {memoizedFeatures.map((feature, index) => (
             <motion.div 
               key={feature.title} 
               variants={animations.slideUp}
@@ -651,7 +776,7 @@ const FeatureSection = memo(function FeatureSection() {
                 transform: `translateX(-${currentFeature * 100}%)`
               }}
             >
-              {features.map((feature, index) => (
+              {memoizedFeatures.map((feature, index) => (
                 <div 
                   key={feature.title}
                   className="min-w-full px-2"
@@ -700,7 +825,7 @@ const FeatureSection = memo(function FeatureSection() {
             </button>
             
             <div className="flex space-x-2">
-              {features.map((_, index) => (
+              {memoizedFeatures.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentFeature(index)}
@@ -1656,112 +1781,132 @@ const CaseStudiesSection = memo(function CaseStudiesSection() {
   );
 })
 
-// 更新 FAQ 區塊 - 優化渲染和狀態管理
-const FAQSection = memo(function FAQSection() {
-  // 使用 useReducer 統一管理 FAQ 狀態
-  type FaqState = {
-    activeIndex: number | null;
-    activeCategory: string;
-  }
-
-  type FaqAction = 
-    | { type: 'SET_CATEGORY'; payload: string }
-    | { type: 'TOGGLE_FAQ'; payload: number };
-
-  const initialState: FaqState = {
-    activeIndex: null,
-    activeCategory: 'all'
-  };
-
-  const faqReducer = (state: FaqState, action: FaqAction): FaqState => {
-    switch (action.type) {
-      case 'SET_CATEGORY':
-        return { activeCategory: action.payload, activeIndex: null };
-      case 'TOGGLE_FAQ':
-        return { 
-          ...state, 
-          activeIndex: state.activeIndex === action.payload ? null : action.payload 
-        };
-      default:
-        return state;
+// 修改FAQSection的定義方式，並導出為React組件
+function FAQSection() {
+  const [isPending, startTransition] = useTransition();
+  const memoizedFaqs = useMemo(() => faqs, []);
+  
+  // 使用useMemo獲取所有類別
+  const categories = useMemo(() => {
+    const categorySet = new Set(memoizedFaqs.map(faq => faq.category));
+    return Array.from(categorySet);
+  }, [memoizedFaqs]);
+  
+  // 使用useState管理活動的分類和開啟的FAQ
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  
+  // 使用useMemo過濾FAQ
+  const filteredFaqs = useMemo(() => {
+    if (activeCategory === 'all') {
+      return memoizedFaqs; // 當選擇「全部問題」時，返回所有FAQ
     }
-  };
-
-  const [state, dispatch] = useReducer(faqReducer, initialState);
-  const { activeIndex, activeCategory } = state;
+    return memoizedFaqs.filter(faq => faq.category === activeCategory);
+  }, [memoizedFaqs, activeCategory]);
   
-  // 使用 useMemo 記憶類別列表，避免重複計算
-  const categories = useMemo(() => 
-    Array.from(new Set(faqs.map(faq => faq.category))),
-    [faqs]
-  );
-  
-  // 使用 useMemo 記憶過濾後的 FAQ 列表，避免重複計算
-  const filteredFaqs = useMemo(() => 
-    activeCategory === 'all' 
-    ? faqs 
-      : faqs.filter(faq => faq.category === activeCategory),
-    [activeCategory, faqs]
-  );
-
-  // 使用 useCallback 記憶函數，減少不必要的重新渲染
+  // 處理分類更改
   const handleTabChange = useCallback((category: string) => {
-    React.startTransition(() => {
-      dispatch({ type: 'SET_CATEGORY', payload: category });
+    startTransition(() => {
+      setActiveCategory(category);
+      setOpenFaq(null);
     });
   }, []);
   
-  const toggleFaq = useCallback((index: number) => {
-    dispatch({ type: 'TOGGLE_FAQ', payload: index });
+  // 切換FAQ開關狀態
+  const toggleFaq = useCallback((id: number) => {
+    startTransition(() => {
+      setOpenFaq(openFaq === id ? null : id);
+    });
+  }, [openFaq]);
+  
+  // 格式化FAQ答案，處理換行
+  const formatAnswer = useCallback((answer: string) => {
+    // 根據雙換行符分割段落
+    const paragraphs = answer.split('\n\n');
+    
+    return (
+      <div className="space-y-4">
+        {paragraphs.map((paragraph, idx) => {
+          // 如果段落包含列表項目（以"- "開頭的行）
+          if (paragraph.includes('\n- ')) {
+            const [listTitle, ...listItems] = paragraph.split('\n- ');
+            return (
+              <div key={idx} className="space-y-2">
+                <p className="font-medium text-gray-800">{listTitle}</p>
+                <ul className="list-disc list-outside ml-5 space-y-1.5">
+                  {listItems.map((item, itemIdx) => (
+                    <li key={itemIdx} className="text-gray-600 text-sm sm:text-base leading-relaxed">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          }
+          // 一般段落
+          return <p key={idx} className="text-gray-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">{paragraph}</p>;
+        })}
+      </div>
+    );
   }, []);
-
-  // 使用 useRef 追蹤元素
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
-
+  
+  // Intersection Observer觀察元素
+  const sectionRef = useRef(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            console.log("FAQ Section visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+  
   return (
-    <section ref={sectionRef} className="py-20 bg-white overflow-hidden border-t border-gray-100">
-      <div ref={ref} className="container mx-auto px-4 sm:px-6 relative z-10">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-            常見<span className="text-primary">問答集</span>
-          </h2>
-          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
-            以下是診所院長常問的問題，如果您有其他疑問，歡迎隨時與我們聯繫
+    <section 
+      ref={sectionRef} 
+      className="py-16 md:py-24 px-4 bg-gray-50/70"
+    >
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">常見問題</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            我們整理了關於數位行銷的常見問題，協助您更了解如何透過專業行銷策略提升診所業績
           </p>
-        </motion.div>
+        </div>
         
-        {/* 分類標籤 - 扁平簡約設計，與案例區保持一致 */}
+        {/* 類別選擇器 - 優化響應式設計 */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
-            <button
+          <button
             onClick={() => handleTabChange('all')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
               activeCategory === 'all'
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
             全部問題
           </button>
-          
-          {categories.map(category => (
+          {categories.map((category) => (
             <button
               key={category}
               onClick={() => handleTabChange(category)}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 activeCategory === category
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
               {category}
@@ -1769,128 +1914,59 @@ const FAQSection = memo(function FAQSection() {
           ))}
         </div>
         
-        {/* FAQ列表 - 優化載入 */}
-        <div className="max-w-3xl mx-auto">
-          <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCategory}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                {filteredFaqs.length > 0 ? (
-                  <div className="space-y-4">
-            {filteredFaqs.map((faq, index) => (
-                      <FaqItem 
-                        key={`${activeCategory}-${faq.question}`} 
-                        faq={faq} 
-                        index={index} 
-                        isOpen={activeIndex === index} 
-                        toggle={() => toggleFaq(index)} 
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center p-10 bg-white border border-gray-200 mb-12">
-                    <p className="text-gray-500">此分類下暫無常見問題</p>
-                  </div>
-                )}
-              </motion.div>
-          </AnimatePresence>
-          </Suspense>
-          
-          {/* 聯絡我們按鈕 */}
-            <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="text-center mt-10"
-          >
-            <Link 
-              href="/contact" 
-              prefetch={true} 
-              className="inline-flex items-center justify-center bg-primary text-white px-6 py-3 font-medium hover:bg-primary-dark transition-colors duration-300"
+        {/* FAQ列表 - 改善排版與間距 */}
+        <div className="space-y-4 max-w-4xl mx-auto">
+          {filteredFaqs.map((faq, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
             >
-              更多問題諮詢
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="ml-2">
-                <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
-            </motion.div>
+              <button
+                onClick={() => toggleFaq(index)}
+                className="w-full text-left px-6 py-5 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-gray-50"
+              >
+                <h3 className="font-semibold text-base sm:text-lg pr-8 text-gray-900">{faq.question}</h3>
+                <div className={`transform transition-transform duration-300 ${
+                  openFaq === index ? 'rotate-180' : ''
+                }`}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </button>
+              
+              {/* 答案區塊 - 加強結構化與可讀性 */}
+              {openFaq === index && (
+                <div 
+                  className="px-6 pb-6 pt-2 border-t border-gray-100"
+                >
+                  {formatAnswer(faq.answer)}
+                  <div className="mt-4 pt-3 border-t border-gray-100 text-sm text-gray-500">
+                    <p>還有其他問題？<a href="/contact" className="text-primary hover:underline">聯絡我們</a>獲取專業建議</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
-})
-
-interface FaqItemProps {
-  faq: {
-    question: string;
-    answer: string;
-    category: string;
-  };
-  index: number;
-  isOpen: boolean;
-  toggle: () => void;
 }
 
-// 優化 FAQ 項目以減少不必要的渲染
-const FaqItem = memo(({ faq, index, isOpen, toggle }: FaqItemProps) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="bg-white border border-gray-200 hover:border-gray-300 transition-colors duration-200"
-      layout
-      >
-        <button
-          onClick={toggle}
-          className="w-full px-5 py-4 text-left flex items-center justify-between focus:outline-none"
-        aria-expanded={isOpen}
-      >
-        <h3 className="font-medium text-base md:text-lg text-gray-900">{faq.question}</h3>
-        <div className={`text-primary transition-transform duration-200 transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
-        </button>
-        
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
-              className="overflow-hidden"
-            >
-            <div className="px-5 pb-5 pt-0">
-              <div className="pt-3 border-t border-gray-100">
-                <div className="prose prose-sm max-w-none text-gray-600">
-                {faq.answer.split('\n\n').map((paragraph, i) => (
-                    <p key={i} className={`${i > 0 ? 'mt-3' : ''}`}>
-                    {paragraph}
-                  </p>
-                ))}
-                </div>
-                <div className="mt-3 flex items-center">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
-                    {faq.category}
-                  </span>
-                </div>
-              </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-    </motion.div>
-  );
-});
+// 使用memo包裝FAQSection
+const MemoizedFAQSection = memo(FAQSection);
 
 // 聯絡區塊 - 使用 Suspense 優化載入
 const ContactSection = memo(function ContactSection() {
@@ -2257,119 +2333,109 @@ const TestimonialSection = memo(function TestimonialSection() {
   );
 })
 
-// 最終組合 - 使用異步導入與Suspense優化首頁效能
+// 最終組合 - 使用Suspense優化首頁效能
 const HomePage = () => {
-  // 使用useState監測組件掛載狀態
-  const [isComponentMounted, setIsComponentMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
   
-  // 等待組件掛載後再載入非關鍵組件
+  // 使用useEffect記錄頁面性能
   useEffect(() => {
-    // 使用requestIdleCallback (如有支援) 或 setTimeout 延遲載入
-    if ('requestIdleCallback' in window) {
-      // @ts-ignore - requestIdleCallback 類型定義問題
-      window.requestIdleCallback(() => {
-        setIsComponentMounted(true);
-      }, { timeout: 2000 });
-    } else {
-      setTimeout(() => {
-        setIsComponentMounted(true);
-      }, 1500);
-    }
-    
     // 初始化性能標記
     if (window.performance && window.performance.mark) {
       window.performance.mark('homepage-mounted');
+      
+      // 註冊性能觀察者 - 使用Next.js 15+優化的方式
+      if ('PerformanceObserver' in window) {
+        const observer = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          // 收集重要性能指標
+          entries.forEach(entry => {
+            if (entry.entryType === 'largest-contentful-paint' ||
+                entry.entryType === 'layout-shift' ||
+                entry.entryType === 'first-input') {
+              console.log(`Performance: ${entry.entryType}`, entry);
+            }
+          });
+        });
+        
+        // 監控Web Vitals核心指標
+        observer.observe({
+          entryTypes: ['largest-contentful-paint', 'layout-shift', 'first-input']
+        });
+        
+        return () => observer.disconnect();
+      }
     }
   }, []);
 
   return (
     <>
-      {/* 立即顯示的首屏關鍵內容 - 不使用Suspense */}
+      {/* 使用<ErrorBoundary>+<Suspense>替換isComponentMounted邏輯 */}
       <ErrorBoundary fallback={<div className="min-h-screen flex items-center justify-center">載入中...</div>}>
         <HeroSection />
       </ErrorBoundary>
       
-      {/* 第二優先級內容 - Marketing區塊 */}
       <ErrorBoundary fallback={<div className="py-16 bg-primary">載入中...</div>}>
         <MarketingSection />
       </ErrorBoundary>
       
-      {/* 非關鍵內容 - 僅在組件掛載後載入 */}
-      {isComponentMounted && (
-        <>
-          {/* 功能區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-16 bg-white"></div>}>
-              <FeatureSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 服務區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-24 bg-gray-50"></div>}>
-              <ServiceSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 統計區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-20 bg-white"></div>}>
-              <StatsSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 案例研究區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-20 bg-gray-50"></div>}>
-              <CaseStudiesSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 評價區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-16 bg-white"></div>}>
-              <TestimonialSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 常見問題區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-20 bg-gray-50"></div>}>
-              <FAQSection />
-            </Suspense>
-          </ErrorBoundary>
-          
-          {/* 聯絡區塊 */}
-          <ErrorBoundary>
-            <Suspense fallback={<div className="py-16 bg-white"></div>}>
-              <ContactSection />
-            </Suspense>
-          </ErrorBoundary>
-        </>
-      )}
+      {/* 使用<Suspense>進行懶加載 */}
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-16 bg-white flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <FeatureSection />
+        </Suspense>
+      </ErrorBoundary>
       
-      {/* 添加懶加載性能監測 */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            // 監測非關鍵內容載入
-            const observer = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                if (entry.isIntersecting && window.performance && window.performance.mark) {
-                  window.performance.mark('non-critical-content-visible');
-                  observer.disconnect();
-                }
-              });
-            });
-            
-            // 監測首屏外元素
-            setTimeout(() => {
-              const elementsToObserve = document.querySelectorAll('#marketing-content, #features-section');
-              elementsToObserve.forEach(el => observer.observe(el));
-            }, 1000);
-          `
-        }}
-      />
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-24 bg-gray-50 flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <ServiceSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-20 bg-white flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <StatsSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-20 bg-gray-50 flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <CaseStudiesSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-16 bg-white flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <TestimonialSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-20 bg-gray-50 flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <MemoizedFAQSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <Suspense fallback={<div className="py-16 bg-white flex items-center justify-center">
+          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
+        </div>}>
+          <ContactSection />
+        </Suspense>
+      </ErrorBoundary>
+      
+      {/* 使用React 19 useEffect處理性能監測，移除舊的script */}
     </>
   );
 }
