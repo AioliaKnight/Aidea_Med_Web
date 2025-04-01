@@ -416,7 +416,7 @@ const HeroSection = memo(function HeroSection() {
                   </h1>
                   
                   {/* 英文主副標題 - 視覺上分隔但保持關聯性 */}
-                  <div className="mt-3 mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 leading-tight tracking-wide">
+                  <div className="mt-3 mb-3 text-lg sm:text-xl md:text-2xl lg:text-3xl text-white leading-tight tracking-wide">
                     {titles[currentTitleIndex].enMain},
                     <div className="font-extrabold text-white mt-2">
                       {titles[currentTitleIndex].enSub}.
@@ -432,7 +432,7 @@ const HeroSection = memo(function HeroSection() {
                 {tags.map((tag) => (
                   <span
                     key={tag.id}
-                    className="text-xs sm:text-sm md:text-base text-white/90 font-medium tracking-wide whitespace-nowrap"
+                    className="text-xs sm:text-sm md:text-base text-white font-medium tracking-wide whitespace-nowrap"
                   >
                     {tag.name}
                   </span>
@@ -444,7 +444,7 @@ const HeroSection = memo(function HeroSection() {
             <div className="mt-4 mb-5 flex justify-center w-full min-h-[60px]">
               <Link href="/contact" prefetch={false}>
                 <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10 hover:bg-black/80 transition-colors">
-                  <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
+                  <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white">
                     A:
                   </span>
                   <span className="font-medium">免費30分鐘專業顧問</span>
@@ -607,7 +607,7 @@ const MarketingSection = memo(function MarketingSection() {
                       {block.zh.title}
                     </p>
                     {block.zh.subtitle && (
-                      <p className="text-lg md:text-xl text-white/90 mt-2 font-medium leading-tight">
+                      <p className="text-lg md:text-xl text-white mt-2 font-medium leading-tight">
                         {block.zh.subtitle}
                       </p>
                     )}
@@ -829,7 +829,7 @@ const FeatureSection = memo(function FeatureSection() {
                 <button
                   key={index}
                   onClick={() => setCurrentFeature(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                  className={`w-4 h-4 rounded-full transition-colors ${
                     currentFeature === index ? 'bg-primary' : 'bg-gray-300'
                   }`}
                   aria-label={`查看特色 ${index + 1}`}
@@ -996,7 +996,7 @@ const ServiceSection = memo(function ServiceSection() {
             <div className="absolute -left-2 top-0 w-2 h-1 bg-red-600 animate-pulse"></div>
             <div className="absolute -right-2 top-0 w-2 h-1 bg-red-600 animate-pulse"></div>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-white max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
             結合十年以上醫療產業經驗，為診所打造專屬成長策略，從品牌建立到數位行銷全面支援
           </p>
         </AnimatedSection>
@@ -1258,7 +1258,7 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 md:mb-4">
             顯著成效數據
           </h2>
-          <p className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
+          <p className="text-white max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
             多年實證數據驅動診所業務增長，提供可量化的成功案例與投資回報
           </p>
         </motion.div>
@@ -1301,7 +1301,7 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
                   {/* 標題與描述 */}
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">{stat.label}</h3>
-                    <p className="text-white/90 text-sm">{stat.description}</p>
+                    <p className="text-white text-sm">{stat.description}</p>
                   </div>
                 </div>
               </motion.div>
@@ -1349,7 +1349,7 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
                     {/* 標題與描述 */}
                     <div>
                       <h3 className="text-xl font-bold text-white mb-2">{stats[currentIndex].label}</h3>
-                      <p className="text-white/90 text-sm">{stats[currentIndex].description}</p>
+                      <p className="text-white text-sm">{stats[currentIndex].description}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -1361,8 +1361,8 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      currentIndex === idx ? 'bg-white w-4' : 'bg-white/50'
+                    className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                      currentIndex === idx ? 'bg-white w-6' : 'bg-white/50'
                     }`}
                     aria-label={`切換到第 ${idx + 1} 張卡片`}
                   />
@@ -1727,7 +1727,7 @@ const CaseStudiesSection = memo(function CaseStudiesSection() {
                 <button
                   key={index}
                               onClick={() => handleSlideChange(index)}
-                              className={`w-2 h-2 transition-all duration-300 ${
+                              className={`w-4 h-4 rounded-full transition-all duration-300 ${
                                 currentSlide === index ? 'bg-primary w-6' : 'bg-gray-300'
                               }`}
                               aria-label={`前往案例 ${index + 1}`}
@@ -2281,7 +2281,7 @@ const TestimonialSection = memo(function TestimonialSection() {
                 
                 {/* 作者 */}
                 <div className="mt-auto">
-                  <h4 className="font-bold text-gray-900 text-lg md:text-xl">{clientTestimonials[currentSlide].author}</h4>
+                  <h3 className="font-bold text-gray-900 text-lg md:text-xl">{clientTestimonials[currentSlide].author}</h3>
                   <p className="text-sm md:text-base text-gray-500">{clientTestimonials[currentSlide].role}</p>
                 </div>
               </motion.div>
@@ -2306,9 +2306,9 @@ const TestimonialSection = memo(function TestimonialSection() {
                 <button
                   key={index}
                   onClick={() => handleSlideChange(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                  className={`w-4 h-4 rounded-full transition-all ${
                     currentSlide === index 
-                      ? 'bg-primary w-6' 
+                      ? 'bg-primary w-7' 
                       : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                   aria-label={`切換到第 ${index + 1} 個見證`}
