@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
@@ -148,47 +148,43 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
-  // 針對 Next.js 15+ 與 React 19+ 優化圖片預加載邏輯
+  // 優化圖片載入邏輯
   useEffect(() => {
+    if (!member.image) return;
+    
     let isMounted = true;
     
-    // 僅在客戶端執行
-    if (typeof window !== 'undefined') {
-      // 避免使用 new Image() 構造函數，改用更安全的方法檢查圖片
-      const checkImage = () => {
-        // 建立臨時的 img 元素而不是用構造函數
-        const tempImg = document.createElement('img');
-        tempImg.src = member.image;
-        
-        // 設置監聽事件
-        tempImg.onerror = () => {
-          if (isMounted) {
-            setImageError(true);
-          }
-          tempImg.onerror = null; // 清理事件處理器
-        };
-        
-        // 如果圖片已在快取中，可能不會觸發load事件，但也不會觸發error事件
-        tempImg.onload = () => {
-          if (isMounted) {
-            setImageLoading(false);
-          }
-          tempImg.onload = null; // 清理事件處理器
-        };
-      };
-      
-      checkImage();
+    // 使用Intersection Observer確保只有視窗內的圖片才加載
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        const img = document.createElement('img');
+        img.src = member.image;
+        img.onload = () => isMounted && setImageLoading(false);
+        img.onerror = () => isMounted && setImageError(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '200px' });
+    
+    // 觀察當前元素
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
     }
     
     return () => {
-      isMounted = false; // 防止在組件卸載後設置狀態
+      isMounted = false;
+      observer.disconnect();
     };
   }, [member.image]);
 
   return (
     <AnimatedSection delay={delay}>
-      <div className="group bg-white hover:bg-gray-50 border border-gray-100 hover:border-primary hover:shadow-lg rounded-lg overflow-hidden transition-all duration-300">
+      <div 
+        ref={cardRef}
+        className="group bg-white hover:bg-gray-50 focus-within:bg-gray-50 border border-gray-100 hover:border-primary focus-within:border-primary hover:shadow-lg focus-within:shadow-lg rounded-lg overflow-hidden transition-all duration-300 will-change-transform"
+        tabIndex={0}
+      >
         {/* 頭像區域 */}
         <div className="relative overflow-hidden aspect-square rounded-full mx-auto w-[70%] sm:w-[65%] mt-6 mb-2 border-4 border-white shadow-md">
           {imageLoading && !imageError && (
@@ -216,9 +212,12 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               </div>
             </div>
           )}
-          {/* 基本資訊遮罩 - hover 時顯示 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end rounded-full transform scale-100 group-hover:scale-105">
-            <div className="text-white transform translate-y-2 group-hover:translate-y-0 transition duration-300 text-center p-2">
+          {/* 基本資訊遮罩 - 優化移動端觸控體驗 */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 sm:group-focus-visible:opacity-100 transition duration-300 flex flex-col justify-end rounded-full transform will-change-transform scale-100 group-hover:scale-105 group-active:scale-105 sm:group-focus-visible:scale-105"
+            role="presentation"
+          >
+            <div className="text-white transform translate-y-2 group-hover:translate-y-0 group-active:translate-y-0 group-focus-visible:translate-y-0 transition duration-300 text-center p-2">
               <p className="text-xs text-white/90 font-medium">{member.education}</p>
             </div>
           </div>
@@ -235,16 +234,16 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
             </p>
           </div>
           
-          {/* 社交媒體圖標 */}
-          <div className="flex justify-center space-x-3 my-3">
+          {/* 社交媒體圖標 - 增加觸控區域 */}
+          <div className="flex justify-center space-x-2 sm:space-x-3 my-3">
             {member.socialLinks.map((link: SocialLink, i) => (
               <a
                 key={i}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-primary transition-colors transform hover:-translate-y-1 hover:scale-110 duration-300"
-                aria-label={`${member.name}的${link.platform}個人檔案`}
+                className="text-gray-400 hover:text-primary active:text-primary focus:text-primary transition-colors p-2"
+                aria-label={`在${link.platform}上關注${member.name}`}
               >
                 <span className="sr-only">{link.platform}</span>
                 {link.platform === 'facebook' ? (
@@ -272,17 +271,17 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
             ))}
           </div>
           
-          {/* 專業描述文字 */}
+          {/* 專業描述文字 - 改善對比度 */}
           <div className="bg-gray-50 p-3 rounded-md mb-3">
-            <p className="text-gray-600 line-clamp-3 text-xs sm:text-sm leading-relaxed">{member.description}</p>
+            <p className="text-gray-700 line-clamp-3 text-xs sm:text-sm leading-relaxed">{member.description}</p>
           </div>
           
-          {/* 專業領域標籤 */}
+          {/* 專業領域標籤 - 改善對比度 */}
           <div className="flex flex-wrap justify-center gap-2 mt-4">
             {member.expertise.slice(0, 2).map((skill, i) => (
               <span 
                 key={i} 
-                className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full"
+                className="px-3 py-1 bg-primary/15 text-primary-800 text-xs font-medium rounded-full"
               >
                 {skill}
               </span>
@@ -321,9 +320,10 @@ export default function TeamPage() {
               <div className="w-20 h-1 bg-primary mx-auto"></div>
             </AnimatedSection>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto">
+            {/* 優化響應式網格 */}
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto">
               {teamMembers.map((member, index) => (
-                <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
+                <TeamMemberCard key={member.name} member={member} delay={index * 0.05} />
               ))}
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function TeamPage() {
                   <div className="space-y-4">
                     <div className="flex items-start">
                       <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -355,7 +355,7 @@ export default function TeamPage() {
                     </div>
                     <div className="flex items-start">
                       <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -363,7 +363,7 @@ export default function TeamPage() {
                     </div>
                     <div className="flex items-start">
                       <div className="flex-shrink-0 w-6 h-6 text-primary mt-1">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -377,7 +377,7 @@ export default function TeamPage() {
                       prefetch
                     >
                       了解我們的服務
-                      <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                       </svg>
                     </Link>
@@ -388,7 +388,7 @@ export default function TeamPage() {
                     className="rounded-lg overflow-hidden shadow-md"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                   >
                     <OptimizedImage 
@@ -405,39 +405,41 @@ export default function TeamPage() {
                     className="rounded-lg overflow-hidden mt-4 sm:mt-8 shadow-md"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6, delay: 0.3 }}
                   >
-                    <img 
+                    <OptimizedImage 
                       src="/images/team/office-2.png" 
                       alt="團隊協作空間" 
-                      width="400"
-                      height="300"
-                      className="w-full h-auto object-cover"
-                      loading="lazy"
+                      width={400}
+                      height={300}
+                      className="w-full h-auto"
+                      quality={85}
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                     />
                   </motion.div>
                   <motion.div 
                     className="rounded-lg overflow-hidden shadow-md"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                   >
-                    <img 
+                    <OptimizedImage 
                       src="/images/team/office-3.png" 
                       alt="創意討論空間" 
-                      width="400"
-                      height="300"
-                      className="w-full h-auto object-cover"
-                      loading="lazy"
+                      width={400}
+                      height={300}
+                      className="w-full h-auto"
+                      quality={85}
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 400px"
                     />
                   </motion.div>
                   <motion.div 
                     className="rounded-lg overflow-hidden mt-4 sm:mt-8 shadow-md"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6, delay: 0.5 }}
                   >
                     <OptimizedImage 
@@ -456,7 +458,7 @@ export default function TeamPage() {
           </div>
         </section>
 
-        {/* 團隊價值觀 - 優化響應式設計 */}
+        {/* 團隊價值觀 - 優化無障礙性和動畫 */}
         <section className="py-20 bg-gray-50">
           <div className="container-custom">
             <AnimatedSection className="text-center mb-12">
@@ -468,18 +470,23 @@ export default function TeamPage() {
               </p>
             </AnimatedSection>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              role="list"
+              aria-label="團隊價值觀列表"
+            >
               {values.map((value, index) => (
                 <motion.div 
                   key={value.title}
+                  role="listitem"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border-t-2 border-primary"
+                  className="bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border-t-2 border-primary will-change-transform"
                 >
                   <div className="flex justify-center mb-6">
-                    <value.icon className="w-12 h-12 text-primary" />
+                    <value.icon className="w-12 h-12 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
                     {value.title}
@@ -493,13 +500,13 @@ export default function TeamPage() {
           </div>
         </section>
 
-        {/* CTA Section - 優化響應式設計 */}
+        {/* CTA Section - 優化無障礙性 */}
         <section className="py-20 bg-primary text-white">
           <div className="container-custom">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
               className="text-center max-w-4xl mx-auto"
             >
@@ -512,13 +519,15 @@ export default function TeamPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 transition-all duration-300 text-lg"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-medium hover:bg-gray-100 focus:bg-gray-100 transition-all duration-300 text-lg"
+                  prefetch
                 >
                   立即預約諮詢
                 </Link>
                 <Link
                   href="/service"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary transition-all duration-300 text-lg"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-primary focus:bg-white focus:text-primary transition-all duration-300 text-lg"
+                  prefetch
                 >
                   了解服務內容
                 </Link>
