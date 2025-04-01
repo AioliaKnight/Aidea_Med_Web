@@ -5,6 +5,7 @@ import {
   medicalServicesFaq,
   brandingWebsiteSchema
 } from './metadata'
+import { viewport } from './viewport'
 import { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
@@ -22,13 +23,8 @@ import '@/app/fonts.css'
 
 export const metadata = sharedMetadata
 
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
-  themeColor: 'var(--color-primary)',
-  colorScheme: 'light'
-}
+// 使用從viewport.ts匯入的viewport設定
+export { viewport }
 
 export const runtime = 'edge'  // 使用邊緣運行時
 export const preferredRegion = ['auto']  // 自動選擇最佳區域
