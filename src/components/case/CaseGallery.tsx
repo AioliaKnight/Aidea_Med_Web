@@ -215,36 +215,26 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     preloadImages()
   }, [preloadImages])
   
-  // 獲取圖片URL (處理錯誤情況)
+  // 獲取圖片URL，支援備用URL
   const getImageUrl = useCallback((image: CaseImage) => {
-    // 確保 URL 是絕對路徑
-    const ensureAbsoluteUrl = (url: string) => {
-      if (url.startsWith('http')) return url;
-      if (url.startsWith('//')) return `https:${url}`;
-      return url.startsWith('/') ? url : `/${url}`;
-    };
-
-    // 首先檢查主URL是否已載入
+    // 檢查主圖片URL是否已載入或出錯
     if (loadedImages[image.url]) {
-      return ensureAbsoluteUrl(image.url);
+      return image.url;
     }
     
-    // 如果主URL有錯誤，檢查是否有任何已載入的備用URL
-    if (image.fallbackUrls) {
-      for (const fallbackUrl of image.fallbackUrls) {
-        if (loadedImages[fallbackUrl] && !errorImages[fallbackUrl]) {
-          return ensureAbsoluteUrl(fallbackUrl);
-        }
-      }
+    // 檢查是否有備用URL已載入
+    if (image.fallbackUrls && image.fallbackUrls.length > 0) {
+      const loadedFallback = image.fallbackUrls.find(url => loadedImages[url]);
+      if (loadedFallback) return loadedFallback;
     }
     
-    // 如果所有URL都失敗，使用預設圖片
-    if (errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]))) {
-      return ensureAbsoluteUrl(handleCaseImageError(image.url));
+    // 如果主URL有錯誤，且有備用URL，返回第一個備用URL
+    if (errorImages[image.url] && image.fallbackUrls && image.fallbackUrls.length > 0) {
+      return image.fallbackUrls[0];
     }
     
-    // 預設返回主URL
-    return ensureAbsoluteUrl(image.url);
+    // 否則返回主URL
+    return image.url;
   }, [loadedImages, errorImages]);
   
   // 模態框控制
@@ -383,22 +373,31 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
         {/* 預設背景 */}
-        <div className="absolute inset-0 bg-gray-200"></div>
+        <div className="absolute inset-0 bg-gray-100"></div>
         
         {/* 圖片 */}
         <img 
+          key={`desktop-img-${caseId}-${index}`}
           src={getImageUrl(image)}
           alt={image.alt || `案例圖片 ${index + 1}`}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            loadedImages[image.url] ? 'opacity-100' : 'opacity-70'
+            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
+              ? 'opacity-100' : 'opacity-70'
           }`}
-          onError={() => handleImageError(image.url)}
+          onError={(e) => {
+            // 防止無限循環錯誤
+            const target = e.target as HTMLImageElement;
+            if (target.src === getImageUrl(image)) {
+              handleImageError(image.url);
+            }
+          }}
           onLoad={() => handleImageLoad(image.url)}
           loading={index === 0 ? "eager" : "lazy"}
         />
         
-        {/* 加載指示器 */}
-        {!loadedImages[image.url] && !errorImages[image.url] && (
+        {/* 加載指示器 - 僅在圖片未載入且無錯誤時顯示 */}
+        {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && 
+         !(errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url]))) && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -406,8 +405,8 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
           </div>
         )}
         
-        {/* 錯誤指示器 */}
-        {errorImages[image.url] && (
+        {/* 錯誤指示器 - 僅在所有可能的圖片源都出錯時顯示 */}
+        {errorImages[image.url] && (!image.fallbackUrls || image.fallbackUrls.every(url => errorImages[url])) && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
               <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
