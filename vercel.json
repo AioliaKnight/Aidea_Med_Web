@@ -130,5 +130,10 @@
         "distDir": ".next"
       }
     }
-  ]
+  ],
+  "github": {
+    "silent": true,
+    "autoAlias": true,
+    "enabled": true
+  }
 } 
