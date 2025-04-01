@@ -31,6 +31,38 @@ const constructSecurityHeaders = (pathname: string) => {
   return headers
 }
 
+// 根據路徑設定快取控制策略
+const getCacheControlHeaders = (pathname: string): string => {
+  // 靜態資源使用長期快取
+  if (
+    pathname.match(/\.(jpg|jpeg|gif|png|ico|svg|webp|mp4|webm|woff|woff2)$/) ||
+    pathname.startsWith('/_next/static/') ||
+    pathname.startsWith('/static/') ||
+    pathname.startsWith('/icons/') ||
+    pathname.startsWith('/images/')
+  ) {
+    return 'public, max-age=31536000, immutable';
+  }
+  
+  // JSON 檔案
+  if (pathname.endsWith('.json')) {
+    return 'public, max-age=3600';
+  }
+  
+  // 網站圖示
+  if (pathname === '/favicon.ico' || pathname === '/manifest.json') {
+    return 'public, max-age=86400';
+  }
+  
+  // API 路徑不快取
+  if (pathname.startsWith('/api/')) {
+    return 'no-store, no-cache, must-revalidate, proxy-revalidate';
+  }
+  
+  // 其他 HTML 頁面使用較短的快取時間，且啟用 stale-while-revalidate 策略
+  return 'public, s-maxage=60, stale-while-revalidate=120';
+};
+
 // 中間件
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -38,10 +70,18 @@ export function middleware(request: NextRequest) {
   
   // 應用安全標頭(不應用於API路徑)
   if (!pathname.startsWith('/api/')) {
+    // 設置安全標頭
     const securityHeaders = constructSecurityHeaders(pathname)
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value)
     })
+    
+    // 設置快取控制標頭
+    response.headers.set('Cache-Control', getCacheControlHeaders(pathname))
+    
+    // 添加其他性能相關標頭
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
 
   // 繼續正常的請求

@@ -72,6 +72,21 @@ export const getDefaultDirectives = () => {
       'https://www.google-analytics.com',
       'https://stats.g.doubleclick.net',
       'https://www.googletagmanager.com',
+      // 醫療/牙科案例相關
+      'https://*.vivo.com',
+      'https://*.imgur.com',
+      'https://*.pixnet.net',
+      'https://*.pimg.tw',
+      'https://*.dentist.com.tw',
+      'https://*.health.gvm.com.tw',
+      'https://*.cch.org.tw',
+      'https://*.commonhealth.com.tw',
+      'https://*.dent.com.tw',
+      'https://*.doctorvoice.org',
+      'https://*.kmuya.org',
+      'https://*.meetjobs.com',
+      'https://*.1111.com.tw',
+      'https://*.job104.com.tw',
     ],
     
     // 允許載入字體的來源

@@ -149,6 +149,16 @@ const nextConfig = {
     optimisticClientCache: true,
     // 性能指標
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'INP', 'TTFB'],
+    // 增強型持久快取
+    turboCaching: true,
+    // 提升ISR效能
+    isrMemoryCacheSize: 100, // 增加ISR快取容量
+    // 平行路由優化
+    parallelRoutes: true,
+    // 字體優化
+    fontLoaders: [
+      { loader: '@next/font/google', options: { subsets: ['latin'] } },
+    ],
   },
   poweredByHeader: false,
   compiler: {
@@ -179,6 +189,55 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '3000',
+        pathname: '/**',
+      },
+      // 醫療/牙科相關網站
+      {
+        protocol: 'https',
+        hostname: '*.vivo.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.imgur.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.pixnet.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.pimg.tw',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.dentist.com.tw',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cch.org.tw',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.commonhealth.com.tw',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.dent.com.tw',
+        port: '',
         pathname: '/**',
       },
     ],
