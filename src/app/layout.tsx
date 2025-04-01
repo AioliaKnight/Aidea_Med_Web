@@ -26,7 +26,7 @@ export const metadata = sharedMetadata
 // 使用從viewport.ts匯入的viewport設定
 export { viewport }
 
-export const runtime = 'edge'  // 使用邊緣運行時
+// 支援靜態生成優化
 export const preferredRegion = ['auto']  // 自動選擇最佳區域
 export const dynamic = 'force-dynamic'  // 利用PPR的動態部分
 
