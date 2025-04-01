@@ -149,16 +149,6 @@ const nextConfig = {
     optimisticClientCache: true,
     // 性能指標
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'INP', 'TTFB'],
-    // 增強型持久快取
-    turboCaching: true,
-    // 提升ISR效能
-    isrMemoryCacheSize: 100, // 增加ISR快取容量
-    // 平行路由優化
-    parallelRoutes: true,
-    // 字體優化
-    fontLoaders: [
-      { loader: '@next/font/google', options: { subsets: ['latin'] } },
-    ],
   },
   poweredByHeader: false,
   compiler: {
