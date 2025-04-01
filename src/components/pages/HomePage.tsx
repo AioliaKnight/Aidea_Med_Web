@@ -309,7 +309,6 @@ const HeroSection = memo(function HeroSection() {
   // 使用useTransition提高性能和用戶體驗
   const [isPending, startTransition] = useTransition();
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
-  const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   
   // 避免標題切換過於頻繁，導致不必要的重繪
   const titleInterval = useRef<NodeJS.Timeout | null>(null);
@@ -361,22 +360,18 @@ const HeroSection = memo(function HeroSection() {
         {/* 首先顯示純色漸變背景 - 立即顯示提供視覺基礎 */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
-        {/* CSS背景替代Image組件 - 減少DOM節點與渲染時間 */}
-        {/* 使用Next.js 15+ Image組件的最新優化 */}
+        {/* 優化LCP，移除緩慢的背景載入轉場效果 */}
         <Image 
           src="/images/bgline-w-small.webp"
           alt=""
           fill
           priority={true}
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, 100vw"
           quality={30}
-          className="object-cover opacity-0 transition-opacity duration-700"
-          style={{ 
-            objectPosition: 'center',
-            opacity: isBackgroundLoaded ? 0.3 : 0,
-          }}
+          fetchPriority="high"
+          className="object-cover opacity-30"
+          style={{ objectPosition: 'center' }}
           onLoad={() => {
-            setIsBackgroundLoaded(true);
             if (window.performance && window.performance.mark) {
               window.performance.mark('hero-bg-loaded');
             }
