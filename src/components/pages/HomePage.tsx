@@ -166,25 +166,26 @@ interface MarketingBlock {
 // 修改MarketingSection組件，優化代碼架構和排版
 const MarketingSection = memo(function MarketingSection() {
   // 使用React.useRef和useInView偵測元素進入視窗
-  const ref = useRef<HTMLElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
-    triggerOnce: false,
+    triggerOnce: true, // 改為true，只觸發一次動畫，避免反覆計算
+    rootMargin: '0px 0px -10% 0px', // 提前觸發，增加流暢感
   });
   
   // 使用callback ref合併兩個ref
   const setRefs = useCallback(
     (node: HTMLElement | null) => {
       // 保存DOM ref的引用
-      ref.current = node;
+      sectionRef.current = node;
       // 設置inView ref
       inViewRef(node);
     },
     [inViewRef]
   );
 
-  // 階梯式行銷文案數據
-  const contentBlocks: MarketingBlock[] = [
+  // 階梯式行銷文案數據 - 使用useMemo避免重新創建
+  const contentBlocks = useMemo<MarketingBlock[]>(() => [
     {
       en: {
         title: "THE MARKETING PARTNER",
@@ -206,7 +207,7 @@ const MarketingSection = memo(function MarketingSection() {
         title: "全方位品牌整合策略",
         subtitle: "啟動專業對話"
       },
-      delay: 0.5,
+      delay: 0.3, // 降低延遲時間
       className: "ml-[5%]"
     },
     {
@@ -218,148 +219,17 @@ const MarketingSection = memo(function MarketingSection() {
         title: "與您的潛在患者創造連結",
         subtitle: "打造醫療品牌價值"
       },
-      delay: 0.9,
+      delay: 0.5, // 降低延遲時間
       className: "ml-[10%]"
     }
-  ];
+  ], []);
 
-  // 渲染單個內容塊的函數
-  const renderContentBlock = (block: MarketingBlock, index: number) => {
-    const isLastBlock = index === contentBlocks.length - 1;
-
-    return (
-            <motion.div
-              key={index}
-        className={`mb-8 ${block.className}`}
-        initial={{ opacity: 0, x: -20 }}
-        animate={inView ? 
-          { 
-            opacity: 1, 
-            x: 0,
-            transition: {
-                delay: block.delay,
-              duration: 0.4,
-              ease: "easeOut"
-            }
-          } : 
-          { opacity: 0, x: -20 }
-        }
-        style={{ willChange: 'transform' }}
-      >
-        {/* 內容區塊 - 左側英文右側中文 */}
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
-          {/* 英文標題部分 */}
-                <motion.div 
-                  className="w-full md:w-5/12"
-            initial={{ opacity: 0, x: -15 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-              duration: 0.3, 
-              delay: Math.min(block.delay + 0.1, 0.4)
-                  }}
-                >
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent text-pretty relative group">
-                    {block.en.title}
-                  </h2>
-                  {block.en.subtitle && (
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-0.5 md:mt-1 leading-tight tracking-tight text-pretty relative group">
-                      {block.en.subtitle}
-                    </h3>
-                  )}
-                </motion.div>
-                
-          {/* 中文內容部分 */}
-                <motion.div 
-                  className="mt-3 md:mt-0 w-full md:w-6/12"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: block.delay + 0.2
-                  }}
-                >
-                  <div className="border-l-4 border-white/70 pl-4 md:pl-6">
-                    <motion.p 
-                className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight relative will-change-transform"
-                initial={{ opacity: 0, y: 5 }}
-                      animate={inView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ 
-                  duration: 0.3, 
-                  delay: Math.min(block.delay + 0.2, 0.5)
-                      }}
-                whileHover={{ x: 3 }}
-                    >
-                      {block.zh.title}
-                    </motion.p>
-                    {block.zh.subtitle && (
-                      <motion.p 
-                  className="text-lg md:text-xl text-white/80 mt-1 md:mt-2 font-medium leading-tight relative will-change-transform"
-                  initial={{ opacity: 0, y: 5 }}
-                        animate={inView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ 
-                    duration: 0.3, 
-                    delay: Math.min(block.delay + 0.3, 0.6)
-                        }}
-                  whileHover={{ x: 3 }}
-                      >
-                        {block.zh.subtitle}
-                      </motion.p>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-              
-        {/* 分隔線 - 最後一個塊沒有分隔線 */}
-        {!isLastBlock && renderDivider(block.delay)}
-      </motion.div>
-    );
-  };
-
-  // 渲染分隔線的函數
-  const renderDivider = (delay: number) => (
-                <motion.div 
-                  className="w-full h-px bg-white/30 mt-6 md:mt-12 relative overflow-hidden"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={inView ? { scaleX: 1, opacity: 0.3 } : {}}
-                  transition={{ 
-                    duration: 0.8, 
-        delay: delay + 0.5
-                  }}
-                >
-                  <motion.div 
-                    className="absolute top-0 left-0 h-full w-[30%] bg-white/50"
-                    initial={{ x: "-100%" }}
-                    animate={inView ? { x: "400%" } : {}}
-                    transition={{
-                      duration: 2,
-          delay: delay + 1,
-                      repeat: Infinity,
-                      repeatDelay: 4
-                    }}
-                  />
-                </motion.div>
-  );
-
-  // 渲染向下滾動指示器
-  const renderScrollIndicator = () => (
-    <motion.div 
-      className="relative z-10 pb-8 flex justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
-    >
-      <motion.div
-        className="text-white p-2 cursor-pointer hover:bg-white/10 transition-all"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-      >
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-            </motion.div>
-    </motion.div>
-  );
+  // 優化性能監測
+  useEffect(() => {
+    if (inView && window.performance && window.performance.mark) {
+      window.performance.mark('marketing-section-visible');
+    }
+  }, [inView]);
 
   return (
     <section 
@@ -367,22 +237,93 @@ const MarketingSection = memo(function MarketingSection() {
       className="relative bg-primary overflow-hidden py-16 md:py-20"
       id="marketing-section"
     >
-      {/* 背景設計 */}
+      {/* 背景設計 - 使用Image組件，背景線條改為完全不透明 */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-primary"></div>
-        <div className="absolute inset-0 bg-no-repeat bg-cover bg-center" 
-             style={{ backgroundImage: 'url(/images/bgline-w.webp)' }}></div>
-        <div className="absolute inset-0 bg-primary/20"></div>
+        <Image
+          src="/images/bgline-w.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          quality={60} // 提高品質，確保清晰度
+          loading="lazy"
+          className="absolute inset-0 object-cover opacity-100" // 改為完全不透明
+          style={{ objectPosition: 'center' }}
+        />
       </div>
       
       {/* 階梯式行銷文案內容 */}
       <div className="container-custom relative z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {contentBlocks.map(renderContentBlock)}
+          {contentBlocks.map((block, index) => {
+            return (
+              <motion.div
+                key={index}
+                className={`mb-16 md:mb-20 ${block.className}`} // 增加段落間距，取代分隔線
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? 
+                  { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: {
+                      delay: block.delay,
+                      duration: 0.3,
+                      ease: "easeOut"
+                    }
+                  } : 
+                  { opacity: 0, y: 20 }
+                }
+                style={{ 
+                  willChange: 'opacity, transform',
+                  contain: 'content'
+                }}
+              >
+                {/* 內容區塊 - 左側英文右側中文，確保在各種尺寸下都保持這個結構 */}
+                <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-10">
+                  {/* 英文標題部分 - 固定在左側 */}
+                  <div className="w-full md:w-1/2 md:pr-4">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight font-accent">
+                      {block.en.title}
+                    </h2>
+                    {block.en.subtitle && (
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 leading-tight tracking-tight">
+                        {block.en.subtitle}
+                      </h3>
+                    )}
+                  </div>
+                  
+                  {/* 中文內容部分 - 固定在右側 */}
+                  <div className="w-full md:w-1/2 mt-6 md:mt-0">
+                    <div className="border-l-4 border-white pl-4 md:pl-6">
+                      <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
+                        {block.zh.title}
+                      </p>
+                      {block.zh.subtitle && (
+                        <p className="text-lg md:text-xl text-white/90 mt-2 font-medium leading-tight">
+                          {block.zh.subtitle}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
       
-      {renderScrollIndicator()}
+      {/* 向下滾動指示器 - 簡化設計 */}
+      <div className="relative z-10 pb-8 flex justify-center mt-4">
+        <motion.div
+          className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
+          whileHover={{ y: 3 }}
+          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </motion.div>
+      </div>
     </section>
   );
 })
@@ -490,14 +431,14 @@ const HeroSection = memo(function HeroSection() {
       {/* 主要標題內容區 */}
       <div className="container-custom relative z-20 py-6 md:py-8">
         <div className="max-w-5xl mx-auto">
-          {/* 標題區塊 - 置中對齊 - 優化動畫 */}
+          {/* 標題區塊 - 標題置左對齊，其他元素保持居中 */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="px-4 sm:px-6 flex flex-col items-center text-center"
+            className="px-4 sm:px-6 flex flex-col items-center"
           >
-            {/* 統一標題結構 - 中文主副標題下方緊接英文主副標題 */}
+            {/* 標題結構 - 中英文標題置左對齊 */}
             <div className="w-full max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -506,7 +447,7 @@ const HeroSection = memo(function HeroSection() {
                   animate="visible"
                   exit="exit"
                   variants={heroTitleVariants}
-                  className="font-bold text-white text-center"
+                  className="font-bold text-white text-left" // 改為左對齊
                 >
                   {/* 中文主副標題 */}
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl leading-tight">
@@ -527,9 +468,9 @@ const HeroSection = memo(function HeroSection() {
               </AnimatePresence>
             </div>
             
-            {/* 單行白框線條標籤設計 - 簡化動畫 */}
+            {/* 單行白框線條標籤設計 - 保持居中 */}
             <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[750px] mx-auto overflow-hidden">
-              <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6">
+              <div className="flex justify-between items-center border-t border-b border-white/40 py-3 px-1 my-6 text-center">
                 {tags.map((tag, index) => (
                   <span
                     key={tag.id}
@@ -541,8 +482,8 @@ const HeroSection = memo(function HeroSection() {
               </div>
             </div>
         
-            {/* 預約按鈕 - 黑底白字扁平化設計 - 置中 - 移除不必要的動畫 */}
-            <div className="mt-4 mb-5">
+            {/* 預約按鈕 - 黑底白字扁平化設計 - 保持置中 */}
+            <div className="mt-4 mb-5 flex justify-center w-full">
               <Link href="/contact" prefetch={false}>
                 <span className="inline-flex items-center bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border border-white/10">
                   <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl font-bold text-white/90">
@@ -553,8 +494,8 @@ const HeroSection = memo(function HeroSection() {
               </Link>
             </div>
             
-            {/* 預約按鈕下方的向下滾動指示器 - 移除不必要的動畫 */}
-            <div className="mt-20 flex justify-center">
+            {/* 預約按鈕下方的向下滾動指示器 - 保持置中 */}
+            <div className="mt-20 flex justify-center w-full">
               <div
                 className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors"
                 onClick={() => document.getElementById('marketing-section')?.scrollIntoView({ behavior: 'smooth' })}
