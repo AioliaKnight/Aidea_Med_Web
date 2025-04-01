@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://www.aideamed.com';
+  // 從環境變數讀取基礎URL，如果不存在則使用預設值
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com';
   
   return {
     rules: [
@@ -18,6 +19,11 @@ export default function robots(): MetadataRoute.Robots {
           '/admin',        // 管理頁面
           '/*.json$',      // JSON 檔案
           '/private/',     // 私有內容
+          '/preview/',     // 預覽頁面
+          '*/draft',       // 草稿頁面
+          '*/temp',        // 暫存頁面
+          '/unused/',      // 未使用的舊頁面
+          '/test/',        // 測試頁面
         ],
       },
       {
@@ -25,6 +31,8 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/preview/',
+          '*/draft',
         ],
       },
       {
@@ -32,6 +40,35 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/preview/',
+          '*/draft',
+        ],
+      },
+      {
+        userAgent: 'Baiduspider',
+        allow: '/',
+        disallow: [
+          '/api/',
+          '/preview/',
+          '*/draft',
+        ],
+      },
+      {
+        userAgent: 'YandexBot',
+        allow: '/',
+        disallow: [
+          '/api/',
+          '/preview/',
+          '*/draft',
+        ],
+      },
+      {
+        userAgent: 'Applebot',
+        allow: '/',
+        disallow: [
+          '/api/',
+          '/preview/',
+          '*/draft',
         ],
       },
     ],
