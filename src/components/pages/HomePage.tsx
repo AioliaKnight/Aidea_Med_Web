@@ -240,16 +240,15 @@ const MarketingSection = memo(function MarketingSection() {
       {/* 背景設計 - 使用Image組件，背景線條改為完全不透明 */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-primary"></div>
-        <Image
-          src="/images/bgline-w.webp"
-          alt=""
-          fill
-          sizes="100vw"
-          quality={60} // 提高品質，確保清晰度
-          loading="lazy"
-          className="absolute inset-0 object-cover opacity-100" // 改為完全不透明
-          style={{ objectPosition: 'center' }}
-        />
+        {/* 使用更簡單的背景處理方式，避免LCP問題 */}
+        <div 
+          className="absolute inset-0 bg-no-repeat bg-cover opacity-100"
+          style={{ 
+            backgroundImage: 'url(/images/bgline-w-small.webp)',
+            backgroundPosition: 'center'
+          }}
+          aria-hidden="true"
+        ></div>
       </div>
       
       {/* 階梯式行銷文案內容 */}
@@ -406,16 +405,16 @@ const HeroSection = memo(function HeroSection() {
         {/* 使用純色背景代替圖片，避免LCP問題 */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
-        {/* 簡化的背景紋理，使用懶加載和較低品質設定 */}
+        {/* 優化背景圖片加載，解決LCP問題 */}
         <Image 
           src="/images/bgline-w-optimized.webp" 
           alt=""
           fill
-          priority={false}
-          loading="lazy"
+          priority={true} // 使用priority確保優先加載
+          loading="eager" // 使用eager替代lazy loading
           sizes="100vw"
-          quality={60}
-          className="object-cover opacity-100 mix-blend-overlay"
+          quality={30} // 降低品質以減少檔案大小
+          className="object-cover opacity-30" // 降低不透明度，減少視覺依賴
           style={{
             objectPosition: 'center'
           }}
