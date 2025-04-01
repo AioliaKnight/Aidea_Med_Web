@@ -174,8 +174,33 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     caseImages.forEach((image, index) => {
       if (image.type !== 'image') return
       
+      // 強制進行首圖預載入，避免生產環境黑屏問題
+      if (index === 0) {
+        const img = new window.Image();
+        img.onload = () => handleImageLoad(image.url);
+        img.onerror = () => {
+          setErrorImages(prev => ({
+            ...prev,
+            [image.url]: true
+          }));
+          
+          // 如果主圖載入失敗且有備用URL，嘗試載入備用URL
+          if (image.fallbackUrls && image.fallbackUrls.length > 0) {
+            const fallbackImg = new window.Image();
+            fallbackImg.onload = () => handleImageLoad(image.fallbackUrls![0]);
+            fallbackImg.src = image.fallbackUrls[0];
+          }
+        };
+        // 設置較高的加載優先級
+        if ('fetchPriority' in img) {
+          (img as any).fetchPriority = "high";
+        }
+        img.loading = "eager";
+        img.src = image.url;
+      }
+      
       // 如果有備用URL，嘗試按優先順序載入
-      if (image.fallbackUrls && image.fallbackUrls.length > 0) {
+      else if (image.fallbackUrls && image.fallbackUrls.length > 0) {
         // 使用備用URL中的第一個（可能是WebP）
         const primaryUrl = image.fallbackUrls[0];
         const img = new window.Image();
@@ -213,7 +238,27 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
   // 初始化圖片預載入
   useEffect(() => {
     preloadImages()
-  }, [preloadImages])
+    
+    // 針對生產環境的特殊處理
+    if (typeof window !== 'undefined') {
+      // 使用requestIdleCallback或setTimeout確保在頁面渲染完成後進行二次預載入
+      const idleCallback = window.requestIdleCallback || ((cb) => setTimeout(cb, 100));
+      idleCallback(() => {
+        // 強制重新加載第一張圖片，避免生產環境黑屏問題
+        if (caseImages.length > 0 && caseImages[0].type === 'image') {
+          const firstImage = caseImages[0];
+          // 使用原生Image對象加載
+          const img = new window.Image();
+          img.onload = () => {
+            handleImageLoad(firstImage.url);
+            // 更新狀態強制重新渲染
+            setLoadedImages(prev => ({...prev}));
+          };
+          img.src = firstImage.url;
+        }
+      });
+    }
+  }, [preloadImages, caseImages])
   
   // 獲取圖片URL，支援備用URL
   const getImageUrl = useCallback((image: CaseImage) => {
@@ -377,7 +422,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         
         {/* 圖片 */}
         <img 
-          key={`desktop-img-${caseId}-${index}`}
+          key={`desktop-img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
           src={getImageUrl(image)}
           alt={image.alt || `案例圖片 ${index + 1}`}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
@@ -391,8 +436,18 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               handleImageError(image.url);
             }
           }}
-          onLoad={() => handleImageLoad(image.url)}
+          onLoad={() => {
+            handleImageLoad(image.url);
+            // 強制重新渲染，解決生產環境下可能的渲染問題
+            if (index === 0) {
+              setTimeout(() => {
+                setLoadedImages(prev => ({...prev}));
+              }, 50);
+            }
+          }}
           loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : "auto"}
+          decoding="async"
         />
         
         {/* 加載指示器 - 僅在圖片未載入且無錯誤時顯示 */}
