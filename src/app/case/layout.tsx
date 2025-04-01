@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { PageHeader, BreadcrumbNav } from '@/components/common'
+import { PageHeader } from '@/components/common'
 
 export default function CaseLayout({
   children,
@@ -21,10 +21,7 @@ export default function CaseLayout({
         className="border-b border-red-700"
       />
       <div className="container mx-auto px-4">
-        <BreadcrumbNav 
-          className="mt-4 mb-2" 
-          includeJsonLd={true}
-        />
+        
       </div>
       <div className="animate-fadeIn">
         {children}

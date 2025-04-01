@@ -1,6 +1,5 @@
 import { contactMetadata } from '../metadata'
 import ContactPage from '@/components/pages/ContactPage'
-import { BreadcrumbNav } from '@/components/common'
 import Script from 'next/script'
 import Link from 'next/link'
 
@@ -25,12 +24,6 @@ export default function Page() {
           `
         }}
       />
-      <div className="container mx-auto px-4 pt-16">
-        <BreadcrumbNav 
-          className="mb-3" 
-          includeJsonLd={true}
-        />
-      </div>
       <ContactPage />
       
       {/* 相關服務連結區塊 */}

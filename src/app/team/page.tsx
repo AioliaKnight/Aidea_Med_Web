@@ -1,6 +1,5 @@
 import { teamMetadata } from '../metadata'
 import TeamPage from '@/components/pages/TeamPage'
-import { BreadcrumbNav } from '@/components/common'
 import { createFaqSchema } from '../metadata'
 
 export const metadata = teamMetadata
@@ -24,12 +23,6 @@ const teamFaqSchema = createFaqSchema([
 export default function Page() {
   return (
     <>
-      <div className="container mx-auto px-4 pt-16">
-        <BreadcrumbNav 
-          className="mb-3" 
-          includeJsonLd={true}
-        />
-      </div>
       <TeamPage />
       
       {/* 插入團隊FAQ的結構化數據 */}
