@@ -308,73 +308,85 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     setFitMode(prev => prev === 'contain' ? 'cover' : 'contain')
   }, [])
   
-  // 圖片網格樣式 - 優化手機顯示
+  // 圖片網格樣式 - 優化桌面顯示
   const gridLayout = useMemo(() => {
     if (isMobile) {
       // 手機上使用水平滾動，而不是網格
       return "flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x snap-mandatory"
     }
+    
+    // 桌面版使用更現代的網格布局
     return layout === 'masonry' 
-      ? "columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5"
-      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+      ? "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
   }, [layout, isMobile])
   
-  // 桌面版圖片項目
+  // 桌面版圖片項目 - 全新設計
   const renderDesktopImageItem = (image: CaseImage, index: number) =>
     <div
       key={`case-image-${caseId}-${index}`}
-      className={`group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid mb-5' : ''}`}
+      className={`group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid mb-6' : ''}`}
       onClick={() => openModal(index)}
     >
       <div
-        className={`relative overflow-hidden rounded-lg shadow-md ${
+        className={`relative overflow-hidden rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 ${
           layout === 'masonry' ? '' : `aspect-[${aspectRatio}]`
         }`}
         style={layout === 'masonry' ? { aspectRatio } : undefined}
       >
-        {/* 簡化圖片渲染邏輯 */}
-        <div className="absolute inset-0 bg-gray-100"></div>
+        {/* 背景與持久層 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100"></div>
         
-        {/* 直接渲染圖片，避免複雜層級結構 */}
-        <img 
-          key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
-          src={getImageUrl(image)}
-          alt={image.alt || `案例圖片 ${index + 1}`}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
-              ? 'opacity-100' : 'opacity-70'
-          }`}
-          onError={() => handleImageError(image.url)}
-          onLoad={() => {
-            handleImageLoad(image.url);
-            if (index === 0) {
-              // 立即更新狀態而不使用 setTimeout
-              setLoadedImages(prev => ({...prev}));
-            }
-          }}
-          loading={index === 0 ? "eager" : "lazy"}
-          fetchPriority={index === 0 ? "high" : "auto"}
-          decoding="async"
-        />
+        {/* 圖片層 */}
+        <div className="absolute inset-0 z-10">
+          <img 
+            key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
+            src={getImageUrl(image)}
+            alt={image.alt || `案例圖片 ${index + 1}`}
+            className={`w-full h-full object-cover transition-all duration-500 ${
+              loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
+                ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.02]'
+            }`}
+            onError={() => handleImageError(image.url)}
+            onLoad={() => {
+              handleImageLoad(image.url);
+              if (index === 0) {
+                setLoadedImages(prev => ({...prev}));
+              }
+            }}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "auto"}
+            decoding="async"
+          />
+        </div>
         
         {/* 載入指示器 */}
         {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center backdrop-blur-sm">
+              <div className="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           </div>
         )}
         
-        {/* 簡化懸停效果 */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 z-10 transition-colors duration-300"></div>
+        {/* 懸停效果層 - 更豐富的視覺反饋 */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+          <div className="p-4 w-full text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+            {image.caption && (
+              <p className="text-sm font-medium mb-1">{image.caption}</p>
+            )}
+            <div className="flex items-center text-xs text-white/80">
+              <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <span>點擊查看大圖</span>
+            </div>
+          </div>
+        </div>
       </div>
-      {image.caption && (
-        <p className="text-sm text-gray-600 mt-2 text-center">{image.caption}</p>
-      )}
     </div>
 
-  // 移動版圖片項目
+  // 移動版圖片項目 - 保持一致性的設計語言
   const renderMobileImageItem = (image: CaseImage, index: number) => (
     <div
       key={`case-image-${caseId}-${index}`}
@@ -382,35 +394,40 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       onClick={() => openModal(index)}
     >
       <div 
-        className="cursor-pointer overflow-hidden rounded-lg shadow-md relative aspect-[4/3] bg-gray-100"
+        className="cursor-pointer overflow-hidden rounded-xl shadow-sm relative aspect-[4/3] border border-gray-100"
       >
-        {/* 直接渲染圖片，使用與桌面版相同的簡化邏輯 */}
-        <img 
-          key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
-          src={getImageUrl(image)}
-          alt={image.alt || `案例圖片 ${index + 1}`}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
-              ? 'opacity-100' : 'opacity-70'
-          }`}
-          onError={() => handleImageError(image.url)}
-          onLoad={() => handleImageLoad(image.url)}
-          loading={index === 0 ? "eager" : "lazy"}
-          fetchPriority={index === 0 ? "high" : "auto"}
-          decoding="async"
-        />
+        {/* 背景層 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100"></div>
+        
+        {/* 圖片層 */}
+        <div className="absolute inset-0 z-10">
+          <img 
+            key={`img-${caseId}-${index}-${loadedImages[image.url] ? 'loaded' : 'loading'}`}
+            src={getImageUrl(image)}
+            alt={image.alt || `案例圖片 ${index + 1}`}
+            className={`w-full h-full object-cover transition-all duration-500 ${
+              loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url])) 
+                ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.02]'
+            }`}
+            onError={() => handleImageError(image.url)}
+            onLoad={() => handleImageLoad(image.url)}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "auto"}
+            decoding="async"
+          />
+        </div>
         
         {/* 載入指示器 */}
         {!(loadedImages[image.url] || (image.fallbackUrls?.some(url => loadedImages[url]))) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center backdrop-blur-sm">
+              <div className="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           </div>
         )}
         
         {/* 圖片指示器 */}
-        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-20">
+        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-20 shadow-md backdrop-blur-sm">
           {index + 1}/{caseImages.length}
         </div>
       </div>
