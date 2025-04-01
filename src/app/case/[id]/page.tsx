@@ -588,6 +588,119 @@ export default function CaseDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* 頁面底部推薦相關內容區塊 */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-12">其他相關案例</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* 篩選出3個相同類別的其他案例 */}
+            {caseStudies
+              .filter(c => c.id !== id && c.category === caseStudy?.category)
+              .slice(0, 3)
+              .map(relatedCase => (
+                <Link
+                  key={relatedCase.id}
+                  href={`/case/${relatedCase.id}`}
+                  prefetch={true}
+                  className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={relatedCase.image}
+                      alt={relatedCase.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                        {relatedCase.category}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1 line-clamp-1">{relatedCase.name}</h3>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-3">{relatedCase.description}</p>
+                    <div className="text-primary font-medium text-sm flex items-center">
+                      閱讀更多案例
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 ml-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            
+            {/* 如果同類案例不足3個，則添加其他類別的案例補足 */}
+            {caseStudies
+              .filter(c => c.id !== id && c.category !== caseStudy?.category)
+              .slice(0, 3 - caseStudies.filter(c => c.id !== id && c.category === caseStudy?.category).length)
+              .map(relatedCase => (
+                <Link
+                  key={relatedCase.id}
+                  href={`/case/${relatedCase.id}`}
+                  prefetch={true}
+                  className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={relatedCase.image}
+                      alt={relatedCase.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                        {relatedCase.category}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1 line-clamp-1">{relatedCase.name}</h3>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-3">{relatedCase.description}</p>
+                    <div className="text-primary font-medium text-sm flex items-center">
+                      閱讀更多案例
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 ml-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+          </div>
+          
+          <div className="text-center mt-10">
+            <Link 
+              href="/case"
+              prefetch={true}
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark transition-colors duration-300"
+            >
+              查看所有案例
+            </Link>
+          </div>
+        </div>
+      </section>
     </CaseDetailErrorBoundary>
   );
-} 
+}
