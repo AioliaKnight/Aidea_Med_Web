@@ -288,11 +288,11 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     setShowModal(true)
     setFitMode('contain') // 初始設為 contain 模式以顯示完整圖片
   }, [])
-  
+
   const closeModal = useCallback(() => {
     setShowModal(false)
   }, [])
-  
+
   const changeImage = useCallback((direction: 'next' | 'prev') => {
     setActiveImage(prev => {
       if (direction === 'next') {
@@ -302,12 +302,12 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
       }
     })
   }, [caseImages.length])
-  
+
   // 切換圖片顯示模式
   const toggleFitMode = useCallback(() => {
     setFitMode(prev => prev === 'contain' ? 'cover' : 'contain')
   }, [])
-  
+
   // 圖片網格樣式 - 優化桌面顯示
   const gridLayout = useMemo(() => {
     if (isMobile) {
@@ -444,16 +444,16 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     if (image.type === 'video') {
       return (
         <div className="w-full h-full flex items-center justify-center bg-gray-900">
-          <iframe
-            src={image.url}
-            className="w-full h-full"
-            style={{ border: 'none', overflow: 'hidden' }}
-            scrolling="no"
-            frameBorder="0"
-            allowFullScreen
+                  <iframe
+                    src={image.url}
+                    className="w-full h-full"
+                    style={{ border: 'none', overflow: 'hidden' }}
+                    scrolling="no"
+                    frameBorder="0"
+                    allowFullScreen
             title={`${name} - 案例視頻`}
-          />
-        </div>
+                  />
+                </div>
       )
     }
     
@@ -479,7 +479,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               ? 'max-h-[95%] max-w-[95%] object-contain' 
               : 'w-full h-full object-cover'
           } shadow-lg transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onError={() => handleImageError(image.url)}
+                    onError={() => handleImageError(image.url)}
           onLoad={() => handleImageLoad(image.url)}
         />
         
@@ -488,10 +488,10 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
           <div className="absolute z-20 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center shadow-lg">
               <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
     )
   }, [caseImages, activeImage, loadedImages, getImageUrl, handleImageError, handleImageLoad, name, fitMode])
 
@@ -505,7 +505,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             : renderDesktopImageItem(image, index)
         ))}
       </div>
-      
+
       {/* 手機版輪播指示器 */}
       {isMobile && (
         <div className="flex justify-center gap-1 mt-4">
@@ -658,7 +658,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                               src={getImageUrl(image)}
                               alt={image.alt || `縮圖 ${idx + 1}`}
                               className="w-full h-full object-cover"
-                              onError={() => handleImageError(image.url)}
+                          onError={() => handleImageError(image.url)}
                               onLoad={() => handleImageLoad(image.url)}
                               loading="lazy"
                             />
