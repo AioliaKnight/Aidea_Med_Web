@@ -443,7 +443,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     
     if (image.type === 'video') {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-800">
+        <div className="w-full h-full flex items-center justify-center bg-gray-900">
           <iframe
             src={image.url}
             className="w-full h-full"
@@ -461,16 +461,16 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
     const imgUrl = getImageUrl(image);
     
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-        {/* 預設圖片作為背景 */}
+      <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        {/* 背景層 - 使用更優雅的背景效果 */}
         <div 
-          className="absolute inset-0 bg-center bg-cover opacity-40 dark:opacity-20 blur-sm" 
+          className="absolute inset-0 bg-center bg-cover opacity-10 dark:opacity-5 blur-md" 
           style={{
-            backgroundImage: `url('/images/case-placeholder.jpg')`,
+            backgroundImage: `url('${imgUrl}')`,
           }}
         />
         
-        {/* 實際圖片 */}
+        {/* 實際圖片 - 改進圖片顯示效果 */}
         <img
           src={imgUrl}
           alt={image.alt || `案例圖片 ${activeImage + 1}`}
@@ -478,15 +478,17 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             fitMode === 'contain' 
               ? 'max-h-[95%] max-w-[95%] object-contain' 
               : 'w-full h-full object-cover'
-          }`}
+          } shadow-lg transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           onError={() => handleImageError(image.url)}
           onLoad={() => handleImageLoad(image.url)}
         />
         
-        {/* 載入指示器 */}
+        {/* 載入指示器 - 優化載入動畫 */}
         {!isLoaded && (
-          <div className="absolute z-20 w-16 h-16 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+          <div className="absolute z-20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-white/40 backdrop-blur-md flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
           </div>
         )}
       </div>
@@ -518,7 +520,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
         </div>
       )}
 
-      {/* 圖片模態框 */}
+      {/* 圖片模態框 - 重新設計 */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -526,7 +528,7 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-95 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
             onClick={closeModal}
           >
             <motion.div
@@ -534,12 +536,12 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className={`relative w-full ${isMobile ? 'h-[90vh] max-w-full mx-2' : 'max-w-6xl mx-auto h-[85vh]'} bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden`}
+              className={`relative w-full ${isMobile ? 'h-[90vh] max-w-full mx-2' : 'max-w-7xl mx-auto h-[85vh]'} bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 關閉按鈕 */}
+              {/* 關閉按鈕 - 更現代的設計 */}
               <button
-                className="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white transition-all duration-300"
+                className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white shadow-lg transition-all duration-300 backdrop-blur-sm"
                 onClick={closeModal}
                 aria-label="關閉圖片"
               >
@@ -548,13 +550,13 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                 </svg>
               </button>
 
-              {/* 主圖區 */}
-              <div className={`relative ${isMobile ? 'h-[65vh]' : 'h-[70vh]'} bg-gray-100 dark:bg-gray-800`}>
+              {/* 主圖區 - 改進背景和動畫效果 */}
+              <div className={`relative ${isMobile ? 'h-[65vh]' : 'h-[70vh]'} bg-gray-50 dark:bg-gray-900 overflow-hidden`}>
                 {renderModalImage()}
                 
-                {/* 切換顯示模式按鈕 */}
+                {/* 切換顯示模式按鈕 - 優化位置和樣式 */}
                 <button
-                  className="absolute bottom-4 right-4 z-20 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white transition-all duration-300"
+                  className="absolute bottom-4 right-4 z-20 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white shadow-lg transition-all duration-300 backdrop-blur-sm"
                   onClick={(e) => {
                     e.stopPropagation()
                     toggleFitMode()
@@ -571,13 +573,13 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                 </button>
               </div>
 
-              {/* 圖片說明 */}
+              {/* 圖片說明 - 優化樣式和動畫 */}
               <motion.div
                 variants={caseAnimations.galleryImage}
                 initial="hidden"
                 animate="visible"
                 custom={activeImage}
-                className="p-2 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800"
+                className="p-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800"
               >
                 {caseImages[activeImage].caption && (
                   <p className="text-center text-gray-900 dark:text-gray-100 font-medium text-sm">
@@ -589,43 +591,43 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                 </p>
               </motion.div>
 
-              {/* 導航按鈕 */}
-              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 md:px-4 pointer-events-none">
+              {/* 導航按鈕 - 優化按鈕樣式 */}
+              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 pointer-events-none">
                 <button
-                  className="bg-black/50 hover:bg-black/70 rounded-full p-2 md:p-3 text-white transition-all duration-300 pointer-events-auto z-10"
+                  className="bg-black/40 hover:bg-black/60 rounded-full p-3 text-white shadow-lg transition-all duration-300 pointer-events-auto z-10 backdrop-blur-sm"
                   onClick={(e) => {
                     e.stopPropagation()
                     changeImage('prev')
                   }}
                   aria-label="上一張圖片"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <button
-                  className="bg-black/50 hover:bg-black/70 rounded-full p-2 md:p-3 text-white transition-all duration-300 pointer-events-auto z-10"
+                  className="bg-black/40 hover:bg-black/60 rounded-full p-3 text-white shadow-lg transition-all duration-300 pointer-events-auto z-10 backdrop-blur-sm"
                   onClick={(e) => {
                     e.stopPropagation()
                     changeImage('next')
                   }}
                   aria-label="下一張圖片"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
               </div>
               
-              {/* 縮圖列表 - 優化手機顯示 */}
+              {/* 縮圖列表 - 優化樣式和滾動效果 */}
               <div className="p-2 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-hidden">
                 <div className="flex justify-start md:justify-center gap-2 overflow-x-auto pb-1 px-2 md:px-4 snap-x snap-mandatory">
                   {caseImages.map((image, idx) => (
                     <div
                       key={`thumb-${caseId}-${idx}`}
-                      className={`relative flex-shrink-0 w-14 h-14 cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-300 snap-center ${
+                      className={`relative flex-shrink-0 w-16 h-16 cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-300 snap-center ${
                         idx === activeImage 
-                          ? 'border-primary scale-110 shadow-md' 
+                          ? 'border-primary scale-110 shadow-lg' 
                           : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                       onClick={(e) => {
@@ -638,27 +640,18 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                         setActiveImage(idx)
                       }}
                     >
-                      {/* 始終顯示的背景圖層 */}
-                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
+                      {/* 縮圖背景 */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800" />
                       
                       {image.type === 'video' ? (
                         <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center z-10">
-                          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6 text-primary dark:text-primary/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
                       ) : (
                         <>
-                          {/* 預設縮圖背景 */}
-                          <div 
-                            className="absolute inset-0 bg-center bg-cover z-5" 
-                            style={{
-                              backgroundImage: `url('/images/case-placeholder.jpg')`,
-                              opacity: 0.5
-                            }}
-                          />
-                          
                           {/* 實際縮圖 */}
                           <div className="absolute inset-0 z-10">
                             <img
@@ -667,14 +660,15 @@ const CaseGallery: React.FC<CaseGalleryProps> = ({
                               className="w-full h-full object-cover"
                               onError={() => handleImageError(image.url)}
                               onLoad={() => handleImageLoad(image.url)}
+                              loading="lazy"
                             />
                           </div>
                         </>
                       )}
                       
-                      {/* 縮圖索引指示器 - 僅在手機上顯示 */}
+                      {/* 縮圖索引指示器 - 優化顯示效果 */}
                       {isMobile && (
-                        <div className="absolute bottom-0 right-0 bg-black/60 text-white text-[8px] px-1 z-10">
+                        <div className="absolute bottom-0 right-0 bg-black/60 text-white text-[8px] px-1 z-10 backdrop-blur-sm">
                           {idx + 1}
                         </div>
                       )}
