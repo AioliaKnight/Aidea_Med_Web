@@ -873,4 +873,173 @@ export const brandingWebsiteSchema = {
       value: '運用最新AI技術提升行銷效率與精準度'
     }
   ]
+}
+
+// 麵包屑結構化資料
+export const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    }
+  ]
+}
+
+// 團隊頁面麵包屑
+export const teamBreadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '團隊',
+      item: `${siteConfig.url}/team`
+    }
+  ]
+}
+
+// 服務頁面麵包屑
+export const serviceBreadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '服務',
+      item: `${siteConfig.url}/service`
+    }
+  ]
+}
+
+// 案例頁面麵包屑
+export const caseBreadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '案例',
+      item: `${siteConfig.url}/case`
+    }
+  ]
+}
+
+// 聯絡頁面麵包屑
+export const contactBreadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '聯絡我們',
+      item: `${siteConfig.url}/contact`
+    }
+  ]
+}
+
+// 醫療服務業增強FAQ示例
+export const enhancedMedicalServicesFaq = createFaqSchema([
+  // 正確處理現有medicalServicesFaq的結構
+  // 由於medicalServicesFaq已經是createFaqSchema的結果，包含mainEntity屬性
+  // 所以我們需要傳入新的問答陣列，而不是直接展開mainEntity
+  {
+    question: '您們如何評估醫療行銷的成效？',
+    answer: '我們使用綜合性指標評估行銷成效，包括網站流量與轉換率分析、預約數量增長比較、自費項目轉換率追蹤、社群媒體參與度監測、患者回訪率計算與線上口碑評價分析等。我們提供透明的定期數據報告，協助診所清楚掌握每個行銷渠道的投資報酬率，以持續優化資源分配。'
+  },
+  {
+    question: '您們的行銷活動是否符合台灣醫療廣告法規？',
+    answer: '是的，我們的團隊專精於台灣醫療廣告相關法規，所有行銷方案在執行前都會經過嚴格的法規合規性審核，確保完全符合衛福部的醫療廣告規範。我們不僅確保合法合規，同時致力於維護醫療專業形象，避免任何可能被視為誇大不實的宣傳內容，保護診所與醫師的專業聲譽。'
+  },
+  {
+    question: '如何針對特定醫療專科客製化行銷策略？',
+    answer: '我們為每一個醫療專科建立獨特的行銷模型，考量各專科的患者決策旅程、競爭環境與專業特性。例如，牙醫診所策略著重於視覺呈現與自費項目價值溝通；皮膚科診所則強調持續護理與療程效果；家醫科則著重在建立社區信任與健康管理價值。每個行銷計畫都從深入的專科市場分析開始，確保策略精準匹配目標患者群體的需求與行為模式。'
+  }
+])
+
+// 本地商家結構化資料優化
+export const enhancedLocalBusinessSchema = {
+  ...localBusinessSchema,
+  areaServed: [
+    '台北市',
+    '新北市',
+    '桃園市',
+    '新竹市',
+    '新竹縣',
+    '苗栗縣',
+    '台中市',
+    '彰化縣',
+    '南投縣',
+    '雲林縣',
+    '嘉義市',
+    '嘉義縣',
+    '台南市',
+    '高雄市',
+    '屏東縣',
+    '宜蘭縣',
+    '花蓮縣',
+    '台東縣',
+    '金門縣',
+    '澎湖縣'
+  ],
+  serviceOutput: {
+    '@type': 'Service',
+    serviceType: [
+      '牙醫診所行銷',
+      '整形外科診所行銷',
+      '皮膚科診所行銷',
+      '眼科診所行銷',
+      '中醫診所行銷',
+      '婦產科診所行銷',
+      '小兒科診所行銷',
+      '骨科診所行銷',
+      '復健科診所行銷',
+      '耳鼻喉科診所行銷',
+      '醫學美容診所行銷',
+      '家醫科診所行銷'
+    ],
+    provider: {
+      '@type': 'Organization',
+      name: siteConfig.name
+    }
+  },
+  specialty: [
+    '醫療行銷',
+    '牙醫診所行銷',
+    '醫師個人品牌',
+    '診所數位轉型',
+    '醫療內容策略',
+    '健康照護行銷'
+  ]
 } 

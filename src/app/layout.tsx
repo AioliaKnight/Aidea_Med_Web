@@ -3,7 +3,10 @@ import {
   organizationSchema, 
   localBusinessSchema, 
   medicalServicesFaq,
-  brandingWebsiteSchema
+  brandingWebsiteSchema,
+  breadcrumbSchema,
+  enhancedLocalBusinessSchema,
+  enhancedMedicalServicesFaq
 } from './metadata'
 import { viewport } from './viewport'
 import { Suspense } from 'react'
@@ -120,19 +123,25 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ 
-            __html: JSON.stringify(localBusinessSchema) 
+            __html: JSON.stringify(enhancedLocalBusinessSchema) 
           }}
         />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ 
-            __html: JSON.stringify(medicalServicesFaq) 
+            __html: JSON.stringify(enhancedMedicalServicesFaq) 
           }}
         />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ 
             __html: JSON.stringify(brandingWebsiteSchema) 
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(breadcrumbSchema) 
           }}
         />
       </head>
