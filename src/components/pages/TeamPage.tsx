@@ -36,7 +36,7 @@ const teamMembers: TeamMember[] = [
   {
     name: '陳維鈞 Wilson',
     role: '創辦人暨策略總監',
-    image: '/images/team/member-1.png',
+    image: '/images/team/member-1.jpg',
     description: '擁有十五年以上行銷經驗，曾協助超過50家診所完成品牌轉型。曾任大型牙醫連鎖集團行銷總監，深諳醫療領域的病患心理與行銷策略。她相信，真正有溫度的醫療體驗，始於醫者的用心與良好的溝通橋樑。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
