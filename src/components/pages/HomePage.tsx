@@ -44,6 +44,89 @@ import {
   tagAnimationVariants
 } from '@/utils/animations'
 
+// 統一的輪播按鈕元件
+const CarouselButton = memo(({ 
+  direction, 
+  onClick, 
+  className = '',
+  size = 'medium',
+  ariaLabel
+}: { 
+  direction: 'prev' | 'next', 
+  onClick: () => void,
+  className?: string,
+  size?: 'small' | 'medium' | 'large',
+  ariaLabel?: string
+}) => {
+  // 根據尺寸設定按鈕大小
+  const sizeClasses = {
+    small: 'w-8 h-8',
+    medium: 'w-10 h-10',
+    large: 'w-12 h-12'
+  };
+  
+  // 根據方向設定箭頭
+  const Arrow = direction === 'prev' 
+    ? ({ className }: { className?: string }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className || 'w-5 h-5'}>
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      )
+    : ({ className }: { className?: string }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className || 'w-5 h-5'}>
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      );
+
+  const label = ariaLabel || `${direction === 'prev' ? '上一個' : '下一個'}`;
+  
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`flex items-center justify-center rounded-full bg-white shadow-md text-gray-800 hover:text-primary hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-300 ${sizeClasses[size]} ${className}`}
+    >
+      <Arrow />
+    </button>
+  );
+});
+
+CarouselButton.displayName = 'CarouselButton';
+
+// 輪播指示器元件
+const CarouselIndicator = memo(({ 
+  total, 
+  current, 
+  onChange,
+  className = '' 
+}: { 
+  total: number, 
+  current: number,
+  onChange: (index: number) => void,
+  className?: string
+}) => {
+  return (
+    <div className={`flex items-center justify-center gap-2 ${className}`}>
+      {Array.from({ length: total }).map((_, index) => (
+        <button
+          key={index}
+          onClick={() => onChange(index)}
+          aria-label={`切換到第 ${index + 1} 個項目`}
+          aria-current={index === current ? 'true' : 'false'}
+          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+            index === current
+              ? 'bg-primary scale-110'
+              : 'bg-gray-300 hover:bg-gray-400'
+          }`}
+        />
+      ))}
+    </div>
+  );
+});
+
+CarouselIndicator.displayName = 'CarouselIndicator';
+
 // 動態載入非核心組件 - 使用優化的Next.js 15+ dynamic import
 const CaseCard = dynamic(() => import('@/components/case/CaseCard').then(mod => mod.CaseCard), {
   loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
@@ -632,94 +715,69 @@ const MarketingSection = memo(function MarketingSection() {
 // 更新服務特色區塊 - 使用useTransition優化用戶體驗
 const FeatureSection = memo(function FeatureSection() {
   const [currentFeature, setCurrentFeature] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const resizeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   
-  // 使用useTransition優化狀態更新，避免阻塞主線程
-  const [isPending, startTransition] = useTransition();
-  
-  // 使用useRef避免多餘重新渲染
-  const featureTimer = useRef<NodeJS.Timeout | null>(null);
-  
-  // 在組件內部使用useMemo記憶化features數據
-  const memoizedFeatures = useMemo(() => features, []);
-  
-  // 使用features數組的長度來創建指示器
-  const indicators = useMemo(() => {
-    return Array.from({ length: memoizedFeatures.length }, (_, index) => index);
-  }, [memoizedFeatures.length]);
-  
-  // 監控視窗大小，判斷是否為行動裝置
+  // 檢測裝置以優化體驗
   useEffect(() => {
     const checkMobile = () => {
-      startTransition(() => {
-        setIsMobile(window.innerWidth < 768); // md breakpoint
-      });
+      setIsMobile(window.innerWidth < 768);
     };
     
     checkMobile();
-    
-    // 使用防抖動避免過度觸發
-    const handleResize = () => {
-      clearTimeout(featureTimer.current!);
-      featureTimer.current = setTimeout(checkMobile, 100);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (featureTimer.current) clearTimeout(featureTimer.current);
-    };
-  }, [startTransition]);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
-  // 處理輪播控制
-  const handleNext = useCallback(() => {
-    setCurrentFeature((prev) => (prev + 1) % memoizedFeatures.length);
-  }, [memoizedFeatures.length]);
+  // 記憶化特點數據，避免不必要的重新渲染
+  const memoizedFeatures = useMemo(() => features, []);
   
+  // 處理手動控制輪播
   const handlePrev = useCallback(() => {
-    setCurrentFeature((prev) => (prev - 1 + memoizedFeatures.length) % memoizedFeatures.length);
-  }, [memoizedFeatures.length]);
+    if (isMobile) {
+      setCurrentFeature(prev => 
+        prev === 0 ? memoizedFeatures.length - 1 : prev - 1
+      );
+    }
+  }, [isMobile, memoizedFeatures.length]);
   
-  // 每5秒自動切換功能卡片
+  const handleNext = useCallback(() => {
+    if (isMobile) {
+      setCurrentFeature(prev => 
+        prev === memoizedFeatures.length - 1 ? 0 : prev + 1
+      );
+    }
+  }, [isMobile, memoizedFeatures.length]);
+  
+  const handleSlideChange = useCallback((index: number) => {
+    setCurrentFeature(index);
+  }, []);
+  
+  // 自動輪播
   useEffect(() => {
+    if (!isMobile) return;
+    
     const interval = setInterval(() => {
-      if (isMobile) {
-        handleNext();
-      }
-    }, 5000);
+      handleNext();
+    }, 4000);
     
     return () => clearInterval(interval);
   }, [isMobile, handleNext]);
   
   return (
-    <section id="features" className="py-16 sm:py-20 bg-gray-50 overflow-hidden" suppressHydrationWarning>
-      <div className="container-custom relative z-10 px-4 sm:px-6">
+    <section id="features" className="py-16 md:py-20 lg:py-24 bg-gray-50 px-4 sm:px-6">
+      <div className="container-custom relative z-10">
         <AnimatedSection className="text-center mb-12 sm:mb-20" suppressHydrationWarning>
           <h2 className="inline-flex items-center justify-center text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 relative" suppressHydrationWarning>
-              <Logo 
-                variant="primary" 
-                size="responsive" 
-              className="mr-3 transform scale-90 sm:scale-100" 
-                priority={true}
-              />
-            <span className="relative">
-              專業團隊
-              <div className="absolute -bottom-2 left-0 w-full h-1 bg-primary"></div>
-            </span>
+            <span className="relative z-10">專注醫療的數位行銷</span>
+            <span className="absolute bottom-1 left-0 w-full h-3 bg-primary/20 rounded-full -z-1"></span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
-            作為專注於<span className="text-primary font-medium">醫療產業</span>的數位行銷團隊，我們融合了臨床經驗、數位專業與創新技術，
-            致力於幫助診所建立<span className="text-primary font-medium">品牌價值</span>，吸引理想患者，實現穩健成長
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto" suppressHydrationWarning>
+            我們深入理解醫療產業特性，提供從品牌策略到數位執行的全方位服務，協助診所開發最適合的成長方案
           </p>
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">
-            團隊由醫療背景與行銷專家組成，深入理解產業挑戰與機會，提供真正適合醫療環境的整合解決方案
-          </p>
-          
-
         </AnimatedSection>
-
-        {/* 桌面版網格排列 */}
+        
         <div className="hidden md:block">
         <motion.div 
             className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8"
@@ -807,89 +865,35 @@ const FeatureSection = memo(function FeatureSection() {
             </div>
           </div>
           
-          {/* 輪播控制 - 增加點擊區域和提升觸控體驗 */}
-          <div className="flex justify-between items-center mt-8">
-            <button 
-              onClick={handlePrev}
-              className="bg-white border border-gray-200 rounded-full p-3 shadow-sm hover:shadow-md transition-shadow hover:border-primary touch-manipulation"
-              aria-label="上一個特色"
-              style={{ touchAction: 'manipulation' }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
+          {/* 輪播控制 - 統一樣式 */}
+          <div className="mt-8 flex flex-col items-center">
+            <CarouselIndicator 
+              total={memoizedFeatures.length}
+              current={currentFeature}
+              onChange={handleSlideChange}
+              className="mb-4"
+            />
             
-            <div className="flex space-x-3">
-              {memoizedFeatures.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentFeature(index)}
-                  className={`w-6 h-6 rounded-full transition-colors ${
-                    currentFeature === index ? 'bg-primary' : 'bg-gray-300'
-                  }`}
-                  aria-label={`切換到特色 ${index + 1}`}
-                  style={{ touchAction: 'manipulation' }}
-                />
-              ))}
+            <div className="flex items-center gap-4">
+              <CarouselButton 
+                direction="prev" 
+                onClick={handlePrev}
+                size="medium"
+                ariaLabel="查看上一個特色"
+              />
+              <CarouselButton 
+                direction="next" 
+                onClick={handleNext}
+                size="medium"
+                ariaLabel="查看下一個特色"
+              />
             </div>
-            
-            <button 
-              onClick={handleNext}
-              className="bg-white border border-gray-200 rounded-full p-3 shadow-sm hover:shadow-md transition-shadow hover:border-primary touch-manipulation"
-              aria-label="下一個特色"
-              style={{ touchAction: 'manipulation' }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
           </div>
         </div>
-
-        {/* 新增團隊簡介區塊 */}
-        <AnimatedSection className="mt-20 text-center" delay={0.3}>
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 lg:p-10 max-w-4xl mx-auto relative">
-            {/* 左側裝飾線 - 保留但調整透明度 */}
-            <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/30"></div>
-            
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"><span className="text-primary">核心優勢</span>與多元背景</h3>
-            <p className="text-gray-600 mb-6">
-              Aidea:Med 匯集了醫療背景專家、數位行銷策略師、UI/UX 設計師、數據分析師及內容創作者，
-              建立一個能夠真正理解醫療產業需求的多元團隊。我們不僅了解數據與行銷，
-              更理解醫病關係的細微之處與醫療產業的獨特挑戰。
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 my-2 py-1">
-              {[
-                { id: 'medical', name: '#醫療專業背景' },
-                { id: 'marketing', name: '#數位行銷策略' },
-                { id: 'ai', name: '#AI技術應用' },
-                { id: 'brand', name: '#品牌設計' },
-                { id: 'uiux', name: '#UI/UX設計' },
-                { id: 'data', name: '#數據分析' }
-              ].map((tag, index) => (
-                <motion.div
-                  key={tag.id}
-                  className="border border-primary/70 text-primary text-xs sm:text-sm md:text-base whitespace-nowrap px-3 sm:px-4 py-1.5"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1, duration: 0.4 }}
-                  whileHover={{
-                    backgroundColor: "rgba(var(--color-primary-rgb), 0.05)",
-                    y: -2,
-                    transition: { duration: 0.2 }
-                  }}
-                >
-                  {tag.name}
-        </motion.div>
-              ))}
-            </div>
-          </div>
-        </AnimatedSection>
       </div>
     </section>
   );
-})
+});
 
 // 更新服務內容區塊 - 使用 Lucide 圖標
 const services = [
