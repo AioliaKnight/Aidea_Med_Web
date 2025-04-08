@@ -1,4 +1,5 @@
-import { caseStudies, generateCaseMetadata } from '@/components/pages/CasePage'
+import { caseStudies } from '@/data/cases'
+import { generateCaseMetadata } from '@/components/pages/CasePage'
 
 // 使用統一的 metadata 生成函數
 export default function generateMetadata({ params }) {

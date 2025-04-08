@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og'
-import { caseStudies } from '@/components/pages/CasePage'
+import { caseStudies } from '@/data/cases'
 
 export const size = {
   width: 1200,

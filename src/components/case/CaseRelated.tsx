@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { caseAnimations } from '@/utils/animations'
 import { handleCaseImageError } from '@/utils/case'
 import type { CaseRelatedProps } from '@/types/case'
-import { caseStudies } from '@/components/pages/CasePage'
+import { caseStudies } from '@/data/cases'
 
 const CaseRelated: React.FC<CaseRelatedProps> = ({ currentId, category }) => {
   // 使用 useMemo 緩存相關案例
