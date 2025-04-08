@@ -302,18 +302,18 @@
   color: var(--color-white) !important;
 }
 
-.bg-red a,
-.bg-primary a,
-.bg-[#e62733] a {
+.bg-red a:not([role="menuitem"]), 
+.bg-primary a:not([role="menuitem"]),
+.bg-[#e62733] a:not([role="menuitem"]) {
   color: var(--color-white);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
-.bg-red a:hover,
-.bg-primary a:hover,
-.bg-[#e62733] a:hover {
+.bg-red a:hover:not([role="menuitem"]),
+.bg-primary a:hover:not([role="menuitem"]),
+.bg-[#e62733] a:hover:not([role="menuitem"]) {
   text-decoration-thickness: 2px;
   opacity: 0.9;
 }
