@@ -18,7 +18,7 @@ const siteConfig = {
     facebook: 'https://www.facebook.com/www.aideamed',
     instagram: 'https://www.instagram.com/aidea_med',
     linkedin: 'https://www.linkedin.com/company/aideamed',
-    line: 'https://line.me/ti/p/@aideamed'
+    line: 'https://lin.ee/ZPdkmHh'
   },
   keywords: [
     // 主要關鍵字（優先顯示）
