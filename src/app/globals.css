@@ -306,15 +306,11 @@
 .bg-primary a:not([role="menuitem"]),
 .bg-[#e62733] a:not([role="menuitem"]) {
   color: var(--color-white);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
 }
 
 .bg-red a:hover:not([role="menuitem"]),
 .bg-primary a:hover:not([role="menuitem"]),
 .bg-[#e62733] a:hover:not([role="menuitem"]) {
-  text-decoration-thickness: 2px;
   opacity: 0.9;
 }
 
@@ -1327,4 +1323,52 @@ a.has-underline,
 a.underline-effect {
   text-decoration: none;
   position: relative;
+}
+
+/* 全域移除連結底線 - 使用更高優先級 */
+a, 
+a:hover, 
+a:focus, 
+a:visited,
+.bg-red a, 
+.bg-primary a, 
+.bg-[#e62733] a,
+#main-header a, 
+nav a,
+[role="menuitem"],
+[role="menuitem"]:hover,
+header a {
+  text-decoration: none !important;
+}
+
+/* 只為特別需要底線的元素添加底線，並使用特定的類別 */
+a.has-underline,
+a.text-link,
+.content a:not([role="button"]):not([role="menuitem"]) {
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 2px !important;
+}
+
+/* 移除其他區域連結底線 */
+.bg-black a:not(.text-primary),
+.bg-[#111111] a:not(.text-primary),
+[class*="bg-black"] a:not(.text-primary),
+.bg-white a,
+a.underline-effect,
+a.underline-effect:hover {
+  text-decoration: none !important;
+}
+
+/* 修改底線效果類別，確保只有在需要的地方添加底線 */
+a.underline-effect::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width var(--duration-normal) var(--ease-out);
+  text-decoration: none !important;
 } 
