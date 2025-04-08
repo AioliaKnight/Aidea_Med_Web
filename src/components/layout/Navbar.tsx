@@ -77,7 +77,7 @@ const NavItem = React.memo(({
     <Link
       href={item.href}
       className={cn(
-        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105",
+        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
         activeStyle
       )}
       aria-current={isActive ? 'page' : undefined}
