@@ -734,9 +734,13 @@ export default function CaseDetailPage() {
       {/* 頁面底部推薦相關內容區塊 */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-12">其他相關案例</h2>
+          <div className="flex items-center justify-center mb-12">
+            <div className="w-10 h-1 bg-primary mr-4"></div>
+            <h2 className="text-2xl font-bold">其他相關案例</h2>
+            <div className="w-10 h-1 bg-primary ml-4"></div>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* 篩選出3個相同類別的其他案例 - 添加安全檢查防止錯誤 */}
             {Array.isArray(caseStudies) && caseStudies
               .filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category)
@@ -746,39 +750,52 @@ export default function CaseDetailPage() {
                   key={relatedCase.id}
                   href={`/case/${relatedCase.id}`}
                   prefetch={true}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                  className="group block bg-white border border-gray-100 hover:border-primary/30 transition-all duration-300"
                 >
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={relatedCase.image}
-                      alt={relatedCase.name}
-                      className="w-full h-full object-cover object-center"
-                    />
+                  {/* 圖片容器 */}
+                  <div className="relative py-8 overflow-hidden bg-gray-50 border-b border-gray-100 flex items-center justify-center">
+                    <div className="relative h-28 w-full mx-auto px-10 flex items-center justify-center">
+                      <img
+                        src={relatedCase.image}
+                        alt={relatedCase.name}
+                        className="max-h-28 w-auto max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
                   </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                  
+                  {/* 內容區 */}
+                  <div className="p-6">
+                    <div className="mb-3">
+                      <span className="inline-block text-xs font-medium px-3 py-1 border border-primary/20 text-primary">
                         {relatedCase.category}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-1 line-clamp-1">{relatedCase.name}</h3>
-                    <p className="text-gray-600 text-sm line-clamp-2 mb-3">{relatedCase.description}</p>
-                    <div className="text-primary font-medium text-sm flex items-center">
-                      閱讀更多案例
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 ml-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+                    <h3 className="text-lg font-medium mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-1">
+                      {relatedCase.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4 h-10">
+                      {relatedCase.description}
+                    </p>
+                    
+                    {/* 閱讀更多 - 採用扁平化設計 */}
+                    <div className="border-t border-gray-100 pt-4 mt-auto">
+                      <div className="text-primary text-sm flex items-center font-medium group-hover:translate-x-1 transition-transform duration-300">
+                        閱讀更多案例
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:translate-x-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -793,52 +810,68 @@ export default function CaseDetailPage() {
                   key={relatedCase.id}
                   href={`/case/${relatedCase.id}`}
                   prefetch={true}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                  className="group block bg-white border border-gray-100 hover:border-primary/30 transition-all duration-300"
                 >
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={relatedCase.image}
-                      alt={relatedCase.name}
-                      className="w-full h-full object-cover object-center"
-                    />
+                  {/* 圖片容器 */}
+                  <div className="relative py-8 overflow-hidden bg-gray-50 border-b border-gray-100 flex items-center justify-center">
+                    <div className="relative h-28 w-full mx-auto px-10 flex items-center justify-center">
+                      <img
+                        src={relatedCase.image}
+                        alt={relatedCase.name}
+                        className="max-h-28 w-auto max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
                   </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                  
+                  {/* 內容區 */}
+                  <div className="p-6">
+                    <div className="mb-3">
+                      <span className="inline-block text-xs font-medium px-3 py-1 border border-primary/20 text-primary">
                         {relatedCase.category}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-1 line-clamp-1">{relatedCase.name}</h3>
-                    <p className="text-gray-600 text-sm line-clamp-2 mb-3">{relatedCase.description}</p>
-                    <div className="text-primary font-medium text-sm flex items-center">
-                      閱讀更多案例
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 ml-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+                    <h3 className="text-lg font-medium mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-1">
+                      {relatedCase.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4 h-10">
+                      {relatedCase.description}
+                    </p>
+                    
+                    {/* 閱讀更多 - 採用扁平化設計 */}
+                    <div className="border-t border-gray-100 pt-4 mt-auto">
+                      <div className="text-primary text-sm flex items-center font-medium group-hover:translate-x-1 transition-transform duration-300">
+                        閱讀更多案例
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:translate-x-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </Link>
               ))}
           </div>
           
-          <div className="text-center mt-10">
+          <div className="text-center mt-12">
             <Link 
               href="/case"
               prefetch={true}
-              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark transition-colors duration-300"
+              className="inline-flex items-center justify-center px-8 py-3 border border-primary text-primary bg-transparent hover:bg-primary hover:text-white transition-colors duration-300"
             >
               查看所有案例
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </Link>
           </div>
         </div>
