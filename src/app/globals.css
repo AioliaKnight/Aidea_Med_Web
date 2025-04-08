@@ -1305,4 +1305,26 @@ section[id]:first-of-type,
 .section-top,
 .content-top {
   padding-top: calc(4rem + 16px);
+}
+
+/* 移除所有 next/link 元件的底線 */
+a, a:hover {
+  text-decoration: none;
+}
+
+/* 只為需要底線的元素特別添加 */
+a.has-underline,
+.bg-red a,
+.bg-primary a,
+.bg-[#e62733] a,
+.underline-effect:hover::after {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* 保持原有的懸停底線效果 */
+a.underline-effect {
+  text-decoration: none;
+  position: relative;
 } 
