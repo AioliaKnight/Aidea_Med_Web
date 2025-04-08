@@ -77,7 +77,9 @@ export default function CaseDetailPage() {
   
   // 使用 useMemo 緩存案例資料
   const currentCase = useMemo(() => {
-    return caseStudies.find((c: CaseStudy) => c.id === id)
+    return Array.isArray(caseStudies) 
+      ? caseStudies.find((c: CaseStudy) => c.id === id)
+      : undefined
   }, [id])
   
   // 優化 useEffect 邏輯
@@ -85,36 +87,52 @@ export default function CaseDetailPage() {
     let isMounted = true
     
     const loadCaseData = async () => {
-      if (id && currentCase) {
-        try {
-          // 使用 Promise.resolve().then 確保在微任務隊列中執行
-          await Promise.resolve().then(() => {
-            if (isMounted) {
-              setCaseStudy(currentCase)
-              setLoading(false)
-              
-              // 從 localStorage 中讀取案例收藏狀態
-              try {
-                const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]')
-                setIsLiked(likedCases.includes(id))
-              } catch (e) {
-                console.error('Error reading liked cases from localStorage', e)
-              }
-              
-              // 追蹤已瀏覽案例
-              try {
-                // 更新瀏覽記錄
-                trackViewedCases(id)
-              } catch (e) {
-                console.error('Error tracking viewed case', e)
-              }
-            }
-          })
-        } catch (error) {
-          console.error('Error loading case data:', error)
+      try {
+        if (!id) {
+          console.error('案例 ID 不存在')
+          if (isMounted) setLoading(false)
+          return
+        }
+        
+        if (!Array.isArray(caseStudies)) {
+          console.error('案例資料未正確載入')
+          if (isMounted) setLoading(false)
+          return
+        }
+        
+        if (!currentCase) {
+          console.error(`找不到 ID 為 ${id} 的案例`)
+          if (isMounted) setLoading(false)
+          return
+        }
+        
+        // 使用 Promise.resolve().then 確保在微任務隊列中執行
+        await Promise.resolve().then(() => {
           if (isMounted) {
+            setCaseStudy(currentCase)
             setLoading(false)
+            
+            // 從 localStorage 中讀取案例收藏狀態
+            try {
+              const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]')
+              setIsLiked(likedCases.includes(id))
+            } catch (e) {
+              console.error('Error reading liked cases from localStorage', e)
+            }
+            
+            // 追蹤已瀏覽案例
+            try {
+              // 更新瀏覽記錄
+              trackViewedCases(id)
+            } catch (e) {
+              console.error('Error tracking viewed case', e)
+            }
           }
+        })
+      } catch (error) {
+        console.error('載入案例資料時發生錯誤:', error)
+        if (isMounted) {
+          setLoading(false)
         }
       }
     }
@@ -124,7 +142,7 @@ export default function CaseDetailPage() {
     return () => {
       isMounted = false
     }
-  }, [id, currentCase])
+  }, [id, currentCase, caseStudies])
   
   // 優化圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
@@ -719,8 +737,8 @@ export default function CaseDetailPage() {
           <h2 className="text-2xl font-bold text-center mb-12">其他相關案例</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* 篩選出3個相同類別的其他案例 */}
-            {caseStudies
+            {/* 篩選出3個相同類別的其他案例 - 添加安全檢查防止錯誤 */}
+            {Array.isArray(caseStudies) && caseStudies
               .filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category)
               .slice(0, 3)
               .map((relatedCase: CaseStudy) => (
@@ -766,10 +784,10 @@ export default function CaseDetailPage() {
                 </Link>
               ))}
             
-            {/* 如果同類案例不足3個，則添加其他類別的案例補足 */}
-            {caseStudies
+            {/* 如果同類案例不足3個，則添加其他類別的案例補足 - 添加安全檢查防止錯誤 */}
+            {Array.isArray(caseStudies) && caseStudies
               .filter((c: CaseStudy) => c.id !== id && c.category !== caseStudy?.category)
-              .slice(0, 3 - caseStudies.filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category).length)
+              .slice(0, 3 - (Array.isArray(caseStudies) ? caseStudies.filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category).length : 0))
               .map((relatedCase: CaseStudy) => (
                 <Link
                   key={relatedCase.id}
