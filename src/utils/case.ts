@@ -122,15 +122,33 @@ export const handleCaseImageError = (url: string, fallbackUrl: string = CONSTANT
 }
 
 // 新增：生成案例圖片集
-export const generateCaseGallery = (caseId: string, count: number = 6): CaseImage[] => {
+export const generateCaseGallery = (caseId: string, count: number = 6, options?: {
+  basePath?: string;
+  fileTypes?: string[];
+  withPlaceholder?: boolean;
+}): CaseImage[] => {
   const images: CaseImage[] = [];
+  const basePath = options?.basePath || CONSTANTS.IMAGE_PATHS.CASES;
+  const fileTypes = options?.fileTypes || CONSTANTS.IMAGE_EXTENSIONS;
   
   for (let i = 1; i <= count; i++) {
+    const mainUrl = `${basePath}/${caseId}/${i}.${fileTypes[0]}`;
+    const fallbackUrls = fileTypes.slice(1).map(ext => 
+      `${basePath}/${caseId}/${i}.${ext}`
+    );
+    
+    if (options?.withPlaceholder) {
+      fallbackUrls.push(CONSTANTS.IMAGE_PATHS.PLACEHOLDER);
+    }
+    
     images.push({
-      url: generateCaseImageUrl(caseId, i),
+      url: mainUrl,
       alt: `案例圖片 ${i}`,
+      caption: `${caseId} 案例圖片 ${i}`,
       priority: i === 1, // 首張圖優先載入
-      fallbackUrls: generateCaseImageUrlWithFallbacks(caseId, i) // 添加備用 URL
+      fallbackUrls: fallbackUrls, // 添加備用 URL
+      width: i === 1 ? 1200 : 800, // 主圖更大
+      height: i === 1 ? 800 : 600,
     });
   }
   

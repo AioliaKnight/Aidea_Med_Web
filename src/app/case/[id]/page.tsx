@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, Suspense, useCallback } from 'reac
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { caseStudies, generateCaseStudyMetadata } from '@/components/pages/CasePage'
+import { caseStudies } from '@/data/cases'
 import type { CaseStudy } from '@/types/case'
 import { ArrowLeftIcon, ShareIcon, ChartBarIcon, HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import CountUp from 'react-countup'
 import { staggerContainer, fadeInUp } from '@/utils/animations'
 import { ErrorBoundary, CaseDetailErrorBoundary } from '@/components/common'
-import { trackViewedCases } from '@/utils/case'
+import { trackViewedCases, generateCaseStudyMetadata } from '@/utils/case'
 
 // 時間軸和案例詳情組件
 const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'))
@@ -77,7 +77,7 @@ export default function CaseDetailPage() {
   
   // 使用 useMemo 緩存案例資料
   const currentCase = useMemo(() => {
-    return caseStudies.find(c => c.id === id) || null
+    return caseStudies.find((c: CaseStudy) => c.id === id)
   }, [id])
   
   // 優化 useEffect 邏輯
@@ -152,7 +152,41 @@ export default function CaseDetailPage() {
         });
       } catch (err) {
         console.log('Error sharing', err);
+        // 如果原生分享失敗，顯示分享選單
+        setShowShareMenu(true);
       }
+    } else {
+      // 如果不支援原生分享，顯示分享選單
+      setShowShareMenu(true);
+    }
+  }, [caseStudy]);
+  
+  // 分享到社交媒體
+  const shareToSocialMedia = useCallback((platform: 'facebook' | 'twitter' | 'linkedin' | 'line') => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(caseStudy?.name || '');
+    const description = encodeURIComponent(caseStudy?.description || '');
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'line':
+        shareUrl = `https://social-plugins.line.me/lineit/share?url=${url}`;
+        break;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+      setShowShareMenu(false);
     }
   }, [caseStudy]);
   
@@ -215,7 +249,7 @@ export default function CaseDetailPage() {
               </Link>
               
               {/* 操作按鈕 */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 relative">
                 <button
                   onClick={handleLike}
                   className="flex items-center px-3 py-1.5 rounded-md text-gray-600 hover:text-primary hover:bg-gray-50 transition-all duration-300"
@@ -237,6 +271,58 @@ export default function CaseDetailPage() {
                   <ShareIcon className="w-5 h-5" />
                   <span className="ml-1 text-sm">分享</span>
                 </button>
+                
+                {/* 社交媒體分享選單 */}
+                <AnimatePresence>
+                  {showShareMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-10 z-10 bg-white shadow-lg rounded-md border border-gray-100 p-2 w-48"
+                    >
+                      <div className="flex flex-col">
+                        <button 
+                          onClick={() => shareToSocialMedia('facebook')}
+                          className="flex items-center p-2 hover:bg-gray-50 text-gray-700 text-sm"
+                        >
+                          <svg className="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+                          </svg>
+                          Facebook
+                        </button>
+                        <button 
+                          onClick={() => shareToSocialMedia('twitter')}
+                          className="flex items-center p-2 hover:bg-gray-50 text-gray-700 text-sm"
+                        >
+                          <svg className="w-5 h-5 mr-3 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                          </svg>
+                          Twitter
+                        </button>
+                        <button 
+                          onClick={() => shareToSocialMedia('linkedin')}
+                          className="flex items-center p-2 hover:bg-gray-50 text-gray-700 text-sm"
+                        >
+                          <svg className="w-5 h-5 mr-3 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+                          </svg>
+                          LinkedIn
+                        </button>
+                        <button 
+                          onClick={() => shareToSocialMedia('line')}
+                          className="flex items-center p-2 hover:bg-gray-50 text-gray-700 text-sm"
+                        >
+                          <svg className="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.365 9.89c.50 0 .866-.37.866-.87 0-.5-.366-.87-.866-.87H8.668v-1.9c0-.47-.345-.85-.813-.85-.47 0-.815.38-.815.85v2.77c0 .47.345.85.815.85h11.51v.02zm-9.88 5.89h-4.03c-.47 0-.813-.38-.813-.85 0-.47.345-.85.814-.85h4.03c.47 0 .814.38.814.85s-.344.85-.814.85zM19.883 3H4.117C1.85 3 0 4.85 0 7.117v9.766C0 19.15 1.85 21 4.117 21h15.766C22.15 21 24 19.15 24 16.883V7.117C24 4.85 22.15 3 19.883 3zM4.117 4.637h15.766c1.368 0 2.48 1.11 2.48 2.48v9.766c0 1.37-1.112 2.48-2.48 2.48H4.117c-1.37 0-2.48-1.11-2.48-2.48V7.117c0-1.37 1.11-2.48 2.48-2.48z" />
+                          </svg>
+                          LINE
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
@@ -314,6 +400,44 @@ export default function CaseDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-8">
+              {/* 案例內容區域 */}
+              {caseStudy.content && (
+                <motion.section
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-white p-8"
+                >
+                  <h2 className="text-2xl font-bold text-gray-900 mb-8">案例詳情</h2>
+                  <div className="prose prose-lg max-w-none">
+                    {caseStudy.content.split('# ').map((section, index) => {
+                      if (!section) return null;
+                      
+                      // 處理標題和內容
+                      const lines = section.split('\n');
+                      const title = lines[0];
+                      const content = lines.slice(1).join('\n');
+                      
+                      return (
+                        <div key={index} className="mb-10">
+                          {index > 0 && (
+                            <h3 className="text-2xl font-bold text-primary mb-5 pb-2 border-b border-gray-100">
+                              {title}
+                            </h3>
+                          )}
+                          {content.split('\n\n').map((paragraph, pIndex) => (
+                            <p key={pIndex} className="mb-5 text-gray-700 leading-relaxed">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.section>
+              )}
+              
               {/* 解決方案 */}
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -597,9 +721,9 @@ export default function CaseDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* 篩選出3個相同類別的其他案例 */}
             {caseStudies
-              .filter(c => c.id !== id && c.category === caseStudy?.category)
+              .filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category)
               .slice(0, 3)
-              .map(relatedCase => (
+              .map((relatedCase: CaseStudy) => (
                 <Link
                   key={relatedCase.id}
                   href={`/case/${relatedCase.id}`}
@@ -644,9 +768,9 @@ export default function CaseDetailPage() {
             
             {/* 如果同類案例不足3個，則添加其他類別的案例補足 */}
             {caseStudies
-              .filter(c => c.id !== id && c.category !== caseStudy?.category)
-              .slice(0, 3 - caseStudies.filter(c => c.id !== id && c.category === caseStudy?.category).length)
-              .map(relatedCase => (
+              .filter((c: CaseStudy) => c.id !== id && c.category !== caseStudy?.category)
+              .slice(0, 3 - caseStudies.filter((c: CaseStudy) => c.id !== id && c.category === caseStudy?.category).length)
+              .map((relatedCase: CaseStudy) => (
                 <Link
                   key={relatedCase.id}
                   href={`/case/${relatedCase.id}`}

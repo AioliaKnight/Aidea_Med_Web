@@ -36,6 +36,7 @@ export interface CaseStudy {
   badges?: string[]; // 標籤
   priority?: number; // 優先順序 (用於排序)
   backgroundColor?: string; // 背景色
+  content?: string; // 案例詳細內容
 }
 
 // Schema.org 結構化資料類型定義

@@ -35,7 +35,7 @@ import {
   FileText
 } from 'lucide-react'
 import { Logo, CTASection, AnimatedSection } from '@/components/common'
-import { caseStudies as casesData } from '@/components/pages/CasePage'
+import { caseStudies } from '@/data/cases'
 import { animations, homePageAnimations } from '@/utils/animations'
 import { 
   heroTitleVariants, 
@@ -1426,7 +1426,7 @@ const CaseStudiesSection = memo(function CaseStudiesSection() {
         return { ...state, isMobile: action.payload };
       case 'NEXT_SLIDE': {
         // 需要計算當前過濾後的案例長度
-        const currentCases = casesData.filter(cs => 
+        const currentCases = caseStudies.filter(cs => 
           state.activeCategory === 'all' || cs.category === state.activeCategory
         );
         return { 
@@ -1455,15 +1455,15 @@ const CaseStudiesSection = memo(function CaseStudiesSection() {
   // 使用useMemo記憶過濾後的案例數據，避免重複計算
   const filteredCases = useMemo(() => 
     activeCategory === 'all' 
-      ? casesData 
-      : casesData.filter(cs => cs.category === activeCategory),
+      ? caseStudies 
+      : caseStudies.filter(cs => cs.category === activeCategory),
     [activeCategory]
   );
   
   // 使用useMemo記憶類別列表，避免重複計算
   const categories = useMemo(() => 
-    ['all', ...Array.from(new Set(casesData.map(cs => cs.category)))],
-    [casesData]
+    ['all', ...Array.from(new Set(caseStudies.map(cs => cs.category)))],
+    [caseStudies]
   );
   
   // 檢測視窗大小以決定是否為行動裝置，使用防抖處理

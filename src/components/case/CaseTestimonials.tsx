@@ -4,43 +4,29 @@ import React, { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { caseAnimations } from '@/utils/animations'
-import { CaseStudy } from '@/components/pages/CasePage'
-
-// 客戶見證介面
-interface Testimonial {
-  name: string
-  role: string
-  company: string
-  content: string
-  avatar?: string
-}
-
-// 修改組件的 props 類型名稱以避免衝突
-interface TestimonialProps {
-  caseStudy: CaseStudy
-}
+import { CaseStudy, Testimonial, CaseTestimonialsProps } from '@/types/case'
 
 // 生成客戶見證
 function generateTestimonials(caseStudy: CaseStudy): Testimonial[] {
   return [
     {
-      name: `${caseStudy.name.includes('診所') ? caseStudy.name.replace('診所', '') : caseStudy.name}院長`,
-      role: '院長',
-      company: caseStudy.name,
       content: `與Aidea:Med合作後，我們的網路預約人數增加了${Math.floor(Math.random() * 40 + 60)}%，新患者轉換率顯著提升。他們不只提供行銷服務，更能深入了解牙醫診所的特殊需求，提供專業且有效的解決方案。`,
+      author: `${caseStudy.name.includes('診所') ? caseStudy.name.replace('診所', '') : caseStudy.name}院長`,
+      title: '院長',
+      company: caseStudy.name,
       avatar: '/images/testimonials/doctor-avatar.jpg'
     },
     {
-      name: '劉經理',
-      role: '營運總監',
-      company: caseStudy.name,
       content: `Aidea:Med團隊的專業度讓我們印象深刻，從市場分析到執行細節都非常到位。我們的品牌形象煥然一新，診所的數位足跡也大幅提升，是值得長期合作的夥伴。`,
+      author: '劉經理',
+      title: '營運總監',
+      company: caseStudy.name,
       avatar: '/images/testimonials/manager-avatar.jpg'
     }
   ]
 }
 
-const CaseTestimonials: React.FC<TestimonialProps> = ({ caseStudy }) => {
+const CaseTestimonials: React.FC<CaseTestimonialsProps> = ({ caseStudy, variant = 'card' }) => {
   // 如果沒有見證資料則不顯示組件
   if (!caseStudy.testimonial) {
     return null
