@@ -598,7 +598,8 @@ export default function ServicePage() {
             variant="red"
             size="md"
             alignment="center"
-            className="border-b border-red-700 relative z-10"
+            backgroundImage="/images/bgline-w.webp"
+            className="border-b border-primary relative z-10"
           />
         </div>
         

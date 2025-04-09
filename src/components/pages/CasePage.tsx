@@ -501,31 +501,6 @@ const MainContent = memo(function MainContent() {
       {/* 統一的頁面容器 */}
       <div className="bg-gray-50 py-16">
         <div className="container mx-auto px-4 pb-16">
-          {/* 頁面標題區塊 */}
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="text-center mb-10 sm:mb-16"
-          >
-            <motion.div 
-              variants={fadeInUp}
-              className="w-12 sm:w-16 h-1 bg-primary mx-auto mb-4 sm:mb-6"
-            />
-            <motion.h1 
-              variants={fadeInUp}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4"
-            >
-              成功案例
-            </motion.h1>
-            <motion.p
-              variants={fadeInUp}
-              className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto"
-            >
-              了解我們如何幫助診所提升品牌價值與轉換率
-            </motion.p>
-          </motion.div>
-          
           {/* 類別過濾器 */}
           <div className="mb-8 sm:mb-12">
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">

@@ -335,15 +335,6 @@ export default function TeamPage() {
         {/* 團隊成員 */}
         <section className="py-10 sm:py-16 md:py-20 bg-white">
           <div className="container-custom">
-            <div className="text-center mb-8 sm:mb-16">
-              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-black mb-3 sm:mb-4 border-b-2 border-primary pb-2 inline-block">
-                認識我們的專業團隊
-              </h2>
-              <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto mt-3 sm:mt-4 px-4">
-                每位成員都擁有豐富的醫療行銷經驗，致力於為診所打造最佳品牌策略
-              </p>
-            </div>
-
             <div 
               className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 md:gap-8 xl:gap-10 max-w-7xl mx-auto" 
               role="list"
