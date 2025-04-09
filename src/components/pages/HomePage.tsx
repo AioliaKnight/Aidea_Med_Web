@@ -231,26 +231,29 @@ const HeroSection = memo(function HeroSection() {
       aria-label="網站主要橫幅"
       id="hero"
     >
-      {/* 優化背景 */}
-      <div className="absolute inset-0">
+      {/* 優化背景 - 使用CSS背景色替代大圖片，減少LCP時間 */}
+      <div className="absolute inset-0 bg-primary">
         <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
-          <Image 
-          src="/images/bgline-w-small.webp"
+        {/* 使用漸進式加載策略：先顯示背景色，再加載背景圖 */}
+        <picture>
+          <source 
+            media="(min-width: 768px)" 
+            srcSet="/images/bgline-w-small.webp"
+          />
+          <img 
+            src="/images/bgline-w-small.webp"
             alt=""
-            fill
-            priority={true}
-          sizes="(max-width: 768px) 100vw, 100vw"
-          quality={30}
-          fetchPriority="high"
-          className="object-cover opacity-30"
-          style={{ objectPosition: 'center' }}
-          onLoad={() => {
-            if (window.performance && window.performance.mark) {
-              window.performance.mark('hero-bg-loaded');
-            }
-          }}
-        />
+            className="object-cover opacity-30 absolute inset-0 w-full h-full"
+            loading="lazy"
+            decoding="async"
+            onLoad={() => {
+              if (window.performance && window.performance.mark) {
+                window.performance.mark('hero-bg-loaded');
+              }
+            }}
+          />
+        </picture>
       </div>
       
       {/* 主要標題內容區 */}
@@ -498,148 +501,97 @@ const MarketingSection = memo(function MarketingSection() {
 
 // 更新服務特色區塊
 const FeatureSection = memo(function FeatureSection() {
-  const [currentFeature, setCurrentFeature] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // 檢測裝置以優化體驗
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  
-  // 處理手動控制輪播
-  const handlePrev = useCallback(() => {
-    if (isMobile) {
-      setCurrentFeature(prev => 
-        prev === 0 ? FEATURES.length - 1 : prev - 1
-      );
-    }
-  }, [isMobile]);
-  
-  const handleNext = useCallback(() => {
-    if (isMobile) {
-      setCurrentFeature(prev => 
-        prev === FEATURES.length - 1 ? 0 : prev + 1
-      );
-    }
-  }, [isMobile]);
-  
-  const handleIndicatorChange = useCallback((index: number) => {
-    setCurrentFeature(index);
-  }, []);
+  // 移除不必要的狀態，減少記憶體使用
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
 
   return (
     <section 
-      id="features" 
-      className="py-16 md:py-24 bg-white"
+      ref={ref}
+      className="py-12 md:py-20 bg-white"
+      aria-labelledby="features-heading"
     >
-      <div className="container-custom px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 text-center mb-4">
-            我們的<span className="text-primary">核心</span>特色
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 
+            id="features-heading"
+            className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 tracking-tight"
+          >
+            為什麼選擇我們
           </h2>
-          <p className="text-xl text-gray-600 text-center max-w-3xl mx-auto mb-16">
-            結合醫療專業與數位行銷專長，我們提供獨特的服務讓您的醫療團隊脫穎而出
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+            專注醫療領域的行銷專家，為您創造真正能轉化為患者的品牌價值
           </p>
-          
-          {/* 移動端輪播版本 */}
-            <div 
-              ref={carouselRef}
-            className="md:hidden relative px-4"
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                key={currentFeature}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3 }}
-                className="bg-gray-50 p-6 rounded-lg shadow-sm"
-              >
-                <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
-                  {React.createElement(FEATURES[currentFeature].icon, { size: 24 })}
-                      </div>
-                <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
-                  {FEATURES[currentFeature].title}
-                              </h3>
-                <p className="text-gray-600 text-center">
-                  {FEATURES[currentFeature].description}
-                </p>
-              </motion.div>
-        </AnimatePresence>
-            
-            {/* 輪播控制 */}
-            <div className="flex justify-between items-center mt-6">
-              <CarouselButton direction="prev" onClick={handlePrev} size="small" />
-              <CarouselIndicator 
-                total={FEATURES.length} 
-                current={currentFeature} 
-                onChange={handleIndicatorChange} 
-              />
-              <CarouselButton direction="next" onClick={handleNext} size="small" />
-                  </div>
-                  </div>
-          
-          {/* 桌面網格版本 */}
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FEATURES.map((feature, index) => (
-              <div 
-                key={index}
-                className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
-              >
-                <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
-                  {React.createElement(feature.icon, { size: 24 })}
         </div>
-                <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+          {FEATURES.map((feature, index) => (
+            <div 
+              key={feature.title}
+              className={`bg-white rounded-xl p-6 md:p-8 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/20 transition-all duration-300 ${inView ? 'animate-fadeIn' : 'opacity-0'}`}
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <div className="flex flex-col h-full">
+                <div className="mb-4 text-primary">
+                  <feature.icon 
+                    size={28} 
+                    strokeWidth={2} 
+                    className="text-primary" 
+                    aria-hidden="true"
+                  />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold mb-2 text-gray-900">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-center">
+                <p className="text-sm md:text-base text-gray-600 flex-grow">
                   {feature.description}
                 </p>
-                </div>
-              ))}
+              </div>
             </div>
+          ))}
         </div>
       </div>
     </section>
   );
 });
 
-// 主要頁面組件
-const HomePage = () => {
+// 主要應用入口優化
+export default function HomePage() {
+  // 使用SSR先渲染，然後客戶端激活
   return (
-    <>
-        <HeroSection />
-          <MarketingSection />
-          <FeatureSection />
-        
-      {/* 從這裡開始的組件拆分到單獨的文件中 */}
-      <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
+    <main className="min-h-screen flex flex-col overflow-hidden">
+      {/* 核心內容先載入 */}
+      <HeroSection />
+      
+      {/* 使用React.lazy進行代碼分割，懶加載非核心區塊 */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center bg-gray-50"><span className="text-gray-400">載入中...</span></div>}>
+        <MarketingSection />
+      </Suspense>
+      
+      <FeatureSection />
+      
+      <Suspense fallback={<div className="h-96 bg-gray-50"></div>}>
         <HomeFAQSection />
-        </Suspense>
-        
-      <CTASection 
-        title="準備好提升您的醫療專業形象了嗎？"
-        description="與我們的專業顧問安排免費諮詢，探討如何為您的診所打造最適合的行銷策略"
-        primaryButton={{
-          href: "/contact",
-          text: "預約免費諮詢",
-          variant: "white"
-        }}
-        secondaryButton={{
-          href: "/services",
-          text: "了解服務內容",
-          variant: "black"
-        }}
-      />
-    </>
-  );
-};
-
-export default HomePage; 
+      </Suspense>
+      
+      <Suspense fallback={<div className="h-80 bg-gray-50"></div>}>
+        <CTASection 
+          title="準備好開始了嗎？" 
+          description="讓我們一起為您的診所打造專屬的品牌成長策略" 
+          primaryButton={{
+            text: "預約免費諮詢",
+            href: "/contact",
+            variant: "primary"
+          }}
+          secondaryButton={{
+            text: "了解服務項目",
+            href: "/service",
+            variant: "outline-white"
+          }}
+        />
+      </Suspense>
+    </main>
+  )
+} 
