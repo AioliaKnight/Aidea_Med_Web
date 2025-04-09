@@ -84,11 +84,8 @@ export const CaseCard = React.memo(({
   }, [variant]);
 
   return (
-    <Link 
-      href={`/case/${caseStudy.id}`} 
-      prefetch={true}
-      className="block h-full"
-    >
+    // 暫時禁用案例詳情頁面連結 - 將Link標籤改為div
+    <div className="block h-full">
       <Card 
         variant={cardVariant}
         hoverEffect="lift"
@@ -206,7 +203,7 @@ export const CaseCard = React.memo(({
           )}
         </div>
       </Card>
-    </Link>
+    </div>
   );
 });
 
