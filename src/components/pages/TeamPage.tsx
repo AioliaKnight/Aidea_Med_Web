@@ -26,7 +26,6 @@ interface TeamMember {
   image: string;
   description: string;
   socialLinks: SocialLink[];
-  education: string;
   expertise: string[];
   quote: string;
 }
@@ -37,80 +36,74 @@ const teamMembers: TeamMember[] = [
     name: '陳維鈞 Wilson',
     role: '創辦人暨策略總監',
     image: '/images/team/member-1.jpg',
-    description: '擁有十五年以上行銷經驗，曾協助超過50家診所完成品牌轉型。曾任大型牙醫連鎖集團行銷總監，深諳醫療領域的病患心理與行銷策略。她相信，真正有溫度的醫療體驗，始於醫者的用心與良好的溝通橋樑。',
+    description: '擁有十五年以上醫療行銷經驗，專精於診所品牌策略與患者體驗設計。帶領團隊協助超過50家診所重塑品牌形象，深諳如何將專業醫療價值轉譯為患者信任。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' },
       { platform: 'line', url: 'https://lin.ee/ZPdkmHh' }
     ],
-    education: '國立台灣大學工商管理碩士',
-    expertise: ['醫療品牌策略', '病患體驗設計', '醫病溝通優化'],
-    quote: '每位醫師都有獨特的故事與價值，我的使命是讓這些故事被更多人看見與理解。'
+    expertise: ['醫療品牌策略', '患者體驗設計', '醫病溝通優化'],
+    quote: '每位醫師都有獨特的故事與價值，我的使命是讓這些故事被更多患者看見與理解。'
   },
   {
     name: 'Mike',
     role: '數位行銷總監',
     image: '/images/team/member-2.jpg',
-    description: '數位行銷專家，擅長診所網站優化與搜尋引擎行銷，過去五年成功幫助30多家牙醫與皮膚科診所提升40%以上的新客數量。他深信數據與溫度不是對立的，透過精準的數據分析，能更準確地回應病患的真實需求。',
+    description: '數位行銷專家，擅長診所網站優化與精準投放策略。過去五年成功幫助30多家醫療機構提升40%以上的新患數量，專注於將數據轉化為實際診所成長。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' }
     ],
-    education: '國立政治大學數位行銷碩士',
-    expertise: ['搜尋引擎優化', '醫療網站轉換率提升', 'Google Ads操作'],
-    quote: '每一個數據背後都是一個尋求幫助的人，我們的工作是讓對的醫師被對的病患找到。'
+    expertise: ['搜尋引擎優化', '醫療轉換率提升', '精準廣告投放'],
+    quote: '每一個數據背後都是一個尋求幫助的人，我們的工作是讓對的醫師被對的患者找到。'
   },
   {
     name: 'Leo',
     role: '創意內容總監',
     image: '/images/team/member-3.jpg',
-    description: '資深醫療內容創作者，曾任健康雜誌主編，擅長將艱澀的醫療知識轉化為溫暖易懂的內容。她帶領的創意團隊每月為診所客戶產出超過200篇精彩內容，從專業文章到暖心故事，讓醫療不再冰冷距離。',
+    description: '資深醫療內容策略專家，擅長將艱澀的醫療知識轉化為患者易懂且具共鳴的內容。帶領創意團隊為診所打造各類專業醫療內容，建立患者信任與醫師權威。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' }
     ],
-    education: '輔仁大學大眾傳播學系',
-    expertise: ['醫療故事敘事', '衛教內容創作', '診所品牌文案'],
-    quote: '最動人的醫療故事往往是最簡單的真實分享，我們的文字是連結醫師熱忱與病患信任的橋樑。'
+    expertise: ['醫療故事敘事', '衛教內容創作', '專業知識轉譯'],
+    quote: '最動人的醫療故事往往是最簡單的真實分享，我們的文字是連結醫師熱忱與患者信任的橋樑。'
   },
   {
     name: 'Chloe',
     role: '視覺設計總監',
     image: '/images/team/member-4.jpg',
-    description: '擁有十年以上設計經驗，專注於醫療環境與品牌視覺設計。他理解醫療環境設計的獨特需求，如何在保持專業的同時，創造溫暖舒適的空間體驗。他的設計作品曾獲得多項國際設計大獎。',
+    description: '專精於醫療品牌視覺設計，在保持專業形象同時注入情感連結。擅長透過設計語言傳達診所核心價值，打造讓患者感到安心信任的視覺體驗。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' }
     ],
-    education: '台灣科技大學設計研究所',
-    expertise: ['診所空間設計', '醫療品牌視覺系統', 'UI/UX設計'],
-    quote: '好的設計是無形的，它讓病患在不知不覺中感到安心與信任，這在醫療環境中格外重要。'
+    expertise: ['診所品牌視覺', '醫療UX設計', '患者體驗設計'],
+    quote: '好的醫療設計是無形的，它讓患者在不知不覺中感到安心與信任，這在醫療環境中格外重要。'
   },
   {
     name: 'Queena',
     role: '顧客關係總監',
     image: '/images/team/member-5.jpg',
-    description: '專注於優化診所病患體驗與建立忠誠度系統。她擁有心理諮商背景，深入理解病患心理需求與疑慮，協助診所建立完善的溝通系統與顧客旅程。她帶領的團隊成功幫助客戶提升30%以上的回診率。',
+    description: '專注於醫療顧客體驗與患者忠誠度系統建立。深入理解醫病關係的獨特性，協助診所設計全方位的患者溝通策略，成功提升客戶30%以上的回診率。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'instagram', url: 'https://www.instagram.com/aidea_med/' }
     ],
-    education: '台灣師範大學心理諮商研究所',
-    expertise: ['病患體驗管理', '醫療顧客關係維護', '診所服務流程優化'],
+    expertise: ['患者體驗管理', '醫療關係維護', '診所服務優化'],
     quote: '每位走進診所的人都帶著自己的故事與擔憂，我們的使命是讓他們感受到：這裡有人真正在乎你。'
   },
   {
     name: '西裝哥',
     role: '技術開發總監',
     image: '/images/team/member-6.jpg',
-    description: '資深技術專家，專注於醫療相關數位工具開發。他帶領的技術團隊為診所開發便捷的預約管理系統、病患關係管理工具等，提升診所營運效率的同時，也創造更好的病患數位體驗。',
+    description: '資深醫療科技專家，專精於診所數位轉型與患者體驗優化。領導技術團隊開發整合預約管理、患者關係維護等系統，提升診所營運效率與數位體驗。',
     socialLinks: [
       { platform: 'facebook', url: 'https://www.facebook.com/www.aideamed' },
       { platform: 'line', url: 'https://lin.ee/ZPdkmHh' }
     ],
-    education: '交通大學資訊工程博士',
-    expertise: ['醫療系統開發', '診所數位工具整合', '資料安全管理'],
-    quote: '科技的終極目標是為人創造價值，在醫療領域，這意味著為醫師節省時間，為病患提供便利，使醫療服務回歸人性關懷的本質。'
+    expertise: ['醫療系統開發', '診所數位轉型', '患者數據管理'],
+    quote: '科技的終極目標是為人創造價值，在醫療領域，這意味著為醫師節省時間，為患者提供便利。'
   }
 ]
 
@@ -221,14 +214,11 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
               </div>
             </div>
           )}
-          {/* 基本資訊遮罩 - hover 時顯示 */}
+          {/* 懸停效果遮罩 - 移除了學歷顯示 */}
           <div 
-            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition duration-300 flex flex-col justify-end rounded-full transform scale-100 group-hover:scale-105 group-focus:scale-105 will-change-transform"
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition duration-300 rounded-full transform scale-100 group-hover:scale-105 group-focus:scale-105 will-change-transform"
             aria-hidden="true"
           >
-            <div className="text-white transform translate-y-2 group-hover:translate-y-0 group-focus:translate-y-0 transition duration-300 text-center p-2">
-              <p className="text-xs text-white/90 font-medium">{member.education}</p>
-            </div>
           </div>
         </div>
         
@@ -283,6 +273,15 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
           {/* 專業描述文字 */}
           <div className="bg-gray-50 p-3 rounded-md mb-3">
             <p className="text-gray-700 line-clamp-3 text-xs sm:text-sm leading-relaxed">{member.description}</p>
+          </div>
+          
+          {/* 添加引言顯示 */}
+          <div className="mb-4 px-2">
+            <p className="text-primary italic text-xs sm:text-sm relative">
+              <span className="absolute -left-2 -top-1 text-primary/30 text-lg">"</span>
+              {member.quote}
+              <span className="absolute -right-2 -bottom-1 text-primary/30 text-lg">"</span>
+            </p>
           </div>
           
           {/* 專業領域標籤 */}

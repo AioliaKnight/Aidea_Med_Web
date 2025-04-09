@@ -35,7 +35,6 @@ import {
   FileText
 } from 'lucide-react'
 import { Logo, CTASection, AnimatedSection } from '@/components/common'
-import { caseStudies } from '@/data/cases'
 import { animations, homePageAnimations } from '@/utils/animations'
 import { 
   heroTitleVariants, 
@@ -1389,411 +1388,6 @@ const StatsSection = memo(function StatsSection({ className = '' }: StatsSection
   );
 });
 
-// 更新案例展示區塊 - 整合CaseStudiesSection和CaseShowcaseSection
-const CaseStudiesSection = memo(function CaseStudiesSection() {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
-  
-  // 使用useReducer統一管理相關狀態
-  type CaseState = {
-    activeCategory: string;
-    currentSlide: number;
-    isMobile: boolean;
-  };
-
-  type CaseAction = 
-    | { type: 'SET_CATEGORY'; payload: string }
-    | { type: 'SET_SLIDE'; payload: number }
-    | { type: 'SET_MOBILE'; payload: boolean }
-    | { type: 'NEXT_SLIDE' }
-    | { type: 'PREV_SLIDE'; totalLength: number };
-
-  const initialState: CaseState = {
-    activeCategory: 'all',
-    currentSlide: 0,
-    isMobile: false
-  };
-
-  const caseReducer = (state: CaseState, action: CaseAction): CaseState => {
-    switch (action.type) {
-      case 'SET_CATEGORY':
-        return { ...state, activeCategory: action.payload, currentSlide: 0 };
-      case 'SET_SLIDE':
-        return { ...state, currentSlide: action.payload };
-      case 'SET_MOBILE':
-        return { ...state, isMobile: action.payload };
-      case 'NEXT_SLIDE': {
-        // 需要計算當前過濾後的案例長度
-        const currentCases = caseStudies.filter(cs => 
-          state.activeCategory === 'all' || cs.category === state.activeCategory
-        );
-        return { 
-          ...state, 
-          currentSlide: state.isMobile ? (state.currentSlide + 1) % currentCases.length : state.currentSlide 
-        };
-      }
-      case 'PREV_SLIDE': {
-        // 使用傳入的總長度參數
-        return { 
-          ...state, 
-          currentSlide: state.isMobile ? (state.currentSlide - 1 + action.totalLength) % action.totalLength : state.currentSlide 
-        };
-      }
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(caseReducer, initialState);
-  const { activeCategory, currentSlide, isMobile } = state;
-  
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const resizeTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  // 使用useMemo記憶過濾後的案例數據，避免重複計算
-  const filteredCases = useMemo(() => 
-    activeCategory === 'all' 
-      ? caseStudies 
-      : caseStudies.filter(cs => cs.category === activeCategory),
-    [activeCategory]
-  );
-  
-  // 使用useMemo記憶類別列表，避免重複計算
-  const categories = useMemo(() => 
-    ['all', ...Array.from(new Set(caseStudies.map(cs => cs.category)))],
-    [caseStudies]
-  );
-  
-  // 檢測視窗大小以決定是否為行動裝置，使用防抖處理
-  useEffect(() => {
-    const handleResize = () => {
-      // 清除之前的計時器
-      if (resizeTimerRef.current) {
-        clearTimeout(resizeTimerRef.current);
-      }
-      
-      // 設置新的計時器，實現防抖
-      resizeTimerRef.current = setTimeout(() => {
-        dispatch({ type: 'SET_MOBILE', payload: window.innerWidth < 768 });
-      }, 150);
-    };
-    
-    // 初始檢查
-    handleResize();
-    
-    // 添加事件監聽
-    window.addEventListener('resize', handleResize);
-    
-    // 清理函數
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (resizeTimerRef.current) {
-        clearTimeout(resizeTimerRef.current);
-      }
-    };
-  }, []);
-  
-  // 手動控制輪播 - 使用useCallback記憶函數
-  const handleNext = useCallback(() => {
-    dispatch({ type: 'NEXT_SLIDE' });
-  }, [filteredCases.length]);
-  
-  const handlePrev = useCallback(() => {
-    dispatch({ type: 'PREV_SLIDE', totalLength: filteredCases.length });
-  }, [filteredCases.length]);
-  
-  // 自動輪播設定
-  useEffect(() => {
-    if (!isMobile || filteredCases.length <= 1) return;
-    
-    const interval = setInterval(() => {
-      dispatch({ type: 'NEXT_SLIDE' });
-    }, 4000);
-    
-    return () => clearInterval(interval);
-  }, [isMobile, filteredCases.length]);
-  
-  // 切換分類 - 使用useCallback記憶函數
-  const handleCategoryChange = useCallback((category: string) => {
-    dispatch({ type: 'SET_CATEGORY', payload: category });
-  }, []);
-
-  // 切換輪播項 - 使用useCallback記憶函數
-  const handleSlideChange = useCallback((index: number) => {
-    dispatch({ type: 'SET_SLIDE', payload: index });
-  }, []);
-
-  return (
-    <section ref={ref} className="relative py-16 md:py-24 bg-white overflow-hidden border-t border-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-            令人印象深刻的<span className="text-primary">成功案例</span>
-          </h2>
-          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
-            探索我們如何協助醫療診所提升數位形象、打造專屬行銷策略，並獲得顯著的營運成果
-          </p>
-          
-          {/* 分類標籤 - 扁平簡約設計 */}
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            <button
-              onClick={() => handleCategoryChange('all')}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
-                activeCategory === 'all'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              全部案例
-            </button>
-            
-            {categories.filter(cat => cat !== 'all').map(category => (
-              <button
-                key={category}
-                onClick={() => handleCategoryChange(category)}
-                className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
-                  activeCategory === category
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-                  </div>
-                </motion.div>
-              
-        <AnimatePresence mode="wait">
-          {inView && (
-                <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              {filteredCases.length > 0 ? (
-                <>
-                  {/* 桌面版網格顯示 */}
-                  {!isMobile ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                      {filteredCases.slice(0, 6).map((caseStudy, index) => (
-                        <motion.div
-                          key={caseStudy.id}
-                          initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: index * 0.1 }}
-                          className={`${caseStudy.featured ? 'md:col-span-2 lg:col-span-1' : ''} group`}
-                        >
-                      <Link 
-                        href={`/case/${caseStudy.id}`}
-                        prefetch={true}
-                        className="block h-full"
-                      >
-                            <div className="bg-white h-full p-6 hover:shadow-lg transition-all duration-300 rounded-lg flex flex-col items-center text-center">
-                              {/* 圓形圖片，作為視覺焦點 */}
-                              <div className="relative mb-5 transform group-hover:scale-105 transition-transform duration-300">
-                                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mx-auto relative">
-                                  <Image
-                                    src={caseStudy.image || `/images/case-placeholder.jpg`}
-                                    alt={caseStudy.name}
-                                    fill
-                                    sizes="(max-width: 768px) 160px, 192px"
-                                    className="object-cover"
-                                  />
-                  </div>
-                                
-                                {/* 精選案例標籤，放在圖片上方 */}
-                                {caseStudy.featured && (
-                                  <span className="absolute top-0 right-0 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full transform translate-x-1/4">
-                                    精選案例
-                                  </span>
-                                )}
-      </div>
-                              
-                              {/* 類別標籤，獨立於圖片 */}
-                              <span className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full mb-4">
-                                {caseStudy.category}
-                              </span>
-                              
-                              <h3 className="font-bold text-gray-900 text-xl mb-3">{caseStudy.name}</h3>
-                              
-                              {/* 績效指標，突出顯示 */}
-                              {caseStudy.metrics && caseStudy.metrics.length > 0 && (
-                                <div className="mb-5 flex justify-center space-x-6">
-                                  {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
-                                    <div key={idx} className="text-center">
-                                      <span className="block font-bold text-primary text-xl">{metric.value}</span>
-                                      <span className="text-xs text-gray-500">{metric.label}</span>
-        </div>
-                    ))}
-                  </div>
-                              )}
-                              
-                              {/* 僅顯示摘要文字 */}
-                              <p className="text-gray-600 text-sm mb-5 line-clamp-2 flex-grow">
-                                {caseStudy.description}
-                              </p>
-                              
-                              {/* 查看案例按鈕 */}
-                              <div className="mt-auto pt-4 border-t border-gray-100 w-full">
-                                <span className="inline-flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform duration-300">
-                                  查看案例
-                                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="ml-1">
-                                    <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </span>
-                    </div>
-                  </div>
-                          </Link>
-                        </motion.div>
-                      ))}
-                </div>
-                  ) : (
-                    /* 行動版輪播顯示 - 所有案例使用同一輪播 */
-                    <div className="mb-12">
-                      {/* 當前案例卡片 */}
-                      <div ref={carouselRef} className="mb-6">
-                        <Link 
-                          href={`/case/${filteredCases[currentSlide].id}`}
-                          prefetch={true}
-                          className="block"
-                        >
-                          <div className="bg-white border border-gray-200">
-                            <div className="relative aspect-[4/3]">
-                      <Image
-                                src={filteredCases[currentSlide].image || `/images/case-placeholder.jpg`}
-                                alt={filteredCases[currentSlide].name}
-                                fill
-                                sizes="100vw"
-                                className="object-cover"
-                                loading="lazy"
-                      />
-                              <div className="absolute top-0 left-0 right-0 flex justify-between p-2">
-                                {filteredCases[currentSlide].featured && (
-                                  <span className="bg-primary text-white text-xs font-medium px-2 py-1">
-                                    精選案例
-                                  </span>
-                                )}
-                                <span className="bg-black text-white text-xs font-medium px-2 py-1 ml-auto">
-                                  {filteredCases[currentSlide].category}
-                                </span>
-                        </div>
-                            </div>
-                            
-                            <div className="p-4">
-                              <h3 className="font-bold text-gray-900 text-lg mb-2">
-                                {filteredCases[currentSlide].name}
-                              </h3>
-                              
-                              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                                {filteredCases[currentSlide].description}
-                              </p>
-                              
-                              {/* 績效指標 */}
-                              {filteredCases[currentSlide].metrics && filteredCases[currentSlide].metrics.length > 0 && (
-                                <div className="mb-3 grid grid-cols-2 gap-2">
-                                  {filteredCases[currentSlide].metrics.slice(0, 2).map((metric, idx) => (
-                                    <div key={idx} className="flex items-center border-l-2 border-primary pl-2">
-                                      <span className="font-bold text-primary text-sm">{metric.value}</span>
-                                      <span className="text-xs text-gray-500 ml-1">{metric.label}</span>
-                                    </div>
-                                  ))}
-                      </div>
-                    )}
-                              
-                              <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                                <span className="text-xs text-gray-500">
-                                  {filteredCases[currentSlide].solutions?.length || 0} 項解決方案
-                                </span>
-                                <span className="text-primary text-sm font-medium">查看案例</span>
-                  </div>
-                </div>
-               </div>
-                        </Link>
-                      </div>
-           
-                      {/* 輪播控制 */}
-                      <div className="flex items-center justify-between">
-              <button 
-                          onClick={handlePrev}
-                          className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          aria-label="上一個案例"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-                        <div className="flex items-center gap-1">
-                          {filteredCases.map((_, index) => (
-                <button
-                  key={index}
-                              onClick={() => handleSlideChange(index)}
-                              className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                                currentSlide === index ? 'bg-primary w-6' : 'bg-gray-300'
-                              }`}
-                              aria-label={`前往案例 ${index + 1}`}
-                />
-              ))}
-                        </div>
-              
-              <button 
-                          onClick={handleNext}
-                          className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          aria-label="下一個案例"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center p-10 bg-white border border-gray-200 mb-12">
-                  <p className="text-gray-500">目前沒有符合此類別的案例</p>
-        </div>
-              )}
-              
-              {/* 查看更多按鈕 */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-                className="text-center"
-              >
-                <Link 
-                  href="/case" 
-                  prefetch={true} 
-                  className="inline-flex items-center justify-center bg-primary text-white px-6 py-3 font-medium hover:bg-primary-dark transition-colors duration-300"
-                >
-                  查看全部案例
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="ml-2">
-                    <path d="M4.16666 10H15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M10 4.16669L15.8333 10L10 15.8334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
-  );
-})
-
 // 修改FAQSection的定義方式，並導出為React組件
 function FAQSection() {
   const [isPending, startTransition] = useTransition();
@@ -2350,17 +1944,13 @@ const TestimonialSection = memo(function TestimonialSection() {
 const HomePage = () => {
   const [isPending, startTransition] = useTransition();
   
-  // 使用useEffect記錄頁面性能
   useEffect(() => {
-    // 初始化性能標記
     if (window.performance && window.performance.mark) {
       window.performance.mark('homepage-mounted');
       
-      // 註冊性能觀察者 - 使用Next.js 15+優化的方式
       if ('PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          // 收集重要性能指標
           entries.forEach(entry => {
             if (entry.entryType === 'largest-contentful-paint' ||
                 entry.entryType === 'layout-shift' ||
@@ -2370,7 +1960,6 @@ const HomePage = () => {
           });
         });
         
-        // 監控Web Vitals核心指標
         observer.observe({
           entryTypes: ['largest-contentful-paint', 'layout-shift', 'first-input']
         });
@@ -2382,7 +1971,6 @@ const HomePage = () => {
 
   return (
     <>
-      {/* 使用<ErrorBoundary>+<Suspense>替換isComponentMounted邏輯 */}
       <ErrorBoundary fallback={<div className="min-h-screen flex items-center justify-center">載入中...</div>}>
         <HeroSection />
       </ErrorBoundary>
@@ -2391,7 +1979,6 @@ const HomePage = () => {
         <MarketingSection />
       </ErrorBoundary>
       
-      {/* 使用<Suspense>進行懶加載 */}
       <ErrorBoundary>
         <Suspense fallback={<div className="py-16 bg-white flex items-center justify-center">
           <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
@@ -2413,14 +2000,6 @@ const HomePage = () => {
           <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
         </div>}>
           <StatsSection />
-        </Suspense>
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-        <Suspense fallback={<div className="py-20 bg-gray-50 flex items-center justify-center">
-          <div className="animate-pulse h-8 w-8 rounded-full bg-primary/20"></div>
-        </div>}>
-          <CaseStudiesSection />
         </Suspense>
       </ErrorBoundary>
       
@@ -2447,8 +2026,6 @@ const HomePage = () => {
           <ContactSection />
         </Suspense>
       </ErrorBoundary>
-      
-      {/* 使用React 19 useEffect處理性能監測，移除舊的script */}
     </>
   );
 }
