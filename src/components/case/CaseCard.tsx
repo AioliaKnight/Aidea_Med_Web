@@ -146,16 +146,6 @@ export const CaseCard = React.memo(({
             quality={imageQuality}
           />
           
-          {/* 圖片覆蓋層 - 扁平化設計 */}
-          <div className={
-            `absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 
-            transition-all duration-300 flex items-center justify-center
-            ${isCircular ? 'rounded-full' : ''}`
-          }>
-            <span className="text-white px-3 py-1.5 text-sm font-medium">
-              查看案例
-            </span>
-          </div>
         </div>
         
         {/* 內容區域 */}
