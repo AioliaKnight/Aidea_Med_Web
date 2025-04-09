@@ -11,10 +11,10 @@ export const caseStudies: CaseStudy[] = [
     category: '品牌重塑',
     description: '從傳統診所到數位化品牌的成功轉型，透過整合性行銷策略，在短短 2 個月內實現顯著成長：',
     metrics: [
-      { value: '200%', label: '新患預約成長' },
-      { value: '900000000+', label: '年營業額' },
-      { value: '300%', label: '品牌知名度提升' },
-      { value: '50%', label: '每月穩定回診率成長' }
+      { value: '1000', label: '每月患者預約' },
+      { value: '300%', label: '年營業額成長' },
+      { value: '100%', label: '品牌知名度提升' },
+      { value: '20%', label: '每月穩定回診率成長' }
     ],
     solutions: [
       {

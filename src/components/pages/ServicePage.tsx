@@ -605,12 +605,16 @@ export default function ServicePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-none tracking-tight"
             >
-              <span className="text-white">打造</span>
-              <span className="text-primary bg-white px-2 mx-1 rounded-sm">診所品牌</span><br />
-              <span className="text-white">贏得</span>
-              <span className="text-primary bg-white px-2 mx-1 rounded-sm">患者信任</span>
+              <div className="flex items-center mb-0.5">
+                <span className="text-white">打造</span>
+                <span className="text-primary bg-white px-2 mx-1 rounded-sm">診所品牌</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-white">贏得</span>
+                <span className="text-primary bg-white px-2 mx-1 rounded-sm">患者信任</span>
+              </div>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
