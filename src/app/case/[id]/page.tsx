@@ -13,6 +13,7 @@ import CountUp from 'react-countup'
 import { staggerContainer, fadeInUp } from '@/utils/animations'
 import { ErrorBoundary, CaseDetailErrorBoundary } from '@/components/common'
 import { trackViewedCases, generateCaseStudyMetadata } from '@/utils/case'
+import useAnalytics from '@/hooks/useAnalytics'
 
 // 時間軸和案例詳情組件
 const CaseTimeline = React.lazy(() => import('@/components/case/CaseTimeline'))
@@ -75,6 +76,9 @@ export default function CaseDetailPage() {
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   
+  // 使用分析追蹤 hook
+  const { trackCase, trackEvent, trackClick } = useAnalytics()
+  
   // 使用 useMemo 緩存案例資料
   const currentCase = useMemo(() => {
     return Array.isArray(caseStudies) 
@@ -122,6 +126,13 @@ export default function CaseDetailPage() {
             
             // 追蹤已瀏覽案例
             try {
+              // 使用分析工具追蹤案例瀏覽事件
+              trackCase(
+                currentCase.name,
+                currentCase.id,
+                currentCase.category
+              )
+              
               // 更新瀏覽記錄
               trackViewedCases(id)
             } catch (e) {
@@ -142,7 +153,7 @@ export default function CaseDetailPage() {
     return () => {
       isMounted = false
     }
-  }, [id, currentCase, caseStudies])
+  }, [id, currentCase, caseStudies, trackCase])
   
   // 優化圖片錯誤處理
   const handleImageError = useCallback((url: string) => {
@@ -177,7 +188,18 @@ export default function CaseDetailPage() {
       // 如果不支援原生分享，顯示分享選單
       setShowShareMenu(true);
     }
-  }, [caseStudy]);
+    
+    // 添加分享事件追蹤
+    trackClick(
+      'share_native',
+      'case_detail_page',
+      {
+        case_id: id,
+        case_name: caseStudy?.name,
+        share_platform: 'native'
+      }
+    )
+  }, [caseStudy, id, trackClick]);
   
   // 分享到社交媒體
   const shareToSocialMedia = useCallback((platform: 'facebook' | 'twitter' | 'linkedin' | 'line') => {
@@ -205,26 +227,55 @@ export default function CaseDetailPage() {
     if (shareUrl) {
       window.open(shareUrl, '_blank', 'width=600,height=400');
       setShowShareMenu(false);
+      
+      // 添加分享事件追蹤
+      trackClick(
+        `share_${platform}`,
+        'case_detail_page',
+        {
+          case_id: id,
+          case_name: caseStudy?.name,
+          share_platform: platform
+        }
+      )
     }
-  }, [caseStudy]);
+  }, [caseStudy, id, trackClick]);
   
-  // 優化收藏功能
-  const handleLike = useCallback(() => {
-    setIsLiked(prev => {
-      const newState = !prev;
-      try {
-        const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]');
-        const updatedCases = newState 
-          ? [...likedCases, id]
-          : likedCases.filter((caseId: string) => caseId !== id);
-        
-        localStorage.setItem('likedCases', JSON.stringify(updatedCases));
-      } catch (e) {
-        console.error('Error updating liked cases in localStorage', e);
+  // 添加點贊事件追蹤
+  const handleLikeToggle = useCallback(() => {
+    const newLikedState = !isLiked
+    try {
+      const likedCases = JSON.parse(localStorage.getItem('likedCases') || '[]')
+      if (newLikedState) {
+        if (!likedCases.includes(id)) {
+          likedCases.push(id)
+          
+          // 追蹤點贊事件
+          trackEvent('case_like', {
+            case_id: id,
+            case_name: caseStudy?.name,
+            case_category: caseStudy?.category
+          })
+        }
+      } else {
+        const index = likedCases.indexOf(id)
+        if (index > -1) {
+          likedCases.splice(index, 1)
+          
+          // 追蹤取消點贊事件
+          trackEvent('case_unlike', {
+            case_id: id,
+            case_name: caseStudy?.name,
+            case_category: caseStudy?.category
+          })
+        }
       }
-      return newState;
-    });
-  }, [id]);
+      localStorage.setItem('likedCases', JSON.stringify(likedCases))
+      setIsLiked(newLikedState)
+    } catch (e) {
+      console.error('Error updating liked cases', e)
+    }
+  }, [id, isLiked, caseStudy, trackEvent])
   
   // 當找不到案例或正在加載時顯示骨架屏
   if (loading) {
@@ -269,7 +320,7 @@ export default function CaseDetailPage() {
               {/* 操作按鈕 */}
               <div className="flex items-center space-x-4 relative">
                 <button
-                  onClick={handleLike}
+                  onClick={handleLikeToggle}
                   className="flex items-center px-3 py-1.5 rounded-md text-gray-600 hover:text-primary hover:bg-gray-50 transition-all duration-300"
                   aria-label={isLiked ? '取消收藏' : '收藏案例'}
                 >

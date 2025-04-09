@@ -5,32 +5,21 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { initDataLayer, pushEvent } from '@/lib/analytics'
 
-// GTM ID從環境變數獲取
+// 從環境變數獲取追蹤 ID
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-P5XLZB6F'
+const ENABLE_ANALYTICS = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== 'false'
 
 // dataLayer類型定義
 declare global {
   interface Window {
-    dataLayer: any[] // 保持原始類型以避免lint錯誤
+    dataLayer: any[] // dataLayer array
   }
-}
-
-// 自定義類型用於內部使用，不影響全局定義
-interface DataLayerEvent {
-  event?: string;
-  'gtm.start'?: number;
-  language?: string;
-  pageType?: string;
-  visitorType?: string;
-  timestamp?: string;
-  [key: string]: any;
 }
 
 /**
  * Google Tag Manager 組件
- * 負責初始化GTM並設置基本dataLayer
- * 自動追蹤頁面瀏覽事件
- * @returns {JSX.Element} GTM腳本和noscript標籤
+ * 負責初始化 GTM 並設置基本 dataLayer
+ * GA4 設置將透過 GTM 後台進行配置
  */
 const GoogleTagManager = () => {
   const pathname = usePathname()
@@ -38,21 +27,22 @@ const GoogleTagManager = () => {
   const [isInitialized, setIsInitialized] = useState(false)
   const lastPathRef = useRef<string>('')
   
-  // 初始化dataLayer - 使用記憶化函數減少不必要的重新渲染
+  // 初始化 dataLayer - 使用記憶化函數減少不必要的重新渲染
   const setupDataLayer = useCallback(() => {
+    if (!ENABLE_ANALYTICS || typeof window === 'undefined') return;
+    
     try {
-      if (typeof window === 'undefined') return;
-      
       // 使用集中管理的初始化函數
       initDataLayer();
       
-      // 添加基本頁面信息到dataLayer
+      // 添加基本頁面信息到 dataLayer
       window.dataLayer.push({
         'gtm.start': new Date().getTime(),
         event: 'gtm.js',
         'language': 'zh-TW',
-        'pageType': document.title.includes('Aidea:Med') ? 'home' : 'other',
-        'visitorType': localStorage.getItem('returning_visitor') ? 'returning' : 'new',
+        'pageType': getPageType(pathname),
+        'visitorType': getVisitorType(),
+        'environment': process.env.NODE_ENV,
         'timestamp': new Date().toISOString()
       })
       
@@ -60,7 +50,7 @@ const GoogleTagManager = () => {
       localStorage.setItem('returning_visitor', 'true')
       setIsInitialized(true)
       
-      // 性能監控 - 記錄GTM初始化時間
+      // 性能監控 - 記錄 GTM 初始化時間
       if (window.performance && window.performance.now) {
         pushEvent('performance_monitoring', {
           event_name: 'gtm_initialized',
@@ -68,29 +58,46 @@ const GoogleTagManager = () => {
         });
       }
     } catch (error) {
-      console.error('GTM初始化失敗:', error);
+      console.error('GTM 初始化失敗:', error);
       // 嘗試無錯誤初始化以確保頁面不會崩潰
       window.dataLayer = window.dataLayer || [];
       setIsInitialized(true);
     }
-  }, [])
+  }, [pathname])
+  
+  // 獲取頁面類型
+  const getPageType = (path: string): string => {
+    if (path === '/') return 'home';
+    if (path.includes('/case')) return 'case';
+    if (path.includes('/service')) return 'service';
+    if (path.includes('/team')) return 'team';
+    if (path.includes('/contact')) return 'contact';
+    return 'other';
+  }
+  
+  // 獲取訪客類型
+  const getVisitorType = (): string => {
+    if (typeof localStorage === 'undefined') return 'new';
+    return localStorage.getItem('returning_visitor') ? 'returning' : 'new';
+  }
   
   // 頁面瀏覽追蹤 - 使用記憶化函數優化性能
   const handlePageView = useCallback(() => {
+    if (!isInitialized || !ENABLE_ANALYTICS || typeof window === 'undefined') return;
+    
     try {
-      if (!isInitialized || typeof window === 'undefined') return;
-      
       const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
       
       // 防止重複觸發：比較目前路徑與上一次記錄的路徑
       if (lastPathRef.current !== url) {
         lastPathRef.current = url;
         
-        // 使用集中管理的事件推送函數
+        // 推送頁面瀏覽事件到 dataLayer，GA4 將透過 GTM 配置來接收這個事件
         pushEvent('page_view', {
           page_path: pathname,
           page_url: url,
           page_title: document.title,
+          page_location: window.location.href,
           timestamp: new Date().toISOString()
         });
       }
@@ -99,26 +106,28 @@ const GoogleTagManager = () => {
     }
   }, [pathname, searchParams, isInitialized])
 
-  // 初始化dataLayer - 只在組件掛載時執行一次
+  // 初始化追蹤 - 只在組件掛載時執行一次
   useEffect(() => {
-    setupDataLayer();
+    if (ENABLE_ANALYTICS) {
+      setupDataLayer();
+    }
     
     // 清理函數
     return () => {
-      if (typeof window !== 'undefined' && isInitialized) {
+      if (typeof window !== 'undefined' && isInitialized && ENABLE_ANALYTICS) {
         pushEvent('component_unmount', {
           component: 'GoogleTagManager',
           timestamp: new Date().toISOString()
         });
       }
     };
-  }, [setupDataLayer]);
+  }, [setupDataLayer, isInitialized]);
 
   // 監聽路徑變化，觸發頁面瀏覽事件
   useEffect(() => {
     // 只有在初始化完成後才執行追蹤
-    if (isInitialized) {
-      // 使用requestIdleCallback或setTimeout確保不阻塞主線程
+    if (isInitialized && ENABLE_ANALYTICS) {
+      // 使用 requestIdleCallback 或 setTimeout 確保不阻塞主線程
       if (typeof window !== 'undefined') {
         if ('requestIdleCallback' in window) {
           window.requestIdleCallback(() => handlePageView());
@@ -129,7 +138,7 @@ const GoogleTagManager = () => {
     }
   }, [pathname, searchParams, handlePageView, isInitialized])
   
-  // 對GTM腳本的加載結果進行監控
+  // 對 GTM 腳本的加載結果進行監控
   const handleScriptLoad = () => {
     if (window.performance && window.performance.now) {
       pushEvent('performance_monitoring', {
@@ -137,16 +146,22 @@ const GoogleTagManager = () => {
         time_since_page_load: Math.round(window.performance.now())
       });
     }
+    console.log('GTM 腳本加載成功');
   };
   
   const handleScriptError = () => {
-    console.error('GTM腳本加載失敗');
+    console.error('GTM 腳本加載失敗');
     pushEvent('error', {
       error_type: 'script_load_failure',
       script: 'GTM',
       timestamp: new Date().toISOString()
     });
   };
+  
+  // 如果分析功能被禁用，則返回空組件
+  if (!ENABLE_ANALYTICS) {
+    return null;
+  }
   
   return (
     <>
