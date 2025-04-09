@@ -579,14 +579,26 @@ export default function ServicePage() {
       <div className="relative bg-black overflow-hidden">
         {/* 背景組件 */}
         <div className="relative">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/bgline-w-small.webp"
+              alt="背景圖案"
+              fill
+              priority
+              quality={30}
+              sizes="100vw"
+              className="object-cover opacity-30"
+              placeholder="blur"
+              blurDataURL="data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAADQAQCdASoQAAYABUB8JZwAAp3OPvwA/v7u/wD+/u7/AP7+7v8A/v7u/wD+/u7/AA=="
+            />
+          </div>
           <PageHeader
             title="專業服務項目"
             description="為醫療診所打造全方位的數位行銷解決方案，從品牌故事到數位轉型，助您實現業務成長"
             variant="red"
             size="md"
             alignment="center"
-            backgroundImage="/images/bgline-w.webp"
-            className="border-b border-red-700"
+            className="border-b border-red-700 relative z-10"
           />
         </div>
         
