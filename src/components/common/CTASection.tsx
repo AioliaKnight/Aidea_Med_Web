@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
+import { Button } from '@/components/ui'
 
 interface CTAButtonProps {
   href: string
@@ -37,17 +38,6 @@ export const CTASection: React.FC<CTASectionProps> = ({
   const defaultDescriptionClass = "text-base sm:text-lg md:text-xl mb-10 sm:mb-12 max-w-2xl mx-auto font-normal"
   const defaultButtonsContainerClass = "flex flex-row gap-4 md:gap-6 justify-center items-center"
   
-  // 按鈕樣式 - 扁平化不透明風格
-  const getButtonClass = (variant: 'primary' | 'secondary') => {
-    const baseClass = "inline-block text-center min-w-[140px] md:min-w-[160px] px-6 md:px-8 py-4 font-medium text-base md:text-lg transition-all duration-300"
-    
-    if (variant === 'primary') {
-      return `${baseClass} bg-white text-primary hover:bg-gray-100`
-    } else {
-      return `${baseClass} bg-black text-white hover:bg-black/90`
-    }
-  }
-
   return (
     <section 
       className="py-24 sm:py-28 md:py-32 bg-primary text-white relative"
@@ -99,18 +89,25 @@ export const CTASection: React.FC<CTASectionProps> = ({
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <Link
+            <Button
               href={primaryButton.href}
-              className={`${getButtonClass('primary')} ${primaryButton.className || ''}`}
+              variant="white"
+              size="xl"
+              animation="basic"
+              className={primaryButton.className}
             >
               {primaryButton.text}
-            </Link>
-            <Link
+            </Button>
+            
+            <Button
               href={secondaryButton.href}
-              className={`${getButtonClass('secondary')} ${secondaryButton.className || ''}`}
+              variant="black"
+              size="xl"
+              animation="basic"
+              className={secondaryButton.className}
             >
               {secondaryButton.text}
-            </Link>
+            </Button>
           </motion.div>
           
           {/* 下方裝飾線 */}

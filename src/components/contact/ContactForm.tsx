@@ -5,8 +5,9 @@ import { toast } from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import { animations } from '@/utils/animations'
 import { ContactFormData, FormResponse, FormStatus } from '@/types/form'
-import SubmitButton from '@/components/common/SubmitButton'
 import { trackFormSubmission } from '@/lib/analytics'
+import { Button, Input } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 // 注意：全局 gtag 類型已在 analytics.ts 中定義，此處不再重複定義
 
@@ -85,6 +86,9 @@ const ContactForm = React.memo(({
   const [formData, setFormData] = useState(initialFormData)
   const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE)
   const [showThankYou, setShowThankYou] = useState(false)
+  const [showExtraInfo, setShowExtraInfo] = useState(false)
+  const [privacyChecked, setPrivacyChecked] = useState(false)
+  const [errors, setErrors] = useState<Record<keyof ContactFormData, string>>({})
 
   // 在客戶端獲取 URL 參數 - 使用useCallback優化
   const getUrlParams = useCallback(() => {
@@ -194,60 +198,81 @@ const ContactForm = React.memo(({
     });
   }, [formData, startTransition]);
 
-  // 使用useMemo優化提交按鈕文本和狀態
-  const submitButtonProps = useMemo(() => {
-    return {
-      status: formStatus,
-      submittingText: '提交中...',
-      idleText: '提交諮詢',
-      successText: '提交成功',
-      errorText: '請重試'
-    }
-  }, [formStatus]);
-
   // 重設表單
   const resetForm = useCallback(() => {
     setFormData(initialFormData);
     setFormStatus(FormStatus.IDLE);
     setShowThankYou(false);
+    setShowExtraInfo(false);
+    setPrivacyChecked(false);
+    setErrors({});
   }, []);
+
+  // 基本輸入框模板
+  const renderInput = (name: keyof ContactFormData, label: string, placeholder: string, type = 'text', required = false) => (
+    <Input
+      name={name}
+      value={formData[name]}
+      onChange={handleChange}
+      label={label + (required ? ' *' : '')}
+      placeholder={placeholder}
+      type={type}
+      disabled={formStatus === FormStatus.SUBMITTING}
+      error={errors[name]}
+      className="mb-4"
+    />
+  );
+
+  // 下拉選單模板
+  const renderSelect = (name: string, label: string, options: {value: string, label: string}[], required = false) => (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-800 mb-2">
+        {label + (required ? ' *' : '')}
+      </label>
+      <select
+        name={name}
+        value={(formData as any)[name]}
+        onChange={handleChange}
+        disabled={formStatus === FormStatus.SUBMITTING}
+        className={cn(
+          "w-full px-4 py-3 border border-gray-200 focus:border-primary focus:ring-0 transition-colors",
+          errors[name] && "border-red-500 focus:border-red-500",
+          formStatus === FormStatus.SUBMITTING && "bg-gray-100 text-gray-500 cursor-not-allowed"
+        )}
+      >
+        {options.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {errors[name] && <p className="text-red-500 text-sm mt-1">{errors[name]}</p>}
+    </div>
+  );
 
   // 顯示感謝頁面
   if (showThankYou) {
     return (
-      <AnimatedDiv {...animationProps} className={`${className} text-center py-8`}>
-        <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
-          <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      <AnimatedDiv {...animationProps} className="text-center py-8">
+        <div className="text-primary text-5xl mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold mb-3">感謝您的諮詢</h2>
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          我們已收到您的表單，專業顧問將於 1 個工作日內與您聯繫，為您提供客製化的行銷解決方案。
+        
+        <h3 className="text-2xl font-bold mb-3">感謝您的諮詢！</h3>
+        <p className="text-gray-600 mb-8">
+          我們已收到您的訊息，將在1個工作日內與您聯繫。<br />
+          期待與您進一步討論診所的行銷需求。
         </p>
-        <div className="bg-gray-50 p-5 rounded-lg mb-6 max-w-md mx-auto">
-          <h3 className="font-medium mb-2">後續流程</h3>
-          <ol className="text-left text-gray-600 space-y-2">
-            <li className="flex items-start">
-              <span className="bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2 flex-shrink-0 mt-0.5">1</span>
-              <span>顧問電話初步了解您的需求</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2 flex-shrink-0 mt-0.5">2</span>
-              <span>安排免費一對一深度諮詢</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-2 flex-shrink-0 mt-0.5">3</span>
-              <span>提供客製化行銷方案建議</span>
-            </li>
-          </ol>
-        </div>
-        <button 
+        
+        <Button 
           onClick={resetForm}
-          className="px-6 py-2 border border-primary text-primary hover:bg-primary hover:text-white transition-colors rounded-md"
+          variant="outline-red"
+          size="lg"
         >
           填寫新的諮詢表單
-        </button>
+        </Button>
       </AnimatedDiv>
     );
   }
@@ -270,221 +295,128 @@ const ContactForm = React.memo(({
             <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">1</span>
             基本資訊
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                姓名 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="請輸入您的姓名"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                電子郵件 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="您的電子郵件"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                聯絡電話 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="您的聯絡電話"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="contactTime" className="block text-sm font-medium text-gray-700 mb-1">
-                偏好聯絡時段
-              </label>
-              <select
-                id="contactTime"
-                name="contactTime"
-                value={formData.contactTime}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              >
-                {contactTimes.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          
+          {renderInput('name', '姓名', '請輸入您的姓名', 'text', true)}
+          {renderInput('email', '電子郵件', '請輸入您的電子郵件', 'email', true)}
+          {renderInput('phone', '聯絡電話', '請輸入您的聯絡電話', 'tel', true)}
+          {renderInput('clinic', '診所/機構名稱', '請輸入您的診所或機構名稱')}
+          {renderInput('position', '職稱', '請輸入您的職稱')}
         </div>
-
-        {/* 診所資訊 */}
-        <div className="bg-gray-50 p-5 rounded-lg">
-          <h3 className="font-medium mb-4 text-gray-800 flex items-center">
-            <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">2</span>
-            診所資訊
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div>
-              <label htmlFor="clinic" className="block text-sm font-medium text-gray-700 mb-1">
-                診所名稱 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="clinic"
-                name="clinic"
-                value={formData.clinic}
-                onChange={handleChange}
-                placeholder="您的診所名稱"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-1">
-                您的職稱
-              </label>
-              <input
-                type="text"
-                id="position"
-                name="position"
-                value={formData.position || ''}
-                onChange={handleChange}
-                placeholder="您的職稱（選填）"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="clinicSize" className="block text-sm font-medium text-gray-700 mb-1">
-                診所規模
-              </label>
-              <select
-                id="clinicSize"
-                name="clinicSize"
-                value={formData.clinicSize}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              >
-                {clinicSizes.map((size) => (
-                  <option key={size.value} value={size.value}>
-                    {size.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">
-                月行銷預算
-              </label>
-              <select
-                id="budget"
-                name="budget"
-                value={formData.budget}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              >
-                <option value="">請選擇月預算範圍</option>
-                <option value="100k-150k">100,000-150,000元</option>
-                <option value="150k-200k">150,000-200,000元</option>
-                <option value="200k-300k">200,000-300,000元</option>
-                <option value="over300k">300,000元以上</option>
-                <option value="undecided">尚未決定</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
+        
         {/* 需求資訊 */}
         <div className="bg-gray-50 p-5 rounded-lg">
           <h3 className="font-medium mb-4 text-gray-800 flex items-center">
-            <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">3</span>
+            <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">2</span>
             需求資訊
           </h3>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">
-                需求服務 <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="service"
-                name="service"
-                value={formData.service}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                required
-              >
-                {services.map((service) => (
-                  <option key={service.value} value={service.value}>
-                    {service.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="competitors" className="block text-sm font-medium text-gray-700 mb-1">
-                主要競爭對手
-              </label>
-              <input
-                type="text"
-                id="competitors"
-                name="competitors"
-                value={formData.competitors}
-                onChange={handleChange}
-                placeholder="您診所周邊或同領域的競爭對手"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                診所目前面臨的挑戰或需求
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={4}
-                placeholder="請描述您診所的行銷需求或目前面臨的挑戰，讓我們能更精準提供解決方案"
-                className="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              ></textarea>
-            </div>
+          
+          {renderSelect('service', '需要的服務', services, true)}
+          {renderSelect('clinicSize', '診所規模', clinicSizes)}
+          {renderSelect('contactTime', '偏好聯絡時段', contactTimes)}
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
+              諮詢內容
+            </label>
+            <textarea
+              name="message"
+              placeholder="請簡述您的需求或問題"
+              value={formData.message}
+              onChange={handleChange}
+              disabled={formStatus === FormStatus.SUBMITTING}
+              className={cn(
+                "w-full px-4 py-3 border border-gray-200 focus:border-primary focus:ring-0 transition-colors h-32",
+                errors.message && "border-red-500 focus:border-red-500",
+                formStatus === FormStatus.SUBMITTING && "bg-gray-100 text-gray-500 cursor-not-allowed"
+              )}
+            ></textarea>
+            {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
           </div>
         </div>
-
-        <div className="flex justify-center pt-3">
-          <SubmitButton {...submitButtonProps} className="rounded-md py-2.5" />
+        
+        {/* 額外資訊 - 可摺疊區塊 */}
+        <div className="bg-gray-50 p-5 rounded-lg">
+          <button 
+            type="button"
+            onClick={() => setShowExtraInfo(!showExtraInfo)}
+            className="w-full text-left font-medium text-gray-800 flex items-center justify-between mb-2 focus:outline-none"
+          >
+            <span className="flex items-center">
+              <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">3</span>
+              其他參考資訊 (選填)
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 ${showExtraInfo ? 'transform rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+          
+          {showExtraInfo && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="pt-2"
+            >
+              {renderInput('competitors', '主要競爭診所', '請列出您所知的競爭診所名稱')}
+              {renderInput('budget', '預算範圍', '請提供您的行銷預算範圍 (選填)')}
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-800 mb-2">
+                  您如何得知我們？
+                </label>
+                <div className="space-y-2">
+                  {marketingSources.map(source => (
+                    <label key={source.value} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="source"
+                        value={source.value}
+                        checked={formData.source === source.value}
+                        onChange={handleChange}
+                        disabled={formStatus === FormStatus.SUBMITTING}
+                        className="text-primary mr-2"
+                      />
+                      {source.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
-
-        <p className="text-center text-xs text-gray-500 mt-3">
-          提交表單即表示您同意我們的隱私政策，我們會妥善保管您的資料。
-        </p>
+        
+        {/* 隱私權政策確認 */}
+        <div className="mt-4">
+          <label className="flex items-start">
+            <input
+              type="checkbox"
+              checked={privacyChecked}
+              onChange={() => setPrivacyChecked(!privacyChecked)}
+              disabled={formStatus === FormStatus.SUBMITTING}
+              className="text-primary mt-1 mr-2"
+              required
+            />
+            <span className="text-sm text-gray-600">
+              我已閱讀並同意<a href="/privacy" target="_blank" className="text-primary underline">隱私權政策</a>，並同意Aidea:Med處理我的個人資料用於回覆諮詢。
+            </span>
+          </label>
+        </div>
+        
+        {/* 提交按鈕 */}
+        <div className="mt-6">
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            size="lg"
+            isLoading={formStatus === FormStatus.SUBMITTING}
+            loadingText="提交中..."
+            disabled={formStatus === FormStatus.SUBMITTING || !privacyChecked}
+          >
+            送出諮詢表單
+          </Button>
+        </div>
       </form>
     </AnimatedDiv>
   )

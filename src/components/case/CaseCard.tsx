@@ -3,11 +3,11 @@
 import React from 'react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { CaseCardProps } from '@/types/case'
-import { caseAnimations } from '@/utils/animations'
 import { handleCaseImageError, formatMetricValue } from '@/utils/case'
+import { Card } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 // 使用memo包裝CaseCard以避免不必要的重渲染
 export const CaseCard = React.memo(({ 
@@ -17,7 +17,8 @@ export const CaseCard = React.memo(({
   showMetrics = true,
   aspectRatio = '16/9',
   priority = false,
-  isCircular = false
+  isCircular = false,
+  isCompact = false
 }: CaseCardProps): React.ReactElement => {
   // 圖片源計算邏輯
   const imgSrc = useMemo(() => {
@@ -30,7 +31,6 @@ export const CaseCard = React.memo(({
     return '/images/case-placeholder.jpg';
   }, [caseStudy.image]);
   
-  const [isHovered, setIsHovered] = useState(false);
   const [imgStatus, setImgStatus] = useState({
     error: false,
     loading: true
@@ -59,9 +59,6 @@ export const CaseCard = React.memo(({
     };
   }, [imgSrc, imgStatus.error, handleImageLoad, handleImageError]);
 
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
-
   // 優化圖片加載策略
   const imageLoadingStrategy = useMemo(() => {
     return priority || index < 4 ? 'eager' : 'lazy';
@@ -74,31 +71,33 @@ export const CaseCard = React.memo(({
     return 70;
   }, [index, priority]);
 
-  // 根據不同變體選擇卡片樣式
-  const cardStyle = useMemo(() => {
+  // 選擇Card變體
+  const cardVariant = useMemo(() => {
     switch (variant) {
       case 'featured':
-        return 'bg-white border-l-4 border-primary';
+        return 'accent';
       case 'minimal':
-        return 'bg-white';
+        return 'flat';
       default: // standard
-        return 'bg-white';
+        return 'default';
     }
   }, [variant]);
 
-  const cardContent = (
-    <div 
-      className={`
-        h-full transition-all duration-300 group
-        ${cardStyle}
-        ${isCircular ? 'pt-3 text-center' : ''}
-        hover:translate-y-[-4px] hover:shadow-md shadow-sm
-        rounded-lg overflow-hidden
-      `}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+  return (
+    <Link 
+      href={`/case/${caseStudy.id}`} 
+      prefetch={true}
+      className="block h-full"
     >
-      <div className="h-full flex flex-col bg-white">
+      <Card 
+        variant={cardVariant}
+        hoverEffect="lift"
+        isClickable
+        className={cn(
+          "h-full",
+          isCircular ? 'pt-3 text-center' : ''
+        )}
+      >
         {/* 類別標籤 - 移至圖片外部頂部 */}
         <div className="flex justify-between items-center px-3 py-2">
           {caseStudy.category && (
@@ -168,14 +167,14 @@ export const CaseCard = React.memo(({
             {caseStudy.name}
           </h3>
           
-          {caseStudy.description && (
+          {caseStudy.description && !isCompact && (
             <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
               {caseStudy.description}
             </p>
           )}
           
           {/* 績效指標 - 扁平化設計 */}
-          {showMetrics && Array.isArray(caseStudy.metrics) && caseStudy.metrics.length > 0 && (
+          {showMetrics && Array.isArray(caseStudy.metrics) && caseStudy.metrics.length > 0 && !isCompact && (
             <div className="mt-auto">
               <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
                 {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
@@ -198,7 +197,7 @@ export const CaseCard = React.memo(({
           {/* 標籤顯示 */}
           {caseStudy.badges && caseStudy.badges.length > 0 && (
             <div className="flex flex-wrap gap-1 sm:gap-2 mt-auto pt-2 sm:pt-3">
-              {caseStudy.badges.slice(0, 2).map((badge, idx) => (
+              {caseStudy.badges.slice(0, isCompact ? 1 : 2).map((badge, idx) => (
                 <span key={idx} className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 sm:py-1 rounded-sm">
                   {badge}
                 </span>
@@ -206,20 +205,10 @@ export const CaseCard = React.memo(({
             </div>
           )}
         </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <Link 
-      href={`/case/${caseStudy.id}`} 
-      prefetch={true}
-      className="block h-full"
-    >
-      {cardContent}
+      </Card>
     </Link>
   );
-}); 
+});
 
 // 重命名組件以便於調試
 CaseCard.displayName = 'CaseCard'; 
