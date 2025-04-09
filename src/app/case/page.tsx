@@ -12,7 +12,7 @@ const CasePage = dynamic(() => import('@/components/pages/CasePage'), {
 // 骨架組件，顯示加載中的外觀
 function CasePageSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 py-16">src\app\case\page.tsx
+    <div className="min-h-screen bg-gray-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 標題區域骨架 */}
         <div className="text-center mb-16">
@@ -58,10 +58,14 @@ export const metadata = caseMetadata
 
 export default function Page() {
   return (
-    <CaseErrorBoundary>
-      <Suspense fallback={<CasePageSkeleton />}>
-        <CasePage />
-      </Suspense>
-    </CaseErrorBoundary>
+    <div className="min-h-screen bg-gray-50">
+      <div className="animate-fadeIn">
+        <CaseErrorBoundary>
+          <Suspense fallback={<CasePageSkeleton />}>
+            <CasePage />
+          </Suspense>
+        </CaseErrorBoundary>
+      </div>
+    </div>
   )
 } 

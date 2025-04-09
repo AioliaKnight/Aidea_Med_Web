@@ -111,8 +111,8 @@ const CarouselButton = memo(({
       );
 
   const label = ariaLabel || `${direction === 'prev' ? '上一個' : '下一個'}`;
-  
-  return (
+
+    return (
     <button
       type="button"
       onClick={onClick}
@@ -153,7 +153,7 @@ const CarouselIndicator = memo(({
           }`}
         />
       ))}
-    </div>
+      </div>
   );
 });
 
@@ -206,8 +206,8 @@ const HeroSection = memo(function HeroSection() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       titleInterval.current = setInterval(() => {
-        setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
-      }, 4000);
+      setCurrentTitleIndex(prevIndex => (prevIndex + 1) % titles.length);
+    }, 4000);
     }
     
     return () => {
@@ -222,7 +222,7 @@ const HeroSection = memo(function HeroSection() {
       window.performance.mark('hero-section-visible');
     }
   }, [heroInView]);
-
+  
   return (
     <section 
       ref={setRefs}
@@ -235,11 +235,11 @@ const HeroSection = memo(function HeroSection() {
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         
-        <Image 
+          <Image 
           src="/images/bgline-w-small.webp"
-          alt=""
-          fill
-          priority={true}
+            alt=""
+            fill
+            priority={true}
           sizes="(max-width: 768px) 100vw, 100vw"
           quality={30}
           fetchPriority="high"
@@ -412,7 +412,7 @@ const MarketingSection = memo(function MarketingSection() {
       window.performance.mark('marketing-section-visible');
     }
   }, [marketingInView]);
-
+  
   return (
     <section 
       ref={setRefs}
@@ -433,13 +433,13 @@ const MarketingSection = memo(function MarketingSection() {
           style={{ objectPosition: 'center' }}
           aria-hidden="true"
         />
-      </div>
-      
+                </div>
+                
       {/* 階梯式行銷文案內容 */}
       <div className="container-custom relative z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           {contentBlocks.map((block, index) => (
-            <motion.div
+                <motion.div
               key={index}
               className={`mb-16 md:mb-20 ${block.className}`}
               initial={{ opacity: 0, y: 20 }}
@@ -458,10 +458,10 @@ const MarketingSection = memo(function MarketingSection() {
                   {block.en.subtitle && (
                     <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 leading-tight tracking-tight">
                       {block.en.subtitle}
-                    </h3>
+              </h3>
                   )}
-                </div>
-                
+                  </div>
+                  
                 {/* 中文內容部分 */}
                 <div className="w-full md:w-1/2 mt-6 md:mt-0">
                   <div className="border-l-4 border-white pl-4 md:pl-6">
@@ -474,11 +474,11 @@ const MarketingSection = memo(function MarketingSection() {
                       </p>
                     )}
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                    </div>
+                  </div>
+                </motion.div>
+            ))}
+          </div>
       </div>
       
       {/* 向下滾動指示器 */}
@@ -489,7 +489,7 @@ const MarketingSection = memo(function MarketingSection() {
         >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+              </svg>
         </div>
       </div>
     </section>
@@ -533,7 +533,7 @@ const FeatureSection = memo(function FeatureSection() {
   const handleIndicatorChange = useCallback((index: number) => {
     setCurrentFeature(index);
   }, []);
-  
+
   return (
     <section 
       id="features" 
@@ -549,30 +549,30 @@ const FeatureSection = memo(function FeatureSection() {
           </p>
           
           {/* 移動端輪播版本 */}
-          <div 
-            ref={carouselRef}
+            <div 
+              ref={carouselRef}
             className="md:hidden relative px-4"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
                 key={currentFeature}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.3 }}
                 className="bg-gray-50 p-6 rounded-lg shadow-sm"
               >
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
                   {React.createElement(FEATURES[currentFeature].icon, { size: 24 })}
-                </div>
+                      </div>
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                   {FEATURES[currentFeature].title}
-                </h3>
+                              </h3>
                 <p className="text-gray-600 text-center">
                   {FEATURES[currentFeature].description}
                 </p>
               </motion.div>
-            </AnimatePresence>
+        </AnimatePresence>
             
             {/* 輪播控制 */}
             <div className="flex justify-between items-center mt-6">
@@ -583,8 +583,8 @@ const FeatureSection = memo(function FeatureSection() {
                 onChange={handleIndicatorChange} 
               />
               <CarouselButton direction="next" onClick={handleNext} size="small" />
-            </div>
-          </div>
+                  </div>
+                  </div>
           
           {/* 桌面網格版本 */}
           <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -595,16 +595,16 @@ const FeatureSection = memo(function FeatureSection() {
               >
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
                   {React.createElement(feature.icon, { size: 24 })}
-                </div>
+        </div>
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600 text-center">
                   {feature.description}
                 </p>
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
         </div>
       </div>
     </section>
@@ -615,15 +615,15 @@ const FeatureSection = memo(function FeatureSection() {
 const HomePage = () => {
   return (
     <>
-      <HeroSection />
-      <MarketingSection />
-      <FeatureSection />
-      
+        <HeroSection />
+          <MarketingSection />
+          <FeatureSection />
+        
       {/* 從這裡開始的組件拆分到單獨的文件中 */}
       <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
         <HomeFAQSection />
-      </Suspense>
-      
+        </Suspense>
+        
       <CTASection 
         title="準備好提升您的醫療專業形象了嗎？"
         description="與我們的專業顧問安排免費諮詢，探討如何為您的診所打造最適合的行銷策略"

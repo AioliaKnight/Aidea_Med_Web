@@ -646,8 +646,19 @@ MainContent.displayName = 'MainContent';
 // 使用React.memo優化主頁面組件
 export default memo(function CasePage(): React.ReactElement {
   return (
-    <Suspense fallback={<LoadingState />}>
-      <MainContent />
-    </Suspense>
+    <>
+      <PageHeader
+        title="成功案例展示"
+        description="探索我們如何協助醫療診所提升品牌價值與患者轉換率，實現業務成長目標"
+        variant="red"
+        size="md"
+        alignment="center"
+        backgroundImage="/images/bgline-w.webp"
+        className="border-b border-primary"
+      />
+      <Suspense fallback={<LoadingState />}>
+        <MainContent />
+      </Suspense>
+    </>
   )
 }) 
