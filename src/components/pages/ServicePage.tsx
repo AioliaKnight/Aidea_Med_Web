@@ -1184,7 +1184,7 @@ export default function ServicePage() {
             </span>
             <h2 
               id="pricing-title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 font-display text-gray-900 leading-tight"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-6 text-gray-900 leading-tight"
             >
               選擇<span className="text-primary">適合</span>的方案
             </h2>

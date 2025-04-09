@@ -20,7 +20,7 @@ import {
   WebsiteChat,
   GoogleTagManager 
 } from '@/components/common'
-import { notoSansTC, bageo } from '@/lib/fonts'
+import { notoSansTC } from '@/lib/fonts'
 
 import '@/app/globals.css'
 
@@ -42,7 +42,7 @@ export default function RootLayout({
   children
 }: RootLayoutProps) {
   return (
-    <html lang="zh-TW" className={`${notoSansTC.variable} ${bageo.variable}`} suppressHydrationWarning>
+    <html lang="zh-TW" className={`${notoSansTC.variable}`} suppressHydrationWarning>
       <head>
         {/* PWA 相關設定 */}
         <link
