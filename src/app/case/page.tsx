@@ -2,6 +2,7 @@ import { caseMetadata } from '../metadata'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import { ErrorBoundary, CaseErrorBoundary } from '@/components/common'
+import { organizationSchema } from '../metadata'
 
 // 使用動態導入代替直接導入，增加加載提示
 const CasePage = dynamic(() => import('@/components/pages/CasePage'), {
@@ -66,6 +67,12 @@ export default function Page() {
           </Suspense>
         </CaseErrorBoundary>
       </div>
+      
+      {/* 添加組織結構化數據以支持案例列表頁的SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
     </div>
   )
 } 
