@@ -111,22 +111,22 @@ const teamMembers: TeamMember[] = [
 const values = [
   {
     title: '創新思維',
-    description: '持續探索AI與數位科技的應用，打破傳統行銷界限，創造超越客戶期待的解決方案',
+    description: '持續探索AI與數位科技在牙醫診所行銷中的應用，打破傳統牙科行銷界限，創造超越客戶期待的植牙、矯正等專科行銷解決方案',
     icon: LightBulbIcon
   },
   {
     title: '專業導向',
-    description: '深入醫療領域的專業知識與行業洞察，確保每個策略都建立在對醫療產業深刻理解的基礎上',
+    description: '深入牙醫與口腔醫療領域的專業知識與行業洞察，確保每個牙科診所行銷策略都建立在對牙科產業與患者心理的深刻理解基礎上',
     icon: AcademicCapIcon
   },
   {
     title: '數據驅動',
-    description: '透過精準數據分析與AI工具，挖掘洞察並制定有效策略，持續優化行銷績效與投資回報',
+    description: '透過精準數據分析與AI工具，挖掘牙醫診所潛在患者行為模式與決策因素，持續優化牙科診所行銷績效、植牙與美白療程轉換率與投資回報',
     icon: ChartBarIcon
   },
   {
     title: '協作精神',
-    description: '視客戶為長期合作夥伴，建立透明溝通管道，共同探索並實現醫療品牌的成長目標',
+    description: '視牙醫診所為長期合作夥伴，建立透明溝通管道，共同探索並實現牙科診所的品牌成長目標與患者服務價值',
     icon: UsersIcon
   }
 ]
