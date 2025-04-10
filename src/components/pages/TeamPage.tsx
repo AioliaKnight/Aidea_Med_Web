@@ -111,22 +111,22 @@ const teamMembers: TeamMember[] = [
 const values = [
   {
     title: '創新思維',
-    description: '持續探索新技術與方法，為客戶帶來創新的解決方案',
+    description: '持續探索AI與數位科技的應用，打破傳統行銷界限，創造超越客戶期待的解決方案',
     icon: LightBulbIcon
   },
   {
     title: '專業導向',
-    description: '以專業知識為基礎，提供最適合的行銷策略建議',
+    description: '深入醫療領域的專業知識與行業洞察，確保每個策略都建立在對醫療產業深刻理解的基礎上',
     icon: AcademicCapIcon
   },
   {
     title: '數據驅動',
-    description: '運用數據分析，制定精準的行銷策略與優化方案',
+    description: '透過精準數據分析與AI工具，挖掘洞察並制定有效策略，持續優化行銷績效與投資回報',
     icon: ChartBarIcon
   },
   {
     title: '協作精神',
-    description: '與客戶緊密合作，共同實現品牌成長目標',
+    description: '視客戶為長期合作夥伴，建立透明溝通管道，共同探索並實現醫療品牌的成長目標',
     icon: UsersIcon
   }
 ]
@@ -355,7 +355,7 @@ export default function TeamPage() {
                 團隊核心價值
               </h2>
               <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto mt-3 sm:mt-4 px-4">
-                秉持專業與創新精神，為客戶提供最優質的服務
+                我們的核心價值引領著我們如何思考、如何工作、以及如何與客戶和社會互動
               </p>
             </div>
 
@@ -477,6 +477,121 @@ export default function TeamPage() {
                     quality={90}
                     sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 人才招募區塊 */}
+        <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
+          <div className="container-custom">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                <div>
+                  <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 border-b-2 border-primary pb-2 inline-block">
+                    加入我們的團隊
+                  </h2>
+                  <p className="text-base sm:text-lg text-gray-700 mb-6">
+                    我們正在尋找對醫療行銷充滿熱情的人才加入我們的團隊。在這裡，你將有機會與醫療領域專業人士合作，打造有影響力的品牌策略，同時不斷學習成長。
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="p-4 sm:p-6 bg-white shadow-sm">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">我們提供</h3>
+                      <ul className="space-y-2" role="list">
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>具競爭力的薪資與完善的福利制度</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>彈性工作制度與舒適的工作環境</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>持續學習與專業發展的機會</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>與頂尖醫療專業人士合作的平台</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <Link
+                    href="https://www.104.com.tw/company/1a2x6bmyub#info06"
+                    className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-base"
+                    aria-label="前往104人力銀行查看職缺"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>立即申請職位</span>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </Link>
+                </div>
+                
+                <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+                    目前職缺
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療內容策略專員</h4>
+                      <p className="text-sm text-gray-700 mb-2">
+                        負責規劃與撰寫醫療專業內容，包括網站內容、社群貼文、部落格文章等，需具備醫療相關知識或學習意願。
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
+                      </div>
+                    </div>
+                    
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">數位行銷執行專員</h4>
+                      <p className="text-sm text-gray-700 mb-2">
+                        負責執行醫療診所的數位行銷活動，包括廣告投放、追蹤與優化，社群媒體經營等，歡迎有醫療行銷熱情的新手。
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職/兼職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北/遠端</span>
+                      </div>
+                    </div>
+                    
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">UI/UX設計師</h4>
+                      <p className="text-sm text-gray-700 mb-2">
+                        為醫療診所設計網站及數位應用介面，創造具專業感且易用的使用者體驗，需對醫療品牌設計有興趣。
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療行銷顧問</h4>
+                      <p className="text-sm text-gray-700 mb-2">
+                        為醫療診所提供行銷策略規劃與諮詢，協助診所建立品牌與提升市場競爭力，需具備3年以上相關經驗。
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
