@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo, memo } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 // FAQ數據
 const faqs = [

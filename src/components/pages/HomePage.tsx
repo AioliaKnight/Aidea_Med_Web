@@ -571,9 +571,9 @@ const FeatureSection = memo(function FeatureSection() {
                 <p className="text-gray-600 text-center">
                   {FEATURES[currentFeature].description}
                 </p>
-              </motion.div>
-        </AnimatePresence>
-            
+                </motion.div>
+              </AnimatePresence>
+
             {/* 輪播控制 */}
             <div className="flex justify-between items-center mt-6">
               <CarouselButton direction="prev" onClick={handlePrev} size="small" />
@@ -583,8 +583,8 @@ const FeatureSection = memo(function FeatureSection() {
                 onChange={handleIndicatorChange} 
               />
               <CarouselButton direction="next" onClick={handleNext} size="small" />
-                  </div>
-                  </div>
+              </div>
+            </div>
           
           {/* 桌面網格版本 */}
           <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -595,17 +595,17 @@ const FeatureSection = memo(function FeatureSection() {
               >
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
                   {React.createElement(feature.icon, { size: 24 })}
-        </div>
+                  </div>
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                   {feature.title}
-                </h3>
+                              </h3>
                 <p className="text-gray-600 text-center">
                   {feature.description}
                 </p>
-                </div>
-              ))}
-            </div>
-        </div>
+                                    </div>
+                                  ))}
+                      </div>
+                  </div>
       </div>
     </section>
   );
@@ -622,7 +622,48 @@ const HomePage = () => {
       {/* 從這裡開始的組件拆分到單獨的文件中 */}
       <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
         <HomeFAQSection />
-        </Suspense>
+          </Suspense>
+          
+      {/* 合作客戶區塊 */}
+      <section className="py-16 border-t border-gray-100">
+        <div className="container-custom">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">合作客戶</h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+            <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg">
+              投入行銷產業近十年，多年來獲得許多業主的肯定與支持，為醫療診所量身打造專屬的行銷方案
+            </p>
+            </div>
+          
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 items-center">
+            {[
+              { src: '/images/cases/Case_artisticdc.jpg', alt: '雅德思牙醫診所' },
+              { src: '/images/cases/Case_ytdentalcare.jpg', alt: '雲天牙醫診所' },
+              { src: '/images/cases/Case_中華.jpg', alt: '中華牙醫診所' },
+              { src: '/images/cases/Case_品誠.jpg', alt: '品誠牙醫診所' },
+              { src: '/images/cases/Case_春生.jpg', alt: '春生牙醫診所' },
+              { src: '/images/cases/Case_家源.jpg', alt: '家源牙醫診所' },
+              { src: '/images/cases/Case_海蒂.jpg', alt: '海蒂牙醫診所' },
+              { src: '/images/cases/Case_皓皓.jpg', alt: '皓皓牙醫診所' },
+              { src: '/images/cases/Case_勤美民生.jpg', alt: '勤美民生牙醫診所' },
+              { src: '/images/cases/Case_經典聯合.jpg', alt: '經典聯合牙醫診所' }
+            ].map((client, index) => (
+              <div 
+                key={index}
+                className="flex items-center justify-center h-20 sm:h-24 md:h-28"
+              >
+                    <Image
+                  src={client.src}
+                  alt={client.alt}
+                  width={150}
+                  height={60}
+                  className="max-h-full w-auto object-contain"
+                />
+              </div>
+            ))}
+        </div>
+      </div>
+    </section>
         
       <CTASection 
         title="準備好提升您的醫療專業形象了嗎？"
