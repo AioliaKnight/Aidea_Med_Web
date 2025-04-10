@@ -339,17 +339,9 @@ const HeroSection = memo(function HeroSection() {
 // 階梯式行銷區域
 const MarketingSection = memo(function MarketingSection() {
   // 使用interface定義數據結構
-  interface MarketingBlock {
-    en: {
-      title: string;
-      subtitle: string;
-    };
-    zh: {
-      title: string;
-      subtitle: string;
-    };
-    delay: number;
-    className: string;
+  interface MarketingContent {
+    en: string;
+    zh: string;
   }
 
   const marketingRef = useRef<HTMLElement | null>(null);
@@ -367,43 +359,19 @@ const MarketingSection = memo(function MarketingSection() {
     [marketingInViewRef]
   );
 
-  // 階梯式行銷文案數據
-  const contentBlocks = useMemo<MarketingBlock[]>(() => [
+  // 中英文交叉內容
+  const contentBlocks = useMemo<MarketingContent[]>(() => [
     {
-      en: {
-        title: "THE MARKETING PARTNER",
-        subtitle: "THAT UNDERSTANDS HEALTHCARE BEST."
-      },
-      zh: {
-        title: "專業醫療行銷夥伴",
-        subtitle: "最了解醫療產業的最佳選擇"
-      },
-      delay: 0.1,
-      className: "ml-0"
+      en: "THE MARKETING PARTNER THAT UNDERSTANDS HEALTHCARE BEST.",
+      zh: "專業醫療行銷夥伴，最了解醫療產業的最佳選擇"
     },
     {
-      en: {
-        title: "COMPREHENSIVE BRAND INTEGRATION",
-        subtitle: "START THE CONVERSATION"
-      },
-      zh: {
-        title: "全方位品牌整合策略",
-        subtitle: "啟動專業對話"
-      },
-      delay: 0.2,
-      className: "ml-[5%]"
+      en: "COMPREHENSIVE BRAND INTEGRATION START THE CONVERSATION",
+      zh: "全方位品牌整合策略，啟動專業對話"
     },
     {
-      en: {
-        title: "WITH YOUR POTENTIAL PATIENTS.",
-        subtitle: ""
-      },
-      zh: {
-        title: "與您的潛在患者創造連結",
-        subtitle: "打造醫療品牌價值"
-      },
-      delay: 0.3,
-      className: "ml-[10%]"
+      en: "WITH YOUR POTENTIAL PATIENTS.",
+      zh: "與您的潛在患者創造連結，打造醫療品牌價值"
     }
   ], []);
 
@@ -416,12 +384,12 @@ const MarketingSection = memo(function MarketingSection() {
   return (
     <section 
       ref={setRefs}
-      className="relative bg-primary overflow-hidden py-16 md:py-20"
+      className="relative bg-primary overflow-hidden py-20 md:py-24"
       id="marketing-content"
     >
       {/* 背景設計 */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-primary"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
         <Image 
           src="/images/bgline-w-small.webp"
           alt=""
@@ -429,67 +397,52 @@ const MarketingSection = memo(function MarketingSection() {
           sizes="100vw"
           quality={30}
           loading="lazy"
-          className="object-cover opacity-100"
+          className="object-cover opacity-30"
           style={{ objectPosition: 'center' }}
           aria-hidden="true"
         />
+      </div>
+      
+      <div className="container-custom relative z-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {contentBlocks.map((block, index) => (
+            <div 
+              key={index}
+              className={`mb-16 md:mb-20 ${index % 2 === 0 ? '' : ''}`}
+            >
+              <div className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-8 md:gap-12`}>
+                {/* 英文部分 */}
+                <div className="w-full md:w-1/2">
+                  <div className="p-8 md:p-10">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
+                      {block.en}
+                    </h2>
+                  </div>
                 </div>
                 
-      {/* 階梯式行銷文案內容 */}
-      <div className="container-custom relative z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {contentBlocks.map((block, index) => (
-                <motion.div
-              key={index}
-              className={`mb-16 md:mb-20 ${block.className}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={marketingInView ? 
-                { opacity: 1, y: 0, transition: { delay: block.delay, duration: 0.3, ease: "easeOut" }} : 
-                { opacity: 0, y: 20 }
-              }
-            >
-              {/* 內容區塊 */}
-              <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-10">
-                {/* 英文標題部分 */}
-                <div className="w-full md:w-1/2 md:pr-4">
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tight">
-                    {block.en.title}
-                  </h2>
-                  {block.en.subtitle && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mt-2 leading-tight tracking-tight">
-                      {block.en.subtitle}
-              </h3>
-                  )}
-                  </div>
-                  
-                {/* 中文內容部分 */}
-                <div className="w-full md:w-1/2 mt-6 md:mt-0">
-                  <div className="border-l-4 border-white pl-4 md:pl-6">
-                    <p className="text-xl md:text-2xl lg:text-3xl text-white font-medium leading-tight">
-                      {block.zh.title}
+                {/* 中文部分 */}
+                <div className="w-full md:w-1/2">
+                  <div className="p-8 md:p-10 border-l-4 border-white">
+                    <p className="text-xl md:text-2xl text-white font-medium leading-tight">
+                      {block.zh}
                     </p>
-                    {block.zh.subtitle && (
-                      <p className="text-lg md:text-xl text-white mt-2 font-medium leading-tight">
-                        {block.zh.subtitle}
-                      </p>
-                    )}
                   </div>
-                    </div>
-                  </div>
-                </motion.div>
-            ))}
-          </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       
       {/* 向下滾動指示器 */}
-      <div className="relative z-10 pb-8 flex justify-center mt-4">
+      <div className="relative z-10 flex justify-center mt-4">
         <div
           className="text-white p-2 cursor-pointer hover:bg-white/10 transition-colors hover:translate-y-1"
           onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
         >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+          </svg>
         </div>
       </div>
     </section>
@@ -658,8 +611,8 @@ const HomePage = () => {
                   width={150}
                   height={60}
                   className="max-h-full w-auto object-contain"
-                />
-              </div>
+                    />
+                  </div>
             ))}
         </div>
       </div>
