@@ -401,8 +401,8 @@ const MarketingSection = memo(function MarketingSection() {
           style={{ objectPosition: 'center' }}
           aria-hidden="true"
         />
-      </div>
-      
+              </div>
+
       <div className="container-custom relative z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {contentBlocks.map((block, index) => (
@@ -417,7 +417,7 @@ const MarketingSection = memo(function MarketingSection() {
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
                       {block.en}
                     </h2>
-                  </div>
+                    </div>
                 </div>
                 
                 {/* 中文部分 */}
@@ -426,14 +426,14 @@ const MarketingSection = memo(function MarketingSection() {
                     <p className="text-xl md:text-2xl text-white font-medium leading-tight">
                       {block.zh}
                     </p>
-                  </div>
-                </div>
               </div>
+                </div>
             </div>
+          </div>
           ))}
         </div>
-      </div>
-      
+            </div>
+            
       {/* 向下滾動指示器 */}
       <div className="relative z-10 flex justify-center mt-4">
         <div
@@ -442,8 +442,8 @@ const MarketingSection = memo(function MarketingSection() {
         >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+              </svg>
+          </div>
       </div>
     </section>
   );
