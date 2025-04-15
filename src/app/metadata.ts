@@ -1173,4 +1173,140 @@ export const enhancedLocalBusinessSchema = {
     '醫療內容策略',
     '健康照護行銷'
   ]
+}
+
+// 專業服務結構化資料 - 新增
+export const professionalServiceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://www.aideamed.com#professionalservice',
+  name: siteConfig.name,
+  image: siteConfig.ogImage,
+  description: siteConfig.description,
+  url: siteConfig.url,
+  telephone: siteConfig.contact.phone,
+  email: siteConfig.contact.email,
+  priceRange: '$$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '敦化南路二段99號13樓',
+    addressLocality: '台北市',
+    addressRegion: '大安區',
+    postalCode: '106',
+    addressCountry: 'TW'
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: '25.0338',
+    longitude: '121.5466'
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00'
+    }
+  ],
+  sameAs: [
+    siteConfig.social.facebook,
+    siteConfig.social.instagram,
+    siteConfig.social.linkedin,
+    siteConfig.social.line
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: '醫療行銷服務',
+    itemListElement: [
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '醫療品牌策略',
+          description: '打造醫療診所獨特品牌定位與形象'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '診所數位行銷',
+          description: '透過AI技術優化診所的線上曝光與患者轉換率'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '醫師個人品牌',
+          description: '建立醫師個人專業形象，提升專業權威性'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '診所網站設計',
+          description: '高轉換率的診所網站設計與開發'
+        }
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: '醫療內容策略',
+          description: '專業醫療知識內容策略與製作'
+        }
+      }
+    ]
+  },
+  review: [
+    {
+      '@type': 'Review',
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: '5',
+        bestRating: '5'
+      },
+      author: {
+        '@type': 'Person',
+        name: '王醫師'
+      },
+      reviewBody: '網站改版後預約量增加30%，非常專業的服務團隊！'
+    },
+    {
+      '@type': 'Review',
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: '5',
+        bestRating: '5'
+      },
+      author: {
+        '@type': 'Person',
+        name: '林醫師'
+      },
+      reviewBody: '醫師品牌規劃非常到位，協助我建立個人專業形象，讓診所自費療程轉換率提高了25%。'
+    }
+  ],
+  areaServed: {
+    '@type': 'GeoCircle',
+    geoMidpoint: {
+      '@type': 'GeoCoordinates',
+      latitude: 25.0338,
+      longitude: 121.5466
+    },
+    geoRadius: '50000'
+  },
+  serviceArea: ['台灣全島', '線上服務不受地域限制'],
+  paymentAccepted: ['現金', '信用卡', 'LINE Pay', '轉帳'],
+  memberOf: [
+    {
+      '@type': 'Organization',
+      name: '台灣醫療行銷協會'
+    },
+    {
+      '@type': 'Organization',
+      name: '台灣數位媒體應用協會'
+    }
+  ]
 } 

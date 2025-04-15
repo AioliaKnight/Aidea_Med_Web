@@ -17,6 +17,42 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return generateBlogMetadata(post)
 }
 
+// 生成結構化資料 Schema.org
+function generateBlogStructuredData(post: any) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'
+  
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.summary,
+    image: post.coverImage,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: post.author.name,
+      url: `${baseUrl}/team`
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Aidea:Med 醫療行銷顧問',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/logo.png`
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/blog/${post.slug}`
+    },
+    keywords: post.tags.join(', '),
+    articleBody: post.content.replace(/<[^>]*>/g, '').substring(0, 500) + '...',
+    articleSection: post.category || '醫療行銷',
+    wordCount: post.content.replace(/<[^>]*>/g, '').split(/\s+/).length
+  }
+}
+
 function BlogDetailSkeleton() {
   return (
     <div className="container mx-auto py-12">
@@ -41,9 +77,21 @@ export default async function Page({ params }: { params: { slug: string } }) {
     notFound()
   }
   
+  const structuredData = generateBlogStructuredData(post)
+  
   return (
-    <Suspense fallback={<BlogDetailSkeleton />}>
-      <BlogDetail post={post} />
-    </Suspense>
+    <>
+      {/* Schema.org 結構化資料 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData)
+        }}
+      />
+      
+      <Suspense fallback={<BlogDetailSkeleton />}>
+        <BlogDetail post={post} />
+      </Suspense>
+    </>
   )
 } 
