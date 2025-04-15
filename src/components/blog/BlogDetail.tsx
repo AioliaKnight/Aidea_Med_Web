@@ -148,6 +148,26 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       padding: 1rem !important;
       border-radius: 0.5rem !important;
     }
+    
+    /* 排除聊天組件受到文章樣式的影響 */
+    .prose div.respondio-webchat,
+    .prose div.respondio-launcher,
+    .prose div[id^="respondio"] {
+      position: fixed !important;
+      display: block !important;
+      visibility: visible !important;
+      min-height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* 確保聊天組件內部元素正常顯示 */
+    .prose div.respondio-webchat *,
+    .prose div.respondio-launcher * {
+      display: inherit !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
   `;
 
   return (

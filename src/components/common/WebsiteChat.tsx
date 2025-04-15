@@ -197,6 +197,23 @@ export default function WebsiteChat(): React.ReactElement {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 12px !important;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        pointer-events: auto !important;
+      }
+      
+      /* 確保聊天視窗內容不被遮蓋 */
+      .respondio-webchat * {
+        visibility: visible !important;
+        display: inherit !important;
+      }
+      
+      /* 修正在文章詳情頁的樣式衝突 */
+      article .prose div.respondio-webchat,
+      article .prose div.respondio-launcher {
+        position: fixed !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
       }
       
       /* 針對深色模式調整背景 */
