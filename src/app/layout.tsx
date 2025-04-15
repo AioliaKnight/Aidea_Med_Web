@@ -17,7 +17,6 @@ import Navbar from '@/components/layout/Navbar'
 import { 
   Loading, 
   BackToTopButton, 
-  WebsiteChat,
   GoogleTagManager 
 } from '@/components/common'
 import { notoSansTC } from '@/lib/fonts'
@@ -183,11 +182,6 @@ export default function RootLayout({
               iconSize="h-6 w-6"
               autoHideDelay={4000} /* 停止滾動4秒後自動隱藏 */
             />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            {/* 客服聊天功能 - 添加到固定UI控制區塊中 */}
-            <WebsiteChat />
           </Suspense>
         </div>
 
