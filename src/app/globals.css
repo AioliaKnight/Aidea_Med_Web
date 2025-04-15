@@ -959,6 +959,67 @@
     font-size: 0.625rem; /* 10px */
     line-height: 1rem;
   }
+  
+  /* 文章內容 div 樣式修復 */
+  .preserve-div {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .prose div {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .prose div.stat-highlight,
+  .prose div.response-model,
+  .prose div.action-checklist,
+  .prose div.case-study,
+  .prose div.pro-tip,
+  .prose div.action-plan,
+  .prose div.cta-section,
+  .prose div.warning-box,
+  .prose div.info-box,
+  .prose div.note-box,
+  .prose div.image-gallery,
+  .prose div.expert-quote,
+  .prose div.product-recommendation,
+  .prose div.timeline,
+  .prose div.step-guide {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 2rem 0 !important;
+  }
+  
+  .prose div h1,
+  .prose div h2,
+  .prose div h3,
+  .prose div h4,
+  .prose div h5,
+  .prose div h6 {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .prose div p {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .prose div ul,
+  .prose div ol {
+    display: block !important;
+    padding-left: 1.5rem !important;
+    margin: 0.5rem 0 !important;
+  }
+  
+  .prose div li {
+    display: list-item !important;
+    margin: 0.25rem 0 !important;
+  }
 }
 
 /* 強制紅白黑三色方案 */

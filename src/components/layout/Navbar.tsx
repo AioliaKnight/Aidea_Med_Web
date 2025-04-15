@@ -13,6 +13,7 @@ const navigation = [
   { name: '首頁', nameEn: 'HOME', href: '/' },
   { name: '服務項目', nameEn: 'SERVICES', href: '/service' },
   { name: '成功案例', nameEn: 'CASES', href: '/case' },
+  { name: '知識洞察', nameEn: 'BLOG', href: '/blog' },
   { name: '專業團隊', nameEn: 'TEAM', href: '/team' },
   { name: '聯絡我們', nameEn: 'CONTACT', href: '/contact' }
 ]
