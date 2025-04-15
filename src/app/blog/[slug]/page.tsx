@@ -6,7 +6,8 @@ import { BlogDetail } from '@/components/blog'
 
 // 生成元資料
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug)
+  const slug = params.slug
+  const post = await getBlogPost(slug)
   
   if (!post) {
     return {
@@ -70,7 +71,8 @@ function BlogDetailSkeleton() {
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug)
+  const slug = params.slug
+  const post = await getBlogPost(slug)
   
   // 若文章不存在則返回404
   if (!post) {
