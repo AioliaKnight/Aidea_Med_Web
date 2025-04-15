@@ -182,6 +182,7 @@ export default function WebsiteChat(): React.ReactElement {
         transition: transform 0.3s ease, opacity 0.3s ease !important;
         transform-origin: bottom right;
         will-change: transform, opacity;
+        background: transparent !important;
       }
       
       /* 聊天窗口位置調整 */
@@ -193,6 +194,38 @@ export default function WebsiteChat(): React.ReactElement {
         max-height: 600px !important;
         max-width: 360px !important;
         contain: content;
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+      }
+      
+      /* 針對深色模式調整背景 */
+      @media (prefers-color-scheme: dark) {
+        .respondio-webchat {
+          background-color: rgba(30, 41, 59, 0.95) !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+      
+      /* 手機版樣式調整 */
+      @media (max-width: 767px) {
+        .respondio-webchat {
+          bottom: 0 !important;
+          right: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          max-height: 80vh !important;
+          border-radius: 12px 12px 0 0 !important;
+          box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* 確保聊天按鈕在手機上位置適當 */
+        .respondio-launcher {
+          bottom: 16px !important;
+          right: 16px !important;
+          background: transparent !important;
+        }
       }
     `;
     
