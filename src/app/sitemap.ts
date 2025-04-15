@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { caseStudies } from '@/data/cases'
+import { getAllBlogPosts } from '@/lib/blog-server'
 
 /**
  * 提供給搜尋引擎的網站地圖
@@ -41,26 +42,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
     : []
   
-  // 獲取部落格資料
+  // 獲取部落格資料 - 使用檔案系統而非API
   let blogRoutes: MetadataRoute.Sitemap = []
   try {
-    const blogResponse = await fetch(`${baseUrl}/api/blog`, {
-      method: 'GET',
-      next: { revalidate: 3600 }, // 使用 ISR, 每小時更新一次
-    })
+    // 使用伺服器端函數獲取所有部落格文章
+    const allBlogPosts = await getAllBlogPosts()
     
-    if (blogResponse.ok) {
-      const blogData = await blogResponse.json()
-      
-      blogRoutes = blogData.map((article: any) => ({
-        url: `${baseUrl}/blog/${article.slug}`,
-        lastModified: article.updatedAt 
-          ? new Date(article.updatedAt) 
-          : new Date(article.publishedAt || new Date()),
-        changeFrequency: 'monthly',
-        priority: 0.7,
-      }))
-    }
+    blogRoutes = allBlogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt 
+        ? new Date(post.updatedAt) 
+        : new Date(post.publishedAt || new Date()),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
   } catch (error) {
     console.error('Error fetching blog data for sitemap:', error)
     // 繼續處理已有的資料，不因部落格獲取失敗而中斷整個 sitemap 生成
