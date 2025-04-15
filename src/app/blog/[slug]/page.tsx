@@ -5,9 +5,10 @@ import { generateBlogMetadata } from '@/lib/blog-utils'
 import { BlogDetail } from '@/components/blog'
 
 // 生成元資料
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const slug = params.slug
-  const post = await getBlogPost(slug)
+export async function generateMetadata(props: { params: { slug: string } }) {
+  // 先解析 params，再使用其屬性
+  const params = await Promise.resolve(props.params);
+  const post = await getBlogPost(params.slug)
   
   if (!post) {
     return {
@@ -70,9 +71,10 @@ function BlogDetailSkeleton() {
   )
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const slug = params.slug
-  const post = await getBlogPost(slug)
+export default async function Page(props: { params: { slug: string } }) {
+  // 先解析 params，再使用其屬性
+  const params = await Promise.resolve(props.params);
+  const post = await getBlogPost(params.slug)
   
   // 若文章不存在則返回404
   if (!post) {

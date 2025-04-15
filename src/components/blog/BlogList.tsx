@@ -4,30 +4,54 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Post, formatDate, filterPostsByCategory } from '@/lib/blog-utils'
+import { 
+  Post, 
+  formatDate, 
+  filterPostsByCategory, 
+  getAllCategories, 
+  getPostCountByCategory 
+} from '@/lib/blog-utils'
 
 interface BlogListProps {
   initialPosts: Post[]
 }
 
-// 定義博客文章類別
-const categories = [
-  { id: null, name: '全部文章' },
-  { id: 'dental', name: '牙醫行銷' },
-  { id: 'digital', name: '數位行銷' },
-  { id: 'branding', name: '品牌策略' },
-  { id: 'technology', name: 'AI與科技' }
-]
+// 定義動態產生博客文章類別
+const generateCategories = (allCategories: string[]) => {
+  return [
+    { id: null, name: '全部文章' },
+    ...allCategories.map(category => ({ id: category, name: category }))
+  ];
+};
 
 const BlogList: React.FC<BlogListProps> = ({ initialPosts }) => {
   const [posts, setPosts] = useState<Post[]>(initialPosts)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  // 使用新的 getAllCategories 函數獲取所有可用的分類
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<Array<{id: string | null, name: string}>>([
+    { id: null, name: '全部文章' }
+  ])
+
+  // 在組件加載時收集所有可用的分類
+  useEffect(() => {
+    if (initialPosts && initialPosts.length > 0) {
+      const uniqueCategories = getAllCategories(initialPosts);
+      setAvailableCategories(uniqueCategories);
+      setCategories(generateCategories(uniqueCategories));
+    }
+  }, [initialPosts])
 
   // 處理類別變更
   useEffect(() => {
-    const filtered = filterPostsByCategory(initialPosts, activeCategory)
-    setPosts(filtered)
+    setIsLoading(true);
+    // 使用短暫延遲來顯示過渡效果
+    setTimeout(() => {
+      const filtered = filterPostsByCategory(initialPosts, activeCategory);
+      setPosts(filtered);
+      setIsLoading(false);
+    }, 300);
   }, [activeCategory, initialPosts])
 
   return (
@@ -45,6 +69,11 @@ const BlogList: React.FC<BlogListProps> = ({ initialPosts }) => {
             }`}
           >
             {category.name}
+            {category.id !== null && (
+              <span className="ml-2 text-xs inline-block">
+                ({getPostCountByCategory(initialPosts, category.id)})
+              </span>
+            )}
           </button>
         ))}
       </div>

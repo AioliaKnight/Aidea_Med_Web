@@ -79,5 +79,29 @@ export function filterPostsByCategory(posts: Post[], category: string | null): P
     return posts;
   }
   
-  return posts.filter(post => post.category === category);
+  // 使用直接比較而不是嚴格比較，以處理可能的字符編碼或類型差異
+  return posts.filter(post => post.category && post.category === category);
+}
+
+// 獲取所有可用分類 - 客戶端可用
+export function getAllCategories(posts: Post[]): string[] {
+  if (!posts || posts.length === 0) {
+    return [];
+  }
+  
+  // 提取所有非空的分類，並去重
+  const categories = Array.from(
+    new Set(posts.map(post => post.category).filter(Boolean))
+  ) as string[];
+  
+  return categories;
+}
+
+// 根據分類獲取文章數量 - 客戶端可用
+export function getPostCountByCategory(posts: Post[], category: string): number {
+  if (!posts || posts.length === 0) {
+    return 0;
+  }
+  
+  return posts.filter(post => post.category === category).length;
 } 
