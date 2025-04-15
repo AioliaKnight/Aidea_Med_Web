@@ -22,8 +22,11 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: 'cover',
-  themeColor: 'var(--color-primary)',
-  colorScheme: 'light',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'var(--color-primary)' },
+    { media: '(prefers-color-scheme: dark)', color: 'var(--color-primary-dark, #191919)' }
+  ],
+  colorScheme: 'light dark',
   interactiveWidget: 'resizes-visual'
 }
 
@@ -90,4 +93,41 @@ export const darkModeViewport: Viewport = {
   ...viewport,
   themeColor: 'var(--color-primary-dark, #191919)',
   colorScheme: 'dark'
+}
+
+/**
+ * 適用於摺疊螢幕設備的 viewport 設定
+ * 針對 Galaxy Fold、Surface Duo 等折疊螢幕設備優化
+ * 
+ * 特點：
+ * - 適應螢幕折疊狀態變化
+ * - 優化雙屏顯示模式
+ * - 保持內容在折疊處的連續性
+ */
+export const foldableViewport: Viewport = {
+  ...viewport,
+  viewportFit: 'cover',
+  interactiveWidget: 'overlays-content', // 折疊螢幕上互動元素更適合覆蓋模式
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'var(--color-primary)' },
+    { media: '(prefers-color-scheme: dark)', color: 'var(--color-primary-dark, #191919)' }
+  ]
+}
+
+/**
+ * 大螢幕設備優化的 viewport 設定
+ * 適用於平板、桌面和大型觸控螢幕
+ * 
+ * 特點：
+ * - 利用更大的螢幕空間展示更多內容
+ * - 保持互動元素的可訪問性
+ * - 優化多窗口和分屏模式
+ */
+export const largeScreenViewport: Viewport = {
+  ...viewport,
+  initialScale: 1,
+  minimumScale: 0.6, // 允許更大範圍的縮小以查看全局佈局
+  maximumScale: 2,   // 限制最大縮放以維持佈局完整性
+  userScalable: true,
+  interactiveWidget: 'resizes-content' // 在大螢幕上調整交互內容大小
 } 
