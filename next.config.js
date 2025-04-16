@@ -138,7 +138,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["three"],
   experimental: { 
     optimizeCss: true,
     // 啟用部分預渲染功能 (PPR)
