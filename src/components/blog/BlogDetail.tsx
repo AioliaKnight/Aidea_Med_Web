@@ -254,6 +254,36 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             )}
           </motion.div>
           
+          {/* AI優化摘要區塊 */}
+          {post.summary && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="mb-8 bg-gray-50 rounded-lg p-6 border-l-4 border-primary"
+            >
+              <h2 className="text-lg font-semibold mb-2 text-gray-900">文章重點摘要</h2>
+              <div className="prose prose-sm max-w-none">
+                <p className="text-gray-700 mb-3">{post.summary}</p>
+                {post.tags && post.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    <span className="text-sm text-gray-600 font-medium">關鍵字：</span>
+                    {post.tags.map((tag, index) => (
+                      <span key={tag} className="text-sm text-primary font-medium">
+                        {tag}{index < post.tags.length - 1 ? '、' : ''}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {post.readTime && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    <span className="font-medium">閱讀時間：</span> 約 {post.readTime} 分鐘
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+          
           {/* 文章元信息 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

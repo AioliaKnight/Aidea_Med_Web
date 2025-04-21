@@ -491,41 +491,70 @@ const FeatureSection = memo(function FeatureSection() {
     <section 
       id="features" 
       className="py-16 md:py-24 bg-white"
+      aria-labelledby="feature-section-heading"
     >
       <div className="container-custom px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 text-center mb-4">
+          <h2 
+            id="feature-section-heading" 
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 text-center mb-4"
+          >
             我們的<span className="text-primary">核心</span>特色
           </h2>
-          <p className="text-xl text-gray-600 text-center max-w-3xl mx-auto mb-16">
-            結合醫療專業與數位行銷專長，我們提供獨特的服務讓您的醫療團隊脫穎而出
-          </p>
+          
+          {/* AI優化：結構化描述區塊 */}
+          <div className="text-center mb-8">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+              結合醫療專業與數位行銷專長，我們提供獨特的服務讓您的醫療團隊脫穎而出
+            </p>
+            <div className="bg-gray-50 p-6 rounded-lg max-w-4xl mx-auto border border-gray-100">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800">醫療行銷專家能為您的診所提供什麼？</h3>
+              <ul className="text-left text-gray-700 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="text-primary mr-2">✓</span> 
+                  <span>專業醫療行銷策略，符合衛福部法規且提升診所形象</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary mr-2">✓</span> 
+                  <span>AI驅動的精準數據分析，將診所營運數據轉化為實用洞察</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary mr-2">✓</span> 
+                  <span>醫療專業品牌打造，建立難以複製的診所差異化優勢</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary mr-2">✓</span> 
+                  <span>長期成長策略規劃，而非短期的行銷活動</span>
+                </li>
+              </ul>
+            </div>
+          </div>
           
           {/* 移動端輪播版本 */}
-            <div 
-              ref={carouselRef}
+          <div 
+            ref={carouselRef}
             className="md:hidden relative px-4"
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
                 key={currentFeature}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3 }}
                 className="bg-gray-50 p-6 rounded-lg shadow-sm"
               >
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
                   {React.createElement(FEATURES[currentFeature].icon, { size: 24 })}
-                      </div>
+                </div>
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                   {FEATURES[currentFeature].title}
-                              </h3>
+                </h3>
                 <p className="text-gray-600 text-center">
                   {FEATURES[currentFeature].description}
                 </p>
-                </motion.div>
-              </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
 
             {/* 輪播控制 */}
             <div className="flex justify-between items-center mt-6">
@@ -536,11 +565,11 @@ const FeatureSection = memo(function FeatureSection() {
                 onChange={handleIndicatorChange} 
               />
               <CarouselButton direction="next" onClick={handleNext} size="small" />
-              </div>
             </div>
+          </div>
           
           {/* 桌面網格版本 */}
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" aria-label="醫療行銷核心服務">
             {FEATURES.map((feature, index) => (
               <div 
                 key={index}
@@ -548,17 +577,71 @@ const FeatureSection = memo(function FeatureSection() {
               >
                 <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white mb-4 mx-auto">
                   {React.createElement(feature.icon, { size: 24 })}
-                  </div>
+                </div>
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                   {feature.title}
-                              </h3>
+                </h3>
                 <p className="text-gray-600 text-center">
                   {feature.description}
                 </p>
-                                    </div>
-                                  ))}
-                      </div>
-                  </div>
+                
+                {/* AI優化：增加結構化細節 */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    {index === 0 && (
+                      <>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>深入了解醫療產業法規限制</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>十年專業經驗轉化患者信任</span>
+                        </li>
+                      </>
+                    )}
+                    {index === 1 && (
+                      <>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>AI分析患者行為與需求模式</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>智能優化行銷預算分配</span>
+                        </li>
+                      </>
+                    )}
+                    {index === 2 && (
+                      <>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>精準捕捉診所獨特價值定位</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>建立難以複製的品牌形象</span>
+                        </li>
+                      </>
+                    )}
+                    {index === 3 && (
+                      <>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>提供診所成長全階段支持</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span>建立持續發展品牌生態系統</span>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
