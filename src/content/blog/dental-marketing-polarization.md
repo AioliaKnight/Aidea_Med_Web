@@ -5,7 +5,7 @@ coverImage: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=f
 publishedAt: '2024-07-15'
 author:
   name: 'Leo'
-  avatar: '/images/team/member-1.jpg'
+  avatar: '/images/team/member-3.jpg'
   title: '資深醫療行銷顧問'
 tags:
   - '牙醫行銷'
