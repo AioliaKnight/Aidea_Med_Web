@@ -524,6 +524,24 @@ export const contactMetadata: Metadata = {
   }
 }
 
+// 隱私權政策頁面 Metadata
+export const privacyMetadata: Metadata = {
+  ...sharedMetadata,
+  title: '隱私權政策 | 用戶資料保護與使用說明',
+  description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+  openGraph: {
+    ...sharedOgConfig,
+    title: '隱私權政策 | 用戶資料保護與使用說明',
+    description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+    url: `${siteConfig.url}/privacy`,
+  },
+  twitter: {
+    ...sharedTwitterConfig,
+    title: '隱私權政策 | 用戶資料保護與使用說明',
+    description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+  }
+}
+
 // 結構化資料 - 組織
 export const organizationSchema = {
   '@context': 'https://schema.org',
@@ -1065,6 +1083,26 @@ export const contactBreadcrumbSchema = {
       position: 2,
       name: '聯絡我們',
       item: `${siteConfig.url}/contact`
+    }
+  ]
+}
+
+// 隱私權政策頁面麵包屑
+export const privacyBreadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '首頁',
+      item: siteConfig.url
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '隱私權政策',
+      item: `${siteConfig.url}/privacy`
     }
   ]
 }
