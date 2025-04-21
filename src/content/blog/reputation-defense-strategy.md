@@ -1,7 +1,7 @@
 ---
 title: '差評來了怎麼辦？牙醫診所的聲譽保衛戰略指南'
 summary: '在數位口碑成為診所第二張臉的時代，如何專業有效地處理負面評價，化危機為轉機？本文分享完整的牙醫診所聲譽管理策略。'
-coverImage: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=1920'
 publishedAt: '2024-06-15'
 author:
   name: 'Leo'

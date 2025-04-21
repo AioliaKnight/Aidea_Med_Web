@@ -1,7 +1,7 @@
 ---
 title: '2025年自費診所如何從患者的角度規劃行銷策略？'
 summary: '在2025年的醫療行銷趨勢中，診所競爭重點已轉向誰能真正站在患者角度，理解他們的內心想法與決策焦慮。本文提供三個實用策略方向，協助診所提升與患者的連結，打造安心、有溫度的品牌形象。'
-coverImage: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=1920'
 publishedAt: '2024-06-26'
 author:
   name: 'Chloe'

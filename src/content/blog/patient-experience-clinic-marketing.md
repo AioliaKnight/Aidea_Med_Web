@@ -1,7 +1,7 @@
 ---
 title: '讓患者有更好的體驗：診所行銷應該專注的三個關鍵點'
 summary: '在競爭激烈的醫療市場中，患者體驗已成為選擇診所的關鍵因素。本文分享三個打造患者友善體驗的核心策略：善用數位工具建立即時回應感、優化診所內細節體驗，以及創造有溫度的社群內容，幫助診所建立口碑、提升滿意度與自然吸引更多新病患。'
-coverImage: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1638202993928-7d113095e431?auto=format&fit=crop&w=1920'
 publishedAt: '2024-07-05'
 author:
   name: 'Chloe'

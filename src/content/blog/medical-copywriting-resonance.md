@@ -1,7 +1,7 @@
 ---
 title: '醫療行銷寫文案，抓住「共鳴」才是關鍵技！'
 summary: '在充斥健康資訊的時代，醫療文案不只要傳遞知識，還要引起讀者情感共鳴。本文分享如何讓冰冷的醫療專業成為溫暖的健康指南。'
-coverImage: 'https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1518971847948-f3777b10c91d?auto=format&fit=crop&w=1920'
 publishedAt: '2024-07-02'
 author:
   name: 'Queena'

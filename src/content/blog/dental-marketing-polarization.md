@@ -1,7 +1,7 @@
 ---
 title: '牙醫行銷的 M 型化戰場：在高階美學與健保紅海中，找到你的勝出之道'
 summary: '台灣牙醫市場呈現明顯的M型化趨勢：一端是追求極致美學的高端自費市場，另一端是服務廣大健保需求的社區診所。本文深入分析兩種市場的客群特性與行銷策略，幫助診所在各自的戰場中精準定位，建立信任，實現永續成長。'
-coverImage: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=1920'
 publishedAt: '2024-07-15'
 author:
   name: 'Leo'

@@ -1,7 +1,7 @@
 ---
 title: '百萬級 SEO 投資，是策略捷徑還是昂貴的迷霧？深度解析高價 SEO 服務的價值迷思'
 summary: '高價SEO服務是否總能帶來預期的回報？本文深入探討百萬級SEO投資的常見迷思與潛在問題，提供企業主與行銷決策者一個更清晰的評估框架。'
-coverImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1562577309-4932fdd64cd1?auto=format&fit=crop&w=1920'
 publishedAt: '2024-06-25'
 author:
   name: 'Leo'
