@@ -1,7 +1,7 @@
 ---
 title: '從陌生到信賴：行銷顧問帶你解構牙科患者的完整決策路徑'
 summary: '跳脫單點行銷，看見病患旅程的全貌。了解牙科患者從意識需求到成為忠誠顧客的完整決策路徑，並掌握各階段的關鍵行銷策略。'
-coverImage: 'https://images.unsplash.com/photo-1571772996211-2f02974a9f91?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&w=1920'
 publishedAt: '2024-06-20'
 author:
   name: 'Leo'

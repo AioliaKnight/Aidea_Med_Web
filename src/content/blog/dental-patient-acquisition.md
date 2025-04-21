@@ -1,7 +1,7 @@
 ---
 title: '欸，你的新病人從哪來？牙醫診所「熟客介紹、自己找到、看到廣告」三大流量來源，線上線下都要顧！'
 summary: '牙醫診所的新病患主要來自三大流量來源：口碑推薦、自然搜尋和廣告曝光，而每種流量都有線上與線下兩個面向。本文深入解析這三種流量的特性、整合策略和實用技巧，幫助診所建立穩定的患者來源，打造無縫的線上線下體驗。'
-coverImage: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1920'
+coverImage: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1920'
 publishedAt: '2024-07-20'
 author:
   name: 'Leo'

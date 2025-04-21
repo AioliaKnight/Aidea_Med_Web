@@ -1,25 +1,25 @@
 ---
 title: '差評來了怎麼辦？牙醫診所的聲譽保衛戰略指南'
-summary: '在數位口碑成為診所第二張臉的時代，如何專業有效地處理負面評價，化危機為轉機？本文分享完整的牙醫診所聲譽管理策略。'
-coverImage: 'https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=1920'
-publishedAt: '2024-06-15'
+summary: '網路差評已成為診所經營的重大風險，本文從預防、即時應對到長期修復，提供完整的聲譽防禦策略框架，幫助診所將危機轉化為建立信任的契機。'
+coverImage: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=1920'
+publishedAt: '2024-06-01'
 author:
-  name: 'Leo'
-  avatar: '/images/team/member-3.jpg'
-  title: '創意內容總監'
+  name: 'Chloe'
+  avatar: '/images/team/member-4.jpg'
+  title: '醫療行銷顧問'
 tags:
-  - '牙醫評價管理'
-  - '網路聲譽'
-  - '負評處理'
-  - '醫病溝通'
+  - '線上聲譽'
+  - '危機處理'
+  - '牙醫診所'
+  - '負評管理'
+  - '患者溝通'
   - '診所經營'
-  - '行銷策略'
-  - '數位口碑'
-  - '牙醫行銷'
+  - '網路評價'
+  - 'Google評論'
   - '品牌形象'
-  - '客戶關係管理'
+  - '信任建立'
 readTime: 10
-category: '經營管理'
+category: '危機管理'
 ---
 
 ## 當數位口碑成為診所的第二張臉

@@ -1,25 +1,25 @@
 ---
 title: '醫療行銷寫文案，抓住「共鳴」才是關鍵技！'
-summary: '在充斥健康資訊的時代，醫療文案不只要傳遞知識，還要引起讀者情感共鳴。本文分享如何讓冰冷的醫療專業成為溫暖的健康指南。'
-coverImage: 'https://images.unsplash.com/photo-1518971847948-f3777b10c91d?auto=format&fit=crop&w=1920'
-publishedAt: '2024-07-02'
+summary: '精準掌握患者的深層需求與情感觸點，為診所創造能引起共鳴的醫療文案。本文分享五個實用技巧，幫助診所在擁擠的市場中脫穎而出，建立情感連結與品牌信任。'
+coverImage: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1920'
+publishedAt: '2024-06-15'
 author:
-  name: 'Queena'
-  avatar: '/images/team/member-5.jpg'
-  title: '顧客關係總監'
+  name: 'Chloe'
+  avatar: '/images/team/member-4.jpg'
+  title: '醫療行銷顧問'
 tags:
-  - '醫療文案'
-  - '病患溝通'
-  - '內容行銷'
-  - '共鳴心理學'
   - '醫療行銷'
-  - '患者體驗'
-  - '溝通技巧'
-  - '醫療品牌'
-  - '轉換率優化'
   - '文案撰寫'
+  - '品牌信任'
+  - '情感連結'
+  - '診所行銷'
+  - '溝通技巧'
+  - '行銷文字'
+  - '品牌定位'
+  - '消費者心理學'
+  - '內容行銷'
 readTime: 9
-category: '內容行銷'
+category: '品牌行銷'
 ---
 
 ## 在滿天資訊中脫穎而出

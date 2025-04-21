@@ -1,25 +1,25 @@
 ---
 title: '疫後看診新習慣，診所行銷怎麼應變？靠AISARE打造死忠病患'
-summary: '疫情改變了患者的就醫行為，從網路預約到遠距問診，醫療行銷也需要全新策略。本文介紹AISARE模式，幫助診所從吸引注意到培養忠誠患者，打造完整的患者轉化體系。'
-coverImage: 'https://images.unsplash.com/photo-1580777361964-27e9cdd2f838?auto=format&fit=crop&w=1920'
-publishedAt: '2024-04-15'
+summary: '後疫情時代，病患的就醫行為與期待已經改變。本文介紹如何運用AISARE模型重新規劃診所行銷策略，鎖定關鍵觸點，從意識、搜尋、行動、關係到體驗全面優化，培養長期忠誠度。'
+coverImage: 'https://images.unsplash.com/photo-1577401239170-897942555fb3?auto=format&fit=crop&w=1920'
+publishedAt: '2024-05-30'
 author:
-  name: 'Queena'
-  avatar: '/images/team/member-5.jpg'
-  title: '顧客關係總監'
+  name: 'Leo'
+  avatar: '/images/team/member-3.jpg'
+  title: '創意內容總監'
 tags:
-  - '診所行銷'
-  - '患者忠誠度'
-  - '數位轉型'
-  - '醫療品牌'
+  - '疫後行銷'
+  - '診所經營'
+  - 'AISARE模型'
   - '病患體驗'
-  - '回診率提升'
-  - '行銷策略'
+  - '患者關係'
+  - '數位行銷'
+  - '醫療行銷'
+  - '忠誠度建立'
   - '醫病關係'
-  - '數位醫療'
-  - '疫後趨勢'
-readTime: 10
-category: '行銷策略'
+  - '疫情轉型'
+readTime: 9
+category: '診所經營'
 ---
 
 ## 疫後看診新習慣，診所行銷怎麼應變？
