@@ -527,18 +527,18 @@ export const contactMetadata: Metadata = {
 // 隱私權政策頁面 Metadata
 export const privacyMetadata: Metadata = {
   ...sharedMetadata,
-  title: '隱私權政策 | 用戶資料保護與使用說明',
-  description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+  title: '隱私權政策 | 牙醫診所行銷顧問的資料保護承諾',
+  description: '了解Aidea:Med醫療行銷顧問如何保護您的診所資料安全。我們在提供牙醫診所行銷、醫師個人品牌與診所SEO優化服務時，嚴格遵守個人資料保護法規，確保所有診所與患者資料獲得最高級別的保護。',
   openGraph: {
     ...sharedOgConfig,
-    title: '隱私權政策 | 用戶資料保護與使用說明',
-    description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+    title: '隱私權政策 | 牙醫診所行銷顧問的資料保護承諾',
+    description: '了解Aidea:Med醫療行銷顧問如何保護您的診所資料安全。我們在提供牙醫診所行銷、醫師個人品牌與診所SEO優化服務時，嚴格遵守個人資料保護法規，確保所有診所與患者資料獲得最高級別的保護。',
     url: `${siteConfig.url}/privacy`,
   },
   twitter: {
     ...sharedTwitterConfig,
-    title: '隱私權政策 | 用戶資料保護與使用說明',
-    description: '了解Aidea:Med如何收集、處理及保護您的個人資料，我們致力於保護您的隱私權並確保資料安全。',
+    title: '隱私權政策 | 牙醫診所行銷顧問的資料保護承諾',
+    description: '了解Aidea:Med醫療行銷顧問如何保護您的診所資料安全。我們在提供牙醫診所行銷、醫師個人品牌與診所SEO優化服務時，嚴格遵守個人資料保護法規，確保所有診所與患者資料獲得最高級別的保護。',
   }
 }
 

@@ -98,7 +98,25 @@ export default function PrivacyPage() {
           </section>
           
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">8. 您的權利</h2>
+            <h2 className="text-2xl font-semibold mb-4">8. 醫療診所相關資料處理</h2>
+            <p>
+              作為專業的牙醫診所行銷顧問，我們了解醫療資訊的敏感性與重要性。當您委託我們進行牙醫診所行銷服務時，我們會特別注意：
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>嚴格遵守衛福部關於醫療廣告的規範與限制</li>
+              <li>確保植牙診所行銷、矯正牙科行銷等專科行銷內容符合法規要求</li>
+              <li>處理診所SEO優化時，謹慎管理患者評價與案例資訊</li>
+              <li>在牙醫網站設計過程中，保護所有相關患者資料安全</li>
+              <li>進行醫師個人品牌建立時，確保所有資訊準確且符合專業規範</li>
+              <li>處理診所數位行銷資料時採取額外的安全措施</li>
+            </ul>
+            <p>
+              我們針對不同類型的醫療行銷需求(如家醫科診所行銷、皮膚科診所行銷、牙醫品牌顧問等)採取客製化的資料保護方案，確保您的診所資訊與患者資料獲得最高級別的保護。
+            </p>
+          </section>
+          
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold mb-4">9. 您的權利</h2>
             <p>根據適用的資料保護法律，您可能擁有以下權利：</p>
             <ul className="list-disc pl-6 mb-4">
               <li>存取權：獲取有關我們處理您個人資料的信息</li>
@@ -114,28 +132,28 @@ export default function PrivacyPage() {
           </section>
           
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">9. 兒童隱私</h2>
+            <h2 className="text-2xl font-semibold mb-4">10. 兒童隱私</h2>
             <p>
               我們的服務不針對16歲以下的兒童。我們不會故意收集16歲以下兒童的個人資料。如果您是父母或監護人，並相信您的孩子向我們提供了個人資料，請立即與我們聯繫。
             </p>
           </section>
           
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">10. 第三方連結</h2>
+            <h2 className="text-2xl font-semibold mb-4">11. 第三方連結</h2>
             <p>
               我們的網站可能包含指向第三方網站或服務的連結。我們對這些第三方的隱私權實踐或內容不負責任。我們建議您在離開我們的網站時閱讀每個訪問網站的隱私權政策。
             </p>
           </section>
           
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">11. 隱私權政策的變更</h2>
+            <h2 className="text-2xl font-semibold mb-4">12. 隱私權政策的變更</h2>
             <p>
               我們可能會不時更新本隱私權政策。我們會在網站上發布更新後的政策，並在政策頂部更新「最後更新日期」。對於重大變更，我們可能會通過電子郵件或網站通知提醒您。我們鼓勵您定期查閱本政策以了解最新資訊。
             </p>
           </section>
           
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">12. 聯絡我們</h2>
+            <h2 className="text-2xl font-semibold mb-4">13. 聯絡我們</h2>
             <p>
               如果您對本隱私權政策有任何疑問、意見或請求，請透過以下方式與我們聯繫：
             </p>
@@ -150,6 +168,52 @@ export default function PrivacyPage() {
             <p className="text-gray-600 text-sm">
               本隱私權政策的中文版本與其他語言版本間如有歧義，概以中文版本為準。
             </p>
+          </div>
+        </div>
+        
+        {/* 相關醫療行銷服務推薦區塊 */}
+        <div className="mt-16 bg-gray-50 p-8 rounded-xl">
+          <h3 className="text-xl font-semibold text-center mb-6">我們的專業牙醫行銷服務</h3>
+          <p className="text-center text-gray-600 mb-8">作為專業的醫療行銷顧問，我們提供全方位的牙醫診所行銷解決方案</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">植牙診所行銷</h4>
+              <p className="text-sm text-gray-600 mb-3">專為植牙專科診所設計的整合行銷方案，提升專業形象與患者轉換率</p>
+              <Link href="/service#dental-implant-marketing" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">矯正牙科行銷</h4>
+              <p className="text-sm text-gray-600 mb-3">幫助矯正專科醫師建立品牌形象，吸引更多潛在患者諮詢</p>
+              <Link href="/service#orthodontic-marketing" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">醫師個人品牌</h4>
+              <p className="text-sm text-gray-600 mb-3">建立醫師個人專業形象與知名度，提升診所競爭力</p>
+              <Link href="/service#doctor-branding" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">診所SEO優化</h4>
+              <p className="text-sm text-gray-600 mb-3">提升牙醫診所網站在搜尋引擎的排名，獲得更多精準流量</p>
+              <Link href="/service#dental-seo" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">診所網站設計</h4>
+              <p className="text-sm text-gray-600 mb-3">專業牙醫診所網站設計，打造高轉換率的患者體驗</p>
+              <Link href="/service#clinic-website-design" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-semibold text-primary mb-2">診所數位行銷</h4>
+              <p className="text-sm text-gray-600 mb-3">整合Google、社群媒體等數位渠道，全方位提升診所能見度</p>
+              <Link href="/service#clinic-digital-marketing" className="text-primary text-sm hover:underline">了解更多</Link>
+            </div>
           </div>
         </div>
         
