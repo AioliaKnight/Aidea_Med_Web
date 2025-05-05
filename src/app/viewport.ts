@@ -49,6 +49,29 @@ export const mobileOptimizedViewport: Viewport = {
 }
 
 /**
+ * 醫療內容閱讀優化的 viewport 設定
+ * 針對醫療文章和專業內容的閱讀體驗特別優化
+ * 
+ * 適用場景：
+ * - 部落格文章頁面
+ * - 醫療專業知識頁面
+ * - 案例研究詳情頁面
+ * - 需要長時間閱讀的內容頁面
+ */
+export const medicalContentViewport: Viewport = {
+  ...viewport,
+  initialScale: 1,
+  minimumScale: 0.9, // 允許適度縮小但確保文字仍清晰可讀
+  maximumScale: 5,   // 允許高倍放大以檢視圖片細節或協助視力障礙用戶
+  userScalable: true,
+  viewportFit: 'auto', // 使用auto以確保內容完全可見
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' }, // 閱讀模式使用純白背景
+    { media: '(prefers-color-scheme: dark)', color: '#121212' }   // 暗色模式使用較柔和的深色
+  ],
+}
+
+/**
  * 不允許縮放的 viewport 設定
  * 適用於特定互動頁面，如全屏遊戲或工具
  * 
@@ -86,6 +109,25 @@ export const pwaViewport: Viewport = {
 }
 
 /**
+ * 打印友好的 viewport 設定
+ * 針對需要列印的頁面優化，如病例報告、醫療說明書等
+ * 
+ * 特點：
+ * - 優化頁面列印佈局和分頁處理
+ * - 關閉可能影響列印質量的視覺效果
+ * - 可結合媒體查詢使用
+ */
+export const printFriendlyViewport: Viewport = {
+  ...viewport,
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false, // 列印時禁用縮放以確保一致性
+  viewportFit: 'contain',
+  colorScheme: 'light' // 強制使用淺色模式以確保列印效果
+}
+
+/**
  * 深色模式優化的 viewport 設定
  * 當用戶設定為深色模式時提供更舒適的瀏覽體驗
  */
@@ -112,6 +154,25 @@ export const foldableViewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: 'var(--color-primary)' },
     { media: '(prefers-color-scheme: dark)', color: 'var(--color-primary-dark, #191919)' }
   ]
+}
+
+/**
+ * 高可訪問性 viewport 設定
+ * 針對視力障礙、認知障礙或行動不便的用戶優化
+ * 
+ * 特點：
+ * - 允許更大範圍的縮放
+ * - 設置適合閱讀器的佈局參數
+ * - 配合ARIA角色和標籤使用效果更佳
+ */
+export const accessibleViewport: Viewport = {
+  ...viewport,
+  initialScale: 1,
+  minimumScale: 0.5, // 允許更多縮小以查看全局
+  maximumScale: 8,   // 允許更高倍放大以輔助視力障礙用戶
+  userScalable: true, // 必須允許縮放
+  viewportFit: 'auto', // 確保所有內容可見
+  colorScheme: 'light dark', // 支持系統主題切換
 }
 
 /**

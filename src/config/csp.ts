@@ -6,13 +6,34 @@ interface ContentSecurityPolicy {
   [directive: string]: string[];
 }
 
+// 醫療相關可信任來源
+const medicalTrustedSources = [
+  // 醫療機構和醫療資訊網站
+  'https://*.nhi.gov.tw',
+  'https://*.cdc.gov.tw',
+  'https://*.mohw.gov.tw',
+  'https://*.who.int',
+  'https://*.cdc.gov',
+  'https://*.nih.gov',
+  'https://*.mayoclinic.org',
+  'https://*.commonhealth.com.tw',
+  'https://*.dentist.com.tw',
+  'https://*.dent.com.tw',
+  'https://*.e-oral.com.tw',
+  'https://*.wd.guide',
+  'https://*.healthnews.com.tw',
+  'https://*.teacherlee.com',
+  'https://*.rootcanal.com.tw',
+  'https://*.health.yam.com',
+];
+
 // 預設政策（開發環境較寬鬆，生產環境較嚴格）
 export const getDefaultDirectives = () => {
   const isDev = process.env.NODE_ENV === 'development'
 
   return {
     // 預設資源限制
-    'default-src': ["'self'"],
+    'default-src': ["'self'", ...medicalTrustedSources],
     
     // 允許執行的 JavaScript
     'script-src': [
@@ -31,6 +52,16 @@ export const getDefaultDirectives = () => {
       'https://www.google-analytics.com',
       'https://ssl.google-analytics.com',
       'https://tagmanager.google.com',
+      // 醫療相關工具和分析
+      'https://cdn.jsdelivr.net',
+      'https://cdnjs.cloudflare.com',
+      'https://player.vimeo.com',
+      'https://embed.medicalmonk.com',
+      'https://api.medigraphic.com',
+      'https://dentalhub-analytics.com',
+      'https://*.medrevenue.com',
+      'https://*.dental-monitoring.com',
+      ...medicalTrustedSources,
     ],
     
     // 允許載入的樣式
@@ -41,6 +72,8 @@ export const getDefaultDirectives = () => {
       'https://*.googleapis.com',
       'https://cdn.respond.io',
       'https://tagmanager.google.com',
+      'https://cdn.jsdelivr.net',
+      'https://cdnjs.cloudflare.com',
     ],
     
     // 允許連接的來源
@@ -55,7 +88,14 @@ export const getDefaultDirectives = () => {
       'https://vercel.live',
       'https://*.respond.io',
       'wss://*.respond.io',
+      // 醫療相關API
+      'https://api.healthdata.tw',
+      'https://api.dentaltw.com',
+      'https://api.dentalcase.io',
+      'https://api.medicalanalytics.com',
+      'https://api.medicinenet.com',
       ...(isDev ? ['http://localhost:*'] : []),
+      ...medicalTrustedSources,
     ],
     
     // 允許載入圖片的來源
@@ -72,6 +112,13 @@ export const getDefaultDirectives = () => {
       'https://www.google-analytics.com',
       'https://stats.g.doubleclick.net',
       'https://www.googletagmanager.com',
+      // 圖像CDN服務
+      'https://*.imgix.net',
+      'https://*.cloudinary.com',
+      'https://*.cloudfront.net',
+      'https://*.twimg.com',
+      'https://*.kfs.io',
+      'https://images.prismic.io',
       // 醫療/牙科案例相關
       'https://*.vivo.com',
       'https://*.imgur.com',
@@ -87,6 +134,16 @@ export const getDefaultDirectives = () => {
       'https://*.meetjobs.com',
       'https://*.1111.com.tw',
       'https://*.job104.com.tw',
+      'https://*.rootcanal.com.tw',
+      'https://*.implant.com.tw', 
+      'https://*.dentalx.tw',
+      'https://*.dental-aesthetics.com.tw',
+      'https://*.dentalcare.com.tw',
+      'https://*.drwu.com.tw',
+      'https://*.drwen.com.tw',
+      'https://*.teacherlee.com',
+      'https://*.medicalanalytics.com',
+      ...medicalTrustedSources,
     ],
     
     // 允許載入字體的來源
@@ -95,12 +152,20 @@ export const getDefaultDirectives = () => {
       'https://fonts.gstatic.com',
       'https://*.gstatic.com',
       'https://cdn.respond.io',
+      'https://cdn.jsdelivr.net',
+      'https://use.typekit.net',
     ],
     
     // 允許載入音頻的來源
     'media-src': [
       "'self'",
       'https://*.respond.io',
+      'https://player.vimeo.com',
+      'https://*.cloudfront.net',
+      'https://www.youtube.com',
+      'https://*.ytimg.com',
+      'https://*.dental-monitoring.com',
+      ...medicalTrustedSources,
     ],
     
     // 允許載入物件的來源（例如PDF）
@@ -115,6 +180,10 @@ export const getDefaultDirectives = () => {
       'https://www.google.com/maps/',
       'https://*.respond.io',
       'https://www.googletagmanager.com',
+      'https://www.youtube.com',
+      'https://player.vimeo.com',
+      'https://embed.medicalmonk.com',
+      ...medicalTrustedSources,
     ],
     
     // 禁止顯示此網頁於iframe中
@@ -126,6 +195,19 @@ export const getDefaultDirectives = () => {
     // 添加基本安全措施
     'base-uri': ["'self'"],
     'upgrade-insecure-requests': isDev ? [] : [],
+    
+    // 限制 manifest 來源
+    'manifest-src': ["'self'"],
+    
+    // 字體和樣式來源
+    'prefetch-src': ["'self'"],
+    
+    // 工作者腳本來源
+    'worker-src': ["'self'", 'blob:'],
+    
+    // 醫療內容報告違規行為
+    'report-uri': ['https://report.aideamed.com/csp-report'],
+    'report-to': ['default'],
   }
 }
 

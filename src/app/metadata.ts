@@ -308,7 +308,15 @@ export const sharedMetadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: siteConfig.keywords,
+  keywords: [
+    '醫療行銷', '牙醫診所行銷', '醫師個人品牌', '診所SEO優化', 
+    '植牙診所行銷', '矯正牙科行銷', '醫療社群經營', '醫療網站設計',
+    '診所品牌顧問', '牙醫品牌策略', '數位牙科行銷', '口腔醫學中心行銷',
+    '醫療品牌定位', '醫療內容創作', 'EEAT醫療行銷', '醫療AI行銷',
+    '診所轉診策略', '診所病患體驗', '醫療專業權威建立', '醫療行銷顧問',
+    '牙周病專科行銷', '美容牙科推廣', '家庭牙醫行銷', '兒童牙科行銷',
+    '全瓷冠推廣策略', '隱形矯正行銷', '口腔護理教育', '牙科數位轉型'
+  ],
   authors: siteConfig.authors,
   creator: siteConfig.name,
   publisher: siteConfig.name,
@@ -356,15 +364,17 @@ export const sharedMetadata: Metadata = {
       should_fallback: true
     }
   },
-  category: '醫療行銷',
+  category: '醫療行銷顧問',
   other: {
-    'google-site-verification': 'YOUR_GOOGLE_VERIFICATION_CODE',
-    'baidu-site-verification': 'YOUR_BAIDU_VERIFICATION_CODE'
+    'google-site-verification': 'V3X5MUGVFjXZoOmKmxzXnrgBKvnCGm8vw1iVLs45eXA',
+    'baidu-site-verification': 'code-jDsldkA80S',
+    'msvalidate.01': 'A98ADCA8D98A8DD7D98D90A7',
+    'ahrefs-site-verification': '76ad04e7c4c2d367df7829c5446ec4dd7d90c7e21c4ec8a8c5fe678b1a60bfc1'
   },
   verification: {
-    google: 'YOUR_GOOGLE_VERIFICATION_CODE',
-    yandex: 'YOUR_YANDEX_VERIFICATION_CODE',
-    yahoo: 'YOUR_YAHOO_VERIFICATION_CODE',
+    google: 'V3X5MUGVFjXZoOmKmxzXnrgBKvnCGm8vw1iVLs45eXA',
+    yandex: 'yandex-verification-code',
+    yahoo: 'yahoo-verification-code',
   },
 }
 
@@ -604,69 +614,65 @@ export const organizationSchema = {
     postalCode: '106',
     addressCountry: 'TW'
   },
-  location: {
-    '@type': 'Place',
-    name: 'Aidea:Med 醫療行銷顧問辦公室',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '敦化南路二段99號13樓',
-      addressLocality: '台北市',
-      addressRegion: '大安區',
-      postalCode: '106',
-      addressCountry: 'TW'
+  founder: {
+    '@type': 'Person',
+    name: '李大明',
+    jobTitle: '首席醫療行銷顧問',
+    description: '擁有15年醫療行銷經驗，曾協助超過200家診所提升品牌價值與病患轉換率',
+    sameAs: [
+      'https://www.linkedin.com/in/example',
+      'https://www.facebook.com/example'
+    ],
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: '台灣大學數位行銷研究所'
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: '25.0338',
-      longitude: '121.5466'
-    }
+    knowsAbout: [
+      '醫療行銷策略',
+      '診所品牌定位',
+      '醫師個人品牌',
+      '數位醫療轉型',
+      '醫療社群媒體'
+    ]
   },
+  award: [
+    '2023年台灣醫療行銷創新獎',
+    '2022年數位醫療轉型優秀案例',
+    '2021年牙醫診所品牌設計金獎'
+  ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: '醫療診所行銷服務目錄',
+    name: '醫療行銷服務目錄',
     itemListElement: [
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: '醫療品牌策略規劃',
-          description: '為診所建立專業形象與差異化品牌定位，樹立市場領導地位'
+          name: '牙醫診所品牌策略',
+          description: '打造具差異化的診所品牌定位，建立長期競爭優勢'
         },
-        itemListElement: [
-          {
-            '@type': 'Offer',
-            name: '診所品牌識別與定位',
-            description: '診所專屬品牌與視覺識別系統設計'
-          },
-          {
-            '@type': 'Offer',
-            name: '醫師個人品牌建立',
-            description: '專業醫師個人品牌塑造與市場定位'
-          }
-        ]
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: '診所行銷策略執行',
-          description: '為診所量身打造全方位行銷策略，提升進客量與自費項目轉換率'
+        eligibleRegion: {
+          '@type': 'Country',
+          name: '台灣'
+        },
+        deliveryLeadTime: {
+          '@type': 'QuantitativeValue',
+          minValue: 30,
+          maxValue: 60,
+          unitCode: 'DAY'
+        },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 14
         }
       },
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: '醫療數位廣告投放',
-          description: '專業醫療廣告投放，精準觸及潛在患者，最大化行銷預算效益'
-        }
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: '診所口碑管理',
-          description: '建立優質的診所線上評價與口碑，處理危機公關，提升病患信任'
+          name: '醫師個人品牌建立',
+          description: '塑造專業醫師個人形象，提升公信力與病患信任度'
         }
       },
       {
@@ -746,61 +752,30 @@ export const organizationSchema = {
       'name': '台灣'
     }
   ],
-  // 增加更多組織屬性
   foundingDate: '2020-01-01',
-  foundingLocation: {
-    '@type': 'Place',
-    'address': {
-      '@type': 'PostalAddress',
-      'addressLocality': '台北市',
-      'addressRegion': '大安區',
-      'addressCountry': 'TW'
-    }
-  },
+  knowsLanguage: ['zh-TW', 'en'],
+  slogan: '讓專業的醫師專注於醫療品質，行銷交給我們',
   numberOfEmployees: {
     '@type': 'QuantitativeValue',
-    'value': '10-20',
-    'unitText': '人'
+    'value': 15
   },
-  award: [
-    '2022年台灣醫療行銷創新獎',
-    '2023年數位轉型優質顧問機構'
+  expertise: [
+    '牙醫診所行銷',
+    '醫師個人品牌',
+    '診所SEO優化',
+    '醫療社群經營',
+    '醫療內容創作',
+    '診所形象設計',
+    '數位病患體驗'
   ],
-  slogan: siteConfig.slogan,
-  knowsLanguage: ['zh-TW', 'zh-CN', 'en'],
-  employee: [
-    {
-      '@type': 'Person',
-      name: '林醫療總監',
-      jobTitle: '資深醫療行銷總監',
-      description: '擁有十年以上醫療行銷經驗，專精牙科與皮膚科診所行銷策略',
-      sameAs: `${siteConfig.url}/team#director`
-    },
-    {
-      '@type': 'Person',
-      name: '王數據分析師',
-      jobTitle: '醫療數據分析專家',
-      description: '專精診所行銷數據分析與AI驅動的精準行銷策略',
-      sameAs: `${siteConfig.url}/team#analyst`
-    }
-  ],
-  hasCredential: [
-    {
-      '@type': 'EducationalOccupationalCredential',
-      name: 'Google認證數位行銷專家',
-      educationalLevel: '專業級',
-      validFor: 'P1Y'
-    },
-    {
-      '@type': 'EducationalOccupationalCredential',
-      name: 'Meta認證社群媒體行銷專家',
-      educationalLevel: '專業級',
-      validFor: 'P1Y'
-    }
-  ],
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': `${siteConfig.url}/#organization`
+  diversityPolicy: "尊重並促進各種背景的人才多元發展",
+  ethicsPolicy: "恪守醫療行銷倫理，確保所有內容符合專業規範",
+  actionableFeedbackPolicy: "持續收集客戶反饋，不斷改進服務品質",
+  correctionsPolicy: "即時更正任何不準確資訊，維護內容正確性",
+  unnamedSourcesPolicy: "不使用未經驗證的資訊來源",
+  ownershipFundingInfo: {
+    '@type': 'AboutPage',
+    url: `${siteConfig.url}/about`
   }
 }
 
