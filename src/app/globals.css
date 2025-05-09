@@ -705,6 +705,122 @@
   .image-hover {
     @apply transition-transform duration-300 hover:scale-105;
   }
+
+  /* 自定義區塊樣式全局強化 */
+  .prose div.legal-note,
+  .prose div.faq-section,
+  .prose div.faq-item,
+  .prose div.stat-highlight,
+  .prose div.response-model,
+  .prose div.action-checklist,
+  .prose div.case-study,
+  .prose div.pro-tip,
+  .prose div.action-plan,
+  .prose div.cta-section,
+  .prose div.warning-box,
+  .prose div.info-box,
+  .prose div.note-box,
+  .prose div.image-gallery,
+  .prose div.expert-quote,
+  .prose div.product-recommendation,
+  .prose div.timeline,
+  .prose div.step-guide {
+    position: relative !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 2rem 0 !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* 確保所有區塊內的元素正確顯示 */
+  .prose div.legal-note *,
+  .prose div.faq-section *,
+  .prose div.faq-item *,
+  .prose div.cta-section * {
+    display: inherit !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* 特別針對標題、段落和列表進行處理 */
+  .prose div.legal-note h1, .prose div.legal-note h2, .prose div.legal-note h3,
+  .prose div.legal-note h4, .prose div.legal-note h5, .prose div.legal-note h6,
+  .prose div.faq-section h1, .prose div.faq-section h2, .prose div.faq-section h3,
+  .prose div.faq-section h4, .prose div.faq-section h5, .prose div.faq-section h6,
+  .prose div.faq-item h1, .prose div.faq-item h2, .prose div.faq-item h3,
+  .prose div.faq-item h4, .prose div.faq-item h5, .prose div.faq-item h6,
+  .prose div.cta-section h1, .prose div.cta-section h2, .prose div.cta-section h3,
+  .prose div.cta-section h4, .prose div.cta-section h5, .prose div.cta-section h6 {
+    display: block !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .prose div.legal-note p,
+  .prose div.faq-section p,
+  .prose div.faq-item p,
+  .prose div.cta-section p {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .prose div.legal-note ul, .prose div.legal-note ol,
+  .prose div.faq-section ul, .prose div.faq-section ol,
+  .prose div.faq-item ul, .prose div.faq-item ol,
+  .prose div.cta-section ul, .prose div.cta-section ol {
+    display: block !important;
+    padding-left: 1.5rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .prose div.legal-note li,
+  .prose div.faq-section li,
+  .prose div.faq-item li,
+  .prose div.cta-section li {
+    display: list-item !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* CTA區塊特殊樣式 */
+  .prose div.cta-section {
+    background-color: #ebf5ff !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .prose div.cta-section h3 {
+    color: #1e40af !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+  }
+
+  .prose div.cta-section p {
+    color: #1e3a8a !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .prose div.cta-section a.cta-button {
+    display: inline-block !important;
+    background-color: #2563eb !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 0.375rem !important;
+    text-decoration: none !important;
+  }
+
+  .prose div.cta-section a.cta-button:hover {
+    background-color: #1d4ed8 !important;
+    text-decoration: none !important;
+  }
 }
 
 /* 文字動畫效果 */
@@ -987,11 +1103,16 @@
   .prose div.expert-quote,
   .prose div.product-recommendation,
   .prose div.timeline,
-  .prose div.step-guide {
+  .prose div.step-guide,
+  .prose div.legal-note,
+  .prose div.faq-section,
+  .prose div.faq-item {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     margin: 2rem 0 !important;
+    padding: 1rem !important;
+    border-radius: 0.5rem !important;
   }
   
   .prose div h1,
@@ -1019,6 +1140,97 @@
   .prose div li {
     display: list-item !important;
     margin: 0.25rem 0 !important;
+  }
+  
+  /* 法規依據區塊樣式 */
+  .prose div.legal-note {
+    border-left: 4px solid #6b7280 !important;
+    background-color: #f9fafb !important;
+  }
+  
+  .prose div.legal-note h4 {
+    display: flex !important;
+    align-items: center !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .prose div.legal-note h4:before {
+    content: '⚖️' !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  /* FAQ區塊樣式 */
+  .prose div.faq-section {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid #e5e7eb !important;
+    background-color: #ffffff !important;
+  }
+  
+  .prose div.faq-section h3 {
+    background-color: rgba(230, 39, 51, 0.1) !important;
+    color: #e62733 !important;
+    font-weight: 700 !important;
+    padding: 1rem !important;
+    margin: 0 !important;
+    font-size: 1.125rem !important;
+    line-height: 1.5 !important;
+    display: block !important;
+  }
+  
+  .prose div.faq-item {
+    border-bottom: 1px solid #e5e7eb !important;
+    margin: 0 !important;
+    padding: 1.5rem !important;
+  }
+  
+  .prose div.faq-item:last-child {
+    border-bottom: none !important;
+  }
+  
+  .prose div.faq-item h4 {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: #e62733 !important;
+    margin-bottom: 0.75rem !important;
+    display: block !important;
+  }
+  
+  .prose div.cta-section {
+    background-color: #ebf5ff !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .prose div.cta-section h3 {
+    color: #1e40af !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+  }
+  
+  .prose div.cta-section p {
+    color: #1e3a8a !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .prose div.cta-section a.cta-button {
+    display: inline-block !important;
+    background-color: #2563eb !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 0.375rem !important;
+    text-decoration: none !important;
+  }
+  
+  .prose div.cta-section a.cta-button:hover {
+    background-color: #1d4ed8 !important;
+    text-decoration: none !important;
   }
 }
 

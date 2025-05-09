@@ -35,71 +35,85 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
         div.style.opacity = '1';
         div.style.minHeight = '20px'; // 添加最小高度確保可見
         
-        // 處理特定樣式的 div
-        if (div.classList.contains('stat-highlight') || 
-            div.classList.contains('response-model') || 
-            div.classList.contains('action-checklist') || 
-            div.classList.contains('case-study') || 
-            div.classList.contains('pro-tip') || 
-            div.classList.contains('action-plan') || 
-            div.classList.contains('cta-section') ||
-            div.classList.contains('warning-box') ||
-            div.classList.contains('info-box') ||
-            div.classList.contains('note-box') ||
-            div.classList.contains('image-gallery') ||
-            div.classList.contains('expert-quote') ||
-            div.classList.contains('product-recommendation') ||
-            div.classList.contains('timeline') ||
-            div.classList.contains('step-guide')) {
+        // 檢查是否為我們支援的自定義樣式區塊
+        const checkAndApplyStyle = (className: string) => {
+          if (div.classList.contains(className)) {
+            // 添加必要的標記類別
+            div.classList.add('preserve-div');
+            div.classList.add('custom-content-block');
+            
+            // 確保區塊內部元素都能正確顯示
+            applyStyleToInnerElements(div);
+            
+            // 返回 true 表示找到了匹配的樣式
+            return true;
+          }
+          return false;
+        };
         
-          // 添加額外的類別標記
-          div.classList.add('preserve-div');
-          div.classList.add('custom-content-block');
-          
-          // 確保內部元素也能正確顯示
-          const children = div.querySelectorAll('*');
-          children.forEach((child) => {
-            if (child instanceof HTMLElement) {
-              child.style.display = '';
-              child.style.visibility = 'visible';
-              child.style.opacity = '1';
-            }
-          });
-          
-          // 確保標題元素能正確顯示
-          const headings = div.querySelectorAll('h1, h2, h3, h4, h5, h6');
-          headings.forEach((heading) => {
-            if (heading instanceof HTMLElement) {
-              heading.style.display = 'block';
-              heading.style.visibility = 'visible';
-              heading.style.marginBottom = '0.5rem';
-            }
-          });
-          
-          // 確保段落元素能正確顯示
-          const paragraphs = div.querySelectorAll('p');
-          paragraphs.forEach((p) => {
-            if (p instanceof HTMLElement) {
-              p.style.display = 'block';
-              p.style.visibility = 'visible';
-              p.style.marginBottom = '0.5rem';
-            }
-          });
-          
-          // 確保列表元素能正確顯示
-          const lists = div.querySelectorAll('ul, ol');
-          lists.forEach((list) => {
-            if (list instanceof HTMLElement) {
-              list.style.display = 'block';
-              list.style.visibility = 'visible';
-              list.style.marginTop = '0.5rem';
-              list.style.paddingLeft = '1.5rem';
-            }
-          });
+        // 處理特定樣式的 div
+        const customClassNames = [
+          'stat-highlight', 'response-model', 'action-checklist', 
+          'case-study', 'pro-tip', 'action-plan', 'cta-section',
+          'warning-box', 'info-box', 'note-box', 'image-gallery',
+          'expert-quote', 'product-recommendation', 'timeline',
+          'step-guide', 'legal-note', 'faq-section', 'faq-item'
+        ];
+        
+        // 檢查是否是任何一個自定義樣式類別
+        const isCustomBlock = customClassNames.some(className => checkAndApplyStyle(className));
+        
+        // 如果有debug標記，輸出類別名稱以協助調試
+        if (div.classList.contains('debug-class')) {
+          console.log('Current div classes:', Array.from(div.classList));
         }
       });
     }
   }, [content]);
+  
+  // 新函數：應用樣式到內部元素
+  function applyStyleToInnerElements(container: Element) {
+    // 確保內部元素也能正確顯示
+    const children = container.querySelectorAll('*');
+    children.forEach((child) => {
+      if (child instanceof HTMLElement) {
+        child.style.display = '';
+        child.style.visibility = 'visible';
+        child.style.opacity = '1';
+      }
+    });
+    
+    // 確保標題元素能正確顯示
+    const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach((heading) => {
+      if (heading instanceof HTMLElement) {
+        heading.style.display = 'block';
+        heading.style.visibility = 'visible';
+        heading.style.marginBottom = '0.5rem';
+      }
+    });
+    
+    // 確保段落元素能正確顯示
+    const paragraphs = container.querySelectorAll('p');
+    paragraphs.forEach((p) => {
+      if (p instanceof HTMLElement) {
+        p.style.display = 'block';
+        p.style.visibility = 'visible';
+        p.style.marginBottom = '0.5rem';
+      }
+    });
+    
+    // 確保列表元素能正確顯示
+    const lists = container.querySelectorAll('ul, ol');
+    lists.forEach((list) => {
+      if (list instanceof HTMLElement) {
+        list.style.display = 'block';
+        list.style.visibility = 'visible';
+        list.style.marginTop = '0.5rem';
+        list.style.paddingLeft = '1.5rem';
+      }
+    });
+  }
 
   return (
     <motion.div
@@ -251,6 +265,25 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
         "[&_.expert-quote_blockquote]:border-0 [&_.expert-quote_blockquote]:p-0 [&_.expert-quote_blockquote]:mb-4 [&_.expert-quote_blockquote]:italic [&_.expert-quote_blockquote]:text-gray-700 [&_.expert-quote_blockquote]:relative [&_.expert-quote_blockquote]:z-10",
         "[&_.expert-quote_cite]:block [&_.expert-quote_cite]:text-right [&_.expert-quote_cite]:font-semibold [&_.expert-quote_cite]:text-gray-900 [&_.expert-quote_cite]:not-italic",
         
+        // legal-note 法規依據區塊
+        "[&_.legal-note]:block [&_.legal-note]:bg-gray-50 [&_.legal-note]:border-l-4 [&_.legal-note]:border-l-gray-500 [&_.legal-note]:p-5 [&_.legal-note]:rounded-lg [&_.legal-note]:my-6",
+        "[&_.legal-note_h4]:text-gray-800 [&_.legal-note_h4]:font-semibold [&_.legal-note_h4]:mb-3 [&_.legal-note_h4]:flex [&_.legal-note_h4]:items-center",
+        "[&_.legal-note_h4:before]:content-['⚖️'] [&_.legal-note_h4:before]:mr-2",
+        "[&_.legal-note_p]:block [&_.legal-note_p]:text-gray-700 [&_.legal-note_p]:mb-2",
+        "[&_.legal-note_ul]:list-disc [&_.legal-note_ul]:pl-6 [&_.legal-note_ul]:mt-2 [&_.legal-note_ul]:block",
+        "[&_.legal-note_li]:text-gray-700 [&_.legal-note_li]:mb-1 [&_.legal-note_li]:block",
+        
+        // faq-section FAQ問答區塊
+        "[&_.faq-section]:block [&_.faq-section]:bg-white [&_.faq-section]:border [&_.faq-section]:border-gray-200 [&_.faq-section]:rounded-xl [&_.faq-section]:p-0 [&_.faq-section]:my-10 [&_.faq-section]:shadow-sm [&_.faq-section]:overflow-hidden",
+        "[&_.faq-section_h3]:bg-primary/10 [&_.faq-section_h3]:text-primary [&_.faq-section_h3]:p-4 [&_.faq-section_h3]:font-bold [&_.faq-section_h3]:text-lg [&_.faq-section_h3]:mb-0 [&_.faq-section_h3]:block",
+        
+        // faq-item 問答項目區塊
+        "[&_.faq-item]:block [&_.faq-item]:border-b [&_.faq-item]:border-gray-200 [&_.faq-item]:p-6 [&_.faq-item]:last:border-b-0",
+        "[&_.faq-item_h4]:text-lg [&_.faq-item_h4]:font-semibold [&_.faq-item_h4]:text-primary [&_.faq-item_h4]:mb-3 [&_.faq-item_h4]:block",
+        "[&_.faq-item_p]:block [&_.faq-item_p]:text-gray-700 [&_.faq-item_p]:mb-0",
+        "[&_.faq-item_ul]:list-disc [&_.faq-item_ul]:pl-6 [&_.faq-item_ul]:mt-2 [&_.faq-item_ul]:block",
+        "[&_.faq-item_li]:text-gray-700 [&_.faq-item_li]:mb-1 [&_.faq-item_li]:block",
+        
         // product-recommendation 產品推薦區塊
         "[&_.product-recommendation]:block [&_.product-recommendation]:bg-white [&_.product-recommendation]:border [&_.product-recommendation]:border-gray-200 [&_.product-recommendation]:rounded-xl [&_.product-recommendation]:overflow-hidden [&_.product-recommendation]:shadow-md [&_.product-recommendation]:my-10",
         "[&_.product-recommendation_h4]:bg-primary/10 [&_.product-recommendation_h4]:text-primary [&_.product-recommendation_h4]:p-4 [&_.product-recommendation_h4]:m-0 [&_.product-recommendation_h4]:font-bold",
@@ -286,7 +319,7 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
 // 增強 HTML 內容，確保 div 標籤與內容正確顯示
 function enhanceHtmlContent(content: string): string {
   // 確保每個 div 開始標籤有完整的樣式
-  const enhancedContent = content
+  let enhancedContent = content
     // 針對特定類型的 div，增強它們的行內樣式
     .replace(/<div class="([^"]*)">/g, (match, className) => {
       return `<div class="${className}" style="display:block !important; visibility:visible !important; opacity:1 !important; min-height:20px;">`;
@@ -298,6 +331,75 @@ function enhanceHtmlContent(content: string): string {
       }
       return match;
     });
+  
+  // 進一步確保特定自定義區塊的樣式可以被正確識別
+  const customClasses = [
+    'legal-note', 'faq-section', 'faq-item', 'stat-highlight', 
+    'response-model', 'action-checklist', 'case-study', 'pro-tip', 
+    'action-plan', 'cta-section', 'warning-box', 'info-box', 
+    'note-box', 'image-gallery', 'expert-quote', 'product-recommendation', 
+    'timeline', 'step-guide'
+  ];
+  
+  // 確保每個自定義類別都可以被正確識別，如果必要可以添加debug類別
+  customClasses.forEach(className => {
+    // 查找不含class屬性的div，但文本中包含該類別名稱的情況
+    const classRegex = new RegExp(`<div[^>]*>([^<]*${className}[^<]*)</div>`, 'gi');
+    enhancedContent = enhancedContent.replace(classRegex, (match, text) => {
+      return `<div class="${className}" style="display:block !important; visibility:visible !important; opacity:1 !important; min-height:20px;">${text}</div>`;
+    });
+    
+    // 修正可能損壞的類名屬性
+    const brokenClassRegex = new RegExp(`<div([^>]*)class=([^"])${className}([^>]*)>`, 'gi');
+    enhancedContent = enhancedContent.replace(brokenClassRegex, `<div$1class="${className}"$3>`);
+    
+    // 強化解析，處理可能因空格或其他格式問題導致的類名識別失敗
+    const missingClassRegex = new RegExp(`<div([^>]*)(${className})([^>]*)>`, 'gi');
+    enhancedContent = enhancedContent.replace(missingClassRegex, (match, before, name, after) => {
+      if (!match.includes('class=')) {
+        return `<div${before}class="${name}"${after}>`;
+      }
+      return match;
+    });
+    
+    // 特別處理所有自定義區塊，確保內部元素正確顯示
+    const blockRegex = new RegExp(`<div[^>]*class="[^"]*${className}[^"]*"[^>]*>(.*?)</div>`, 'gis');
+    enhancedContent = enhancedContent.replace(blockRegex, (match, innerContent) => {
+      // 確保h4標題可見
+      let processedInnerContent = innerContent.replace(/<h([1-6])([^>]*)>/g, 
+        `<h$1$2 style="display:block !important; visibility:visible !important; opacity:1 !important; margin-bottom:0.75rem !important;">`);
+      
+      // 確保段落可見
+      processedInnerContent = processedInnerContent.replace(/<p([^>]*)>/g, 
+        `<p$1 style="display:block !important; visibility:visible !important; opacity:1 !important; margin-bottom:0.5rem !important;">`);
+      
+      // 確保列表可見
+      processedInnerContent = processedInnerContent.replace(/<ul([^>]*)>/g, 
+        `<ul$1 style="display:block !important; visibility:visible !important; opacity:1 !important; padding-left:1.5rem !important; margin-top:0.5rem !important;">`);
+      
+      processedInnerContent = processedInnerContent.replace(/<ol([^>]*)>/g, 
+        `<ol$1 style="display:block !important; visibility:visible !important; opacity:1 !important; padding-left:1.5rem !important; margin-top:0.5rem !important;">`);
+      
+      processedInnerContent = processedInnerContent.replace(/<li([^>]*)>/g, 
+        `<li$1 style="display:list-item !important; visibility:visible !important; opacity:1 !important; margin-bottom:0.25rem !important;">`);
+      
+      // 確保連結可見並有正確的樣式
+      processedInnerContent = processedInnerContent.replace(/<a([^>]*)>/g, 
+        `<a$1 style="display:inline-block !important; visibility:visible !important; opacity:1 !important;">`);
+      
+      // 特別處理 cta-section 中的 cta-button
+      if (className === 'cta-section') {
+        processedInnerContent = processedInnerContent.replace(/<a([^>]*class="[^"]*cta-button[^"]*"[^>]*)>/g, 
+          `<a$1 style="display:inline-block !important; background-color:#2563eb !important; color:white !important; font-weight:600 !important; padding:0.75rem 2rem !important; border-radius:0.375rem !important; text-decoration:none !important;">`);
+      }
+      
+      return `<div class="${className}" style="display:block !important; visibility:visible !important; opacity:1 !important; min-height:20px; position:relative !important; z-index:1 !important;">${processedInnerContent}</div>`;
+    });
+  });
+  
+  // 添加調試資訊以幫助識別問題區塊
+  enhancedContent = enhancedContent.replace(/(<div[^>]*class="[^"]*)(legal-note|faq-section|faq-item|cta-section)([^"]*"[^>]*>)/g, 
+    `$1$2$3<!-- 這是一個 $2 區塊 -->`);
   
   return enhancedContent;
 }
