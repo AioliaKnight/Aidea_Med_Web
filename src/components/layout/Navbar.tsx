@@ -7,11 +7,32 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import Logo from '@/components/common/Logo'
 import React from 'react'
+import { ChevronDown } from 'lucide-react'
+
+// 擴展導航項類型，添加子項目支持
+type NavItem = {
+  name: string;
+  nameEn: string;
+  href: string;
+  children?: {
+    name: string;
+    nameEn: string;
+    href: string;
+  }[];
+}
 
 // 導航項目定義（統一導航項配置）
-const navigation = [
+const navigation: NavItem[] = [
   { name: '首頁', nameEn: 'HOME', href: '/' },
-  { name: '服務項目', nameEn: 'SERVICES', href: '/service' },
+  { 
+    name: '服務項目', 
+    nameEn: 'SERVICES', 
+    href: '/service',
+    children: [
+      { name: '醫療廣告與法規遵循', nameEn: 'AD COMPLIANCE', href: '/service/medical-ad-compliance' },
+      { name: '診所行銷服務', nameEn: 'CLINIC MARKETING', href: '/service' }
+    ]
+  },
   { name: '成功案例', nameEn: 'CASES', href: '/case' },
   { name: '知識洞察', nameEn: 'BLOG', href: '/blog' },
   { name: '專業團隊', nameEn: 'TEAM', href: '/team' },
@@ -48,6 +69,24 @@ const textStyles = {
   }
 }
 
+// 下拉選單樣式
+const dropdownStyles = {
+  default: 'bg-primary/95 border border-white/10 shadow-lg',
+  scrolled: 'bg-white border border-gray-100 shadow-lg'
+}
+
+// 下拉選單項目樣式
+const dropdownItemStyles = {
+  default: {
+    normal: 'text-white/90 hover:text-white hover:bg-white/10',
+    active: 'text-white bg-white/10'
+  },
+  scrolled: {
+    normal: 'text-gray-800 hover:text-primary hover:bg-gray-50',
+    active: 'text-primary bg-primary/5'
+  }
+}
+
 // 按鈕樣式
 const buttonStyles = {
   default: 'bg-white text-primary hover:bg-white/95 transition-colors duration-300',
@@ -58,62 +97,174 @@ const buttonStyles = {
 const NavItem = React.memo(({ 
   item, 
   isActive, 
-  navMode 
+  navMode,
+  pathname
 }: { 
-  item: typeof navigation[0]; 
+  item: NavItem; 
   isActive: boolean; 
-  navMode: 'default' | 'scrolled'; 
+  navMode: 'default' | 'scrolled';
+  pathname: string; 
 }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  // 檢查子項目是否應該激活
+  const hasActiveChild = useMemo(() => {
+    if (!item.children) return false;
+    return item.children.some(child => pathname === child.href);
+  }, [item.children, pathname]);
+  
+  // 根據當前項目或子項目的激活狀態計算樣式
   const activeStyle = useMemo(() => 
-    isActive ? textStyles[navMode].active : textStyles[navMode].normal,
-    [isActive, navMode]
-  )
+    isActive || hasActiveChild ? textStyles[navMode].active : textStyles[navMode].normal,
+    [isActive, hasActiveChild, navMode]
+  );
   
   const secondaryStyle = useMemo(() => 
-    isActive ? textStyles[navMode].activeSecondary : textStyles[navMode].normalSecondary,
-    [isActive, navMode]
-  )
+    isActive || hasActiveChild ? textStyles[navMode].activeSecondary : textStyles[navMode].normalSecondary,
+    [isActive, hasActiveChild, navMode]
+  );
+
+  // 延遲關閉下拉選單，提升用戶體驗
+  const handleMouseLeave = useCallback(() => {
+    setTimeout(() => setIsDropdownOpen(false), 100);
+  }, []);
 
   return (
-    <Link
-      href={item.href}
-      className={cn(
-        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
-        activeStyle
-      )}
-      aria-current={isActive ? 'page' : undefined}
-      role="menuitem"
+    <div 
+      className="relative"
+      onMouseEnter={() => item.children && setIsDropdownOpen(true)}
+      onMouseLeave={handleMouseLeave}
     >
-      <div className="flex flex-col items-center">
-        <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
-        <span className={cn(
-          "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
-          secondaryStyle
-        )}>
-          {item.nameEn}
-        </span>
-      </div>
-      
-      <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
-        {isActive && (
-          <motion.div
-            layoutId="navIndicator"
-            className={cn(
-              "h-[2px] rounded-full",
-              textStyles[navMode].indicator
+      {item.children ? (
+        // 有子選單的項目
+        <button
+          className={cn(
+            "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105",
+            activeStyle
+          )}
+          aria-expanded={isDropdownOpen}
+          aria-haspopup="true"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          <div className="flex flex-col items-center">
+            <div className="flex items-center">
+              <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
+              <ChevronDown className={cn("ml-1 w-4 h-4 transition-transform", isDropdownOpen ? "transform rotate-180" : "")} />
+            </div>
+            <span className={cn(
+              "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
+              secondaryStyle
+            )}>
+              {item.nameEn}
+            </span>
+          </div>
+          
+          <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
+            {(isActive || hasActiveChild) && (
+              <motion.div
+                layoutId="navIndicator"
+                className={cn(
+                  "h-[2px] rounded-full",
+                  textStyles[navMode].indicator
+                )}
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '28px', opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ 
+                  duration: 0.4, 
+                  ease: [0.4, 0, 0.2, 1],
+                  opacity: { duration: 0.2 }
+                }}
+              />
             )}
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: '28px', opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ 
-              duration: 0.4, 
-              ease: [0.4, 0, 0.2, 1],
-              opacity: { duration: 0.2 }
-            }}
-          />
-        )}
-      </div>
-    </Link>
+          </div>
+        </button>
+      ) : (
+        // 無子選單的項目
+        <Link
+          href={item.href}
+          className={cn(
+            "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
+            activeStyle
+          )}
+          aria-current={isActive ? 'page' : undefined}
+          role="menuitem"
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
+            <span className={cn(
+              "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
+              secondaryStyle
+            )}>
+              {item.nameEn}
+            </span>
+          </div>
+          
+          <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
+            {isActive && (
+              <motion.div
+                layoutId="navIndicator"
+                className={cn(
+                  "h-[2px] rounded-full",
+                  textStyles[navMode].indicator
+                )}
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '28px', opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ 
+                  duration: 0.4, 
+                  ease: [0.4, 0, 0.2, 1],
+                  opacity: { duration: 0.2 }
+                }}
+              />
+            )}
+          </div>
+        </Link>
+      )}
+
+      {/* 下拉選單 */}
+      {item.children && (
+        <AnimatePresence>
+          {isDropdownOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className={cn(
+                "absolute z-10 mt-1 w-56 rounded-md shadow-lg",
+                dropdownStyles[navMode]
+              )}
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+            >
+              <div className="py-1" role="none">
+                {item.children.map((child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className={cn(
+                      "block px-4 py-2 text-sm rounded-sm mx-1 my-1",
+                      pathname === child.href 
+                        ? dropdownItemStyles[navMode].active 
+                        : dropdownItemStyles[navMode].normal
+                    )}
+                    role="menuitem"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <div>
+                      <div className="font-medium">{child.name}</div>
+                      <div className="text-xs opacity-75 mt-0.5">{child.nameEn}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
+    </div>
   )
 })
 NavItem.displayName = 'NavItem'
@@ -123,6 +274,16 @@ export default function Navbar() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedMobileItems, setExpandedMobileItems] = useState<string[]>([])
+
+  // 切換移動端子選單展開狀態
+  const toggleMobileSubMenu = useCallback((href: string) => {
+    setExpandedMobileItems(prev => 
+      prev.includes(href) 
+        ? prev.filter(item => item !== href) 
+        : [...prev, href]
+    )
+  }, [])
 
   // 計算當前頁面類型與導航模式 - 使用useMemo記憶結果避免重複計算
   const { isDetailPage, navMode } = useMemo(() => {
@@ -165,6 +326,13 @@ export default function Navbar() {
     [scrolled]
   )
 
+  // 檢查菜單項是否激活
+  const isItemActive = useCallback((item: NavItem) => {
+    if (pathname === item.href) return true;
+    if (item.children && item.children.some(child => pathname === child.href)) return true;
+    return false;
+  }, [pathname]);
+
   return (
     <header 
       className={cn(
@@ -195,6 +363,7 @@ export default function Navbar() {
                 item={item}
                 isActive={pathname === item.href}
                 navMode={navMode}
+                pathname={pathname}
               />
             ))}
           </div>
@@ -269,27 +438,97 @@ export default function Navbar() {
           >
             <nav className="px-4 pt-2 pb-4 space-y-1" role="menu">
               {navigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
-                    pathname === item.href
-                      ? scrolled
-                        ? "bg-primary/10 text-primary"
-                        : "bg-white/10 text-white"
-                      : scrolled
-                      ? "text-gray-700 hover:bg-gray-50"
-                      : "text-white/90 hover:bg-white/5"
+                <div key={item.href} className="mb-1">
+                  {item.children ? (
+                    <div>
+                      <button
+                        className={cn(
+                          "flex items-center justify-between w-full px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
+                          isItemActive(item)
+                            ? scrolled
+                              ? "bg-primary/10 text-primary"
+                              : "bg-white/10 text-white"
+                            : scrolled
+                            ? "text-gray-700 hover:bg-gray-50"
+                            : "text-white/90 hover:bg-white/5"
+                        )}
+                        onClick={() => toggleMobileSubMenu(item.href)}
+                        aria-expanded={expandedMobileItems.includes(item.href)}
+                        aria-controls={`submenu-${item.href}`}
+                      >
+                        <div>
+                          <span className="block">{item.name}</span>
+                          <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
+                        </div>
+                        <ChevronDown 
+                          className={cn(
+                            "w-5 h-5 transition-transform",
+                            expandedMobileItems.includes(item.href) ? "transform rotate-180" : ""
+                          )} 
+                        />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {expandedMobileItems.includes(item.href) && (
+                          <motion.div
+                            id={`submenu-${item.href}`}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pl-4 mt-1 space-y-1">
+                              {item.children.map((child) => (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className={cn(
+                                    "block px-3 py-2 rounded-lg transition-all duration-300",
+                                    pathname === child.href
+                                      ? scrolled
+                                        ? "bg-primary/5 text-primary"
+                                        : "bg-white/5 text-white"
+                                      : scrolled
+                                      ? "text-gray-600 hover:bg-gray-50"
+                                      : "text-white/80 hover:bg-white/5"
+                                  )}
+                                  onClick={toggleMobileMenu}
+                                  aria-current={pathname === child.href ? 'page' : undefined}
+                                >
+                                  <span className="block">{child.name}</span>
+                                  <span className="block text-xs mt-0.5 opacity-75">{child.nameEn}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
+                        pathname === item.href
+                          ? scrolled
+                            ? "bg-primary/10 text-primary"
+                            : "bg-white/10 text-white"
+                          : scrolled
+                          ? "text-gray-700 hover:bg-gray-50"
+                          : "text-white/90 hover:bg-white/5"
+                      )}
+                      onClick={toggleMobileMenu}
+                      role="menuitem"
+                      aria-current={pathname === item.href ? 'page' : undefined}
+                    >
+                      <span className="block">{item.name}</span>
+                      <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
+                    </Link>
                   )}
-                  onClick={toggleMobileMenu}
-                  role="menuitem"
-                  aria-current={pathname === item.href ? 'page' : undefined}
-                >
-                  <span className="block">{item.name}</span>
-                  <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
-                </Link>
+                </div>
               ))}
+              
               <Link
                 href="/contact"
                 className={cn(

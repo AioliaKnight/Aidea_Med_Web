@@ -616,7 +616,7 @@ export const organizationSchema = {
   },
   founder: {
     '@type': 'Person',
-    name: '李大明',
+    name: 'Wilson Chen',
     jobTitle: '首席醫療行銷顧問',
     description: '擁有15年醫療行銷經驗，曾協助超過200家診所提升品牌價值與病患轉換率',
     sameAs: [
@@ -1083,8 +1083,15 @@ export const privacyBreadcrumbSchema = {
 }
 
 // 創建各頁面的FAQ結構化資料
-export const createFaqSchema = (questions: {question: string, answer: string}[]) => {
-  return {
+export const createFaqSchema = (questions: {question: string, answer: string}[], options?: {
+  id?: string;
+  about?: string;
+  isPartOf?: string;
+  datePublished?: string;
+  lastReviewed?: string;
+  languageCode?: string;
+}) => {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: questions.map(q => ({
@@ -1095,7 +1102,19 @@ export const createFaqSchema = (questions: {question: string, answer: string}[])
         text: q.answer
       }
     }))
+  };
+  
+  // 添加可選屬性
+  if (options) {
+    if (options.id) schema['@id'] = options.id;
+    if (options.about) schema.about = { '@id': options.about };
+    if (options.isPartOf) schema.isPartOf = { '@id': options.isPartOf };
+    if (options.datePublished) schema.datePublished = options.datePublished;
+    if (options.lastReviewed) schema.lastReviewed = options.lastReviewed;
+    if (options.languageCode) schema.inLanguage = options.languageCode;
   }
+  
+  return schema;
 }
 
 // 醫療服務FAQ
