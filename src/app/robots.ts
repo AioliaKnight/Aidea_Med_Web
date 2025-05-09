@@ -34,21 +34,14 @@ export default function robots(): MetadataRoute.Robots {
     '/preview/*',
   ];
   
-  // 主要醫療行銷內容路徑 - 明確允許爬取
+  // 主要醫療行銷內容路徑 - 只包含實際存在的頁面
   const medicalMarketingContentPaths = [
     '/blog/',
     '/case/',
     '/service/',
     '/team/',
-    '/service/brand-strategy',
-    '/service/digital-marketing',
-    '/service/social-media',
-    '/service/seo-optimization',
-    '/service/practice-design',
-    '/service/ai-solutions',
-    '/service/medical-ad-compliance', // 新增醫療廣告法規遵循頁面
-    '/service/content-marketing',
-    '/knowledge/',
+    '/service/medical-ad-compliance', // 醫療廣告法規遵循頁面
+    '/knowledge/medical-advertising-regulations', // 醫療廣告法規知識庫
   ];
   
   return {

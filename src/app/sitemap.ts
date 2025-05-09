@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 取得目前日期作為最後更新時間
   const currentDate = new Date()
   
-  // 基本靜態路由
+  // 基本靜態路由 - 這些是確認存在的主要頁面
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/`,
@@ -61,84 +61,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
   
-  // 服務詳情頁面
+  // 實際已實現的服務詳情頁面
   const serviceDetailRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/service/brand-strategy`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/digital-marketing`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/social-media`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/seo-optimization`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/practice-design`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/ai-solutions`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/service/content-marketing`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+    // 目前已確認實現的服務頁面
     {
       url: `${baseUrl}/service/medical-ad-compliance`,
-      lastModified: currentDate, // 自動使用目前日期
-      changeFrequency: 'weekly', // 調整為每週更新
-      priority: 0.95, // 提高優先級，表示這是重要頁面
+      lastModified: currentDate,
+      changeFrequency: 'weekly', 
+      priority: 0.95, // 保持高優先級
     }
+    // 註: 其他服務頁面如 brand-strategy, digital-marketing 等
+    // 待實際建立後再添加到 sitemap
   ]
   
-  // 團隊成員詳情頁面
+  // 實際已實現的團隊成員詳情頁面
   const teamDetailRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/team/medical-marketing-director`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/team/dental-marketing-specialist`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/team/healthcare-seo-expert`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/team/medical-content-strategist`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    }
+    // 註: 團隊成員詳情頁面待實際建立後再添加到 sitemap
   ]
   
   // 動態案例頁面 - 使用實際案例資料
@@ -200,70 +138,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 繼續處理已有的資料，不因部落格獲取失敗而中斷整個 sitemap 生成
   }
   
-  // 專業知識頁面
+  // 實際已實現的知識庫頁面
   const knowledgeBaseRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/knowledge/dental-marketing-guide`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/knowledge/medical-seo-best-practices`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/knowledge/healthcare-social-media-compliance`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/knowledge/patient-experience-optimization`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // 新增醫療廣告法規知識庫相關頁面
+    // 已確認存在的頁面
     {
       url: `${baseUrl}/knowledge/medical-advertising-regulations`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/knowledge/medical-marketing-compliance-guide`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.85,
     }
+    // 註: 其他知識庫頁面待實際建立後再添加到 sitemap
   ]
   
-  // 醫療廣告法規相關子頁面 - 確保搜尋引擎完整索引所有重要內容
-  const medicalAdComplianceSubRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/service/medical-ad-compliance/case-studies`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/service/medical-ad-compliance/resources`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/service/medical-ad-compliance/faq`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.80,
-    }
-  ]
+  // 醫療廣告法規相關子頁面 - 註記計劃建立的頁面
+  // 這些頁面將在未來實現，但暫時從 sitemap 中移除
+  // const medicalAdComplianceSubRoutes: MetadataRoute.Sitemap = [
+  //   {
+  //     url: `${baseUrl}/service/medical-ad-compliance/case-studies`,
+  //     lastModified: currentDate,
+  //     changeFrequency: 'weekly',
+  //     priority: 0.85,
+  //   },
+  //   {
+  //     url: `${baseUrl}/service/medical-ad-compliance/resources`,
+  //     lastModified: currentDate,
+  //     changeFrequency: 'weekly',
+  //     priority: 0.85,
+  //   },
+  //   {
+  //     url: `${baseUrl}/service/medical-ad-compliance/faq`,
+  //     lastModified: currentDate,
+  //     changeFrequency: 'weekly',
+  //     priority: 0.80,
+  //   }
+  // ]
   
-  // 組合所有路由
+  // 備註: 未來網站擴展計劃
+  // 1. 建立其他服務詳情頁面 (brand-strategy, digital-marketing 等)
+  // 2. 完善團隊成員頁面
+  // 3. 擴充知識庫內容
+  // 4. 添加醫療廣告法規子頁面
+  // 當這些頁面實際開發完成後，再將它們添加到 sitemap
+  
+  // 組合所有實際存在的路由
   return [
     ...staticRoutes, 
     ...serviceDetailRoutes, 
@@ -271,6 +188,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...caseRoutes, 
     ...blogRoutes,
     ...knowledgeBaseRoutes,
-    ...medicalAdComplianceSubRoutes
+    // 移除不存在的子頁面
+    // ...medicalAdComplianceSubRoutes
   ]
 } 
