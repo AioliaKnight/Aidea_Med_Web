@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { getBlogPost } from '@/lib/blog-server'
-import { generateBlogMetadata } from '@/lib/blog-utils'
+import { generateBlogMetadata, type Post } from '@/lib/blog-utils'
 import { BlogDetail } from '@/components/blog'
 import { medicalContentViewport } from '@/app/viewport'
 
@@ -34,6 +34,7 @@ interface Reference {
 }
 
 interface BlogPost {
+  id: string;
   title: string;
   slug: string;
   content: string;
@@ -310,78 +311,7 @@ function ExpertReviewBadge({ reviewedBy, lastReviewed }: { reviewedBy?: BlogPost
 // 修改博客文章組件，加入 EEAT 增強元素
 function BlogPost({ post }: { post: BlogPost }) {
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* 文章標題 */}
-      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        {post.title}
-      </h1>
-      
-      {/* 文章摘要 */}
-      <div className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed article-summary">
-        {post.summary}
-      </div>
-      
-      {/* 專業審核標記 */}
-      {post.reviewedBy && (
-        <ExpertReviewBadge 
-          reviewedBy={post.reviewedBy} 
-          lastReviewed={post.lastReviewed || post.updatedAt} 
-        />
-      )}
-      
-      {/* 作者信息 */}
-      <div className="flex items-center mb-8 pb-4 border-b border-gray-200 dark:border-gray-700">
-        {post.author.avatar && (
-          <img 
-            src={post.author.avatar} 
-            alt={post.author.name}
-            className="w-12 h-12 rounded-full mr-4 object-cover"
-          />
-        )}
-        <div>
-          <div className="text-gray-900 dark:text-gray-100 font-medium">{post.author.name}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {post.author.title}
-          </div>
-          
-          {/* 添加作者專業資格信息 */}
-          <AuthorCredentials author={post.author} />
-          
-          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            發布於 {new Date(post.publishedAt).toLocaleDateString('zh-TW')}
-            {post.updatedAt && post.updatedAt !== post.publishedAt && (
-              <span> • 更新於 {new Date(post.updatedAt).toLocaleDateString('zh-TW')}</span>
-            )}
-            {post.readTime && <span> • 閱讀時間: {post.readTime} 分鐘</span>}
-          </div>
-        </div>
-      </div>
-      
-      {/* 文章內容 */}
-      <div 
-        className="prose prose-lg dark:prose-dark max-w-none"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
-      
-      {/* 標籤 */}
-      {post.tags && post.tags.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag: string) => (
-              <span 
-                key={tag} 
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {/* 參考文獻 */}
-      <ReferencesSection references={post.references} />
-    </article>
+    <BlogDetail post={post as unknown as Post} />
   );
 }
 
@@ -395,7 +325,13 @@ export default async function Page(props: { params: { slug: string } }) {
     notFound()
   }
   
-  const structuredData = generateBlogStructuredData(post)
+  // 確保post具有id屬性以符合BlogPost類型
+  const blogPost: BlogPost = {
+    ...post,
+    id: post.slug, // 使用slug作為id
+  };
+  
+  const structuredData = generateBlogStructuredData(blogPost)
   
   return (
     <>
@@ -408,7 +344,7 @@ export default async function Page(props: { params: { slug: string } }) {
       />
       
       <Suspense fallback={<BlogDetailSkeleton />}>
-        <BlogPost post={post} />
+        <BlogPost post={blogPost} />
       </Suspense>
     </>
   )
