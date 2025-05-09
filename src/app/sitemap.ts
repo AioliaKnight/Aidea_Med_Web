@@ -97,44 +97,62 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 使用伺服器端函數獲取所有部落格文章
     const allBlogPosts = await getAllBlogPosts()
     
-    blogRoutes = allBlogPosts.map((post) => {
-      // 根據文章發布時間決定更新頻率
-      const publishDate = new Date(post.publishedAt);
-      const monthsOld = (currentDate.getFullYear() - publishDate.getFullYear()) * 12 + 
-                        (currentDate.getMonth() - publishDate.getMonth());
+    // 確保成功獲取文章資料
+    if (allBlogPosts && Array.isArray(allBlogPosts) && allBlogPosts.length > 0) {
+      blogRoutes = allBlogPosts.map((post) => {
+        // 確保文章有有效的發布日期
+        const publishDate = post.publishedAt ? new Date(post.publishedAt) : currentDate;
+        const monthsOld = (currentDate.getFullYear() - publishDate.getFullYear()) * 12 + 
+                          (currentDate.getMonth() - publishDate.getMonth());
+        
+        // 較新的內容更頻繁更新
+        let changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
+        if (monthsOld < 1) {
+          changeFrequency = 'weekly';
+        } else if (monthsOld > 12) {
+          changeFrequency = 'yearly';
+        }
+        
+        // 檢查標題中是否包含醫療廣告法規關鍵字 - 改進中文處理
+        const title = typeof post.title === 'string' ? post.title.toLowerCase() : '';
+        const isMedicalAdComplianceRelated = (
+          title.includes('醫療廣告') || 
+          title.includes('法規') ||
+          title.includes('合規') ||
+          title.includes('衛福部') ||
+          title.includes('醫療法') ||
+          (post.tags && Array.isArray(post.tags) && post.tags.some(tag => 
+            tag.includes('法規') || tag.includes('合規') || tag.includes('醫療廣告')
+          ))
+        );
+        
+        // 醫療廣告法規相關文章提高優先級
+        const priorityValue = isMedicalAdComplianceRelated ? 0.92 : 
+                             (post.tags && Array.isArray(post.tags) && post.tags.some(tag => [
+                                '醫療專業知識', '牙醫臨床案例', '醫療行銷策略', 'EEAT', '醫學研究'
+                             ].includes(tag)) ? 0.9 : 0.7);
+        
+        // 確保有效的 slug
+        const slug = post.slug || post.id || `post-${publishDate.getTime()}`;
+        
+        return {
+          url: `${baseUrl}/blog/${slug}`,
+          lastModified: post.updatedAt 
+            ? new Date(post.updatedAt) 
+            : publishDate,
+          changeFrequency: changeFrequency,
+          // 根據標籤和標題關鍵字決定優先級
+          priority: priorityValue,
+        }
+      });
       
-      // 較新的內容更頻繁更新
-      let changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
-      if (monthsOld < 1) {
-        changeFrequency = 'weekly';
-      } else if (monthsOld > 12) {
-        changeFrequency = 'yearly';
-      }
-      
-      // 檢查標題中是否包含醫療廣告法規關鍵字
-      const isMedicalAdComplianceRelated = (post.title?.toLowerCase().includes('醫療廣告') || 
-                                            post.title?.toLowerCase().includes('法規') ||
-                                            post.title?.toLowerCase().includes('合規') ||
-                                            post.title?.toLowerCase().includes('衛福部'));
-      
-      // 醫療廣告法規相關文章提高優先級
-      const priorityValue = isMedicalAdComplianceRelated ? 0.92 : 
-                           (post.tags.some(tag => [
-                              '醫療專業知識', '牙醫臨床案例', '醫療行銷策略', 'EEAT', '醫學研究'
-                           ].includes(tag)) ? 0.9 : 0.7);
-      
-      return {
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: post.updatedAt 
-          ? new Date(post.updatedAt) 
-          : new Date(post.publishedAt || currentDate),
-        changeFrequency: changeFrequency,
-        // 根據標籤和標題關鍵字決定優先級
-        priority: priorityValue,
-      }
-    })
+      // 記錄成功獲取的部落格文章數量
+      console.log(`Successfully added ${blogRoutes.length} blog posts to sitemap`);
+    } else {
+      console.warn('No blog posts found or returned array is empty');
+    }
   } catch (error) {
-    console.error('Error fetching blog data for sitemap:', error)
+    console.error('Error fetching blog data for sitemap:', error);
     // 繼續處理已有的資料，不因部落格獲取失敗而中斷整個 sitemap 生成
   }
   
