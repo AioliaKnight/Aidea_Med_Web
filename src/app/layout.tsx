@@ -76,6 +76,12 @@ export default function RootLayout({
           content="telephone=yes" 
         />
         
+        {/* Google Search Console 驗證 */}
+        <meta 
+          name="google-site-verification" 
+          content="81bf3f84e13758b0" 
+        />
+        
         {/* PWA 圖示 */}
         <link
           rel="icon"
