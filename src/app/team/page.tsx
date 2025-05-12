@@ -5,7 +5,7 @@ import { createFaqSchema } from '../metadata'
 export const metadata = teamMetadata
 
 // 為團隊頁面添加結構化FAQ數據
-const teamFaqSchema = createFaqSchema([
+const teamFaqData = [
   {
     question: 'Aidea:Med團隊有什麼專業背景？',
     answer: '我們的團隊由專業牙醫診所行銷顧問、數位行銷專家、UI/UX設計師、內容創作者與技術開發人員組成。成員具有多年牙科與醫療產業經驗，深入了解牙醫診所的營運模式與市場需求，能為植牙、矯正、美白等各類牙醫診所提供精準的行銷策略與執行方案。'
@@ -30,14 +30,22 @@ const teamFaqSchema = createFaqSchema([
     question: '你們如何針對不同專科牙醫診所提供客製化行銷方案？',
     answer: '我們深知每種牙科專科（如植牙、矯正、兒童牙科、牙周專科等）有其獨特市場與患者群。我們的客製化流程包括：首先，進行專科市場研究與診所定位分析；接著，根據專科特性設定目標患者族群並分析其行為模式；然後，制定專科特色的品牌核心訊息與視覺識別；再者，選擇最適合該專科的行銷渠道組合；最後，設計符合專科特性的轉換策略與患者體驗流程。例如，植牙專科診所需要重視中高齡患者的接觸點，而矯正專科則需要更加注重社群媒體與年輕族群溝通。我們的方案會根據專科特性量身打造，確保行銷資源獲得最佳運用。'
   }
-])
+]
+
+// 建立結構化資料，為確保唯一性加入 ID
+const teamFaqSchema = createFaqSchema(teamFaqData, {
+  id: 'https://www.aideamed.com/team#faq',
+  datePublished: '2024-01-15',
+  lastReviewed: '2024-07-04',
+  languageCode: 'zh-TW'
+})
 
 export default function Page() {
   return (
     <>
       <TeamPage />
       
-      {/* 插入團隊FAQ的結構化數據 */}
+      {/* 插入團隊FAQ的結構化數據 - 使用唯一ID避免重複 */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(teamFaqSchema) }}
