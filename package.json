@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next-sitemap",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
@@ -13,8 +13,7 @@
     "clean": "rimraf .next out",
     "prebuild": "npm run clean",
     "analyze": "ANALYZE=true next build",
-    "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build",
-    "sitemap": "next-sitemap"
+    "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build"
   },
   "overrides": {
     "react-is": "^19.0.0",
@@ -104,7 +103,6 @@
     "eslint-plugin-import": "^2.31.0",
     "image-webpack-loader": "^8.1.0",
     "lint-staged": "^15.5.0",
-    "next-sitemap": "^4.3.1",
     "postcss": "^8.5.3",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-import": "^16.1.0",
