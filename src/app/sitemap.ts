@@ -79,22 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 註: 團隊成員詳情頁面待實際建立後再添加到 sitemap
   ]
   
-  // 隱私權政策相關頁面 - 為主要頁面的子頁
-  const privacyRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/privacy/medical-compliance`,
-      lastModified: currentDate,
-      changeFrequency: 'yearly',
-      priority: 0.6, // 稍微提高隱私權合規頁面的優先級
-    },
-    {
-      url: `${baseUrl}/privacy/cookies`,
-      lastModified: currentDate,
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    }
-  ]
-  
   // 動態案例頁面 - 使用實際案例資料
   const caseRoutes: MetadataRoute.Sitemap = Array.isArray(caseStudies) 
     ? caseStudies.map(caseStudy => {
@@ -228,7 +212,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes, 
     ...serviceDetailRoutes, 
     ...teamDetailRoutes,
-    ...privacyRoutes, 
     ...caseRoutes, 
     ...blogRoutes
   ]

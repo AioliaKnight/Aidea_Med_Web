@@ -4,9 +4,7 @@ import { MetadataRoute } from 'next';
  * 提供給搜尋引擎的爬蟲規則
  * 使用 Next.js 內建的 MetadataRoute.Robots 功能
  * 控制搜尋引擎如何爬取和索引網站內容
- * 採用分級權限設計，針對不同搜尋引擎提供差異化的存取權限
  * 最後更新: 2024-07-04
- * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
  */
 export default function robots(): MetadataRoute.Robots {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -48,44 +46,10 @@ export default function robots(): MetadataRoute.Robots {
     '/team/',
     '/service/medical-ad-compliance/', // 醫療廣告法規遵循頁面
     '/blog/dental-advertising-regulations/', // 牙醫廣告法規專文
-    '/privacy/medical-compliance/', // 醫療合規隱私政策
-  ];
-  
-  // 社群媒體機器人允許的路徑
-  const socialMediaAllowPaths = [
-    '/',
-    '/blog/*',
-    '/case/*',
-    '/service/*', 
-    '/team/*',
-  ];
-  
-  // 社群媒體機器人禁止的路徑
-  const socialMediaDisallowPaths = [
-    '/api/*', 
-    '/_next/*',
-    '/admin/*',
-  ];
-  
-  // AI爬蟲允許的路徑
-  const aiAllowPaths = [
-    '/',
-    '/blog/*',
-    '/service/*',
-  ];
-  
-  // AI爬蟲禁止的路徑
-  const aiDisallowPaths = [
-    '/api/*',
-    '/admin/*',
-    '/contact/*',
-    '/team/*',
-    '/case/*',
   ];
   
   return {
     rules: [
-      // 所有爬蟲的通用規則
       {
         userAgent: '*',
         allow: [
@@ -100,7 +64,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
         disallow: commonDisallow,
       },
-      // Google 主爬蟲
       {
         userAgent: 'Googlebot',
         allow: [
@@ -110,7 +73,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
         disallow: searchEngineDisallow,
       },
-      // Google 圖片爬蟲
       {
         userAgent: 'Googlebot-Image',
         allow: [
@@ -120,6 +82,51 @@ export default function robots(): MetadataRoute.Robots {
           '/team/',
           '/service/', // 允許Google圖片機器人爬取服務頁面
         ],
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: [
+          '/', 
+          '/images/',
+          ...medicalMarketingContentPaths,
+        ],
+        disallow: searchEngineDisallow,
+      },
+      {
+        userAgent: 'Baiduspider',
+        allow: [
+          '/', 
+          '/images/',
+          ...medicalMarketingContentPaths,
+        ],
+        disallow: searchEngineDisallow,
+      },
+      {
+        userAgent: 'YandexBot',
+        allow: [
+          '/', 
+          '/images/',
+          ...medicalMarketingContentPaths,
+        ],
+        disallow: searchEngineDisallow,
+      },
+      {
+        userAgent: 'Applebot',
+        allow: [
+          '/', 
+          '/images/',
+          ...medicalMarketingContentPaths,
+        ],
+        disallow: searchEngineDisallow,
+      },
+      {
+        userAgent: 'DuckDuckBot',
+        allow: [
+          '/', 
+          '/images/',
+          ...medicalMarketingContentPaths,
+        ],
+        disallow: searchEngineDisallow,
       },
       // 特別優化 Google 行動裝置支援
       {
@@ -145,75 +152,53 @@ export default function robots(): MetadataRoute.Robots {
           '/contact/'
         ],
       },
-      // Bing 爬蟲
-      {
-        userAgent: 'Bingbot',
-        allow: [
-          '/', 
-          '/images/',
-          ...medicalMarketingContentPaths,
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // 百度爬蟲
-      {
-        userAgent: 'Baiduspider',
-        allow: [
-          '/', 
-          '/images/',
-          ...medicalMarketingContentPaths,
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // Yandex 爬蟲
-      {
-        userAgent: 'YandexBot',
-        allow: [
-          '/', 
-          '/images/',
-          ...medicalMarketingContentPaths,
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // Apple 爬蟲
-      {
-        userAgent: 'Applebot',
-        allow: [
-          '/', 
-          '/images/',
-          ...medicalMarketingContentPaths,
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // DuckDuckGo 爬蟲
-      {
-        userAgent: 'DuckDuckBot',
-        allow: [
-          '/', 
-          '/images/',
-          ...medicalMarketingContentPaths,
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // Facebook 爬蟲
       {
         userAgent: 'facebookexternalhit',
-        allow: socialMediaAllowPaths,
-        disallow: socialMediaDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/case/*',
+          '/service/*', 
+          '/team/*',
+        ],
+        disallow: [
+          '/api/*', 
+          '/_next/*',
+          '/admin/*',
+        ],
       },
-      // LinkedIn 爬蟲
       {
         userAgent: 'LinkedInBot',
-        allow: socialMediaAllowPaths,
-        disallow: socialMediaDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/case/*',
+          '/service/*', 
+          '/team/*',
+        ],
+        disallow: [
+          '/api/*', 
+          '/_next/*',
+          '/admin/*',
+        ],
       },
-      // Twitter/X 爬蟲
+      // 新增 Twitter/X 爬蟲
       {
         userAgent: 'Twitterbot',
-        allow: socialMediaAllowPaths,
-        disallow: socialMediaDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/case/*',
+          '/service/*', 
+          '/team/*',
+        ],
+        disallow: [
+          '/api/*', 
+          '/_next/*',
+          '/admin/*',
+        ],
       },
-      // Google商業資訊爬蟲
+      // 新增 Google商業資訊爬蟲
       {
         userAgent: 'Google-Business-Information',
         allow: [
@@ -224,34 +209,69 @@ export default function robots(): MetadataRoute.Robots {
         ],
         disallow: searchEngineDisallow,
       },
-      // OpenAI GPT 爬蟲
+      // AI 爬蟲規則
       {
         userAgent: 'GPTBot',
-        allow: aiAllowPaths,
-        disallow: aiDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/service/*',
+        ],
+        disallow: [
+          '/api/*',
+          '/admin/*',
+          '/contact/*',
+          '/team/*',
+          '/case/*',
+        ],
       },
-      // Anthropic 爬蟲
       {
         userAgent: 'Anthropic-AI',
-        allow: aiAllowPaths,
-        disallow: aiDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/service/*',
+        ],
+        disallow: [
+          '/api/*',
+          '/admin/*',
+          '/contact/*',
+          '/team/*',
+          '/case/*',
+        ],
       },
-      // Common Crawl 爬蟲
       {
         userAgent: 'CCBot',
-        allow: aiAllowPaths,
-        disallow: aiDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/service/*',
+        ],
+        disallow: [
+          '/api/*',
+          '/admin/*',
+          '/contact/*',
+          '/team/*',
+          '/case/*',
+        ],
       },
-      // Omgili 爬蟲
       {
         userAgent: 'Omgilibot',
-        allow: aiAllowPaths,
-        disallow: aiDisallowPaths,
+        allow: [
+          '/',
+          '/blog/*',
+          '/service/*',
+        ],
+        disallow: [
+          '/api/*',
+          '/admin/*',
+          '/contact/*',
+          '/team/*',
+          '/case/*',
+        ],
       },
     ],
-    // 明確指定 sitemap 位置
     sitemap: `${baseUrl}/sitemap.xml`,
-    // 明確指定主機名稱
     host: baseUrl,
   };
 } 
