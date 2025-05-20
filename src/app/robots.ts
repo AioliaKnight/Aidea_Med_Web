@@ -4,7 +4,7 @@ import { MetadataRoute } from 'next';
  * 提供給搜尋引擎的爬蟲規則
  * 使用 Next.js 內建的 MetadataRoute.Robots 功能
  * 控制搜尋引擎如何爬取和索引網站內容
- * 最後更新: 2024-07-04
+ * 最後更新: 2024-07-20
  */
 export default function robots(): MetadataRoute.Robots {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -46,6 +46,21 @@ export default function robots(): MetadataRoute.Robots {
     '/team/',
     '/service/medical-ad-compliance/', // 醫療廣告法規遵循頁面
     '/blog/dental-advertising-regulations/', // 牙醫廣告法規專文
+  ];
+  
+  // AI 爬蟲可訪問的路徑
+  const aiAllowedPaths = [
+    '/',
+    '/blog/*',
+    '/service/*',
+  ];
+  
+  // AI 爬蟲禁止訪問的路徑（比一般搜索引擎更嚴格）
+  const aiDisallowPaths = [
+    ...searchEngineDisallow,
+    '/contact/*',
+    '/team/*',
+    '/case/*',
   ];
   
   return {
@@ -209,66 +224,47 @@ export default function robots(): MetadataRoute.Robots {
         ],
         disallow: searchEngineDisallow,
       },
-      // AI 爬蟲規則
+      // AI 爬蟲規則 - OpenAI
       {
         userAgent: 'GPTBot',
-        allow: [
-          '/',
-          '/blog/*',
-          '/service/*',
-        ],
-        disallow: [
-          '/api/*',
-          '/admin/*',
-          '/contact/*',
-          '/team/*',
-          '/case/*',
-        ],
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
       },
+      // AI 爬蟲規則 - Anthropic
       {
         userAgent: 'Anthropic-AI',
-        allow: [
-          '/',
-          '/blog/*',
-          '/service/*',
-        ],
-        disallow: [
-          '/api/*',
-          '/admin/*',
-          '/contact/*',
-          '/team/*',
-          '/case/*',
-        ],
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
       },
+      // AI 爬蟲規則 - Common Crawl
       {
         userAgent: 'CCBot',
-        allow: [
-          '/',
-          '/blog/*',
-          '/service/*',
-        ],
-        disallow: [
-          '/api/*',
-          '/admin/*',
-          '/contact/*',
-          '/team/*',
-          '/case/*',
-        ],
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
       },
+      // AI 爬蟲規則 - Claude
       {
-        userAgent: 'Omgilibot',
-        allow: [
-          '/',
-          '/blog/*',
-          '/service/*',
-        ],
-        disallow: [
-          '/api/*',
-          '/admin/*',
-          '/contact/*',
-          '/team/*',
-          '/case/*',
-        ],
+        userAgent: 'Claude',
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
+      },
+      // AI 爬蟲規則 - Cohere
+      {
+        userAgent: 'Cohere-AI',
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
+      },
+      // AI 爬蟲規則 - Perplexity
+      {
+        userAgent: 'PerplexityBot',
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
+      },
+      // AI 爬蟲規則 - Google Bard/Gemini
+      {
+        userAgent: 'Google-Extended',
+        allow: aiAllowedPaths,
+        disallow: aiDisallowPaths,
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

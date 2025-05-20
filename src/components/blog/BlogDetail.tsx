@@ -9,23 +9,99 @@ import { cn } from '@/lib/utils'
 import { BlogContent } from '@/components/blog'
 import { Post, formatDate } from '@/lib/blog-utils'
 import toast from 'react-hot-toast'
+import { 
+  trackBlogView, 
+  trackBlogInteraction, 
+  trackRelatedBlogClick,
+  trackBlogShare,
+  trackUserBehavior
+} from '@/lib/analytics'
 
 // 共用樣式常數
-const BUTTON_BASE_STYLES = "flex items-center space-x-1 px-3 py-1.5 rounded-full transition-colors"
+const BUTTON_BASE_STYLES = "flex items-center space-x-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-colors"
 const BUTTON_LIKED_STYLES = "bg-red-50 text-red-500"
 const BUTTON_DEFAULT_STYLES = "bg-gray-100 text-gray-600 hover:bg-gray-200"
-const SHARE_BUTTON_STYLES = "flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+const SHARE_BUTTON_STYLES = "flex items-center w-full px-4 py-3 sm:py-2 text-sm text-gray-700 hover:bg-gray-100"
+
+// 相關文章卡片組件
+const RelatedPostCard: React.FC<{ post: Post, index: number, originPostId?: string }> = ({ post, index, originPostId }) => {
+  // 處理點擊事件
+  const handleClick = () => {
+    if (originPostId) {
+      trackRelatedBlogClick(originPostId, post.slug, post.title, index + 1);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.1 + (index * 0.1) }}
+      className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+    >
+      <Link href={`/blog/${post.slug}`} className="block" onClick={handleClick}>
+        <div className="relative h-40 sm:h-48 w-full overflow-hidden">
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform hover:scale-105 duration-500"
+          />
+          {post.category && (
+            <span className="absolute top-3 left-3 bg-white/90 text-primary text-xs font-medium px-2 py-1 rounded-full">
+              {post.category}
+            </span>
+          )}
+        </div>
+        <div className="p-4 sm:p-5">
+          <h3 className="text-base sm:text-lg font-semibold mb-2 text-gray-900 leading-tight line-clamp-2">
+            {post.title}
+          </h3>
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>{formatDate(post.publishedAt)}</span>
+            {post.readTime && <span>{post.readTime} 分鐘閱讀</span>}
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 interface BlogDetailProps {
   post: Post
+  relatedPosts?: Post[]
 }
 
-const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
+const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const shareMenuRef = useRef<HTMLDivElement>(null)
   const shareButtonRef = useRef<HTMLButtonElement>(null)
+  
+  // 記錄頁面加載性能
+  useEffect(() => {
+    // 等待頁面完全加載
+    window.addEventListener('load', () => {
+      // 使用 Performance API 收集性能指標
+      if (window.performance) {
+        const navEntry = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const paintEntries = window.performance.getEntriesByType('paint');
+        
+        let firstContentfulPaint = 0;
+        const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+        if (fcpEntry) {
+          firstContentfulPaint = fcpEntry.startTime;
+        }
+        
+        // 追蹤內容加載性能
+        trackUserBehavior('content_load', 'blog', post.id, 0);
+      }
+    });
+    
+    // 追蹤文章瀏覽
+    trackBlogView(post.id, post.title, post.category, post.author?.name);
+  }, [post]);
 
   // 基於文章ID生成固定的點讚基數，確保相同文章每次渲染點讚數一致
   useEffect(() => {
@@ -83,8 +159,14 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       toast.success("感謝您的喜歡！您的支持是我們創作的動力", {
         duration: 2000
       })
+      
+      // 追蹤點讚事件
+      trackBlogInteraction(post.id, post.title, 'like');
     } else {
       delete likedPosts[post.id]
+      
+      // 追蹤取消點讚事件
+      trackBlogInteraction(post.id, post.title, 'unlike');
     }
     localStorage.setItem('likedPosts', JSON.stringify(likedPosts))
   }
@@ -108,6 +190,9 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
     const url = encodeURIComponent(getFullArticleUrl())
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank')
     setShowShareMenu(false)
+    
+    // 追蹤分享事件
+    trackBlogShare(post.id, post.title, 'facebook');
   }
 
   const shareOnTwitter = () => {
@@ -115,12 +200,18 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
     const text = encodeURIComponent(post.title)
     window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank')
     setShowShareMenu(false)
+    
+    // 追蹤分享事件
+    trackBlogShare(post.id, post.title, 'twitter');
   }
 
   const shareOnLine = () => {
     const url = encodeURIComponent(getFullArticleUrl())
     window.open(`https://social-plugins.line.me/lineit/share?url=${url}`, '_blank')
     setShowShareMenu(false)
+    
+    // 追蹤分享事件
+    trackBlogShare(post.id, post.title, 'line');
   }
 
   const copyLink = () => {
@@ -129,8 +220,20 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
     toast.success("連結已複製到剪貼簿", {
       duration: 2000
     })
+    
+    // 追蹤複製連結事件
+    trackBlogShare(post.id, post.title, 'copy');
   }
   
+  // 處理標籤點擊
+  const handleTagClick = (tag: string) => {
+    // 導航到標籤頁面
+    window.location.href = `/blog?tag=${encodeURIComponent(tag)}`
+    
+    // 追蹤標籤點擊
+    trackUserBehavior('tag_click', 'blog', tag);
+  }
+
   // 添加在最後面，export default 之前
   const styles = `
     /* 確保文章中的 div 元素顯示 */
@@ -163,14 +266,38 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
-      margin: 2rem 0 !important;
-      padding: 1rem !important;
+      margin: 1.5rem 0 !important;
+      padding: 0.75rem !important;
       border-radius: 0.5rem !important;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
       position: relative !important;
       z-index: 1 !important;
       width: 100% !important;
       box-sizing: border-box !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.stat-highlight,
+      .prose div.response-model,
+      .prose div.action-checklist,
+      .prose div.case-study,
+      .prose div.pro-tip,
+      .prose div.action-plan,
+      .prose div.cta-section,
+      .prose div.warning-box,
+      .prose div.info-box,
+      .prose div.note-box,
+      .prose div.image-gallery,
+      .prose div.expert-quote,
+      .prose div.product-recommendation,
+      .prose div.timeline,
+      .prose div.step-guide,
+      .prose div.legal-note,
+      .prose div.faq-section,
+      .prose div.faq-item {
+        margin: 2rem 0 !important;
+        padding: 1rem !important;
+      }
     }
     
     /* 設定 legal-note 樣式 */
@@ -186,6 +313,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       font-weight: 600 !important;
       color: #1f2937 !important;
       margin-bottom: 0.75rem !important;
+      font-size: 1rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.legal-note h4 {
+        font-size: 1.125rem !important;
+      }
     }
     
     .prose div.legal-note h4:before {
@@ -196,18 +330,38 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
     .prose div.legal-note p {
       color: #4b5563 !important;
       margin-bottom: 0.5rem !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.legal-note p {
+        font-size: 1rem !important;
+      }
     }
     
     .prose div.legal-note ul {
       list-style-type: disc !important;
-      padding-left: 1.5rem !important;
+      padding-left: 1.25rem !important;
       margin-top: 0.5rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.legal-note ul {
+        padding-left: 1.5rem !important;
+      }
     }
     
     .prose div.legal-note li {
       color: #4b5563 !important;
       margin-bottom: 0.25rem !important;
       display: list-item !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.legal-note li {
+        font-size: 1rem !important;
+      }
     }
     
     /* FAQ區塊樣式 */
@@ -222,17 +376,30 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       background-color: rgba(230, 39, 51, 0.1) !important;
       color: #e62733 !important;
       font-weight: 700 !important;
-      padding: 1rem !important;
+      padding: 0.75rem 1rem !important;
       margin: 0 !important;
-      font-size: 1.125rem !important;
+      font-size: 1rem !important;
       line-height: 1.5 !important;
       display: block !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.faq-section h3 {
+        padding: 1rem !important;
+        font-size: 1.125rem !important;
+      }
     }
     
     .prose div.faq-item {
       border-bottom: 1px solid #e5e7eb !important;
       margin: 0 !important;
-      padding: 1.5rem !important;
+      padding: 1rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.faq-item {
+        padding: 1.5rem !important;
+      }
     }
     
     .prose div.faq-item:last-child {
@@ -240,54 +407,102 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
     }
     
     .prose div.faq-item h4 {
-      font-size: 1.125rem !important;
+      font-size: 1rem !important;
       font-weight: 600 !important;
       color: #e62733 !important;
       margin-bottom: 0.75rem !important;
       display: block !important;
     }
     
+    @media (min-width: 640px) {
+      .prose div.faq-item h4 {
+        font-size: 1.125rem !important;
+      }
+    }
+    
     .prose div.faq-item p {
       color: #4b5563 !important;
       margin-bottom: 0.5rem !important;
       display: block !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.faq-item p {
+        font-size: 1rem !important;
+      }
     }
     
     .prose div.faq-item ul {
       list-style-type: disc !important;
-      padding-left: 1.5rem !important;
+      padding-left: 1.25rem !important;
       margin-top: 0.5rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.faq-item ul {
+        padding-left: 1.5rem !important;
+      }
     }
     
     .prose div.faq-item li {
       color: #4b5563 !important;
       margin-bottom: 0.25rem !important;
       display: list-item !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.faq-item li {
+        font-size: 1rem !important;
+      }
     }
 
     /* CTA區塊樣式強化 */
     .prose div.cta-section {
       display: block !important;
       background-color: #ebf5ff !important;
-      padding: 2rem !important;
+      padding: 1.5rem 1rem !important;
       border-radius: 0.5rem !important;
-      margin: 2rem 0 !important;
+      margin: 1.5rem 0 !important;
       text-align: center !important;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.cta-section {
+        padding: 2rem !important;
+        margin: 2rem 0 !important;
+      }
     }
     
     .prose div.cta-section h3 {
       color: #1e40af !important;
       font-weight: 700 !important;
-      font-size: 1.5rem !important;
-      margin-bottom: 1rem !important;
+      font-size: 1.25rem !important;
+      margin-bottom: 0.75rem !important;
       display: block !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.cta-section h3 {
+        font-size: 1.5rem !important;
+        margin-bottom: 1rem !important;
+      }
     }
     
     .prose div.cta-section p {
       color: #1e3a8a !important;
-      margin-bottom: 1.5rem !important;
+      margin-bottom: 1rem !important;
       display: block !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.cta-section p {
+        margin-bottom: 1.5rem !important;
+        font-size: 1rem !important;
+      }
     }
     
     .prose div.cta-section a.cta-button {
@@ -295,15 +510,37 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       background-color: #2563eb !important;
       color: white !important;
       font-weight: 600 !important;
-      padding: 0.75rem 2rem !important;
+      padding: 0.625rem 1.5rem !important;
       border-radius: 0.375rem !important;
       text-decoration: none !important;
       transition: background-color 0.2s !important;
+      font-size: 0.9375rem !important;
+    }
+    
+    @media (min-width: 640px) {
+      .prose div.cta-section a.cta-button {
+        padding: 0.75rem 2rem !important;
+        font-size: 1rem !important;
+      }
     }
     
     .prose div.cta-section a.cta-button:hover {
       background-color: #1d4ed8 !important;
       text-decoration: none !important;
+    }
+    
+    /* 行動裝置 touch targets 優化 */
+    @media (max-width: 640px) {
+      .prose a {
+        padding: 0.125rem 0 !important;
+      }
+      
+      .prose div a.cta-button {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        padding: 0.75rem 1rem !important;
+      }
     }
     
     /* 確保所有區塊內元素在低級瀏覽器中也能正確顯示 */
@@ -385,13 +622,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
   }, []);
 
   return (
-    <article className="py-12 bg-white">
+    <article className="py-8 sm:py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          {/* 回到文章列表 */}
+          {/* 回到文章列表 - 增加觸控區域 */}
           <Link 
             href="/blog" 
-            className="inline-flex items-center text-gray-600 hover:text-primary mb-8"
+            className="inline-flex items-center text-gray-600 hover:text-primary mb-6 sm:mb-8 py-2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -410,12 +647,12 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             返回行銷新知
           </Link>
           
-          {/* 封面圖片 */}
+          {/* 封面圖片 - 調整高度 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative h-[400px] w-full rounded-xl overflow-hidden mb-8"
+            className="relative h-[280px] sm:h-[400px] w-full rounded-xl overflow-hidden mb-6 sm:mb-8"
           >
             <Image
               src={post.coverImage}
@@ -425,41 +662,41 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
               priority
             />
             {post.category && (
-              <span className="absolute top-6 left-6 bg-white/90 text-primary text-sm font-medium px-4 py-1.5 rounded-full">
+              <span className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/90 text-primary text-xs sm:text-sm font-medium px-3 py-1 sm:px-4 sm:py-1.5 rounded-full">
                 {post.category}
               </span>
             )}
           </motion.div>
           
-          {/* 文章標題區塊 */}
+          {/* 文章標題區塊 - 調整文字大小和間距 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
             {/* 主標題 */}
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight text-gray-900 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 leading-tight text-gray-900 tracking-tight">
               {post.title}
             </h1>
             
             {/* 副標題/摘要 */}
             {post.summary && (
-              <p className="text-xl text-gray-600 font-normal mt-4 leading-relaxed">
+              <p className="text-lg sm:text-xl text-gray-600 font-normal mt-3 sm:mt-4 leading-relaxed">
                 {post.summary}
               </p>
             )}
           </motion.div>
           
-          {/* AI優化摘要區塊 */}
+          {/* AI優化摘要區塊 - 改善間距 */}
           {post.summary && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              className="mb-8 bg-gray-50 rounded-lg p-6 border-l-4 border-primary"
+              className="mb-6 sm:mb-8 bg-gray-50 rounded-lg p-4 sm:p-6 border-l-4 border-primary"
             >
-              <h2 className="text-lg font-semibold mb-2 text-gray-900">文章重點摘要</h2>
+              <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-900">文章重點摘要</h2>
               <div className="prose prose-sm max-w-none">
                 <p className="text-gray-700 mb-3">{post.summary}</p>
                 {post.tags && post.tags.length > 0 && (
@@ -481,12 +718,12 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             </motion.div>
           )}
           
-          {/* 文章元信息 */}
+          {/* 文章元信息 - 優化間距與觸控 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex items-center justify-between mb-10 py-4 border-y border-gray-200"
+            className="flex flex-wrap sm:flex-nowrap items-center justify-between mb-8 sm:mb-10 py-4 border-y border-gray-200 gap-y-4"
           >
             <div className="flex items-center">
               {post.author.avatar && (
@@ -509,12 +746,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
-              {/* 點讚按鈕 */}
+            <div className="flex items-center space-x-3 w-full sm:w-auto justify-end">
+              {/* 點讚按鈕 - 增加觸控區域 */}
               <button
                 onClick={handleLike}
                 className={cn(
                   BUTTON_BASE_STYLES,
+                  "min-w-[70px] justify-center",
                   isLiked ? BUTTON_LIKED_STYLES : BUTTON_DEFAULT_STYLES
                 )}
                 aria-label={isLiked ? "取消喜歡文章" : "喜歡文章"}
@@ -523,21 +761,21 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
                   "h-4 w-4", 
                   isLiked && "fill-red-500 text-red-500"
                 )} />
-                <span className="text-xs font-medium">{likeCount}</span>
+                <span className="text-xs sm:text-sm font-medium">{likeCount}</span>
               </button>
               
-              {/* 分享按鈕 */}
+              {/* 分享按鈕 - 增加觸控區域 */}
               <div className="relative">
                 <button
                   ref={shareButtonRef}
                   onClick={toggleShareMenu}
-                  className={cn(BUTTON_BASE_STYLES, BUTTON_DEFAULT_STYLES)}
+                  className={cn(BUTTON_BASE_STYLES, "min-w-[70px] justify-center", BUTTON_DEFAULT_STYLES)}
                   aria-expanded={showShareMenu}
                   aria-haspopup="true"
                   aria-label="分享文章"
                 >
                   <Share2 className="h-4 w-4" />
-                  <span className="text-xs font-medium">分享</span>
+                  <span className="text-xs sm:text-sm font-medium">分享</span>
                 </button>
                 
                 {showShareMenu && (
@@ -588,25 +826,48 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             </div>
           </motion.div>
           
-          {/* 文章內容 */}
+          {/* 文章內容 - CSS樣式部分需更新 */}
           <BlogContent content={post.content} />
           
-          {/* 文章標籤 */}
+          {/* 文章標籤 - 增強移動端體驗 */}
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-6 border-t border-gray-200">
+            <div className="mt-10 sm:mt-12 pt-6 border-t border-gray-200">
               <h3 className="text-lg font-semibold mb-4">相關標籤</h3>
               <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <Link
                     key={tag}
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="px-4 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors"
+                    className="px-3 sm:px-4 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors mb-2"
+                    onClick={() => handleTagClick(tag)}
                   >
                     {tag}
                   </Link>
                 ))}
               </div>
             </div>
+          )}
+          
+          {/* 相關文章區塊 - 優化移動端佈局 */}
+          {relatedPosts && relatedPosts.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-12 sm:mt-16 pt-8 border-t border-gray-200"
+            >
+              <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">延伸閱讀</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                {relatedPosts.map((relatedPost, index) => (
+                  <RelatedPostCard 
+                    key={relatedPost.slug} 
+                    post={relatedPost} 
+                    index={index} 
+                    originPostId={post.id}
+                  />
+                ))}
+              </div>
+            </motion.div>
           )}
         </div>
       </div>

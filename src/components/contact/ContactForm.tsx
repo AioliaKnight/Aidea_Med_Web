@@ -51,6 +51,18 @@ const contactTimes = [
   { value: "anytime", label: "任何時段皆可" }
 ];
 
+// 行銷來源選項
+const marketingSources = [
+  { value: "google", label: "Google 搜尋" },
+  { value: "facebook", label: "Facebook / Instagram" },
+  { value: "referral", label: "親友推薦" },
+  { value: "event", label: "活動/研討會" },
+  { value: "magazine", label: "雜誌/報紙" },
+  { value: "youtube", label: "YouTube" },
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "other", label: "其他方式" }
+];
+
 // 表單初始狀態
 const initialFormData: ContactFormData & {
   clinicSize: string;
@@ -88,7 +100,7 @@ const ContactForm = React.memo(({
   const [showThankYou, setShowThankYou] = useState(false)
   const [showExtraInfo, setShowExtraInfo] = useState(false)
   const [privacyChecked, setPrivacyChecked] = useState(false)
-  const [errors, setErrors] = useState<Record<keyof ContactFormData, string>>({})
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({})
 
   // 在客戶端獲取 URL 參數 - 使用useCallback優化
   const getUrlParams = useCallback(() => {
@@ -224,7 +236,7 @@ const ContactForm = React.memo(({
   );
 
   // 下拉選單模板
-  const renderSelect = (name: string, label: string, options: {value: string, label: string}[], required = false) => (
+  const renderSelect = (name: keyof ContactFormData, label: string, options: {value: string, label: string}[], required = false) => (
     <div className="mb-4">
       <label className="block text-sm font-medium text-gray-800 mb-2">
         {label + (required ? ' *' : '')}

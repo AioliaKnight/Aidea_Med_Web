@@ -255,36 +255,36 @@ const TeamMemberCard = ({ member, delay }: TeamMemberCardProps) => {
         {/* 頭像區域 - 改為置中且大小適中的圓形 */}
         <div className="flex justify-center pt-4 pb-2">
           <div className="relative overflow-hidden rounded-full aspect-square w-24 xs:w-28 sm:w-32 md:w-36">
-            {imageLoading && !imageError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full" aria-hidden="true">
-                <Spinner />
-              </div>
-            )}
-            {!imageError ? (
-              <OptimizedImage
-                src={member.image}
-                alt={`${member.name}的照片`}
-                fill
+          {imageLoading && !imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full" aria-hidden="true">
+              <Spinner />
+            </div>
+          )}
+          {!imageError ? (
+            <OptimizedImage
+              src={member.image}
+              alt={`${member.name}的照片`}
+              fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform"
                 sizes="(max-width: 480px) 96px, (max-width: 640px) 112px, (max-width: 768px) 128px, 144px"
-                onLoadComplete={() => setImageLoading(false)}
-                onError={() => setImageError(true)}
-                priority={delay === 0}
+              onLoadComplete={() => setImageLoading(false)}
+              onError={() => setImageError(true)}
+              priority={delay === 0}
                 quality={85}
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-full" aria-label="圖片無法載入">
-                <div className="flex flex-col items-center">
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-full" aria-label="圖片無法載入">
+              <div className="flex flex-col items-center">
                   <span className="text-3xl mb-1" role="img" aria-label="使用者圖示">👤</span>
                   <span className="text-[10px] text-gray-700">圖片無法載入</span>
-                </div>
               </div>
-            )}
-            {/* 懸停效果遮罩 */}
-            <div 
+            </div>
+          )}
+          {/* 懸停效果遮罩 */}
+          <div 
               className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/30 opacity-0 group-hover:opacity-100 transition duration-300"
-              aria-hidden="true"
-            >
+            aria-hidden="true"
+          >
             </div>
           </div>
         </div>
@@ -439,282 +439,282 @@ export default function TeamPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <PageHeader
-          title="專業團隊介紹"
+      <PageHeader
+        title="專業團隊介紹"
           description="由醫療行銷專家、設計師和技術開發人員組成的跨領域團隊，為各類醫療機構提供最專業的行銷服務"
-          variant="red"
-          size="md"
-          alignment="center"
-          backgroundImage="/images/bgline-w.webp"
-          className="border-b border-primary"
-        />
-        
-        <main>
-          {/* 團隊成員 */}
-          <section className="py-10 sm:py-16 md:py-20 bg-white">
-            <div className="container-custom">
-              <div 
+        variant="red"
+        size="md"
+        alignment="center"
+        backgroundImage="/images/bgline-w.webp"
+        className="border-b border-primary"
+      />
+      
+      <main>
+        {/* 團隊成員 */}
+        <section className="py-10 sm:py-16 md:py-20 bg-white">
+          <div className="container-custom">
+            <div 
                 className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 md:gap-6 lg:gap-8 max-w-7xl mx-auto" 
-                role="list"
-                aria-label="團隊成員列表"
-              >
-                {teamMembers.map((member, index) => (
-                  <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
-                ))}
-              </div>
+              role="list"
+              aria-label="團隊成員列表"
+            >
+              {teamMembers.map((member, index) => (
+                <TeamMemberCard key={member.name} member={member} delay={index * 0.1} />
+              ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* 團隊價值觀 */}
-          <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
-            <div className="container-custom">
-              <div className="text-center mb-8 sm:mb-16">
-                <h2 className="text-2xl xs:text-3xl sm:text-4xl font-black mb-3 sm:mb-4 border-b-2 border-primary pb-2 inline-block">
-                  團隊核心價值
-                </h2>
-                <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto mt-3 sm:mt-4 px-4">
+        {/* 團隊價值觀 */}
+        <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
+          <div className="container-custom">
+            <div className="text-center mb-8 sm:mb-16">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-black mb-3 sm:mb-4 border-b-2 border-primary pb-2 inline-block">
+                團隊核心價值
+              </h2>
+              <p className="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto mt-3 sm:mt-4 px-4">
                   我們的核心價值引領著我們如何思考、如何工作、以及如何與醫療專業人士和患者互動
-                </p>
-              </div>
+              </p>
+            </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 lg:gap-6" role="list" aria-label="團隊價值觀">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 lg:gap-6" role="list" aria-label="團隊價值觀">
                 {coreValues.map((value, index) => (
-                  <motion.div 
-                    key={value.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-white border-b-2 border-primary p-4 sm:p-6"
-                    tabIndex={0}
-                    role="article"
-                  >
-                    <div className="mb-3 sm:mb-4" aria-hidden="true">
-                      <value.icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+                <motion.div 
+                  key={value.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white border-b-2 border-primary p-4 sm:p-6"
+                  tabIndex={0}
+                  role="article"
+                >
+                  <div className="mb-3 sm:mb-4" aria-hidden="true">
+                    <value.icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+                  </div>
+                  <h3 className="text-base xs:text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
+                    {value.title}
+                  </h3>
+                  <p className="text-xs xs:text-sm sm:text-base text-gray-700">
+                    {value.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 團隊優勢 */}
+        <section className="py-10 sm:py-16 md:py-20 bg-white">
+          <div className="container-custom">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+              <div>
+                <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 border-b-2 border-primary pb-2 inline-block">
+                  專業醫療行銷團隊
+                </h2>
+                <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8">
+                    我們不僅是行銷專家，更深入理解各類醫療專科的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為各類醫療專業人士創造真正有價值的行銷解決方案。
+                </p>
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8" role="list" aria-label="我們的優勢">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mr-3 mt-1">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
                     </div>
-                    <h3 className="text-base xs:text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
-                      {value.title}
-                    </h3>
-                    <p className="text-xs xs:text-sm sm:text-base text-gray-700">
-                      {value.description}
-                    </p>
-                  </motion.div>
-                ))}
+                    <p className="text-sm sm:text-base text-gray-700">我們的團隊成員平均擁有<strong>8年以上</strong>的醫療行銷經驗</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mr-3 mt-1">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                      <p className="text-sm sm:text-base text-gray-700">我們與超過<strong>100家醫療機構</strong>合作，深知各類專科的獨特需求</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mr-3 mt-1">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <p className="text-sm sm:text-base text-gray-700">我們的客戶平均實現<strong>40%以上</strong>的新病患增長</p>
+                  </div>
+                </div>
+                <div>
+                  <Link 
+                    href="/service" 
+                    className="inline-flex items-center px-5 sm:px-6 py-2 sm:py-3 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-base"
+                    prefetch
+                    aria-label="了解更多服務內容"
+                  >
+                    <span className="text-white">了解我們的服務</span>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 xs:gap-4">
+                <div className="relative overflow-hidden rounded-full aspect-square">
+                  <OptimizedImage 
+                    src="/images/team/office-1.png" 
+                    alt="現代化的辦公環境" 
+                    fill
+                    className="object-cover w-full h-full"
+                    quality={90}
+                    sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-full aspect-square">
+                  <OptimizedImage 
+                    src="/images/team/office-2.png" 
+                    alt="團隊協作空間" 
+                    fill
+                    className="object-cover w-full h-full"
+                    quality={90}
+                    sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-full aspect-square">
+                  <OptimizedImage 
+                    src="/images/team/office-3.png" 
+                    alt="創意討論空間" 
+                    fill
+                    className="object-cover w-full h-full"
+                    quality={90}
+                    sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-full aspect-square">
+                  <OptimizedImage 
+                    src="/images/team/office-4.png" 
+                    alt="會議與討論空間" 
+                    fill
+                    className="object-cover w-full h-full"
+                    quality={90}
+                    sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
+                  />
+                </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* 團隊優勢 */}
-          <section className="py-10 sm:py-16 md:py-20 bg-white">
-            <div className="container-custom">
-              <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+        {/* 人才招募區塊 */}
+        <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
+          <div className="container-custom">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
                 <div>
                   <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 border-b-2 border-primary pb-2 inline-block">
-                    專業醫療行銷團隊
+                    加入我們的團隊
                   </h2>
-                  <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8">
-                    我們不僅是行銷專家，更深入理解各類醫療專科的獨特挑戰與機會。我們的團隊由來自醫療、設計、行銷與技術背景的專業人才組成，共同致力於為各類醫療專業人士創造真正有價值的行銷解決方案。
-                  </p>
-                  <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8" role="list" aria-label="我們的優勢">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 mr-3 mt-1">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="text-sm sm:text-base text-gray-700">我們的團隊成員平均擁有<strong>8年以上</strong>的醫療行銷經驗</p>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 mr-3 mt-1">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="text-sm sm:text-base text-gray-700">我們與超過<strong>100家醫療機構</strong>合作，深知各類專科的獨特需求</p>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 mr-3 mt-1">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-primary">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="text-sm sm:text-base text-gray-700">我們的客戶平均實現<strong>40%以上</strong>的新病患增長</p>
-                    </div>
-                  </div>
-                  <div>
-                    <Link 
-                      href="/service" 
-                      className="inline-flex items-center px-5 sm:px-6 py-2 sm:py-3 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-base"
-                      prefetch
-                      aria-label="了解更多服務內容"
-                    >
-                      <span className="text-white">了解我們的服務</span>
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 xs:gap-4">
-                  <div className="relative overflow-hidden rounded-full aspect-square">
-                    <OptimizedImage 
-                      src="/images/team/office-1.png" 
-                      alt="現代化的辦公環境" 
-                      fill
-                      className="object-cover w-full h-full"
-                      quality={90}
-                      sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
-                    />
-                  </div>
-                  <div className="relative overflow-hidden rounded-full aspect-square">
-                    <OptimizedImage 
-                      src="/images/team/office-2.png" 
-                      alt="團隊協作空間" 
-                      fill
-                      className="object-cover w-full h-full"
-                      quality={90}
-                      sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
-                    />
-                  </div>
-                  <div className="relative overflow-hidden rounded-full aspect-square">
-                    <OptimizedImage 
-                      src="/images/team/office-3.png" 
-                      alt="創意討論空間" 
-                      fill
-                      className="object-cover w-full h-full"
-                      quality={90}
-                      sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
-                    />
-                  </div>
-                  <div className="relative overflow-hidden rounded-full aspect-square">
-                    <OptimizedImage 
-                      src="/images/team/office-4.png" 
-                      alt="會議與討論空間" 
-                      fill
-                      className="object-cover w-full h-full"
-                      quality={90}
-                      sizes="(max-width: 640px) 40vw, (max-width: 768px) 33vw, 25vw"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 人才招募區塊 */}
-          <section className="py-10 sm:py-16 md:py-20 bg-gray-50">
-            <div className="container-custom">
-              <div className="max-w-6xl mx-auto">
-                <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                  <div>
-                    <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 border-b-2 border-primary pb-2 inline-block">
-                      加入我們的團隊
-                    </h2>
-                    <p className="text-base sm:text-lg text-gray-700 mb-6">
+                  <p className="text-base sm:text-lg text-gray-700 mb-6">
                       我們正在尋找對醫療行銷充滿熱情的人才加入我們的團隊。在這裡，你將有機會與各類醫療領域專業人士合作，打造有影響力的品牌策略，同時不斷學習成長。
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="p-4 sm:p-6 bg-white shadow-sm">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">我們提供</h3>
-                        <ul className="space-y-2" role="list">
-                          <li className="flex items-start text-sm sm:text-base text-gray-700">
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>具競爭力的薪資與完善的福利制度</span>
-                          </li>
-                          <li className="flex items-start text-sm sm:text-base text-gray-700">
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>彈性工作制度與舒適的工作環境</span>
-                          </li>
-                          <li className="flex items-start text-sm sm:text-base text-gray-700">
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>持續學習與專業發展的機會</span>
-                          </li>
-                          <li className="flex items-start text-sm sm:text-base text-gray-700">
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>與頂尖醫療專業人士合作的平台</span>
-                          </li>
-                        </ul>
-                      </div>
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="p-4 sm:p-6 bg-white shadow-sm">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">我們提供</h3>
+                      <ul className="space-y-2" role="list">
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>具競爭力的薪資與完善的福利制度</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>彈性工作制度與舒適的工作環境</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>持續學習與專業發展的機會</span>
+                        </li>
+                        <li className="flex items-start text-sm sm:text-base text-gray-700">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>與頂尖醫療專業人士合作的平台</span>
+                        </li>
+                      </ul>
                     </div>
-                    
-                    <Link
-                      href="https://www.104.com.tw/company/1a2x6bmyub#info06"
-                      className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-base"
-                      aria-label="前往104人力銀行查看職缺"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>立即申請職位</span>
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </Link>
                   </div>
                   
-                  <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-                      目前職缺
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      <div className="border-b border-gray-100 pb-4">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療內容策略專員</h4>
-                        <p className="text-sm text-gray-700 mb-2">
+                  <Link
+                    href="https://www.104.com.tw/company/1a2x6bmyub#info06"
+                    className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-base"
+                    aria-label="前往104人力銀行查看職缺"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>立即申請職位</span>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </Link>
+                </div>
+                
+                <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+                    目前職缺
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療內容策略專員</h4>
+                      <p className="text-sm text-gray-700 mb-2">
                           負責規劃與撰寫各類醫療專業內容，包括網站內容、社群貼文、部落格文章等，需具備醫療相關知識或學習意願。
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
-                        </div>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
                       </div>
-                      
-                      <div className="border-b border-gray-100 pb-4">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-1">數位行銷執行專員</h4>
-                        <p className="text-sm text-gray-700 mb-2">
+                    </div>
+                    
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">數位行銷執行專員</h4>
+                      <p className="text-sm text-gray-700 mb-2">
                           負責執行醫療機構的數位行銷活動，包括廣告投放、追蹤與優化，社群媒體經營等，歡迎有醫療行銷熱情的新手。
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職/兼職</span>
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北/遠端</span>
-                        </div>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職/兼職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北/遠端</span>
                       </div>
-                      
-                      <div className="border-b border-gray-100 pb-4">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-1">UI/UX設計師</h4>
-                        <p className="text-sm text-gray-700 mb-2">
+                    </div>
+                    
+                    <div className="border-b border-gray-100 pb-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">UI/UX設計師</h4>
+                      <p className="text-sm text-gray-700 mb-2">
                           為各類醫療機構設計網站及數位應用介面，創造具專業感且易用的使用者體驗，需對醫療品牌設計有興趣。
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
-                        </div>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
                       </div>
-                      
-                      <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療行銷顧問</h4>
-                        <p className="text-sm text-gray-700 mb-2">
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">醫療行銷顧問</h4>
+                      <p className="text-sm text-gray-700 mb-2">
                           為各類醫療機構提供行銷策略規劃與諮詢，協助建立專業品牌與提升市場競爭力，需具備3年以上相關經驗。
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
-                        </div>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">全職</span>
+                        <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">台北</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* 成就展示區塊 */}
           <AnimatedSection className="py-16 bg-white dark:bg-gray-800">
@@ -764,36 +764,36 @@ export default function TeamPage() {
             </div>
           </AnimatedSection>
 
-          {/* CTA Section */}
-          <section className="py-10 sm:py-16 md:py-20 bg-black text-white">
-            <div className="container-custom">
-              <div className="max-w-4xl mx-auto text-center px-4">
-                <h2 className="text-2xl xs:text-3xl sm:text-4xl font-black mb-4 sm:mb-6">
-                  準備好開始合作了嗎？
-                </h2>
-                <p className="text-base xs:text-lg sm:text-xl mb-6 sm:mb-8 max-w-3xl mx-auto">
+        {/* CTA Section */}
+        <section className="py-10 sm:py-16 md:py-20 bg-black text-white">
+          <div className="container-custom">
+            <div className="max-w-4xl mx-auto text-center px-4">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-black mb-4 sm:mb-6">
+                準備好開始合作了嗎？
+              </h2>
+              <p className="text-base xs:text-lg sm:text-xl mb-6 sm:mb-8 max-w-3xl mx-auto">
                   讓我們的專業團隊，為您的醫療機構打造最適合的品牌成長策略
-                </p>
-                <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center">
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-lg"
-                    aria-label="立即預約專業行銷諮詢"
-                  >
-                    立即預約諮詢
-                  </Link>
-                  <Link
-                    href="/service"
-                    className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-black focus:bg-white focus:text-black transition-colors text-sm sm:text-lg"
-                    aria-label="了解更多服務內容"
-                  >
-                    了解服務內容
-                  </Link>
-                </div>
+              </p>
+              <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white font-medium hover:bg-primary-dark focus:bg-primary-dark transition-colors text-sm sm:text-lg"
+                  aria-label="立即預約專業行銷諮詢"
+                >
+                  立即預約諮詢
+                </Link>
+                <Link
+                  href="/service"
+                  className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-black focus:bg-white focus:text-black transition-colors text-sm sm:text-lg"
+                  aria-label="了解更多服務內容"
+                >
+                  了解服務內容
+                </Link>
               </div>
             </div>
-          </section>
-        </main>
+          </div>
+        </section>
+      </main>
 
         {/* 回到頂部按鈕 */}
         <motion.button

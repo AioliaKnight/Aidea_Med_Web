@@ -281,6 +281,113 @@ export const trackError = (
 };
 
 /**
+ * 追蹤博客文章瀏覽事件
+ * @param blogId 博客文章ID或Slug
+ * @param blogTitle 博客文章標題
+ * @param blogCategory 博客文章類別
+ * @param authorName 作者名稱
+ */
+export const trackBlogView = (
+  blogId: string,
+  blogTitle: string,
+  blogCategory?: string,
+  authorName?: string
+): void => {
+  pushEvent('blog_view', {
+    blog_id: blogId,
+    blog_title: blogTitle,
+    blog_category: blogCategory || '未分類',
+    author_name: authorName || '系統管理員',
+    timestamp: new Date().toISOString(),
+    session_id: getOrCreateSessionId()
+  });
+};
+
+/**
+ * 追蹤博客互動事件
+ * @param blogId 博客文章ID或Slug
+ * @param blogTitle 博客文章標題
+ * @param interactionType 互動類型 (例如: 'scroll', 'bookmark', 'like', 'comment')
+ * @param interactionValue 互動值 (例如滾動百分比或評論內容)
+ */
+export const trackBlogInteraction = (
+  blogId: string,
+  blogTitle: string,
+  interactionType: string,
+  interactionValue?: string | number
+): void => {
+  pushEvent('blog_interaction', {
+    blog_id: blogId,
+    blog_title: blogTitle,
+    interaction_type: interactionType,
+    interaction_value: interactionValue,
+    timestamp: new Date().toISOString(),
+    session_id: getOrCreateSessionId()
+  });
+};
+
+/**
+ * 追蹤相關文章點擊事件
+ * @param sourceBlogId 來源博客文章ID或Slug
+ * @param targetBlogId 目標博客文章ID或Slug
+ * @param targetBlogTitle 目標博客文章標題
+ * @param position 推薦位置（例如第一篇、第二篇等）
+ */
+export const trackRelatedBlogClick = (
+  sourceBlogId: string,
+  targetBlogId: string,
+  targetBlogTitle: string,
+  position?: number
+): void => {
+  pushEvent('related_blog_click', {
+    source_blog_id: sourceBlogId,
+    target_blog_id: targetBlogId,
+    target_blog_title: targetBlogTitle,
+    position: position,
+    timestamp: new Date().toISOString(),
+    session_id: getOrCreateSessionId()
+  });
+};
+
+/**
+ * 追蹤博客分享事件
+ * @param blogId 博客文章ID或Slug
+ * @param blogTitle 博客文章標題
+ * @param shareMethod 分享方式 (例如: 'facebook', 'twitter', 'line', 'email')
+ */
+export const trackBlogShare = (
+  blogId: string,
+  blogTitle: string,
+  shareMethod: string
+): void => {
+  pushEvent('blog_share', {
+    blog_id: blogId,
+    blog_title: blogTitle,
+    share_method: shareMethod,
+    timestamp: new Date().toISOString(),
+    session_id: getOrCreateSessionId()
+  });
+};
+
+/**
+ * 獲取或創建會話ID
+ * @returns {string} 會話ID
+ */
+const getOrCreateSessionId = (): string => {
+  if (typeof window === 'undefined') return 'server-side';
+  
+  const storageKey = 'aideamed_session_id';
+  let sessionId = sessionStorage.getItem(storageKey);
+  
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    sessionStorage.setItem(storageKey, sessionId);
+  }
+  
+  return sessionId;
+};
+
+/**
  * 追蹤用戶行為
  * @param actionName 行為名稱
  * @param category 類別

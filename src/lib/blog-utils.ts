@@ -51,24 +51,58 @@ export function calculateReadTime(content: string): number {
 
 // 生成文章的SEO元數據 - 客戶端可用
 export function generateBlogMetadata(post: Post) {
+  // 從環境變數獲取基礎 URL，如不存在則使用預設值
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com';
+  
+  // 為社交媒體優化圖片 URL
+  const imageUrl = post.coverImage.startsWith('http') 
+    ? post.coverImage 
+    : `${baseUrl}${post.coverImage}`;
+    
+  // 移除 HTML 標籤，獲得純文本摘要
+  const plainTextSummary = post.summary ? post.summary.replace(/<[^>]*>/g, '') : '';
+  
+  // 構建標準化的標題
+  const seoTitle = `${post.title} | Aidea:Med 醫療行銷顧問`;
+  
   return {
-    title: `${post.title} | Aidea:Med 醫療行銷顧問`,
-    description: post.summary,
+    title: seoTitle,
+    description: plainTextSummary,
+    keywords: post.tags?.join(', '),
+    alternates: {
+      canonical: `${baseUrl}/blog/${post.slug}`,
+    },
+    authors: [
+      { name: post.author.name, url: `${baseUrl}/team` }
+    ],
+    category: post.category || '醫療行銷',
     openGraph: {
       title: post.title,
-      description: post.summary,
+      description: plainTextSummary,
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
-      authors: [post.author.name],
+      authors: [`${baseUrl}/team`],
+      tags: post.tags,
+      locale: 'zh_TW',
+      url: `${baseUrl}/blog/${post.slug}`,
+      siteName: 'Aidea:Med 醫療行銷顧問',
       images: [
         {
-          url: post.coverImage,
+          url: imageUrl,
           width: 1200,
           height: 630,
           alt: post.title
         }
       ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: plainTextSummary,
+      images: [imageUrl],
+      creator: '@aideamed',
+      site: '@aideamed'
     }
   };
 }

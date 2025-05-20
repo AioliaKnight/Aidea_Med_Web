@@ -6,7 +6,7 @@ import { getAllBlogPosts } from '@/lib/blog-server'
  * 提供給搜尋引擎的網站地圖
  * 包含所有重要的頁面與動態路由
  * 使用 Next.js 內建的 MetadataRoute.Sitemap 功能
- * 最後更新: 2024-07-04
+ * 最後更新: 2024-07-20
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -67,11 +67,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/service/medical-ad-compliance`,
       lastModified: currentDate,
-      changeFrequency: 'weekly', 
+      changeFrequency: 'weekly',
       priority: 0.95, // 保持高優先級
-    }
-    // 註: 其他服務頁面如 brand-strategy, digital-marketing 等
-    // 待實際建立後再添加到 sitemap
+    },
+    // 新增更多服務頁面
+    {
+      url: `${baseUrl}/service/digital-marketing`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.92,
+    },
+    {
+      url: `${baseUrl}/service/brand-strategy`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.92,
+    },
+    {
+      url: `${baseUrl}/service/content-creation`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.90,
+    },
+    {
+      url: `${baseUrl}/service/seo-optimization`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.92,
+    },
+    {
+      url: `${baseUrl}/service/social-media-management`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.90,
+    },
   ]
   
   // 實際已實現的團隊成員詳情頁面
@@ -83,7 +112,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const caseRoutes: MetadataRoute.Sitemap = Array.isArray(caseStudies) 
     ? caseStudies.map(caseStudy => {
         // 檢查案例是否與醫療廣告法規相關
-        // 安全地檢查 caseStudy 是否有 tags 屬性
         const caseHasTags = caseStudy && 
                            typeof caseStudy === 'object' && 
                            'tags' in caseStudy && 
@@ -95,13 +123,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             tag.includes('法規') || 
             tag.includes('合規')
           );
+        
+        // 計算最後修改日期
+        let lastModified = currentDate;
+        if (caseStudy.updatedDate) {
+          lastModified = new Date(caseStudy.updatedDate);
+        } else if (caseStudy.publishedDate) {
+          lastModified = new Date(caseStudy.publishedDate);
+        }
+        
+        // 計算變更頻率
+        let changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
+        const monthsOld = (currentDate.getFullYear() - lastModified.getFullYear()) * 12 + 
+                        (currentDate.getMonth() - lastModified.getMonth());
+                        
+        if (monthsOld < 1) {
+          changeFrequency = 'weekly';
+        } else if (monthsOld > 12) {
+          changeFrequency = 'yearly';
+        }
       
         return {
           url: `${baseUrl}/case/${caseStudy.id}`,
-          lastModified: caseStudy.updatedDate 
-            ? new Date(caseStudy.updatedDate) 
-            : new Date(caseStudy.publishedDate || currentDate),
-          changeFrequency: 'monthly',
+          lastModified,
+          changeFrequency,
           // 提高醫療廣告相關案例的優先級
           priority: isMedicalAdCase ? 0.85 : (caseStudy.featured ? 0.8 : 0.7),
         };
@@ -120,9 +165,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // 確保文章有有效的發布日期
         const publishDate = post.publishedAt ? new Date(post.publishedAt) : currentDate;
         const monthsOld = (currentDate.getFullYear() - publishDate.getFullYear()) * 12 + 
-                          (currentDate.getMonth() - publishDate.getMonth());
+                        (currentDate.getMonth() - publishDate.getMonth());
         
-        // 較新的內容更頻繁更新
+        // 依據文章新鮮度設定更新頻率
         let changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
         if (monthsOld < 1) {
           changeFrequency = 'weekly';
@@ -130,77 +175,58 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency = 'yearly';
         }
         
-        // 檢查標題和內容中是否包含醫療廣告法規關鍵字
-        const title = typeof post.title === 'string' ? post.title.toLowerCase() : '';
-        
-        // 安全地檢查 post 是否有 excerpt 屬性
-        const excerpt = post && 
-                      typeof post === 'object' && 
-                      'excerpt' in post && 
-                      typeof post.excerpt === 'string' 
-                        ? post.excerpt.toLowerCase() 
-                        : '';
-        
-        // 安全地檢查 post 是否有 content 屬性
-        const content = post && 
-                       typeof post === 'object' && 
-                       'content' in post && 
-                       typeof post.content === 'string' 
-                         ? post.content.toLowerCase() 
-                         : '';
-        
-        // 更全面檢查醫療廣告法規相關內容
-        const keywordsToCheck = [
+        // 更高級的相關性檢查 - 針對內容與標籤
+        const highValueTags = [
           '醫療廣告', '法規', '合規', '衛福部', '醫療法', 
           '醫療行銷', '廣告違規', '醫師公會', '醫事法規',
-          '牙醫', '美容醫學', '醫療', '診所', '醫美'
+          '牙醫', '診所經營', 'EEAT', '專業性', '權威性'
         ];
         
-        const isMedicalAdComplianceRelated = (
-          keywordsToCheck.some(keyword => title.includes(keyword)) ||
-          keywordsToCheck.some(keyword => excerpt.includes(keyword)) ||
-          (post.tags && Array.isArray(post.tags) && post.tags.some(tag => 
-            keywordsToCheck.some(keyword => tag.includes(keyword))
-          ))
-        );
+        const titleLower = post.title.toLowerCase();
+        const hasSummary = typeof post.summary === 'string';
+        const summaryLower = hasSummary ? post.summary.toLowerCase() : '';
         
-        // 針對特定重要的文章提供更高優先級
-        const isDentalAdRegulations = post.slug === 'dental-advertising-regulations';
+        const tagRelevance = (post.tags && Array.isArray(post.tags))
+          ? post.tags.filter(tag => highValueTags.some(keyword => tag.includes(keyword))).length
+          : 0;
+          
+        const titleRelevance = highValueTags.filter(keyword => titleLower.includes(keyword)).length;
+        const summaryRelevance = hasSummary 
+          ? highValueTags.filter(keyword => summaryLower.includes(keyword)).length
+          : 0;
+          
+        // 計算綜合相關性分數 (0-10)
+        const relevanceScore = Math.min(10, (tagRelevance * 2) + (titleRelevance * 3) + summaryRelevance);
         
-        // 醫療廣告法規相關文章提高優先級
-        let priorityValue = 0.7; // 預設優先級
+        // 優先度依據相關性分數與新鮮度設定 (0.5-0.95)
+        let priority = 0.7; // 基礎優先度
         
-        if (isDentalAdRegulations) {
-          // 特定重要文章的最高優先級
-          priorityValue = 0.95;
-        } else if (isMedicalAdComplianceRelated) {
-          // 一般醫療廣告相關內容
-          priorityValue = 0.92;
-        } else if (post.tags && Array.isArray(post.tags) && post.tags.some(tag => [
-          '醫療專業知識', '牙醫臨床案例', '醫療行銷策略', 'EEAT', '醫學研究'
-        ].includes(tag))) {
-          // 其他醫療相關的高價值內容
-          priorityValue = 0.9;
+        // 特定重要文章的最高優先級
+        if (post.slug === 'dental-advertising-regulations') {
+          priority = 0.95;
+        } 
+        // 高相關性內容
+        else if (relevanceScore >= 7) {
+          priority = 0.92;
+        } 
+        // 中相關性內容
+        else if (relevanceScore >= 4) {
+          priority = 0.85;
+        } 
+        // 新鮮內容加權
+        else if (monthsOld < 3) {
+          priority = 0.8;
         }
-        
-        // 確保有效的 slug
-        const slug = post.slug || post.id || `post-${publishDate.getTime()}`;
         
         return {
-          url: `${baseUrl}/blog/${slug}`,
-          lastModified: post.updatedAt 
-            ? new Date(post.updatedAt) 
-            : publishDate,
-          changeFrequency: changeFrequency,
-          // 根據內容重要性決定優先級
-          priority: priorityValue,
-        }
+          url: `${baseUrl}/blog/${post.slug}`,
+          lastModified: post.updatedAt ? new Date(post.updatedAt) : publishDate,
+          changeFrequency,
+          priority
+        };
       });
       
-      // 記錄成功獲取的部落格文章數量
       console.log(`Successfully added ${blogRoutes.length} blog posts to sitemap`);
-    } else {
-      console.warn('No blog posts found or returned array is empty');
     }
   } catch (error) {
     console.error('Error fetching blog data for sitemap:', error);
@@ -211,7 +237,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes, 
     ...serviceDetailRoutes, 
-    ...teamDetailRoutes,
+    ...teamDetailRoutes, 
     ...caseRoutes, 
     ...blogRoutes
   ]

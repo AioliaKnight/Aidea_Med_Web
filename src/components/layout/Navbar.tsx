@@ -102,7 +102,7 @@ const NavItem = React.memo(({
 }: { 
   item: NavItem; 
   isActive: boolean; 
-  navMode: 'default' | 'scrolled';
+  navMode: 'default' | 'scrolled'; 
   pathname: string; 
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -181,45 +181,45 @@ const NavItem = React.memo(({
         </button>
       ) : (
         // 無子選單的項目
-        <Link
-          href={item.href}
-          className={cn(
-            "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
-            activeStyle
-          )}
-          aria-current={isActive ? 'page' : undefined}
-          role="menuitem"
-        >
-          <div className="flex flex-col items-center">
-            <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
-            <span className={cn(
-              "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
-              secondaryStyle
-            )}>
-              {item.nameEn}
-            </span>
-          </div>
-          
-          <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
-            {isActive && (
-              <motion.div
-                layoutId="navIndicator"
-                className={cn(
-                  "h-[2px] rounded-full",
-                  textStyles[navMode].indicator
-                )}
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: '28px', opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ 
-                  duration: 0.4, 
-                  ease: [0.4, 0, 0.2, 1],
-                  opacity: { duration: 0.2 }
-                }}
-              />
+    <Link
+      href={item.href}
+      className={cn(
+        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
+        activeStyle
+      )}
+      aria-current={isActive ? 'page' : undefined}
+      role="menuitem"
+    >
+      <div className="flex flex-col items-center">
+        <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
+        <span className={cn(
+          "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
+          secondaryStyle
+        )}>
+          {item.nameEn}
+        </span>
+      </div>
+      
+      <div className="absolute -bottom-0.5 inset-x-0 h-[2px] flex justify-center">
+        {isActive && (
+          <motion.div
+            layoutId="navIndicator"
+            className={cn(
+              "h-[2px] rounded-full",
+              textStyles[navMode].indicator
             )}
-          </div>
-        </Link>
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: '28px', opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ 
+              duration: 0.4, 
+              ease: [0.4, 0, 0.2, 1],
+              opacity: { duration: 0.2 }
+            }}
+          />
+        )}
+      </div>
+    </Link>
       )}
 
       {/* 下拉選單 */}
@@ -506,25 +506,25 @@ export default function Navbar() {
                       </AnimatePresence>
                     </div>
                   ) : (
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
-                        pathname === item.href
-                          ? scrolled
-                            ? "bg-primary/10 text-primary"
-                            : "bg-white/10 text-white"
-                          : scrolled
-                          ? "text-gray-700 hover:bg-gray-50"
-                          : "text-white/90 hover:bg-white/5"
-                      )}
-                      onClick={toggleMobileMenu}
-                      role="menuitem"
-                      aria-current={pathname === item.href ? 'page' : undefined}
-                    >
-                      <span className="block">{item.name}</span>
-                      <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
-                    </Link>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
+                    pathname === item.href
+                      ? scrolled
+                        ? "bg-primary/10 text-primary"
+                        : "bg-white/10 text-white"
+                      : scrolled
+                      ? "text-gray-700 hover:bg-gray-50"
+                      : "text-white/90 hover:bg-white/5"
+                  )}
+                  onClick={toggleMobileMenu}
+                  role="menuitem"
+                  aria-current={pathname === item.href ? 'page' : undefined}
+                >
+                  <span className="block">{item.name}</span>
+                  <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
+                </Link>
                   )}
                 </div>
               ))}

@@ -107,6 +107,58 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
   }
 }
 
+// 新增：根據標籤和分類獲取相關文章
+export async function getRelatedPosts(currentPost: Post, limit: number = 3): Promise<Post[]> {
+  try {
+    // 獲取所有文章
+    const allPosts = await getAllBlogPosts();
+    
+    // 過濾掉當前文章
+    const otherPosts = allPosts.filter(post => post.slug !== currentPost.slug);
+    
+    // 為每篇文章計算相關性得分
+    const scoredPosts = otherPosts.map(post => {
+      let score = 0;
+      
+      // 相同分類的文章得分+3
+      if (post.category && post.category === currentPost.category) {
+        score += 3;
+      }
+      
+      // 相同標籤的文章，每個匹配標籤得分+1
+      if (post.tags && currentPost.tags) {
+        const matchingTags = post.tags.filter(tag => 
+          currentPost.tags.includes(tag)
+        );
+        score += matchingTags.length;
+      }
+      
+      return { post, score };
+    });
+    
+    // 依照得分排序，得分高的優先
+    const sortedPosts = scoredPosts
+      .sort((a, b) => b.score - a.score)
+      .filter(item => item.score > 0) // 只保留有相關性的文章
+      .map(item => item.post);
+    
+    // 如果相關文章不足，補充最新的文章
+    if (sortedPosts.length < limit) {
+      const remainingPosts = otherPosts
+        .filter(post => !sortedPosts.some(p => p.slug === post.slug))
+        .slice(0, limit - sortedPosts.length);
+      
+      return [...sortedPosts, ...remainingPosts].slice(0, limit);
+    }
+    
+    // 返回指定數量的相關文章
+    return sortedPosts.slice(0, limit);
+  } catch (error) {
+    console.error('Error fetching related posts:', error);
+    return [];
+  }
+}
+
 // 處理Markdown檔案 - 僅在伺服器端使用
 async function processMarkdownFile(fileContents: string, slug: string): Promise<Post> {
   // 使用matter解析文章的YAML前置資料

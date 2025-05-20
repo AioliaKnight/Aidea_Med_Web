@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { getBlogPost } from '@/lib/blog-server'
+import { getBlogPost, getRelatedPosts } from '@/lib/blog-server'
 import { generateBlogMetadata, type Post } from '@/lib/blog-utils'
 import { BlogDetail } from '@/components/blog'
 import { medicalContentViewport } from '@/app/viewport'
@@ -58,10 +58,10 @@ interface BlogPost {
 export const viewport = medicalContentViewport
 
 // 生成元資料
-export async function generateMetadata(props: { params: { slug: string } }) {
-  // 先解析 params，再使用其屬性
-  const params = await Promise.resolve(props.params);
-  const post = await getBlogPost(params.slug)
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  // 先await params再使用其屬性
+  const resolvedParams = await params;
+  const post = await getBlogPost(resolvedParams.slug);
   
   if (!post) {
     return {
@@ -101,8 +101,165 @@ function generateBlogStructuredData(post: BlogPost) {
   // 如果作者有專業認證，添加該信息
   const authorCredentials = post.author.credentials || '醫療行銷專家';
   const authorExpertise = post.author.expertise || ['醫療行銷', '診所品牌策略'];
+  
+  // 分析內容中的FAQ區塊
+  const faqMatch = post.content.match(/<div class="faq-section">([\s\S]*?)<\/div>/);
+  let faqItems = [];
+  
+  if (faqMatch) {
+    // 匹配每個問答對
+    const questionMatches = faqMatch[1].matchAll(/<div class="faq-item">\s*<h[34]>(.*?)<\/h[34]>\s*<p>([\s\S]*?)<\/p>\s*<\/div>/g);
+    
+    for (const match of questionMatches) {
+      if (match && match.length >= 3) {
+        faqItems.push({
+          "@type": "Question",
+          "name": match[1].trim().replace(/<[^>]*>/g, ''),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": match[2].trim().replace(/<[^>]*>/g, '')
+          }
+        });
+      }
+    }
+  }
+  
+  // 分析內容中的HowTo區塊
+  const howToMatch = post.content.match(/<div class="step-guide">([\s\S]*?)<\/div>/);
+  let howToData = null;
+  
+  if (howToMatch) {
+    const titleMatch = howToMatch[1].match(/<h[23][^>]*>(.*?)<\/h[23]>/);
+    const howToTitle = titleMatch ? titleMatch[1].trim().replace(/<[^>]*>/g, '') : '操作指南';
+    
+    const descriptionMatch = howToMatch[1].match(/<p class="intro">([\s\S]*?)<\/p>/);
+    const howToDescription = descriptionMatch ? descriptionMatch[1].trim().replace(/<[^>]*>/g, '') : '';
+    
+    // 匹配所有步驟
+    const stepMatches = howToMatch[1].matchAll(/<li[^>]*>\s*<h\d[^>]*>(.*?)<\/h\d>\s*<p>([\s\S]*?)<\/p>[\s\S]*?<\/li>/g);
+    const steps = [];
+    
+    let stepNumber = 1;
+    for (const match of stepMatches) {
+      if (match && match.length >= 3) {
+        steps.push({
+          "@type": "HowToStep",
+          "url": `${postUrl}#step-${stepNumber}`,
+          "name": match[1].trim().replace(/<[^>]*>/g, ''),
+          "text": match[2].trim().replace(/<[^>]*>/g, ''),
+          "position": stepNumber
+        });
+        stepNumber++;
+      }
+    }
+    
+    if (steps.length > 0) {
+      howToData = {
+        "@type": "HowTo",
+        "name": howToTitle,
+        "description": howToDescription,
+        "estimatedCost": {
+          "@type": "MonetaryAmount",
+          "currency": "TWD",
+          "value": "0"
+        },
+        "totalTime": `PT${steps.length * 15}M`,
+        "step": steps
+      };
+    }
+  }
 
-  return {
+  // 定義結構化資料類型，包含動態屬性
+  interface BlogStructuredData {
+    '@context': string;
+    '@type': string;
+    '@id': string;
+    headline: string;
+    name: string;
+    description: string;
+    abstract?: string;
+    image: {
+      '@type': string;
+      url: string;
+      width: number;
+      height: number;
+    };
+    datePublished: string;
+    dateModified: string;
+    author: {
+      '@type': string;
+      name: string;
+      url: string;
+      image?: string;
+      jobTitle?: string;
+      description?: string;
+      knowsAbout?: string[];
+      sameAs?: string[];
+    };
+    publisher: {
+      '@type': string;
+      name: string;
+      url: string;
+      logo: {
+        '@type': string;
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+    mainEntityOfPage: {
+      '@type': string;
+      '@id': string;
+    };
+    keywords: string;
+    articleSection: string;
+    articleBody: string;
+    wordCount: number;
+    timeRequired: string;
+    inLanguage: string;
+    isAccessibleForFree: boolean;
+    creativeWorkStatus: string;
+    speakable: {
+      '@type': string;
+      cssSelector: string[];
+    };
+    potentialAction: {
+      '@type': string;
+      target: string[];
+    };
+    about?: {
+      '@type': string;
+      name: string;
+      description: string;
+    };
+    specialty?: string;
+    accountablePerson: {
+      '@type': string;
+      name: string;
+      url: string;
+    };
+    citation: any[];
+    reviewedBy?: {
+      '@type': string;
+      name: string;
+      url: string;
+      jobTitle?: string;
+      description?: string;
+    };
+    lastReviewed: string;
+    educationalUse?: string;
+    audience: {
+      '@type': string;
+      audienceType: string;
+    };
+    mainEntity?: {
+      '@type': string;
+      mainEntity: any[];
+    };
+    [key: string]: any; // 允許額外的動態屬性
+  }
+
+  const structuredData: BlogStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     '@id': postUrl,
@@ -180,7 +337,7 @@ function generateBlogStructuredData(post: BlogPost) {
     reviewedBy: post.reviewedBy ? {
       '@type': 'Person',
       name: post.reviewedBy.name,
-      url: post.reviewedBy.url,
+      url: post.reviewedBy.url || `${baseUrl}/team`,
       jobTitle: post.reviewedBy.title || '醫療專業顧問',
       description: post.reviewedBy.description || '負責審閱本文內容的醫療專業人士'
     } : undefined,
@@ -193,7 +350,27 @@ function generateBlogStructuredData(post: BlogPost) {
       '@type': 'Audience',
       audienceType: post.audienceType || '醫療專業人士與診所經營者'
     }
+  };
+  
+  // 如果有FAQ區塊，添加到結構化資料
+  if (faqItems.length > 0) {
+    structuredData['mainEntity'] = {
+      '@type': 'FAQPage',
+      mainEntity: faqItems
+    };
   }
+  
+  // 如果有HowTo區塊，添加到結構化資料
+  if (howToData) {
+    // 由於一個頁面不能有多個主要實體，我們將HowTo添加為附加資料
+    const fullStructuredData = [
+      structuredData,
+      howToData
+    ];
+    return fullStructuredData;
+  }
+  
+  return structuredData;
 }
 
 function BlogDetailSkeleton() {
@@ -308,22 +485,25 @@ function ExpertReviewBadge({ reviewedBy, lastReviewed }: { reviewedBy?: BlogPost
   );
 }
 
-// 修改博客文章組件，加入 EEAT 增強元素
-function BlogPost({ post }: { post: BlogPost }) {
+// 修改博客文章組件，加入相關文章數據
+function BlogPost({ post, relatedPosts }: { post: BlogPost, relatedPosts: Post[] }) {
   return (
-    <BlogDetail post={post as unknown as Post} />
+    <BlogDetail post={post as unknown as Post} relatedPosts={relatedPosts} />
   );
 }
 
-export default async function Page(props: { params: { slug: string } }) {
-  // 先解析 params，再使用其屬性
-  const params = await Promise.resolve(props.params);
-  const post = await getBlogPost(params.slug)
+export default async function Page({ params }: { params: { slug: string } }) {
+  // 先await params再使用其屬性
+  const resolvedParams = await params;
+  const post = await getBlogPost(resolvedParams.slug);
   
   // 若文章不存在則返回404
   if (!post) {
     notFound()
   }
+  
+  // 獲取相關文章
+  const relatedPosts = await getRelatedPosts(post, 3)
   
   // 確保post具有id屬性以符合BlogPost類型
   const blogPost: BlogPost = {
@@ -331,6 +511,7 @@ export default async function Page(props: { params: { slug: string } }) {
     id: post.slug, // 使用slug作為id
   };
   
+  // 生成結構化資料
   const structuredData = generateBlogStructuredData(blogPost)
   
   return (
@@ -344,7 +525,7 @@ export default async function Page(props: { params: { slug: string } }) {
       />
       
       <Suspense fallback={<BlogDetailSkeleton />}>
-        <BlogPost post={blogPost} />
+        <BlogPost post={blogPost} relatedPosts={relatedPosts} />
       </Suspense>
     </>
   )
