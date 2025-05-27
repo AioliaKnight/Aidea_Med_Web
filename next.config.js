@@ -366,6 +366,16 @@ const nextConfig = {
           },
         ],
       },
+      // 針對搜尋引擎驗證檔案的快取設定
+      {
+        source: '/(BingSiteAuth.xml|baidu_verify_*.html|yandex_*.html|google*.html)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
+          },
+        ],
+      },
     ]
   },
   webpack: (config, { dev, isServer }) => {
