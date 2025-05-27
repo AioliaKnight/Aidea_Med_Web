@@ -5,9 +5,9 @@ const siteConfig = {
   name: 'Aidea:Med 醫療行銷與牙醫診所行銷顧問服務',
   description: 'Aidea:Med是專業的牙醫診所與醫療診所行銷顧問公司，我們提供全方位的數位行銷解決方案，幫助醫療機構提升品牌形象與增加病患數量。',
   slogan: '為醫療診所注入數位活力，專業行銷解決方案',
-  url: 'https://www.aideamed.com',
-  ogImage: 'https://www.aideamed.com/og-image.jpg',
-  alternateImage: 'https://www.aideamed.com/og-image-alt.jpg',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com',
+  ogImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image.jpg`,
+  alternateImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image-alt.jpg`,
   contact: {
     email: 'contact@aideamed.com',
     phone: '+886-2-27488919',

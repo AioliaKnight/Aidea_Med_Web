@@ -1,0 +1,12 @@
+Contact: mailto:contact@aideamed.com
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://www.aideamed.com/pgp-key.txt
+Preferred-Languages: zh-TW, en
+Canonical: https://www.aideamed.com/.well-known/security.txt
+Policy: https://www.aideamed.com/security-policy
+Hiring: https://www.aideamed.com/careers
+
+# 安全漏洞回報政策
+# 如果您發現任何安全問題，請透過上述聯絡方式回報
+# 我們承諾在收到回報後 48 小時內回應
+# 感謝您協助我們維護網站安全 

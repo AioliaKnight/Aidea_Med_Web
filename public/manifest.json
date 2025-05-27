@@ -1,12 +1,16 @@
 {
-  "name": "AideaMed",
-  "short_name": "AideaMed",
-  "description": "醫療行銷顧問公司品牌網站",
+  "name": "Aidea:Med 醫療行銷顧問",
+  "short_name": "Aidea:Med",
+  "description": "專業的牙醫診所與醫療診所行銷顧問公司，提供全方位的數位行銷解決方案，幫助醫療機構提升品牌形象與增加病患數量。",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0066CC",
+  "theme_color": "#4A6CF7",
   "orientation": "portrait-primary",
+  "categories": ["business", "medical", "marketing"],
+  "lang": "zh-TW",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -55,6 +59,29 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "聯絡我們",
+      "short_name": "聯絡",
+      "description": "快速聯絡 Aidea:Med 醫療行銷顧問",
+      "url": "/contact",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "服務項目",
+      "short_name": "服務",
+      "description": "查看我們的醫療行銷服務",
+      "url": "/service",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "成功案例",
+      "short_name": "案例",
+      "description": "查看醫療診所行銷成功案例",
+      "url": "/case",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
 } 
