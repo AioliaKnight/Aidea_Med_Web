@@ -6,7 +6,7 @@ import { getAllBlogPosts } from '@/lib/blog-server'
  * 提供給搜尋引擎的網站地圖
  * 包含所有重要的頁面與動態路由
  * 使用 Next.js 內建的 MetadataRoute.Sitemap 功能
- * 最後更新: 2024-07-20
+ * 最後更新: 2024-12-19
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 取得目前日期作為最後更新時間
   const currentDate = new Date()
   
-  // 基本靜態路由 - 這些是確認存在的主要頁面
+  // 基本靜態路由 - 只包含實際存在的頁面
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/`,
@@ -61,51 +61,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
   
-  // 實際已實現的服務詳情頁面
+  // 實際已實現的服務詳情頁面 - 只包含確實存在的頁面
   const serviceDetailRoutes: MetadataRoute.Sitemap = [
-    // 目前已確認實現的服務頁面
     {
       url: `${baseUrl}/service/medical-ad-compliance`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 0.95, // 保持高優先級
-    },
-    // 新增更多服務頁面
-    {
-      url: `${baseUrl}/service/digital-marketing`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.92,
-    },
-    {
-      url: `${baseUrl}/service/brand-strategy`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.92,
-    },
-    {
-      url: `${baseUrl}/service/content-creation`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.90,
-    },
-    {
-      url: `${baseUrl}/service/seo-optimization`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.92,
-    },
-    {
-      url: `${baseUrl}/service/social-media-management`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.90,
-    },
-  ]
-  
-  // 實際已實現的團隊成員詳情頁面
-  const teamDetailRoutes: MetadataRoute.Sitemap = [
-    // 註: 團隊成員詳情頁面待實際建立後再添加到 sitemap
+      priority: 0.95, // 保持高優先級，這是重要的專業服務頁面
+    }
   ]
   
   // 動態案例頁面 - 使用實際案例資料
@@ -237,7 +200,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes, 
     ...serviceDetailRoutes, 
-    ...teamDetailRoutes, 
     ...caseRoutes, 
     ...blogRoutes
   ]

@@ -4,7 +4,7 @@ import { MetadataRoute } from 'next';
  * 提供給搜尋引擎的爬蟲規則
  * 使用 Next.js 內建的 MetadataRoute.Robots 功能
  * 控制搜尋引擎如何爬取和索引網站內容
- * 最後更新: 2024-07-20
+ * 最後更新: 2024-12-19
  */
 export default function robots(): MetadataRoute.Robots {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -48,7 +48,7 @@ export default function robots(): MetadataRoute.Robots {
     '/blog/dental-advertising-regulations/', // 牙醫廣告法規專文
   ];
   
-  // AI 爬蟲可訪問的路徑
+  // AI 爬蟲可訪問的路徑 - 只包含實際存在的內容
   const aiAllowedPaths = [
     '/',
     '/blog/*',
