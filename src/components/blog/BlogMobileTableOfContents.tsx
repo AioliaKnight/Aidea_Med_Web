@@ -21,14 +21,7 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ c
     scrollToHeading: scrollToHeadingFn
   } = useBlogTableOfContents({ content })
 
-  // 調試信息
-  if (process.env.NODE_ENV === 'development') {
-    // console.log('BlogMobileTableOfContents 渲染:', {
-    //   tocItemsLength: tocItems.length,
-    //   contentLength: content?.length || 0,
-    //   isVisible
-    // })
-  }
+
 
   const handleScrollToHeading = useCallback((id: string) => {
     try {
@@ -40,47 +33,29 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ c
 
   // 如果沒有內容，不渲染組件
   if (!content) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('BlogMobileTableOfContents: 沒有內容')
-    }
     return null
   }
 
   // 如果沒有目錄項目，不渲染組件
   if (tocItems.length === 0) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('BlogMobileTableOfContents: 沒有找到目錄項目，但有內容')
-    }
     return null
   }
 
   const handleToggle = () => {
-    if (process.env.NODE_ENV === 'development') {
-      // console.log('移動端目錄按鈕被點擊')
-    }
     setIsOpen(!isOpen)
   }
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      if (process.env.NODE_ENV === 'development') {
-        // console.log('背景遮罩被點擊，關閉目錄')
-      }
       setIsOpen(false)
     }
   }
 
   const handleClose = () => {
-    if (process.env.NODE_ENV === 'development') {
-      // console.log('關閉按鈕被點擊')
-    }
     setIsOpen(false)
   }
 
   const handleItemClick = (item: TocItem) => {
-    if (process.env.NODE_ENV === 'development') {
-      // console.log('目錄項目被點擊:', item.title, item.id)
-    }
     handleScrollToHeading(item.id)
     setIsOpen(false)
   }

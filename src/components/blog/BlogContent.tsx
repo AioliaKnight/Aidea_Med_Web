@@ -68,10 +68,7 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
         // 檢查是否是任何一個自定義樣式類別
         customClassNames.some(className => checkAndApplyStyle(className));
         
-        // 如果有debug標記，輸出類別名稱以協助調試
-        if (div.classList.contains('debug-class')) {
-          // console.log('Current div classes:', Array.from(div.classList));
-        }
+
       });
     }
   }, [content]);

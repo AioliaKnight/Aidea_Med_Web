@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import Logo from '@/components/common/Logo'
+import { Logo } from '@/components/common'
 import React from 'react'
 import { ChevronDown } from 'lucide-react'
 

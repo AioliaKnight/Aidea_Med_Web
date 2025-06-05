@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { sharedMetadata } from '@/app/metadata'
 import MedicalAdCompliancePage from '@/components/pages/MedicalAdCompliancePage'
+import { SEOOptimizer } from '@/components/common'
+import { generateServiceStructuredData } from '@/lib/seo-utils'
 
 // 定義頁面的 metadata
 export const metadata: Metadata = {
@@ -316,17 +318,42 @@ const structuredData = {
   ]
 };
 
-// 新增結構化數據輸出
+// 新增結構化數據輸出和 SEO 優化
 export default function Page() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com'
+  const serviceUrl = `${baseUrl}/service/medical-ad-compliance`
+  
+  // 生成 SEO 優化的結構化數據
+  const seoStructuredData = generateServiceStructuredData({
+    name: '醫療廣告法規遵循服務',
+    description: '專業醫療法規顧問服務，協助醫療機構與診所在合法範圍內進行有效行銷，降低違規風險，提升品牌形象。',
+    url: serviceUrl,
+    category: '醫療行銷法規諮詢'
+  })
+  
   return (
     <>
-      {/* 結構化數據標記 */}
+      {/* 原有的結構化數據標記 */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(structuredData)
         }}
       />
+      
+      {/* SEO 優化組件 */}
+      <SEOOptimizer
+        title="醫療廣告與醫療法規遵循服務 | 合法醫療行銷指南"
+        description="幫助醫療機構與診所合法進行廣告宣傳，避免違反醫療法第84條、第85條與第86條規定，醫師行銷必讀的法規遵循攻略，降低違規風險最高達25萬的罰款。"
+        keywords={[
+          '醫療廣告法規', '醫療法85條', '醫療法86條', '醫療法規遵循', 
+          '診所行銷', '醫師行銷', '合法醫療廣告', '醫療網路行銷', 
+          '醫療社群媒體行銷', '醫美行銷規範', '牙醫診所廣告'
+        ]}
+        canonicalUrl={serviceUrl}
+        structuredData={seoStructuredData}
+      />
+      
       <MedicalAdCompliancePage />
     </>
   )

@@ -4,6 +4,8 @@ import { getBlogPost, getRelatedPosts } from '@/lib/blog-server'
 import { generateBlogMetadata, type Post } from '@/lib/blog-utils'
 import { BlogDetail } from '@/components/blog'
 import { medicalContentViewport } from '@/app/viewport'
+import { SEOOptimizer } from '@/components/common'
+import { generateArticleStructuredData } from '@/lib/seo-utils'
 
 // 定義博客文章類型
 interface BlogPostAuthor {
@@ -485,10 +487,37 @@ function ExpertReviewBadge({ reviewedBy, lastReviewed }: { reviewedBy?: BlogPost
   );
 }
 
-// 修改博客文章組件，加入相關文章數據
+// 修改博客文章組件，加入相關文章數據和 SEO 優化
 function BlogPost({ post, relatedPosts }: { post: BlogPost, relatedPosts: Post[] }) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'
+  const canonicalUrl = `${baseUrl}/blog/${post.slug}`
+  
+  // 生成 SEO 優化的結構化數據
+  const seoStructuredData = generateArticleStructuredData({
+    title: post.title,
+    description: post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 160),
+    author: post.author.name,
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    image: post.coverImage,
+    url: canonicalUrl,
+    category: post.category,
+    tags: post.tags
+  })
+  
   return (
-    <BlogDetail post={post as unknown as Post} relatedPosts={relatedPosts} />
+    <>
+      {/* SEO 優化組件 */}
+      <SEOOptimizer
+        title={`${post.title} | Aidea:Med 醫療行銷顧問`}
+        description={post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 160)}
+        keywords={post.tags}
+        canonicalUrl={canonicalUrl}
+        structuredData={seoStructuredData}
+      />
+      
+      <BlogDetail post={post as unknown as Post} relatedPosts={relatedPosts} />
+    </>
   );
 }
 

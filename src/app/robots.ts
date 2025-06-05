@@ -5,6 +5,12 @@ import { MetadataRoute } from 'next';
  * 使用 Next.js 內建的 MetadataRoute.Robots 功能
  * 控制搜尋引擎如何爬取和索引網站內容
  * 最後更新: 2024-12-19
+ * 
+ * SEO 優化重點：
+ * - 針對不同搜尋引擎的個別優化
+ * - 醫療內容的專業權威性保護
+ * - AI 爬蟲的智能管理
+ * - 圖片和媒體內容的優化索引
  */
 export default function robots(): MetadataRoute.Robots {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -25,6 +31,9 @@ export default function robots(): MetadataRoute.Robots {
     '/account/*',    // 帳戶頁面
     '/temp/*',       // 臨時頁面
     '/test/*',       // 測試頁面
+    '/.well-known/*', // 系統配置文件
+    '/sw.js',        // Service Worker
+    '/workbox-*',    // Workbox 文件
   ];
   
   // 搜索引擎特定的禁止路徑，可以比通用爬蟲獲得更多訪問權限
@@ -36,6 +45,9 @@ export default function robots(): MetadataRoute.Robots {
     '/preview/*',
     '/temp/*',
     '/test/*',
+    '/.well-known/*',
+    '/sw.js',
+    '/workbox-*',
   ];
   
   // 主要醫療行銷內容路徑 - 只包含實際存在的頁面
@@ -62,6 +74,14 @@ export default function robots(): MetadataRoute.Robots {
     '/team/*',
     '/case/*',
   ];
+
+  // 圖片和媒體內容路徑
+  const mediaContentPaths = [
+    '/images/',
+    '/videos/',
+    '/documents/',
+    '/downloads/',
+  ];
   
   return {
     rules: [
@@ -78,6 +98,7 @@ export default function robots(): MetadataRoute.Robots {
           '/service/medical-ad-compliance/', // 特別允許醫療廣告法規遵循頁面
         ],
         disallow: commonDisallow,
+        crawlDelay: 1, // 設定爬取延遲，減輕伺服器負擔
       },
       {
         userAgent: 'Googlebot',
@@ -87,6 +108,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 0.5, // Google 可以更頻繁爬取
       },
       {
         userAgent: 'Googlebot-Image',
@@ -97,6 +119,10 @@ export default function robots(): MetadataRoute.Robots {
           '/team/',
           '/service/', // 允許Google圖片機器人爬取服務頁面
         ],
+        disallow: [
+          '/images/private/*',
+          '/images/temp/*',
+        ],
       },
       {
         userAgent: 'Bingbot',
@@ -106,6 +132,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 1,
       },
       {
         userAgent: 'Baiduspider',
@@ -115,6 +142,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 2, // 百度爬蟲較慢
       },
       {
         userAgent: 'YandexBot',
@@ -124,6 +152,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 1,
       },
       {
         userAgent: 'Applebot',
@@ -133,6 +162,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 1,
       },
       {
         userAgent: 'DuckDuckBot',
@@ -142,6 +172,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 1,
       },
       // 特別優化 Google 行動裝置支援
       {
@@ -152,6 +183,7 @@ export default function robots(): MetadataRoute.Robots {
           ...medicalMarketingContentPaths,
         ],
         disallow: searchEngineDisallow,
+        crawlDelay: 0.5,
       },
       // 特別優化 Google 新聞機器人
       {
@@ -166,7 +198,9 @@ export default function robots(): MetadataRoute.Robots {
           '/case/',
           '/contact/'
         ],
+        crawlDelay: 0.2, // 新聞內容需要快速索引
       },
+      // 社交媒體爬蟲
       {
         userAgent: 'facebookexternalhit',
         allow: [
@@ -181,6 +215,7 @@ export default function robots(): MetadataRoute.Robots {
           '/_next/*',
           '/admin/*',
         ],
+        crawlDelay: 1,
       },
       {
         userAgent: 'LinkedInBot',
@@ -196,6 +231,7 @@ export default function robots(): MetadataRoute.Robots {
           '/_next/*',
           '/admin/*',
         ],
+        crawlDelay: 1,
       },
       // 新增 Twitter/X 爬蟲
       {
@@ -204,70 +240,95 @@ export default function robots(): MetadataRoute.Robots {
           '/',
           '/blog/*',
           '/case/*',
-          '/service/*', 
-          '/team/*',
+          '/service/*',
         ],
         disallow: [
-          '/api/*', 
+          '/api/*',
           '/_next/*',
           '/admin/*',
+          '/team/*', // Twitter 不需要團隊頁面
         ],
+        crawlDelay: 1,
       },
-      // 新增 Google商業資訊爬蟲
-      {
-        userAgent: 'Google-Business-Information',
-        allow: [
-          '/',
-          '/service/*', 
-          '/contact/*',
-          '/about/*',
-        ],
-        disallow: searchEngineDisallow,
-      },
-      // AI 爬蟲規則 - OpenAI
+      // AI 訓練爬蟲管理
       {
         userAgent: 'GPTBot',
         allow: aiAllowedPaths,
         disallow: aiDisallowPaths,
+        crawlDelay: 5, // AI 爬蟲較慢的爬取速度
       },
-      // AI 爬蟲規則 - Anthropic
       {
-        userAgent: 'Anthropic-AI',
+        userAgent: 'ChatGPT-User',
         allow: aiAllowedPaths,
         disallow: aiDisallowPaths,
+        crawlDelay: 5,
       },
-      // AI 爬蟲規則 - Common Crawl
       {
         userAgent: 'CCBot',
         allow: aiAllowedPaths,
         disallow: aiDisallowPaths,
+        crawlDelay: 5,
       },
-      // AI 爬蟲規則 - Claude
       {
-        userAgent: 'Claude',
+        userAgent: 'anthropic-ai',
         allow: aiAllowedPaths,
         disallow: aiDisallowPaths,
+        crawlDelay: 5,
       },
-      // AI 爬蟲規則 - Cohere
       {
-        userAgent: 'Cohere-AI',
+        userAgent: 'Claude-Web',
         allow: aiAllowedPaths,
         disallow: aiDisallowPaths,
+        crawlDelay: 5,
       },
-      // AI 爬蟲規則 - Perplexity
+      // 學術研究爬蟲
       {
-        userAgent: 'PerplexityBot',
-        allow: aiAllowedPaths,
-        disallow: aiDisallowPaths,
+        userAgent: 'ia_archiver',
+        allow: [
+          '/blog/*',
+          '/service/medical-ad-compliance/*',
+        ],
+        disallow: [
+          ...commonDisallow,
+          '/case/*',
+          '/team/*',
+          '/contact/*',
+        ],
+        crawlDelay: 10, // 檔案館爬蟲較慢
       },
-      // AI 爬蟲規則 - Google Bard/Gemini
+      // 惡意爬蟲封鎖
       {
-        userAgent: 'Google-Extended',
-        allow: aiAllowedPaths,
-        disallow: aiDisallowPaths,
+        userAgent: [
+          'SemrushBot',
+          'AhrefsBot',
+          'MJ12bot',
+          'DotBot',
+          'BLEXBot',
+          'DataForSeoBot',
+        ],
+        disallow: ['/'],
+      },
+      // SEO 工具爬蟲（有限制的允許）
+      {
+        userAgent: 'ScreamingFrogSEOSpider',
+        allow: [
+          '/',
+          '/blog/',
+          '/service/',
+        ],
+        disallow: [
+          ...commonDisallow,
+          '/case/*',
+          '/team/*',
+          '/contact/*',
+        ],
+        crawlDelay: 10,
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: [
+      `${baseUrl}/sitemap.xml`,
+      `${baseUrl}/sitemap-0.xml`, // 如果有分割的 sitemap
+    ],
     host: baseUrl,
   };
 } 

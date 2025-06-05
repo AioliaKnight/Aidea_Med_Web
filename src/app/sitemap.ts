@@ -7,6 +7,12 @@ import { getAllBlogPosts } from '@/lib/blog-server'
  * 包含所有重要的頁面與動態路由
  * 使用 Next.js 內建的 MetadataRoute.Sitemap 功能
  * 最後更新: 2024-12-19
+ * 
+ * SEO 優化重點：
+ * - 智能優先級分配基於內容相關性
+ * - 動態更新頻率基於內容新鮮度
+ * - 醫療專業內容優先級提升
+ * - 結構化數據整合
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
@@ -195,12 +201,60 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error fetching blog data for sitemap:', error);
     // 繼續處理已有的資料，不因部落格獲取失敗而中斷整個 sitemap 生成
   }
+
+  // 新增：圖片 sitemap 路由（用於 Google 圖片搜尋優化）
+  const imageRoutes: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/images/sitemap`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    }
+  ]
+
+  // 新增：多語言支援路由（未來擴展用）
+  const languageRoutes: MetadataRoute.Sitemap = [
+    // 目前只支援繁體中文，未來可擴展
+    // {
+    //   url: `${baseUrl}/en`,
+    //   lastModified: currentDate,
+    //   changeFrequency: 'monthly',
+    //   priority: 0.8,
+    // }
+  ]
+
+  // 新增：API 文檔路由（如果有公開 API）
+  const apiRoutes: MetadataRoute.Sitemap = [
+    // 未來如果提供公開 API 文檔
+    // {
+    //   url: `${baseUrl}/api/docs`,
+    //   lastModified: currentDate,
+    //   changeFrequency: 'monthly',
+    //   priority: 0.6,
+    // }
+  ]
   
   // 組合所有實際存在的路由
-  return [
-    ...staticRoutes, 
-    ...serviceDetailRoutes, 
-    ...caseRoutes, 
-    ...blogRoutes
-  ]
+  const allRoutes = [
+    ...staticRoutes,
+    ...serviceDetailRoutes,
+    ...caseRoutes,
+    ...blogRoutes,
+    ...imageRoutes,
+    ...languageRoutes,
+    ...apiRoutes
+  ].filter(route => route.url) // 過濾掉空的 URL
+
+  // 排序：優先級高的在前，相同優先級按最後修改時間排序
+  allRoutes.sort((a, b) => {
+    if (a.priority !== b.priority) {
+      return (b.priority || 0) - (a.priority || 0)
+    }
+    return new Date(b.lastModified || 0).getTime() - new Date(a.lastModified || 0).getTime()
+  })
+
+  console.log(`Generated sitemap with ${allRoutes.length} total routes`)
+  console.log(`Blog routes: ${blogRoutes.length}, Case routes: ${caseRoutes.length}`)
+  
+  return allRoutes
 } 

@@ -17,7 +17,8 @@ import Navbar from '@/components/layout/Navbar'
 import { 
   Loading, 
   BackToTopButton, 
-  GoogleTagManager 
+  GoogleTagManager,
+  PerformanceMonitor 
 } from '@/components/common'
 import { notoSansTC } from '@/lib/fonts'
 
@@ -245,6 +246,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Analytics />
           <SpeedInsights />
+          <PerformanceMonitor />
         </Suspense>
         
         {/* 可訪問性提升添加跳過導航連結 */}

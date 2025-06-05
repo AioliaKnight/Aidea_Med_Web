@@ -37,6 +37,13 @@ export { default as AnimatedSection } from './AnimatedSection'
 // Google Tag Manager初始化組件
 export { default as GoogleTagManager } from './GoogleTagManager'
 
+// SEO 優化組件
+export { default as SEOOptimizer } from './SEOOptimizer'
+// 注意：SEO 輔助函數已移至 @/lib/seo-utils 以支援服務器端使用
+
+// 性能監控組件
+export { default as PerformanceMonitor } from './PerformanceMonitor'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common
