@@ -140,8 +140,8 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: { 
     optimizeCss: true,
-    // 啟用部分預渲染功能 (PPR)
-    ppr: true,
+    // 暫時禁用部分預渲染功能 (PPR) - 需要 canary 版本
+    // ppr: true,
     // 應用目錄增強渲染優化
     optimizePackageImports: ['lucide-react', '@phosphor-icons/react', 'react-icons', 'framer-motion', '@heroicons/react'],
     // 增強型圖片優化

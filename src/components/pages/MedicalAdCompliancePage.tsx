@@ -7,7 +7,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { PageHeader, CTASection } from '@/components/common'
 import { Heading } from '@/components/ui'
 import { CheckCircle, AlertTriangle, BookOpen, FileText, Shield, TrendingUp, Info, Gavel, Scale, PlusCircle, MinusCircle } from 'lucide-react'
-import MedicalResourceTabs from '@/components/MedicalResourceTabs'
+import MedicalResourceTabs from '@/components/pages/MedicalResourceTabs'
 import { trackButtonClick, trackServiceView, pushEvent } from '@/lib/analytics'
 
 // 從配置文件導入
