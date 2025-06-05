@@ -1,6 +1,7 @@
 import { teamMetadata } from '../metadata'
 import TeamPage from '@/components/pages/TeamPage'
 import { createFaqSchema } from '../metadata'
+import { SEOOptimizer } from '@/components/common'
 
 export const metadata = teamMetadata
 
@@ -43,6 +44,82 @@ const teamFaqSchema = createFaqSchema(teamFaqData, {
 export default function Page() {
   return (
     <>
+      <SEOOptimizer
+        title="專業醫療行銷團隊"
+        description="認識我們由醫療行銷專家、數位策略師、創意總監組成的專業團隊"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          '@id': 'https://www.aideamed.com/team#about',
+          mainEntity: {
+            '@type': 'Organization',
+            '@id': 'https://www.aideamed.com#organization',
+            name: 'Aidea:Med 醫療行銷顧問',
+            description: '專業醫療行銷團隊，提供醫療機構全方位品牌策略與數位行銷解決方案',
+            url: 'https://www.aideamed.com',
+            foundingDate: '2020',
+            numberOfEmployees: {
+              '@type': 'QuantitativeValue',
+              value: 6
+            },
+            employee: [
+              {
+                '@type': 'Person',
+                name: '陳維鈞 Wilson',
+                jobTitle: '創辦人暨策略總監',
+                description: '擁有十五年以上醫療行銷經驗，專精於醫療品牌策略與患者體驗設計'
+              },
+              {
+                '@type': 'Person',
+                name: 'Mike',
+                jobTitle: '數位行銷總監',
+                description: '數位行銷專家，擅長醫療機構網站優化與精準投放策略'
+              },
+              {
+                '@type': 'Person',
+                name: 'Leo',
+                jobTitle: '創意內容總監',
+                description: '資深醫療內容策略專家，擅長將複雜的醫療專業知識轉化為患者易懂的內容'
+              },
+              {
+                '@type': 'Person',
+                name: 'Chloe',
+                jobTitle: '業務發展總監',
+                description: '資深醫療業務專家，專注於醫療機構客戶關係管理與業務策略'
+              },
+              {
+                '@type': 'Person',
+                name: 'Queena',
+                jobTitle: '顧客體驗總監',
+                description: '專注於醫療顧客體驗與患者忠誠度系統建立'
+              },
+              {
+                '@type': 'Person',
+                name: '西裝哥',
+                jobTitle: '技術開發總監',
+                description: '資深醫療科技專家，專精於醫療機構數位轉型與患者體驗優化'
+              }
+            ],
+            hasCredential: [
+              {
+                '@type': 'EducationalOccupationalCredential',
+                credentialCategory: 'Professional Experience',
+                recognizedBy: {
+                  '@type': 'Organization',
+                  name: 'Healthcare Marketing Industry'
+                },
+                description: '平均15年醫療行銷經驗，已協助70+醫療機構成功轉型'
+              }
+            ],
+            award: [
+              '客戶滿意度達95%以上',
+              '平均提升45%以上新患者轉換率',
+              '整合AI技術優化行銷效能'
+            ]
+          }
+        }}
+      />
+      
       <TeamPage />
       
       {/* 插入團隊FAQ的結構化數據 - 使用唯一ID避免重複 */}

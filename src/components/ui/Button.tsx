@@ -1,164 +1,137 @@
 'use client'
 
-import React, { ReactNode } from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import React, { forwardRef, type ComponentPropsWithoutRef } from 'react'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { buttonAnimations } from '@/utils/animations'
 
-type ButtonVariant = 
-  | 'primary' 
-  | 'secondary' 
-  | 'white' 
-  | 'black' 
-  | 'outline-white' 
-  | 'outline-red' 
-  | 'outline-black'
-  | 'flat-primary'
-  | 'flat-white'
-  | 'flat-black'
-
-type ButtonSize = 'sm' | 'md' | 'lg' | 'xl'
-
-export interface ButtonProps extends Omit<HTMLMotionProps<"button">, "size"> {
-  variant?: ButtonVariant
-  size?: ButtonSize
-  isLoading?: boolean
-  loadingText?: string
-  icon?: ReactNode
-  iconPosition?: 'left' | 'right'
+export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
+  variant?: 'primary' | 'white' | 'black' | 'outline-white' | 'outline-red' | 'outline-black' | 'link'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   fullWidth?: boolean
-  animation?: 'basic' | 'flat' | 'none'
-  as?: React.ElementType
-  href?: string
-  children?: React.ReactNode
+  loading?: boolean
+  icon?: React.ReactNode
+  iconPosition?: 'left' | 'right'
+  animate?: boolean
 }
 
 /**
- * 統一按鈕元件
- * 整合了多種按鈕樣式和狀態，支援動畫效果和圖示
+ * 統一按鈕組件
+ * 支援多種變體、尺寸和狀態
  */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'md',
-      isLoading = false,
-      loadingText,
-      icon,
-      iconPosition = 'left',
-      fullWidth = false,
-      animation = 'basic',
-      as: Component = 'button',
-      href,
-      className,
-      children,
-      disabled,
-      ...props
-    },
-    ref
-  ) => {
-    // 根據尺寸設定類名
-    const sizeClasses = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2',
-      lg: 'px-6 py-3 text-lg',
-      xl: 'px-8 py-4 text-xl'
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  loading = false,
+  icon,
+  iconPosition = 'left',
+  animate = false,
+  className = '',
+  children,
+  disabled,
+  ...props
+}, ref) => {
+  // 基礎樣式
+  const baseClasses = cn(
+    'inline-flex items-center justify-center font-medium transition-colors duration-200',
+    'focus:outline-none focus:ring-2 focus:ring-opacity-50',
+    'disabled:opacity-50 disabled:cursor-not-allowed',
+    fullWidth && 'w-full'
+  )
+
+  // 變體樣式
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'primary':
+        return 'bg-primary text-white hover:bg-primary-dark focus:ring-primary'
+      case 'white':
+        return 'bg-white text-primary hover:bg-gray-50 focus:ring-primary border border-gray-200'
+      case 'black':
+        return 'bg-[#111111] text-white hover:bg-[#333333] focus:ring-gray-500'
+      case 'outline-white':
+        return 'border-2 border-white text-white hover:bg-white hover:text-primary focus:ring-white bg-transparent'
+      case 'outline-red':
+        return 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary bg-transparent'
+      case 'outline-black':
+        return 'border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white focus:ring-gray-500 bg-transparent'
+      case 'link':
+        return 'text-primary hover:text-primary-dark underline-offset-4 hover:underline focus:ring-primary bg-transparent p-0 h-auto'
+      default:
+        return 'bg-primary text-white hover:bg-primary-dark focus:ring-primary'
     }
+  }
 
-    // 根據變體設定類名
-    const variantClasses = {
-      'primary': 'bg-primary text-white hover:bg-primary-dark',
-      'secondary': 'bg-black text-white hover:bg-black/90',
-      'white': 'bg-white text-primary hover:bg-gray-50',
-      'black': 'bg-[#111111] text-white hover:bg-[#333333]',
-      'outline-white': 'border-2 border-white text-white hover:bg-white hover:text-primary',
-      'outline-red': 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
-      'outline-black': 'border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white',
-      'flat-primary': 'bg-primary text-white hover:bg-red-dark',
-      'flat-white': 'bg-white text-primary hover:bg-gray-50',
-      'flat-black': 'bg-black text-white hover:bg-black/90'
+  // 尺寸樣式
+  const getSizeClasses = () => {
+    if (variant === 'link') return ''
+    
+    switch (size) {
+      case 'sm':
+        return 'px-4 py-2 text-sm'
+      case 'md':
+        return 'px-6 py-3 text-base'
+      case 'lg':
+        return 'px-8 py-4 text-lg'
+      case 'xl':
+        return 'px-10 py-5 text-xl'
+      default:
+        return 'px-6 py-3 text-base'
     }
+  }
 
-    // 禁用或加載狀態類
-    const stateClasses = (disabled || isLoading) 
-      ? 'opacity-70 cursor-not-allowed' 
-      : 'cursor-pointer'
+  const finalClasses = cn(
+    baseClasses,
+    getVariantClasses(),
+    getSizeClasses(),
+    className
+  )
 
-    // 完整寬度類
-    const widthClass = fullWidth ? 'w-full' : ''
+  const buttonContent = (
+    <>
+      {loading ? (
+        <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      ) : (
+        icon && iconPosition === 'left' && (
+          <span className="mr-2 -ml-1">{icon}</span>
+        )
+      )}
+      {children}
+      {!loading && icon && iconPosition === 'right' && (
+        <span className="ml-2 -mr-1">{icon}</span>
+      )}
+    </>
+  )
 
-    // 合併所有類名
-    const buttonClasses = cn(
-      'inline-flex items-center justify-center font-medium transition-colors duration-300',
-      sizeClasses[size],
-      variantClasses[variant],
-      stateClasses,
-      widthClass,
-      className
-    )
-
-    // 動畫效果
-    const getAnimationProps = () => {
-      switch (animation) {
-        case 'basic':
-          return {
-            whileHover: { scale: 1.03 },
-            whileTap: { scale: 0.97 },
-            transition: { duration: 0.2 }
-          }
-        case 'flat':
-          return {
-            whileHover: { y: -2 },
-            whileTap: { y: 0 },
-            transition: { duration: 0.2 }
-          }
-        default:
-          return {}
-      }
-    }
-
-    // 處理按鈕文字內容
-    const buttonText = isLoading && loadingText ? loadingText : children
-
-    // 渲染按鈕內容
-    const renderContent = () => (
-      <>
-        {isLoading && (
-          <span className="inline-block mr-2 w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-        )}
-        {icon && iconPosition === 'left' && <span className={`mr-2 ${isLoading ? 'opacity-0' : ''}`}>{icon}</span>}
-        {buttonText}
-        {icon && iconPosition === 'right' && <span className={`ml-2 ${isLoading ? 'opacity-0' : ''}`}>{icon}</span>}
-      </>
-    )
-
-    // 如果是連結按鈕
-    if (href && !disabled) {
-      return (
-        <motion.a
-          href={href}
-          className={buttonClasses}
-          {...getAnimationProps()}
-        >
-          {renderContent()}
-        </motion.a>
-      )
-    }
-
-    // 標準按鈕
+  if (animate) {
     return (
       <motion.button
         ref={ref}
-        className={buttonClasses}
-        disabled={disabled || isLoading}
-        {...getAnimationProps()}
+        className={finalClasses}
+        disabled={disabled || loading}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ duration: 0.2 }}
         {...props}
       >
-        {renderContent()}
+        {buttonContent}
       </motion.button>
     )
   }
-)
+
+  return (
+    <button
+      ref={ref}
+      className={finalClasses}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {buttonContent}
+    </button>
+  )
+})
 
 Button.displayName = 'Button'
 

@@ -44,6 +44,9 @@ export { default as SEOOptimizer } from './SEOOptimizer'
 // 性能監控組件
 export { default as PerformanceMonitor } from './PerformanceMonitor'
 
+// 新增通用組件
+export { FAQSection } from './FAQSection'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

@@ -240,10 +240,10 @@ export default function robots(): MetadataRoute.Robots {
           '/',
           '/blog/*',
           '/case/*',
-          '/service/*',
+          '/service/*', 
         ],
         disallow: [
-          '/api/*',
+          '/api/*', 
           '/_next/*',
           '/admin/*',
           '/team/*', // Twitter 不需要團隊頁面

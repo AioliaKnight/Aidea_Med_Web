@@ -54,7 +54,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [showShareMenu, toggleShareMenu])
-
+  
   // 處理標籤點擊
   const handleTagClick = (tag: string) => {
     // 導航到帶有標籤篩選的 blog 頁面
@@ -78,27 +78,27 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
           <div className="text-center">
             {/* 分類標籤 */}
             {post.category && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
                 className="mb-4"
-              >
+          >
                 <span className="inline-block bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full">
-                  {post.category}
-                </span>
+                {post.category}
+              </span>
               </motion.div>
             )}
-
+          
             {/* 文章標題 */}
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight"
-            >
+          >
               {post.title}
             </motion.h1>
-
+            
             {/* 文章摘要 */}
             {post.summary && (
               <motion.p
@@ -110,7 +110,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                 {post.summary}
               </motion.p>
             )}
-
+          
             {/* 文章元資訊 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -136,8 +136,8 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                       <div className="text-xs text-gray-500">{post.author.title}</div>
                     )}
                   </div>
-                </div>
-              )}
+                  </div>
+                )}
 
               {/* 發布日期 */}
               <div className="flex items-center space-x-4">
@@ -147,7 +147,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
             </motion.div>
           </div>
         </header>
-
+          
         {/* 封面圖片 */}
         {post.coverImage && (
           <motion.div
@@ -157,7 +157,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
             className="mb-8 sm:mb-12"
           >
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-lg">
-              <Image
+                <Image
                 src={post.coverImage}
                 alt={post.title}
                 fill
@@ -200,7 +200,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                 ))}
               </div>
             )}
-
+            
             {/* 互動按鈕 */}
             <div className="flex items-center space-x-4">
               {/* 點讚按鈕 */}
@@ -214,7 +214,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                 <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
                 <span>{likeCount}</span>
               </button>
-
+              
               {/* 分享按鈕 */}
               <div className="relative">
                 <button
@@ -225,10 +225,10 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                   <Share2 className="w-4 h-4" />
                   <span>分享</span>
                 </button>
-
+                
                 {/* 分享選單 */}
                 <ShareMenu
-                  ref={shareMenuRef}
+                    ref={shareMenuRef}
                   isVisible={showShareMenu}
                   onFacebookShare={shareOnFacebook}
                   onTwitterShare={shareOnTwitter}
@@ -236,10 +236,10 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
                   onCopyLink={copyLink}
                 />
               </div>
+              </div>
             </div>
-          </div>
-        </motion.div>
-
+          </motion.div>
+          
         {/* 相關文章 */}
         {relatedPosts.length > 0 && (
           <motion.section
@@ -247,24 +247,24 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
             className="border-t border-gray-200 pt-12"
-          >
+            >
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center">
               相關文章
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {relatedPosts.map((relatedPost, index) => (
-                <RelatedPostCard
+                {relatedPosts.map((relatedPost, index) => (
+                  <RelatedPostCard 
                   key={relatedPost.id}
-                  post={relatedPost}
-                  index={index}
-                  originPostId={post.id}
-                />
-              ))}
-            </div>
+                    post={relatedPost} 
+                    index={index} 
+                    originPostId={post.id}
+                  />
+                ))}
+              </div>
           </motion.section>
-        )}
+          )}
       </article>
-    </div>
+      </div>
   )
 }
 

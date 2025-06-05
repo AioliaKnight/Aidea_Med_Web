@@ -385,37 +385,35 @@
     @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  /* 按鈕系統 - 扁平化設計 */
+  /* 統一按鈕系統 - 扁平化設計 */
   .btn {
-    @apply inline-flex items-center justify-center px-6 py-3 font-medium transition-colors;
+    @apply inline-flex items-center justify-center px-6 py-3 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50;
   }
   
-  /* 紅色按鈕 - 白色文字 */
+  /* 主要顏色按鈕 */
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-dark;
+    @apply bg-primary text-white hover:bg-primary-dark focus:ring-primary;
   }
   
-  /* 白色按鈕 - 紅色文字 */
   .btn-white {
-    @apply bg-white text-primary hover:bg-gray-50;
+    @apply bg-white text-primary hover:bg-gray-50 focus:ring-primary;
   }
   
-  /* 黑色按鈕 - 白色文字 */
   .btn-black {
-    @apply bg-[#111111] text-white hover:bg-[#333333];
+    @apply bg-[#111111] text-white hover:bg-[#333333] focus:ring-gray-500;
   }
   
   /* 輪廓按鈕 */
   .btn-outline-white {
-    @apply border-2 border-white text-white hover:bg-white hover:text-primary;
+    @apply border-2 border-white text-white hover:bg-white hover:text-primary focus:ring-white;
   }
   
   .btn-outline-red {
-    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary;
   }
   
   .btn-outline-black {
-    @apply border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white;
+    @apply border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white focus:ring-gray-500;
   }
   
   /* 文字樣式 */
@@ -475,351 +473,6 @@
   .heading-underline::after {
     content: '';
     @apply absolute left-0 bottom-0 w-12 h-1 bg-primary;
-  }
-  
-  /* 表單元素 - 扁平化設計 */
-  .input {
-    @apply w-full px-4 py-3 border border-gray-200 focus:border-primary focus:ring-0 transition-colors;
-  }
-  
-  .label {
-    @apply block text-sm font-medium text-[#111111] mb-2;
-  }
-  
-  /* 現代化卡片樣式 */
-  .card-modern {
-    @apply bg-white border border-gray-200 p-4 sm:p-6;
-  }
-  
-  .card-flat {
-    @apply bg-white p-4 sm:p-6 shadow-none;
-  }
-  
-  .card-accent {
-    @apply border-l-4 border-primary p-4 sm:p-6 bg-white;
-  }
-  
-  /* 現代扁平化按鈕 */
-  .btn-flat {
-    @apply py-2 px-4 font-medium text-sm transition-colors;
-  }
-  
-  .btn-flat-primary {
-    @apply bg-primary text-white hover:bg-red-dark;
-    color: white !important; /* 強制使用白色文字 */
-  }
-  
-  .btn-flat-black {
-    @apply bg-black text-white hover:bg-black-light;
-  }
-  
-  .btn-flat-white {
-    @apply bg-white text-primary hover:bg-gray-50;
-  }
-  
-  /* 簡約圖標容器 */
-  .icon-container {
-    @apply w-10 h-10 flex items-center justify-center;
-  }
-  
-  .icon-container-primary {
-    @apply bg-primary text-white;
-  }
-  
-  .icon-container-light {
-    @apply bg-primary/10 text-primary;
-  }
-  
-  /* 簡約標題 */
-  .heading-flat {
-    @apply font-bold text-brand-textDark;
-  }
-  
-  /* 手機優化間距 */
-  .mobile-spacing {
-    @apply py-4 px-4 sm:py-6 sm:px-6 md:py-8 md:px-8;
-  }
-
-  /* 平面化按鈕 */
-  .btn-flat {
-    @apply inline-flex items-center justify-center px-5 py-2.5 font-medium text-base transition-all duration-300 ease-out;
-    border: none;
-    outline: none;
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* 平面化標籤 */
-  .tag-flat {
-    @apply inline-flex items-center px-3 py-1 text-sm transition-all duration-300 ease-out;
-    border: none;
-    outline: none;
-    border-radius: 0;
-  }
-
-  /* 卡片組件 */
-  .card-flat {
-    @apply bg-white p-6 transition-all duration-300 ease-out;
-    border: none;
-    border-radius: 0;
-    position: relative;
-  }
-
-  /* 紅色卡片 */
-  .card-primary {
-    @apply bg-primary text-white;
-  }
-
-  /* 黑色卡片 */
-  .card-dark {
-    @apply bg-black text-white;
-  }
-
-  /* 單色圖片效果 */
-  .img-monochrome {
-    filter: grayscale(100%) brightness(1.1) contrast(1.2);
-    transition: filter var(--duration-normal) var(--ease-out);
-  }
-
-  .img-monochrome:hover {
-    filter: grayscale(80%) brightness(1.15) contrast(1.1);
-  }
-
-  /* 紅色濾鏡效果 */
-  .img-red-filter {
-    filter: grayscale(100%) sepia(50%) hue-rotate(325deg) saturate(150%);
-    transition: filter var(--duration-normal) var(--ease-out);
-  }
-
-  /* 分隔線 */
-  .divider-flat {
-    @apply w-full h-px my-6;
-    background-color: currentColor;
-    opacity: 0.1;
-  }
-
-  /* 醫療風格標題 */
-  .heading-medical {
-    @apply relative pb-3 mb-6;
-  }
-  
-  .heading-medical::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 2px;
-    background-color: var(--color-primary);
-  }
-
-  /* 統計數字卡片 */
-  .stat-card {
-    @apply p-6 flex flex-col items-start transition-all duration-300 ease-out;
-    border: none;
-    border-radius: 0;
-  }
-
-  .stat-card-primary {
-    @apply bg-primary text-white;
-  }
-
-  .stat-card-dark {
-    @apply bg-black text-white;
-  }
-
-  .stat-card-light {
-    @apply bg-white text-black border border-gray-100;
-  }
-
-  /* 數據數字 */
-  .stat-number {
-    @apply text-4xl sm:text-5xl font-bold leading-none mb-2;
-  }
-
-  /* 格柵系統 */
-  .grid-system {
-    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
-  }
-
-  /* 動畫效果 */
-  .fade-in {
-    animation: fadeIn var(--duration-slow) var(--ease-out) forwards;
-  }
-
-  .slide-up {
-    animation: slideUp var(--duration-slow) var(--ease-out) forwards;
-  }
-
-  /* 陰影效果 - 保持平面感 */
-  .shadow-flat {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  /* 主色調陰影 */
-  .shadow-primary {
-    box-shadow: 0 2px 8px rgba(230, 39, 51, 0.15);
-  }
-
-  /* 服務內容區塊按鈕樣式 - 確保紅底白字 */
-  .service-cta-button {
-    background-color: var(--color-primary) !important;
-    color: white !important; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.375rem;
-    transition: all 0.2s;
-  }
-
-  .service-cta-button:hover {
-    background-color: var(--color-primary-dark) !important;
-  }
-
-  .service-cta-button svg {
-    color: white !important;
-  }
-
-  /* 圖片容器基礎樣式 */
-  .image-container {
-    @apply relative overflow-hidden;
-  }
-
-  /* 圓形圖片容器 */
-  .image-circle {
-    @apply rounded-full overflow-hidden;
-  }
-
-  /* 圖片遮罩效果 */
-  .image-mask {
-    @apply absolute inset-0 bg-gradient-to-t from-black/20 to-transparent;
-  }
-
-  /* 圖片載入動畫 */
-  .image-loading {
-    @apply animate-pulse bg-gray-200;
-  }
-
-  /* 圖片懸停效果 */
-  .image-hover {
-    @apply transition-transform duration-300 hover:scale-105;
-  }
-
-  /* 自定義區塊樣式全局強化 */
-  .prose div.legal-note,
-  .prose div.faq-section,
-  .prose div.faq-item,
-  .prose div.stat-highlight,
-  .prose div.response-model,
-  .prose div.action-checklist,
-  .prose div.case-study,
-  .prose div.pro-tip,
-  .prose div.action-plan,
-  .prose div.cta-section,
-  .prose div.warning-box,
-  .prose div.info-box,
-  .prose div.note-box,
-  .prose div.image-gallery,
-  .prose div.expert-quote,
-  .prose div.product-recommendation,
-  .prose div.timeline,
-  .prose div.step-guide {
-    position: relative !important;
-    z-index: 1 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    margin: 2rem 0 !important;
-    border-radius: 0.5rem !important;
-  }
-  
-  /* 確保所有區塊內的元素正確顯示 */
-  .prose div.legal-note *,
-  .prose div.faq-section *,
-  .prose div.faq-item *,
-  .prose div.cta-section * {
-    display: inherit !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  /* 特別針對標題、段落和列表進行處理 */
-  .prose div.legal-note h1, .prose div.legal-note h2, .prose div.legal-note h3,
-  .prose div.legal-note h4, .prose div.legal-note h5, .prose div.legal-note h6,
-  .prose div.faq-section h1, .prose div.faq-section h2, .prose div.faq-section h3,
-  .prose div.faq-section h4, .prose div.faq-section h5, .prose div.faq-section h6,
-  .prose div.faq-item h1, .prose div.faq-item h2, .prose div.faq-item h3,
-  .prose div.faq-item h4, .prose div.faq-item h5, .prose div.faq-item h6,
-  .prose div.cta-section h1, .prose div.cta-section h2, .prose div.cta-section h3,
-  .prose div.cta-section h4, .prose div.cta-section h5, .prose div.cta-section h6 {
-    display: block !important;
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .prose div.legal-note p,
-  .prose div.faq-section p,
-  .prose div.faq-item p,
-  .prose div.cta-section p {
-    display: block !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .prose div.legal-note ul, .prose div.legal-note ol,
-  .prose div.faq-section ul, .prose div.faq-section ol,
-  .prose div.faq-item ul, .prose div.faq-item ol,
-  .prose div.cta-section ul, .prose div.cta-section ol {
-    display: block !important;
-    padding-left: 1.5rem !important;
-    margin-top: 0.5rem !important;
-  }
-  
-  .prose div.legal-note li,
-  .prose div.faq-section li,
-  .prose div.faq-item li,
-  .prose div.cta-section li {
-    display: list-item !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  /* CTA區塊特殊樣式 */
-  .prose div.cta-section {
-    background-color: #ebf5ff !important;
-    padding: 2rem !important;
-    text-align: center !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  .prose div.cta-section h3 {
-    color: #1e40af !important;
-    font-weight: 700 !important;
-    font-size: 1.5rem !important;
-    margin-bottom: 1rem !important;
-    display: block !important;
-  }
-
-  .prose div.cta-section p {
-    color: #1e3a8a !important;
-    margin-bottom: 1.5rem !important;
-  }
-
-  .prose div.cta-section a.cta-button {
-    display: inline-block !important;
-    background-color: #2563eb !important;
-    color: white !important;
-    font-weight: 600 !important;
-    padding: 0.75rem 2rem !important;
-    border-radius: 0.375rem !important;
-    text-decoration: none !important;
-  }
-
-  .prose div.cta-section a.cta-button:hover {
-    background-color: #1d4ed8 !important;
-    text-decoration: none !important;
   }
 }
 
@@ -1141,7 +794,7 @@
     display: list-item !important;
     margin: 0.25rem 0 !important;
   }
-  
+
   /* 法規依據區塊樣式 */
   .prose div.legal-note {
     border-left: 4px solid #6b7280 !important;

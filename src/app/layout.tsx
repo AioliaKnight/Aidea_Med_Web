@@ -102,27 +102,7 @@ export default function RootLayout({
         />
         
         {/* 預加載字體以避免CSP問題 */}
-        <link 
-          rel="preload" 
-          href="/fonts/GenYoGothicTW-Regular-subset.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossOrigin=""
-        />
-        <link 
-          rel="preload" 
-          href="/fonts/GenYoGothicTW-Bold-subset.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossOrigin=""
-        />
-        <link 
-          rel="preload" 
-          href="/fonts/Century Gothic 400.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossOrigin=""
-        />
+        {/* 字體設定已改為使用 Google Fonts，移除本地字體預載 */}
         
         {/* 移動優化設定 */}
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />

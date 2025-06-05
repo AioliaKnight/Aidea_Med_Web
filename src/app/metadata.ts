@@ -8,6 +8,14 @@ const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com',
   ogImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image.jpg`,
   alternateImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image-alt.jpg`,
+  locale: 'zh-TW', // 新增 locale
+  language: 'zh-Hant-TW', // 新增 language
+  authors: [
+    {
+      name: 'Aidea:Med 醫療行銷團隊',
+      url: 'https://www.aideamed.com/team',
+    }
+  ], // 新增 authors
   contact: {
     email: 'contact@aideamed.com',
     phone: '+886-2-27488919',
@@ -16,7 +24,7 @@ const siteConfig = {
   },
   social: {
     facebook: 'https://www.facebook.com/www.aideamed',
-    instagram: 'https://www.instagram.com/aidea_med',
+    instagram: 'https://www.instagram.com/aidea.med',
     linkedin: 'https://www.linkedin.com/company/aideamed',
     line: 'https://lin.ee/ZPdkmHh'
   },
@@ -198,75 +206,46 @@ const siteConfig = {
     '牙科診所數位行銷', 
     '植牙診所行銷策略',
     '牙醫SEO優化專家',
-    '牙醫社群媒體經營',
-    '牙醫網站設計團隊',
-    '牙醫Google廣告投放',
-    '牙科診所病患轉介系統',
-    '牙醫美容行銷',
-    '隱形矯正行銷方案',
-    '牙醫診所品牌塑造',
-    '牙科診所口碑管理',
-    '醫療數位轉型顧問',
-    '牙醫診所競爭分析',
-    '雅德思牙醫診所',
-    '雅德思行銷顧問',
-    '雲天牙醫診所',
-    '中華牙醫診所',
-    '品誠牙醫診所',
-    '春生牙醫診所',
-    '家源牙醫診所',
-    '海蒂牙醫診所',
-    '皓皓牙醫診所',
-    '勤美民生牙醫診所',
-    '經典聯合牙醫診所',
 
-    // 數位行銷相關
-    '診所網站設計',
-    '診所形象網站',
-    '醫療網站優化',
-    '醫療診所SEO',
-    '牙醫診所網站建置',
-    '診所關鍵字行銷',
-    '醫療零點行銷',
-    '診所搜尋引擎行銷',
-    '牙醫網路行銷',
-    '醫療內容策略',
-    '診所品牌內容',
-    '醫療社群行銷',
-    '醫師KOL行銷',
-    '牙醫數位廣告',
-    '醫療Facebook廣告',
-    '診所Google Ads',
-    '醫療影音行銷',
-    '診所YouTube頻道',
-    '醫美TikTok行銷',
-    '診所Instagram貼文',
-    '醫療電子報行銷',
-    '醫師部落格經營',
-    '療程轉換率優化',
-    '醫療行動網頁優化',
-    '診所用戶體驗設計',
-    '醫療網站流量分析',
-    '診所數位品牌監測',
-    '牙醫本地搜尋優化',
-    '醫療再行銷策略',
-    '診所CRM系統',
-    '醫療顧客旅程優化',
-    '醫美數位媒體投放',
-    '診所口碑營銷',
-    '牙醫Google我的商家',
-    '醫療精準投放',
-    '診所數位轉型策略',
-  ],
-  authors: [
-    {
-      name: 'Aidea:Med 醫療行銷團隊',
-      url: 'https://www.aideamed.com/team',
-    }
-  ],
-  availableLangs: ['zh-TW'],
-  locale: 'zh-TW',
-  language: 'zh-Hant-TW'
+    // 團隊與公司相關關鍵字
+    '醫療行銷團隊',
+    '專業醫療行銷專家',
+    '資深醫療行銷顧問',
+    'Aidea Med 團隊介紹',
+    '醫療行銷公司',
+    '醫療品牌策略團隊',
+    '醫療數位行銷團隊',
+    '醫療行銷專業人才',
+    '醫療行銷招募',
+    '醫療行銷職缺',
+    '醫療內容策略專員',
+    '醫療UI/UX設計師',
+    '數位醫療行銷執行',
+    '台北醫療行銷公司',
+    '醫療行銷顧問團隊',
+    '醫療品牌設計團隊',
+    '醫療創意團隊',
+    '醫療技術開發團隊',
+    '醫療客戶服務團隊',
+    '醫療行銷價值觀',
+    '醫療行銷使命',
+    '醫療行銷核心價值',
+    '醫療行銷專業創新',
+    '醫療行銷以人為本',
+    '醫療行銷數據驅動',
+    '醫療行銷持續成長',
+    '醫療行銷人才招募',
+    '醫療行銷求職',
+    '醫療行銷工作機會',
+    '醫療行銷實習機會',
+    '醫療行銷職業發展',
+    '醫療行銷團隊文化',
+    '醫療行銷工作環境',
+    '醫療行銷福利制度',
+    '醫療行銷專業培訓',
+    '醫療行銷團隊合作',
+    '醫療行銷創新思維'
+  ]
 }
 
 // 共用的 Open Graph 配置
@@ -398,85 +377,99 @@ export const homeMetadata: Metadata = {
 // 團隊頁面 Metadata
 export const teamMetadata: Metadata = {
   ...sharedMetadata,
-  title: '牙醫診所行銷顧問團隊 | 專精醫療行銷策略與數位轉型的專家',
-  description: '我們團隊由專業牙醫行銷顧問、數位醫療行銷專家與診所品牌策略師組成，擁有豐富的牙醫診所網路行銷經驗。我們深入理解牙醫市場與患者需求，協助各類牙科診所如植牙、美白、矯正、一般牙科等提升品牌知名度、增加患者轉介率與提高自費診療項目轉換率。',
+  title: '專業醫療行銷團隊介紹 | 醫療行銷的人文革命 | Aidea:Med',
+  description: '認識我們由醫療行銷專家、數位策略師、創意總監組成的跨領域團隊。Wilson 創辦人、Mike 數位總監、Leo 創意總監、Chloe 業務總監、Queena 體驗總監、西裝哥 技術總監，平均15年醫療行銷經驗，已協助70+醫療機構成功轉型，實現45%以上新患增長率。我們致力於醫療行銷的人文革命，重新定義醫療品牌與患者的深度連結。',
   keywords: [
     ...(Array.isArray(sharedMetadata.keywords) ? sharedMetadata.keywords : []),
-    '牙醫行銷團隊', 
-    '口腔診所品牌顧問', 
-    '牙科診所數位行銷', 
-    '植牙診所行銷策略',
-    '牙醫SEO優化專家',
-    '牙醫社群媒體經營',
-    '牙醫網站設計團隊',
-    '牙醫Google廣告投放',
-    '牙科診所病患轉介系統',
-    '牙醫美容行銷',
-    '隱形矯正行銷方案',
-    '牙醫診所品牌塑造',
-    '牙科診所口碑管理',
-    '醫療數位轉型顧問',
-    '牙醫診所競爭分析',
+    // 團隊成員相關
+    'Wilson 陳維鈞',
+    'Aidea Med 創辦人',
+    '醫療行銷策略總監',
+    'Mike 數位行銷總監',
+    'Leo 創意內容總監',
+    'Chloe 業務發展總監',
+    'Queena 顧客體驗總監',
+    '西裝哥技術開發總監',
+    '醫療行銷專家團隊',
+    '跨領域醫療行銷',
+    
+    // 團隊使命與價值觀
+    '醫療行銷人文革命',
+    '醫療品牌深度連結',
+    '專業創新醫療行銷',
+    '以人為本醫療服務',
+    '數據驅動醫療策略',
+    '持續成長醫療團隊',
+    '醫療行銷核心價值',
+    '醫療溫度傳遞',
+    '醫療專業價值',
+    '生命關懷醫療行銷',
+    
+    // 使命支柱
+    '深度傾聽醫療需求',
+    '情感共鳴醫療內容',
+    '醫療價值創造',
+    '永續醫療品牌發展',
+    '醫療信任建立',
+    '醫療人文故事',
+    '醫療行銷靈魂',
+    
+    // 團隊成就與服務
+    '70家醫療機構合作',
+    '45%新患增長率',
+    '95%客戶滿意度',
+    '25人專業團隊',
+    '8年平均經驗',
+    '100家醫療機構經驗',
+    '40%患者增長',
+    
+    // 人才招募相關
+    '醫療內容策略專員',
+    '數位醫療行銷執行',
+    '醫療UI UX設計師',
+    '醫療行銷顧問招募',
+    '醫療行銷職缺',
+    '醫療行銷求職',
+    '台北醫療行銷工作',
+    '醫療行銷實習',
+    '醫療行銷團隊文化',
+    
+    // 客戶推薦
     '雅德思牙醫診所',
-    '雅德思行銷顧問',
-    '雲天牙醫診所',
-    '中華牙醫診所',
-    '品誠牙醫診所',
+    '品誠醫美診所',
     '春生牙醫診所',
-    '家源牙醫診所',
-    '海蒂牙醫診所',
-    '皓皓牙醫診所',
-    '勤美民生牙醫診所',
-    '經典聯合牙醫診所',
-
-    // 數位行銷相關
-    '診所網站設計',
-    '診所形象網站',
-    '醫療網站優化',
-    '醫療診所SEO',
-    '牙醫診所網站建置',
-    '診所關鍵字行銷',
-    '醫療零點行銷',
-    '診所搜尋引擎行銷',
-    '牙醫網路行銷',
-    '醫療內容策略',
-    '診所品牌內容',
-    '醫療社群行銷',
-    '醫師KOL行銷',
-    '牙醫數位廣告',
-    '醫療Facebook廣告',
-    '診所Google Ads',
-    '醫療影音行銷',
-    '診所YouTube頻道',
-    '醫美TikTok行銷',
-    '診所Instagram貼文',
-    '醫療電子報行銷',
-    '醫師部落格經營',
-    '療程轉換率優化',
-    '醫療行動網頁優化',
-    '診所用戶體驗設計',
-    '醫療網站流量分析',
-    '診所數位品牌監測',
-    '牙醫本地搜尋優化',
-    '醫療再行銷策略',
-    '診所CRM系統',
-    '醫療顧客旅程優化',
-    '醫美數位媒體投放',
-    '診所口碑營銷',
-    '牙醫Google我的商家',
-    '醫療精準投放',
-    '診所數位轉型策略',
+    '醫療客戶推薦',
+    '醫療行銷案例',
+    '醫療品牌成功故事',
+    
+    // 辦公環境與文化
+    '台北醫療行銷公司',
+    '現代化辦公環境',
+    '團隊協作空間',
+    '創意討論環境',
+    '醫療行銷工作環境',
+    '彈性工作制度',
+    '專業發展機會',
+    '醫療行銷培訓'
   ],
   openGraph: {
     ...sharedOgConfig,
-    title: '牙醫診所行銷顧問團隊 | 專精醫療行銷策略與數位轉型的專家',
-    description: '我們團隊由專業牙醫行銷顧問、數位醫療行銷專家與診所品牌策略師組成，擁有豐富的牙醫診所網路行銷經驗。我們深入理解牙醫市場與患者需求，協助各類牙科診所提升品牌知名度、增加患者轉介率與提高自費診療項目轉換率。',
+    title: '專業醫療行銷團隊介紹 | 醫療行銷的人文革命 | Aidea:Med',
+    description: '認識我們由醫療行銷專家、數位策略師、創意總監組成的跨領域團隊。Wilson 創辦人、Mike 數位總監、Leo 創意總監、Chloe 業務總監、Queena 體驗總監、西裝哥 技術總監，平均15年醫療行銷經驗，已協助70+醫療機構成功轉型，實現45%以上新患增長率。我們致力於醫療行銷的人文革命，重新定義醫療品牌與患者的深度連結。',
     url: `${siteConfig.url}/team`,
+    images: [
+      {
+        url: `${siteConfig.url}/images/team/team-og.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Aidea:Med 專業醫療行銷團隊'
+      }
+    ]
   },
   twitter: {
     ...sharedTwitterConfig,
-    title: '牙醫診所行銷顧問團隊 | 專精醫療行銷策略與數位轉型的專家',
-    description: '我們團隊由專業牙醫行銷顧問、數位醫療行銷專家與診所品牌策略師組成，擁有豐富的牙醫診所網路行銷經驗。我們深入理解牙醫市場與患者需求，協助各類牙科診所提升品牌知名度、增加患者轉介率與提高自費診療項目轉換率。',
+    title: '專業醫療行銷團隊介紹 | 醫療行銷的人文革命',
+    description: '認識我們由醫療行銷專家、數位策略師、創意總監組成的跨領域團隊。Wilson 創辦人、Mike 數位總監、Leo 創意總監等專業人士，平均15年醫療行銷經驗，致力於醫療行銷的人文革命。',
   }
 }
 
@@ -1430,3 +1423,140 @@ export const professionalServiceSchema = {
     }
   ]
 } 
+
+// 結構化資料 - 團隊頁面
+export const teamPageStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: '認識Aidea:Med專業醫療行銷團隊 | 使命、價值觀與我們的專家',
+  description: '深入了解Aidea:Med的團隊使命、核心價值、以及我們的醫療行銷專家團隊。我們致力於透過人文關懷與專業創新，為醫療機構帶來卓越成效。',
+  url: `${siteConfig.url}/team`,
+  publisher: {
+    '@type': 'Organization',
+    name: siteConfig.name,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${siteConfig.url}/logo.png`, // 請確保 logo.png 存在於 public 資料夾
+    },
+  },
+  mainEntity: {
+    '@type': 'Organization',
+    name: siteConfig.name,
+    url: siteConfig.url,
+    slogan: siteConfig.slogan,
+    description: siteConfig.description,
+    logo: `${siteConfig.url}/logo.png`,
+    member: [
+      {
+        '@type': 'Person',
+        name: '陳維鈞 Wilson',
+        jobTitle: '創辦人暨策略總監',
+        description: '擁有十五年以上醫療行銷經驗，專精於醫療品牌策略與患者體驗設計。帶領團隊協助超過70家醫療機構重塑品牌形象。',
+        image: `${siteConfig.url}/images/team/member-1.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://www.instagram.com/aidea.med/',
+          'https://lin.ee/ZPdkmHh'
+        ],
+        knowsAbout: ['醫療品牌策略', '患者體驗設計', '醫病溝通優化', '危機溝通管理', '醫療產業趨勢分析']
+      },
+      {
+        '@type': 'Person',
+        name: 'Mike',
+        jobTitle: '數位行銷總監',
+        description: '數位行銷專家，擅長醫療機構網站優化與精準投放策略。專注於透過AI與數據分析優化醫療行銷績效。',
+        image: `${siteConfig.url}/images/team/member-2.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://www.instagram.com/aidea.med/'
+        ],
+        knowsAbout: ['AI行銷策略', '醫療轉換率提升', '精準廣告投放', 'Google Ads優化', 'SEO策略執行', '社群媒體經營']
+      },
+      {
+        '@type': 'Person',
+        name: 'Leo',
+        jobTitle: '創意內容總監',
+        description: '資深醫療內容策略專家，擅長將複雜的醫療專業知識轉化為患者易懂且具共鳴的內容。',
+        image: `${siteConfig.url}/images/team/member-3.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://www.instagram.com/aidea.med/'
+        ],
+        knowsAbout: ['醫療故事敘事', '專業知識轉譯', '品牌內容策略', '醫療文案撰寫', '影音腳本策劃']
+      },
+      {
+        '@type': 'Person',
+        name: 'Chloe',
+        jobTitle: '業務發展總監',
+        description: '資深醫療業務專家，專注於醫療機構客戶關係管理與業務策略。',
+        image: `${siteConfig.url}/images/team/member-4.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://www.instagram.com/aidea.med/'
+        ],
+        knowsAbout: ['醫療客戶關係', '業務策略規劃', '品牌差異化', '客戶需求分析', '提案策略規劃']
+      },
+      {
+        '@type': 'Person',
+        name: 'Queena',
+        jobTitle: '顧客體驗總監',
+        description: '專注於醫療顧客體驗與患者忠誠度系統建立。深入理解醫病關係的獨特性。',
+        image: `${siteConfig.url}/images/team/member-5.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://www.instagram.com/aidea.med/'
+        ],
+        knowsAbout: ['患者體驗管理', '醫療服務設計', '忠誠度建立', '患者旅程優化', '服務流程設計']
+      },
+      {
+        '@type': 'Person',
+        name: '西裝哥',
+        jobTitle: '技術開發總監',
+        description: '資深醫療科技專家，專精於醫療機構數位轉型與患者體驗優化。',
+        image: `${siteConfig.url}/images/team/member-6.jpg`,
+        sameAs: [
+          'https://www.facebook.com/www.aideamed',
+          'https://lin.ee/ZPdkmHh'
+        ],
+        knowsAbout: ['醫療系統開發', 'AI應用整合', '數位轉型諮詢', '系統架構設計', '數位化流程建置']
+      }
+    ],
+    knowsAbout: [
+      '醫療行銷人文革命',
+      '醫療品牌深度連結',
+      '專業創新醫療行銷',
+      '以人為本醫療服務',
+      '數據驅動醫療策略',
+      '持續成長醫療團隊',
+      '深度傾聽醫療需求',
+      '情感共鳴醫療內容',
+      '醫療價值創造',
+      '永續醫療品牌發展'
+    ],
+    descriptionOfWork: [
+      {
+        '@type': 'CreativeWork',
+        name: '我們的使命：醫療行銷的人文革命',
+        description: '我們的使命是重新定義醫療品牌與患者之間的溝通方式，強調深度連結與人文關懷，為冰冷的醫療場域注入更多溫暖與信任。',
+        keywords: ['醫療行銷人文革命', '醫療品牌深度連結', '醫病溝通']
+      }
+    ]
+  },
+  keywords: [
+    '醫療行銷團隊', 'Aidea Med 團隊介紹', '專業醫療行銷專家', '醫療品牌策略團隊', 
+    '醫療數位行銷團隊', '醫療行銷使命', '醫療行銷價值觀', 'Wilson 陳維鈞', 'Mike 數位總監', 'Leo 創意總監',
+    '醫療行銷人才招募', '醫療客戶推薦'
+  ]
+}
+
+// 建立 FAQ 結構化數據的函數 (此函數已在上方定義，此處僅為標記，不應重複聲明)
+// export const createFaqSchema = (questions: {question: string, answer: string}[], options?: {
+//   id?: string;
+//   about?: string;
+//   isPartOf?: string;
+//   datePublished?: string;
+//   lastReviewed?: string;
+//   languageCode?: string;
+// }) => {
+//   // ... 函數內容 ...
+// };

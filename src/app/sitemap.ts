@@ -236,9 +236,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // 組合所有實際存在的路由
   const allRoutes = [
-    ...staticRoutes,
-    ...serviceDetailRoutes,
-    ...caseRoutes,
+    ...staticRoutes, 
+    ...serviceDetailRoutes, 
+    ...caseRoutes, 
     ...blogRoutes,
     ...imageRoutes,
     ...languageRoutes,

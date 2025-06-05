@@ -1,116 +1,172 @@
 'use client'
 
-import React, { forwardRef } from 'react'
-import { motion } from 'framer-motion'
+import React, { forwardRef, type ComponentPropsWithoutRef } from 'react'
+import { motion, type HTMLMotionProps } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-type CardVariant =
-  | 'default'
-  | 'flat'
-  | 'modern'
-  | 'accent'
-  | 'primary'
-  | 'dark'
-  | 'stat'
-  | 'stat-primary'
-  | 'stat-dark'
-  | 'stat-light'
-
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: CardVariant
-  hoverEffect?: 'lift' | 'border' | 'shadow' | 'none'
-  isClickable?: boolean
+type BaseCardProps = {
+  variant?: 'default' | 'primary' | 'dark' | 'flat' | 'bordered'
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  shadow?: 'none' | 'sm' | 'md' | 'lg'
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full'
+  hover?: boolean
   animate?: boolean
-  motionProps?: any
-  as?: React.ElementType
+  as?: 'div' | 'article' | 'section'
 }
 
+export interface CardProps extends BaseCardProps, Omit<ComponentPropsWithoutRef<'div'>, keyof BaseCardProps> {}
+
 /**
- * 統一卡片元件
- * 整合了各種卡片樣式和效果
+ * 通用卡片組件
+ * 支援多種變體、尺寸和動畫效果
  */
-const Card = forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      variant = 'default',
-      hoverEffect = 'none',
-      isClickable = false,
-      animate = false,
-      motionProps,
-      as: Component = 'div',
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    // 基本卡片樣式
-    const baseClasses = 'relative'
-    
-    // 變體樣式
-    const variantClasses = {
-      'default': 'bg-white border border-gray-100 p-6',
-      'flat': 'bg-white p-6',
-      'modern': 'bg-white border border-gray-200 p-4 sm:p-6',
-      'accent': 'border-l-4 border-primary p-4 sm:p-6 bg-white',
-      'primary': 'bg-primary text-white p-6',
-      'dark': 'bg-black text-white p-6',
-      'stat': 'p-6 flex flex-col items-start',
-      'stat-primary': 'bg-primary text-white p-6 flex flex-col items-start',
-      'stat-dark': 'bg-black text-white p-6 flex flex-col items-start',
-      'stat-light': 'bg-white text-black border border-gray-100 p-6 flex flex-col items-start'
+const Card = forwardRef<HTMLDivElement, CardProps>(({
+  variant = 'default',
+  padding = 'md',
+  shadow = 'sm',
+  rounded = 'md',
+  hover = false,
+  animate = false,
+  as: Component = 'div',
+  className = '',
+  children,
+  ...props
+}, ref) => {
+  // 基礎樣式
+  const baseClasses = cn(
+    'transition-all duration-300',
+  )
+
+  // 變體樣式
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'primary':
+        return 'bg-primary text-white'
+      case 'dark':
+        return 'bg-[#111111] text-white'
+      case 'flat':
+        return 'bg-white border-none'
+      case 'bordered':
+        return 'bg-white border-2 border-gray-200'
+      case 'default':
+      default:
+        return 'bg-white border border-gray-100'
     }
-    
-    // 懸停效果樣式
-    const hoverClasses = {
-      'lift': 'transition-transform duration-300 hover:-translate-y-1',
-      'border': 'transition-colors duration-300 hover:border-primary',
-      'shadow': 'transition-shadow duration-300 hover:shadow-md',
-      'none': ''
+  }
+
+  // 內距樣式
+  const getPaddingClasses = () => {
+    switch (padding) {
+      case 'none':
+        return 'p-0'
+      case 'sm':
+        return 'p-4'
+      case 'md':
+        return 'p-6'
+      case 'lg':
+        return 'p-8'
+      case 'xl':
+        return 'p-10'
+      default:
+        return 'p-6'
     }
+  }
+
+  // 陰影樣式
+  const getShadowClasses = () => {
+    switch (shadow) {
+      case 'none':
+        return 'shadow-none'
+      case 'sm':
+        return 'shadow-sm'
+      case 'md':
+        return 'shadow-md'
+      case 'lg':
+        return 'shadow-lg'
+      default:
+        return 'shadow-sm'
+    }
+  }
+
+  // 圓角樣式
+  const getRoundedClasses = () => {
+    switch (rounded) {
+      case 'none':
+        return 'rounded-none'
+      case 'sm':
+        return 'rounded-sm'
+      case 'md':
+        return 'rounded-md'
+      case 'lg':
+        return 'rounded-lg'
+      case 'full':
+        return 'rounded-full'
+      default:
+        return 'rounded-md'
+    }
+  }
+
+  // 懸停效果
+  const getHoverClasses = () => {
+    if (!hover) return ''
     
-    // 可點擊狀態
-    const clickableClasses = isClickable
-      ? 'cursor-pointer transition-all duration-300'
-      : ''
-    
-    // 合併所有樣式
-    const cardClasses = cn(
-      baseClasses,
-      variantClasses[variant],
-      hoverClasses[hoverEffect],
-      clickableClasses,
-      className
-    )
-    
-    // 靜態卡片
-    const staticCard = (
-      <Component
+    switch (variant) {
+      case 'primary':
+        return 'hover:bg-primary-dark hover:shadow-lg'
+      case 'dark':
+        return 'hover:bg-[#333333] hover:shadow-lg'
+      case 'default':
+      case 'flat':
+      case 'bordered':
+      default:
+        return 'hover:shadow-md hover:border-primary/20'
+    }
+  }
+
+  const finalClasses = cn(
+    baseClasses,
+    getVariantClasses(),
+    getPaddingClasses(),
+    getShadowClasses(),
+    getRoundedClasses(),
+    getHoverClasses(),
+    className
+  )
+
+  if (animate) {
+    // 創建一個新的 motion.div，不使用擴展的 props 避免類型衝突
+    return (
+      <motion.div
         ref={ref}
-        className={cardClasses}
-        {...props}
+        className={finalClasses}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        whileHover={hover ? { scale: 1.02 } : undefined}
+        style={props.style}
+        id={props.id}
+        onClick={props.onClick}
+        onMouseEnter={props.onMouseEnter}
+        onMouseLeave={props.onMouseLeave}
       >
         {children}
-      </Component>
+      </motion.div>
     )
-    
-    // 動畫卡片
-    if (animate) {
-      return (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          {...motionProps}
-        >
-          {staticCard}
-        </motion.div>
-      )
-    }
-    
-    return staticCard
   }
-)
+
+  const ElementComponent = Component as any
+
+  return (
+    <ElementComponent
+      ref={ref}
+      className={finalClasses}
+      {...props}
+    >
+      {children}
+    </ElementComponent>
+  )
+})
 
 Card.displayName = 'Card'
 
