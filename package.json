@@ -12,8 +12,11 @@
     "validate": "npm run lint && npm run type-check",
     "clean": "rimraf .next out",
     "prebuild": "npm run clean",
-    "analyze": "ANALYZE=true next build",
-    "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build"
+    "analyze": "cross-env ANALYZE=true next build",
+    "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build",
+    "optimize-images": "node scripts/optimize-images.js",
+    "perf": "npm run build && npm run start",
+    "audit-bundle": "npm run analyze && npx bundlesize"
   },
   "overrides": {
     "react-is": "^19.0.0",
@@ -78,7 +81,6 @@
     "remark-html": "^16.0.1",
     "resend": "^4.2.0",
     "rimraf": "^6.0.1",
-    "sharp": "^0.33.5",
     "tailwind-merge": "^3.0.2",
     "web-vitals": "^4.2.4",
     "zod": "^3.24.2"
@@ -96,6 +98,8 @@
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "autoprefixer": "^10.4.21",
     "babel-plugin-react-compiler": "^19.0.0-beta-3229e95-20250315",
+    "bundlesize": "^0.18.2",
+    "cross-env": "^7.0.3",
     "cssnano": "^7.0.6",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.4",
@@ -110,6 +114,7 @@
     "postcss-preset-env": "^10.1.5",
     "prettier": "^3.5.3",
     "react-is": "^19.0.0",
+    "sharp": "^0.34.2",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
     "to-ico": "^1.1.5",

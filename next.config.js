@@ -132,7 +132,7 @@ const withPWA = require('next-pwa')({
 })
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: false,
+  enabled: process.env.ANALYZE === 'true',
 })
 
 /** @type {import('next').NextConfig} */
@@ -236,18 +236,15 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    formats: ['image/webp'],
-    // 根據環境使用不同的尺寸配置
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60,
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000, // 1 年
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // 啟用壓縮優化，提高性能
-    disableStaticImages: false,
-    // 優化圖片加載
-    loader: 'default',
-    loaderFile: '',
+    // 設備尺寸優化
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // 啟用圖片優化
+    unoptimized: false,
   },
   // 將 serverComponentsExternalPackages 移至 serverExternalPackages
   serverExternalPackages: [],

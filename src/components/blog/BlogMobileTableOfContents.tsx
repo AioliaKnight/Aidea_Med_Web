@@ -1,48 +1,44 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { List, X, ChevronRight, Clock, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useBlogTableOfContents } from './hooks'
-import { BlogMobileTableOfContentsProps } from './types'
+import { useBlogTableOfContents } from './hooks/useBlogTableOfContents'
+import { TocItem } from './types'
 
-const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ 
-  content, 
-  className 
-}) => {
+interface BlogMobileTableOfContentsProps {
+  content: string
+}
+
+const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ content }) => {
   const [isOpen, setIsOpen] = useState(false)
   
   const {
     tocItems,
-    activeId,
     readingProgress,
     estimatedReadTime,
-    scrollToHeading
+    scrollToHeading: scrollToHeadingFn
   } = useBlogTableOfContents({ content })
 
   // 調試信息
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('BlogMobileTableOfContents 渲染:', {
-        tocItemsCount: tocItems.length,
-        hasContent: !!content,
-        contentLength: content?.length || 0
-      })
-    }
-  }, [tocItems, content])
+  if (process.env.NODE_ENV === 'development') {
+    // console.log('BlogMobileTableOfContents 渲染:', {
+    //   tocItemsLength: tocItems.length,
+    //   contentLength: content?.length || 0,
+    //   isVisible
+    // })
+  }
 
-  // 點擊目錄項目滾動到對應位置並關閉目錄
-  const handleScrollToHeading = (id: string) => {
+  const handleScrollToHeading = useCallback((id: string) => {
     try {
-      scrollToHeading(id)
-      setIsOpen(false)
+      scrollToHeadingFn(id)
     } catch (error) {
       console.error('滾動到標題時發生錯誤:', error)
     }
-  }
+  }, [scrollToHeadingFn])
 
-  // 如果沒有內容，顯示調試信息
+  // 如果沒有內容，不渲染組件
   if (!content) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('BlogMobileTableOfContents: 沒有內容')
@@ -50,7 +46,7 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
     return null
   }
 
-  // 如果沒有目錄項目，但有內容，顯示調試信息
+  // 如果沒有目錄項目，不渲染組件
   if (tocItems.length === 0) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('BlogMobileTableOfContents: 沒有找到目錄項目，但有內容')
@@ -58,14 +54,42 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
     return null
   }
 
+  const handleToggle = () => {
+    if (process.env.NODE_ENV === 'development') {
+      // console.log('移動端目錄按鈕被點擊')
+    }
+    setIsOpen(!isOpen)
+  }
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      if (process.env.NODE_ENV === 'development') {
+        // console.log('背景遮罩被點擊，關閉目錄')
+      }
+      setIsOpen(false)
+    }
+  }
+
+  const handleClose = () => {
+    if (process.env.NODE_ENV === 'development') {
+      // console.log('關閉按鈕被點擊')
+    }
+    setIsOpen(false)
+  }
+
+  const handleItemClick = (item: TocItem) => {
+    if (process.env.NODE_ENV === 'development') {
+      // console.log('目錄項目被點擊:', item.title, item.id)
+    }
+    handleScrollToHeading(item.id)
+    setIsOpen(false)
+  }
+
   return (
     <>
       {/* 觸發按鈕 - 固定在底部 */}
       <motion.button
-        onClick={() => {
-          console.log('移動端目錄按鈕被點擊')
-          setIsOpen(true)
-        }}
+        onClick={handleToggle}
         className={cn(
           "fixed bottom-6 right-6 z-[60]",
           "xl:hidden", // 只在移動端和平板顯示
@@ -74,7 +98,7 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
           "flex items-center justify-center",
           "hover:bg-primary/90 transition-colors",
           "border-2 border-white",
-          className
+          "className"
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -104,10 +128,7 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              onClick={() => {
-                console.log('背景遮罩被點擊，關閉目錄')
-                setIsOpen(false)
-              }}
+              onClick={handleBackdropClick}
             />
 
             {/* 目錄內容 */}
@@ -148,10 +169,7 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
                     </div>
                   </div>
                   <button
-                    onClick={() => {
-                      console.log('關閉按鈕被點擊')
-                      setIsOpen(false)
-                    }}
+                    onClick={handleClose}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     aria-label="關閉目錄"
                   >
@@ -180,17 +198,14 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
                       onClick={() => {
-                        console.log('目錄項目被點擊:', item.title, item.id)
-                        handleScrollToHeading(item.id)
+                        handleItemClick(item)
                       }}
                       className={cn(
                         "w-full text-left p-3 rounded-xl transition-all duration-200",
                         "flex items-start space-x-3",
                         "hover:bg-gray-50 active:bg-gray-100",
                         "focus:outline-none focus:ring-2 focus:ring-primary/20",
-                        activeId === item.id 
-                          ? "bg-primary/10 text-primary border-l-4 border-primary shadow-sm" 
-                          : "text-gray-700 hover:text-gray-900"
+                        "text-gray-700 hover:text-gray-900"
                       )}
                       style={{ 
                         paddingLeft: `${(item.level - 1) * 16 + 12}px` 
@@ -199,12 +214,12 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({
                       <ChevronRight 
                         className={cn(
                           "w-4 h-4 mt-0.5 transition-transform flex-shrink-0",
-                          activeId === item.id ? "text-primary rotate-90" : "text-gray-400"
+                          "text-gray-400"
                         )} 
                       />
                       <span className={cn(
                         "text-base leading-relaxed line-clamp-2",
-                        activeId === item.id ? "font-semibold" : "font-normal"
+                        "font-normal"
                       )}>
                         {item.title}
                       </span>
