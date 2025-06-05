@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fb-ads-mcp-server": {
+      "command": "C:\\Users\\leolee\\facebook-ads-mcp-server\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\leolee\\facebook-ads-mcp-server\\server.py",
+        "--fb-token",
+        "EAARwTusFuKIBO7jgiOcicFo2fVJFbmVZAD5WlnGi9gdZAETW0kxf4OAlJQe0ZCPauLC1c96ibSPZBZAdV3f8PWoXzI3qCkKSTdx4GqWJsZBSnVw5DcZCyTArykwA74rkiLlWaAzcrBKlGM5LKZCowe7j3mp2ZCUOYZCpd5QolytZCg1fRqLjFBaxZCpTcTnOMP3pybk8RZCW3IKu0rGo9NbN9UHg91nvQrF0ZD"
+      ]
+    }
+  }
+} 

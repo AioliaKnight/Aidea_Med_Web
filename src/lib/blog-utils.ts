@@ -42,7 +42,7 @@ export function formatDate(dateString: string) {
 
 // 計算閱讀時間 - 客戶端可用
 export function calculateReadTime(content: string): number {
-  const wordsPerMinute = 200; // 平均每分鐘閱讀字數
+  const wordsPerMinute = 600; // 平均每分鐘閱讀字數
   const textContent = content.replace(/<[^>]*>/g, ''); // 移除HTML標籤
   const wordCount = textContent.split(/\s+/).length;
   const readTime = Math.ceil(wordCount / wordsPerMinute);
@@ -138,4 +138,41 @@ export function getPostCountByCategory(posts: Post[], category: string): number 
   }
   
   return posts.filter(post => post.category === category).length;
+}
+
+/**
+ * 為標題生成唯一的 ID
+ * @param title 標題文本
+ * @param index 標題在文檔中的索引
+ * @returns 生成的唯一 ID
+ */
+export function generateHeadingId(title: string, index: number): string {
+  return `heading-${index}-${title.toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .substring(0, 50)}`
+}
+
+/**
+ * 為 DOM 中的標題元素設置 ID 和滾動偏移
+ * @param headings 標題元素列表
+ */
+export function setupHeadingIds(headings: NodeListOf<Element> | Element[]): void {
+  Array.from(headings).forEach((heading, index) => {
+    const title = heading.textContent?.trim() || ''
+    
+    // 跳過太短的標題
+    if (title.length < 3) return
+    
+    const id = generateHeadingId(title, index)
+    
+    // 如果標題還沒有 ID，設置它
+    if (!heading.id) {
+      heading.id = id
+      // 添加滾動偏移樣式
+      if (heading instanceof HTMLElement) {
+        heading.style.scrollMarginTop = '100px'
+      }
+    }
+  })
 } 

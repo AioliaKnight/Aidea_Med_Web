@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { setupHeadingIds } from '@/lib/blog-utils'
 
 interface BlogContentProps {
   content: string
@@ -22,9 +23,13 @@ interface BlogContentProps {
 const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 確保所有 div 元素和其內容能夠正確顯示
+  // 確保所有 div 元素和其內容能夠正確顯示，並為標題添加 ID
   useEffect(() => {
     if (contentRef.current) {
+      // 處理標題元素，為它們添加 ID 以支援目錄導覽
+      const headings = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      setupHeadingIds(headings);
+      
       // 處理保留原始div結構和類別名稱
       const divElements = contentRef.current.querySelectorAll('div');
       
@@ -61,11 +66,11 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
         ];
         
         // 檢查是否是任何一個自定義樣式類別
-        const isCustomBlock = customClassNames.some(className => checkAndApplyStyle(className));
+        customClassNames.some(className => checkAndApplyStyle(className));
         
         // 如果有debug標記，輸出類別名稱以協助調試
         if (div.classList.contains('debug-class')) {
-          console.log('Current div classes:', Array.from(div.classList));
+          // console.log('Current div classes:', Array.from(div.classList));
         }
       });
     }

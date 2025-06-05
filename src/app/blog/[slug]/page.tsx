@@ -58,7 +58,7 @@ interface BlogPost {
 export const viewport = medicalContentViewport
 
 // 生成元資料
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   // 先await params再使用其屬性
   const resolvedParams = await params;
   const post = await getBlogPost(resolvedParams.slug);
@@ -81,7 +81,7 @@ function generateBlogStructuredData(post: BlogPost) {
   const cleanContent = post.content.replace(/<[^>]*>/g, '')
   
   // 計算閱讀時間，如果沒有提供則使用一個估算
-  const readingTime = post.readTime || Math.ceil(cleanContent.split(/\s+/).length / 200)
+  const readingTime = post.readTime || Math.ceil(cleanContent.split(/\s+/).length / 600)
   
   // 擷取關鍵段落作為文章摘錄
   const excerpt = post.summary || cleanContent.substring(0, 150) + '...'
@@ -492,7 +492,7 @@ function BlogPost({ post, relatedPosts }: { post: BlogPost, relatedPosts: Post[]
   );
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   // 先await params再使用其屬性
   const resolvedParams = await params;
   const post = await getBlogPost(resolvedParams.slug);

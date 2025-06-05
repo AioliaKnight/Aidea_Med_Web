@@ -334,6 +334,23 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://tagmanager.google.com https://cdn.respond.io",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googleapis.com https://cdn.respond.io https://tagmanager.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+              "font-src 'self' https://fonts.gstatic.com https://*.gstatic.com data:",
+              "img-src 'self' data: blob: https: http:",
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://api.respond.io wss://api.respond.io https://cdn.respond.io",
+              "frame-src 'self' https://www.youtube.com https://youtube.com https://www.google.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests"
+            ].join('; ')
+          },
         ]
       },
       // 針對靜態資源的快取優化
