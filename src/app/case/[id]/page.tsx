@@ -180,7 +180,7 @@ export default function CaseDetailPage() {
           url: window.location.href,
         });
       } catch (err) {
-        console.log('Error sharing', err);
+        // 分享功能暫時無法使用
         // 如果原生分享失敗，顯示分享選單
         setShowShareMenu(true);
       }

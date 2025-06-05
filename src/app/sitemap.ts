@@ -195,7 +195,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
       });
       
-      console.log(`Successfully added ${blogRoutes.length} blog posts to sitemap`);
+      // Successfully added blog posts to sitemap
     }
   } catch (error) {
     console.error('Error fetching blog data for sitemap:', error);
@@ -253,8 +253,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return new Date(b.lastModified || 0).getTime() - new Date(a.lastModified || 0).getTime()
   })
 
-  console.log(`Generated sitemap with ${allRoutes.length} total routes`)
-  console.log(`Blog routes: ${blogRoutes.length}, Case routes: ${caseRoutes.length}`)
+  // Generated sitemap with all routes successfully
   
   return allRoutes
 } 

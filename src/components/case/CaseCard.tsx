@@ -43,7 +43,7 @@ export const CaseCard = React.memo(({
   
   const handleImageError = useCallback(() => {
     setImgStatus({ loading: false, error: true });
-    console.log(`圖片載入失敗: ${imgSrc}`);
+          // 圖片載入失敗，使用預設圖片
   }, [imgSrc]);
 
   // 預先載入圖片 - 添加這段代碼確保圖片預載入
