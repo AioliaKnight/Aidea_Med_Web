@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, memo, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { setupHeadingIds } from '@/lib/blog-utils'
@@ -9,6 +9,102 @@ interface BlogContentProps {
   content: string
   className?: string
 }
+
+// 抽離樣式常數，避免重複計算
+const PROSE_STYLES = {
+  base: "prose prose-lg max-w-none",
+  text: "prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-5 sm:prose-p:mb-7 prose-p:text-base md:prose-p:text-lg prose-p:tracking-wide prose-p:leading-7",
+  headings: "prose-headings:font-heading prose-headings:tracking-tight prose-headings:text-gray-900 prose-headings:leading-tight",
+  h2: "prose-h2:text-[1.5rem] sm:prose-h2:text-[1.75rem] prose-h2:font-bold prose-h2:mt-8 sm:prose-h2:mt-10 prose-h2:mb-4 sm:prose-h2:mb-6 prose-h2:pb-2 sm:prose-h2:pb-3 prose-h2:border-b-2 prose-h2:border-gray-100",
+  h3: "prose-h3:text-[1.25rem] sm:prose-h3:text-[1.5rem] prose-h3:font-semibold prose-h3:mt-6 sm:prose-h3:mt-8 prose-h3:mb-3 sm:prose-h3:mb-4",
+  images: "prose-img:rounded-2xl sm:prose-img:rounded-3xl prose-img:shadow-lg prose-img:mx-auto prose-img:my-6 sm:prose-img:my-10 prose-img:w-full prose-img:h-auto"
+} as const
+
+// 優化：使用 memo 來防止不必要的重渲染
+const BlogContentMemo = memo<BlogContentProps>(({ content, className }) => {
+  const contentRef = useRef<HTMLDivElement>(null)
+  
+  // 優化：使用 useMemo 來避免重複計算樣式
+  const combinedStyles = useMemo(() => cn(
+    PROSE_STYLES.base,
+    PROSE_STYLES.text,
+    PROSE_STYLES.headings,
+    PROSE_STYLES.h2,
+    PROSE_STYLES.h3,
+    PROSE_STYLES.images,
+    // 其他現有樣式...
+    "prose-h1:text-3xl sm:prose-h1:text-4xl md:prose-h1:text-5xl prose-h1:font-bold prose-h1:mb-6 sm:prose-h1:mb-10 prose-h1:mt-8 sm:prose-h1:mt-10",
+    className
+  ), [className])
+
+  // 優化：使用 useCallback 來避免重複創建函數
+  const setupContentEnhancements = useCallback(() => {
+    if (!contentRef.current) return
+
+    // 使用 requestIdleCallback 來優化DOM操作時機
+    const scheduleWork = (callback: () => void) => {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(callback, { timeout: 1000 })
+      } else {
+        setTimeout(callback, 0)
+      }
+    }
+
+    scheduleWork(() => {
+      if (!contentRef.current) return
+      
+      // 處理標題元素
+      const headings = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6')
+      setupHeadingIds(headings)
+      
+      // 批量處理 div 元素以減少重排
+      const divElements = contentRef.current.querySelectorAll('div')
+      const fragment = document.createDocumentFragment()
+      
+      Array.from(divElements).forEach((div) => {
+        if (div instanceof HTMLElement) {
+          // 使用 CSS 類而非內聯樣式來提高性能
+          div.classList.add('blog-content-div')
+          applyStyleToInnerElements(div)
+        }
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    setupContentEnhancements()
+  }, [content, setupContentEnhancements])
+
+  // 抽離內部元素處理邏輯
+  const applyStyleToInnerElements = useCallback((container: Element) => {
+    // 使用 classList 操作代替 style 操作以提高性能
+    const processElements = (selector: string, className: string) => {
+      const elements = container.querySelectorAll(selector)
+      elements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          element.classList.add(className)
+        }
+      })
+    }
+
+    processElements('h1, h2, h3, h4, h5, h6', 'blog-heading-enhanced')
+    processElements('p', 'blog-paragraph-enhanced')
+    processElements('ul, ol', 'blog-list-enhanced')
+  }, [])
+
+  return (
+    <motion.div
+      ref={contentRef}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.3 }}
+      className={combinedStyles}
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
+  )
+})
+
+BlogContentMemo.displayName = 'BlogContent'
 
 /**
  * 部落格文章內容排版組件

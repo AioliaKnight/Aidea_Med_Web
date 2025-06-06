@@ -21,23 +21,23 @@ export interface CardProps extends BaseCardProps, Omit<ComponentPropsWithoutRef<
  * 支援多種變體、尺寸和動畫效果
  */
 const Card = forwardRef<HTMLDivElement, CardProps>(({
-  variant = 'default',
+      variant = 'default',
   padding = 'md',
   shadow = 'sm',
   rounded = 'md',
   hover = false,
-  animate = false,
-  as: Component = 'div',
+      animate = false,
+      as: Component = 'div',
   className = '',
-  children,
-  ...props
+      children,
+      ...props
 }, ref) => {
   // 基礎樣式
   const baseClasses = cn(
     'transition-all duration-300',
   )
-
-  // 變體樣式
+    
+    // 變體樣式
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
@@ -104,8 +104,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(({
       default:
         return 'rounded-md'
     }
-  }
-
+    }
+    
   // 懸停效果
   const getHoverClasses = () => {
     if (!hover) return ''
@@ -124,15 +124,15 @@ const Card = forwardRef<HTMLDivElement, CardProps>(({
   }
 
   const finalClasses = cn(
-    baseClasses,
+      baseClasses,
     getVariantClasses(),
     getPaddingClasses(),
     getShadowClasses(),
     getRoundedClasses(),
     getHoverClasses(),
-    className
-  )
-
+      className
+    )
+    
   if (animate) {
     // 創建一個新的 motion.div，不使用擴展的 props 避免類型衝突
     return (
@@ -151,10 +151,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(({
         onMouseLeave={props.onMouseLeave}
       >
         {children}
-      </motion.div>
-    )
-  }
-
+        </motion.div>
+      )
+    }
+    
   const ElementComponent = Component as any
 
   return (

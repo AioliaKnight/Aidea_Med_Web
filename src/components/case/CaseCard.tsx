@@ -75,7 +75,7 @@ export const CaseCard = React.memo(({
   const cardVariant = useMemo(() => {
     switch (variant) {
       case 'featured':
-        return 'accent';
+        return 'primary';
       case 'minimal':
         return 'flat';
       default: // standard
@@ -88,10 +88,9 @@ export const CaseCard = React.memo(({
     <div className="block h-full">
       <Card 
         variant={cardVariant}
-        hoverEffect="lift"
-        isClickable
+        hover={true}
         className={cn(
-          "h-full",
+          "h-full cursor-pointer",
           isCircular ? 'pt-3 text-center' : ''
         )}
       >
