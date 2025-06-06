@@ -4,9 +4,9 @@ import React from 'react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { CaseCardProps } from '@/types/case'
 import { handleCaseImageError, formatMetricValue } from '@/utils/case'
-import { Card } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 // 使用memo包裝CaseCard以避免不必要的重渲染
@@ -22,12 +22,9 @@ export const CaseCard = React.memo(({
 }: CaseCardProps): React.ReactElement => {
   // 圖片源計算邏輯
   const imgSrc = useMemo(() => {
-    // 檢查圖片路徑是否有效
     if (caseStudy.image) {
       return caseStudy.image;
     }
-    
-    // 使用預設圖片
     return '/images/case-placeholder.jpg';
   }, [caseStudy.image]);
   
@@ -36,6 +33,8 @@ export const CaseCard = React.memo(({
     loading: true
   });
   
+  const [isHovered, setIsHovered] = useState(false);
+  
   // 優化圖片載入處理
   const handleImageLoad = useCallback(() => {
     setImgStatus({ loading: false, error: false });
@@ -43,10 +42,9 @@ export const CaseCard = React.memo(({
   
   const handleImageError = useCallback(() => {
     setImgStatus({ loading: false, error: true });
-          // 圖片載入失敗，使用預設圖片
-  }, [imgSrc]);
+  }, []);
 
-  // 預先載入圖片 - 添加這段代碼確保圖片預載入
+  // 預先載入圖片
   useEffect(() => {
     const preloadImage = new window.Image();
     preloadImage.src = imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc;
@@ -71,110 +69,183 @@ export const CaseCard = React.memo(({
     return 70;
   }, [index, priority]);
 
-  // 選擇Card變體
-  const cardVariant = useMemo(() => {
-    switch (variant) {
-      case 'featured':
-        return 'primary';
-      case 'minimal':
-        return 'flat';
-      default: // standard
-        return 'default';
+  // 動畫變體
+  const cardVariants = {
+    initial: { 
+      y: 20, 
+      opacity: 0,
+      scale: 0.95
+    },
+    animate: { 
+      y: 0, 
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    },
+    hover: {
+      y: -8,
+      scale: 1.02,
+      transition: {
+        duration: 0.3,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
     }
-  }, [variant]);
+  };
+
+  const imageVariants = {
+    initial: { scale: 1 },
+    hover: { 
+      scale: 1.1,
+      transition: { duration: 0.6 }
+    }
+  };
+
+  const overlayVariants = {
+    initial: { opacity: 0 },
+    hover: { 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    }
+  };
 
   return (
-    // 暫時禁用案例詳情頁面連結 - 將Link標籤改為div
-    <div className="block h-full">
-      <Card 
-        variant={cardVariant}
-        hover={true}
-        className={cn(
-          "h-full cursor-pointer",
-          isCircular ? 'pt-3 text-center' : ''
+    <motion.div
+      variants={cardVariants}
+      initial="initial"
+      animate="animate"
+      whileHover="hover"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="group h-full"
+    >
+      <div className={cn(
+        "relative h-full bg-white rounded-3xl overflow-hidden transition-all duration-500",
+        "shadow-sm hover:shadow-2xl hover:shadow-primary/10",
+        "border border-gray-100 hover:border-primary/20",
+        variant === 'featured' && "ring-2 ring-primary/20 bg-gradient-to-br from-white to-primary/5",
+        isCircular ? 'pt-6 text-center' : ''
+      )}>
+        {/* 精選標籤 */}
+        {caseStudy.featured && (
+          <div className="absolute top-4 left-4 z-20">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              精選
+            </div>
+          </div>
         )}
-      >
-        {/* 類別標籤 - 移至圖片外部頂部 */}
-        <div className="flex justify-between items-center px-3 py-2">
-          {caseStudy.category && (
-            <div className="text-primary font-medium text-xs tracking-wide">
-              {caseStudy.category}
-            </div>
-          )}
-          
-          {caseStudy.featured && (
-            <div className="text-gray-900 font-medium text-xs tracking-wide flex items-center">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full mr-1"></span>
-              精選案例
-            </div>
-          )}
+
+        {/* 類別標籤 */}
+        <div className="absolute top-4 right-4 z-20">
+          <div className="px-3 py-1.5 bg-black/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
+            {caseStudy.category}
+          </div>
         </div>
         
         {/* 圖片區域 */}
-        <div className={isCircular 
-          ? "relative overflow-hidden rounded-full aspect-square mx-auto w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] border-4 border-white" 
-          : `relative overflow-hidden aspect-[${aspectRatio}]`
-        }>
+        <div className={cn(
+          "relative overflow-hidden",
+          isCircular 
+            ? "mx-auto w-[200px] h-[200px] rounded-full border-4 border-white shadow-xl" 
+            : `aspect-[${aspectRatio}]`
+        )}>
           {/* 載入中狀態 */}
           {imgStatus.loading && (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent animate-spin rounded-full" />
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <div className="relative">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary animate-spin rounded-full" />
+                <div className="absolute inset-2 border-2 border-primary/10 border-b-primary/30 animate-spin rounded-full animation-delay-150" />
+              </div>
             </div>
           )}
           
           {/* 圖片組件 */}
-          <Image
-            src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
-            alt={caseStudy.name}
-            fill
-            sizes={isCircular 
-              ? "(max-width: 640px) 160px, (max-width: 768px) 180px, 200px"
-              : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            }
-            className={`
-              object-cover ${isCircular ? 'object-center' : ''}
-              transition-all duration-500
-              ${imgStatus.loading ? 'opacity-0' : 'opacity-100'}
-              group-hover:scale-105
-            `}
-            priority={priority || index <= 2}
-            loading={imageLoadingStrategy}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            fetchPriority={priority || index <= 2 ? 'high' : 'auto'}
-            quality={imageQuality}
-          />
+          <motion.div
+            variants={imageVariants}
+            className="relative w-full h-full"
+          >
+            <Image
+              src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
+              alt={caseStudy.name}
+              fill
+              sizes={isCircular 
+                ? "200px"
+                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              }
+              className={cn(
+                "object-cover transition-all duration-700",
+                isCircular ? 'object-center' : '',
+                imgStatus.loading ? 'opacity-0' : 'opacity-100'
+              )}
+              priority={priority || index <= 2}
+              loading={imageLoadingStrategy}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              fetchPriority={priority || index <= 2 ? 'high' : 'auto'}
+              quality={imageQuality}
+            />
+          </motion.div>
           
+          {/* 懸浮覆蓋層 */}
+          <motion.div
+            variants={overlayVariants}
+            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end justify-center"
+          >
+            <div className="p-4 text-center">
+              <button className="inline-flex items-center px-4 py-2 bg-white/90 backdrop-blur-sm text-gray-900 font-medium rounded-full hover:bg-white transition-all duration-300 shadow-lg">
+                查看詳情
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
         </div>
         
         {/* 內容區域 */}
-        <div className="flex-1 flex flex-col p-3 sm:p-4">
-          <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-tight mb-2">
-            {caseStudy.name}
-          </h3>
+        <div className="flex-1 flex flex-col p-6">
+          {/* 標題區域 */}
+          <div className="mb-4">
+            <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
+              {caseStudy.name}
+            </h3>
+            
+            {caseStudy.description && !isCompact && (
+              <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                {caseStudy.description}
+              </p>
+            )}
+          </div>
           
-          {caseStudy.description && !isCompact && (
-            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 line-clamp-2">
-              {caseStudy.description}
-            </p>
-          )}
-          
-          {/* 績效指標 - 扁平化設計 */}
+          {/* 績效指標 - 現代化設計 */}
           {showMetrics && Array.isArray(caseStudy.metrics) && caseStudy.metrics.length > 0 && !isCompact && (
-            <div className="mt-auto">
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="mb-4">
+              <div className="grid grid-cols-2 gap-3">
                 {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
-                  <div 
-                    key={idx} 
-                    className="bg-gray-50 px-2 sm:px-3 py-2 sm:py-3"
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 * idx }}
+                    className="relative group/metric"
                   >
-                    <div className="font-bold text-primary text-base sm:text-lg leading-none mb-1">
-                      {formatMetricValue(metric.value, metric.prefix, metric.suffix)}
+                    <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-4 rounded-2xl border border-gray-100 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
+                      <div className="font-bold text-primary text-xl leading-none mb-2 group-hover/metric:scale-110 transition-transform duration-300">
+                        {formatMetricValue(metric.value, metric.prefix, metric.suffix)}
+                      </div>
+                      <div className="text-gray-600 text-xs font-medium">
+                        {metric.label}
+                      </div>
+                      
+                      {/* 裝飾性元素 */}
+                      <div className="absolute top-2 right-2 w-2 h-2 bg-primary/20 rounded-full group-hover/metric:bg-primary/40 transition-colors"></div>
                     </div>
-                    <div className="text-gray-600 text-xs">
-                      {metric.label}
-                    </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -182,17 +253,30 @@ export const CaseCard = React.memo(({
           
           {/* 標籤顯示 */}
           {caseStudy.badges && caseStudy.badges.length > 0 && (
-            <div className="flex flex-wrap gap-1 sm:gap-2 mt-auto pt-2 sm:pt-3">
-              {caseStudy.badges.slice(0, isCompact ? 1 : 2).map((badge, idx) => (
-                <span key={idx} className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 sm:py-1 rounded-sm">
+            <div className="flex flex-wrap gap-2 mt-auto">
+              {caseStudy.badges.slice(0, isCompact ? 1 : 3).map((badge, idx) => (
+                <span 
+                  key={idx} 
+                  className="inline-flex items-center text-xs bg-gradient-to-r from-primary/10 to-primary/5 text-primary px-3 py-1 rounded-full font-medium border border-primary/10"
+                >
                   {badge}
                 </span>
               ))}
+              {caseStudy.badges.length > (isCompact ? 1 : 3) && (
+                <span className="inline-flex items-center text-xs bg-gray-100 text-gray-500 px-3 py-1 rounded-full font-medium">
+                  +{caseStudy.badges.length - (isCompact ? 1 : 3)}
+                </span>
+              )}
             </div>
           )}
         </div>
-      </Card>
-    </div>
+
+        {/* 懸浮時的邊框光效 */}
+        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-xl"></div>
+        </div>
+      </div>
+    </motion.div>
   );
 });
 
