@@ -8,7 +8,7 @@ import { Button } from '@/components/ui'
 interface CTAButtonProps {
   href: string
   text: string
-  variant: 'primary' | 'secondary' | 'white' | 'black' | 'outline-white' | 'outline-red' | 'outline-black' | 'flat-primary' | 'flat-white' | 'flat-black'
+  variant: 'primary' | 'white' | 'black' | 'outline-white' | 'outline-red' | 'outline-black' | 'dark-overlay' | 'link'
   className?: string
 }
 
@@ -93,7 +93,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
               href={primaryButton.href}
               variant={primaryButton.variant}
               size="xl"
-              animation="basic"
+              animate={true}
               className={primaryButton.className}
             >
               {primaryButton.text}
@@ -103,7 +103,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
               href={secondaryButton.href}
               variant={secondaryButton.variant}
               size="xl"
-              animation="basic"
+              animate={true}
               className={secondaryButton.className}
             >
               {secondaryButton.text}

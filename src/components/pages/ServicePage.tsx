@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { memo } from 'react'
 import Image from 'next/image'
 import { PageHeader, CTASection } from '@/components/common'
-import { Heading } from '@/components/ui'
+import { Heading, Button } from '@/components/ui'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { ContactFormData, FormResponse } from '@/types/form'
@@ -387,25 +387,32 @@ const PricingPlan = memo(function PricingPlan({ plan, index }: PricingPlanProps)
           </li>
         ))}
       </ul>
-      <Link
+      <Button
         href={`/contact?plan=${encodeURIComponent(plan.title)}&source=pricing`}
-        className={`w-full py-3 px-4 text-sm font-medium inline-flex justify-center items-center transition-all duration-300 ${
+        variant={plan.isPopular ? 'white' : 'primary'}
+        size="md"
+        fullWidth={true}
+        animate={true}
+        className={`font-medium transition-all duration-300 ${
           plan.isPopular 
-            ? 'bg-white text-primary' 
-            : 'bg-primary text-white'
+            ? 'hover:bg-gray-50 hover:text-primary shadow-md hover:shadow-lg' 
+            : 'hover:bg-primary/90 shadow-md hover:shadow-lg'
         }`}
         aria-label={`選擇${plan.title}方案`}
+        icon={
+          <svg 
+            className="w-4 h-4" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        }
+        iconPosition="right"
       >
-        <span>{plan.btnText}</span>
-        <svg 
-          className="w-4 h-4 ml-2" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
-      </Link>
+        {plan.btnText}
+      </Button>
     </motion.div>
   )
 })
@@ -1528,12 +1535,12 @@ export default function ServicePage() {
         primaryButton={{
           href: "/contact",
           text: "預約諮詢",
-          variant: "primary"
+          variant: "white"
         }}
         secondaryButton={{
           href: "/case",
           text: "查看案例",
-          variant: "secondary"
+          variant: "dark-overlay"
         }}
       />
 
@@ -1724,15 +1731,18 @@ export default function ServicePage() {
                   </div>
                   
                   <div className="animate-slide-up delay-500">
-                    <button 
+                    <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full bg-primary text-white py-3 font-semibold hover:bg-primary/90 transition-colors ${
-                        isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                      }`}
+                      loading={isSubmitting}
+                      variant="primary"
+                      size="lg"
+                      fullWidth={true}
+                      animate={true}
+                      className="font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       {isSubmitting ? '提交中...' : '送出諮詢表單'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </motion.div>
@@ -1859,12 +1869,12 @@ export default function ServicePage() {
         primaryButton={{
           href: "/contact",
           text: "立即預約諮詢",
-          variant: "primary"
+          variant: "white"
         }}
         secondaryButton={{
           href: "/case",
           text: "查看成功案例",
-          variant: "secondary"
+          variant: "dark-overlay"
         }}
       />
     </div>

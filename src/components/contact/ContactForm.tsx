@@ -422,7 +422,7 @@ const ContactForm = React.memo(({
             variant="primary"
             fullWidth
             size="lg"
-            isLoading={formStatus === FormStatus.SUBMITTING}
+                            loading={formStatus === FormStatus.SUBMITTING}
             loadingText="提交中..."
             disabled={formStatus === FormStatus.SUBMITTING || !privacyChecked}
           >

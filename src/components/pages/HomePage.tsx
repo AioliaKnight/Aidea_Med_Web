@@ -751,7 +751,7 @@ const HomePage = () => {
           variant: "white"
         }}
         secondaryButton={{
-          href: "/services",
+          href: "/service",
           text: "了解服務內容",
           variant: "black"
         }}
