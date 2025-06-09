@@ -125,6 +125,11 @@ category: '醫療法規'
   <p>該貼文48小時內遭檢舉，經衛生局調查後處以<strong>5萬元罰鍰</strong>，診所被列為高風險單位，需每季接受專案稽查，相關人員亦需參加醫療廣告法規教育訓練。</p>
 </div>
 
+<div class="my-8">
+  <img src="/images/blog/medical-social-media-compliance-guide_02.jpg" alt="招攬患者違規案例" class="w-full rounded-lg shadow-lg" />
+  <p class="text-sm text-gray-600 mt-2 text-center italic">招攬患者違規案例：使用引導性語言的社群貼文示例</p>
+</div>
+
 #### 這樣做更安心
 
 <div class="action-checklist">
