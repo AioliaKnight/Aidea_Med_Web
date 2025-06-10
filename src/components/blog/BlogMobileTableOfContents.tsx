@@ -7,12 +7,36 @@ import { cn } from '@/lib/utils'
 import { useBlogTableOfContents } from './hooks/useBlogTableOfContents'
 import { TocItem } from './types'
 
+// 新增一個 Hook 來偵測滾動方向
+const useScrollDirection = () => {
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setScrollDirection('down')
+      } else {
+        setScrollDirection('up')
+      }
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
+  return scrollDirection
+}
+
 interface BlogMobileTableOfContentsProps {
   content: string
 }
 
 const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ content }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const scrollDirection = useScrollDirection() // 使用新的 Hook
   
   const {
     tocItems,
@@ -41,6 +65,8 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ c
     return null
   }
 
+  const isButtonVisible = scrollDirection === 'up' || isOpen;
+
   const handleToggle = () => {
     setIsOpen(!isOpen)
   }
@@ -63,29 +89,37 @@ const BlogMobileTableOfContents: React.FC<BlogMobileTableOfContentsProps> = ({ c
   return (
     <>
       {/* 觸發按鈕 - 固定在底部 */}
-      <motion.button
-        onClick={handleToggle}
-        className={cn(
-          "fixed bottom-6 right-6 z-[60]",
-          "xl:hidden", // 只在移動端和平板顯示
-          "bg-primary text-white",
-          "w-14 h-14 rounded-full shadow-lg",
-          "flex items-center justify-center",
-          "hover:bg-primary/90 transition-colors",
-          "border-2 border-white",
-          "className"
+      <AnimatePresence>
+        {isButtonVisible && (
+          <motion.button
+            onClick={handleToggle}
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className={cn(
+              "fixed bottom-6 right-6 z-[60]",
+              "xl:hidden", // 只在移動端和平板顯示
+              "bg-primary text-white",
+              "w-14 h-14 rounded-full shadow-lg",
+              "flex items-center justify-center",
+              "hover:bg-primary/90 transition-colors",
+              "border-2 border-white",
+              "className"
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="開啟文章目錄"
+            style={{ zIndex: 60 }}
+          >
+            <List className="w-6 h-6" />
+            {/* 顯示目錄項目數量的小徽章 */}
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {tocItems.length}
+            </div>
+          </motion.button>
         )}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="開啟文章目錄"
-        style={{ zIndex: 60 }}
-      >
-        <List className="w-6 h-6" />
-        {/* 顯示目錄項目數量的小徽章 */}
-        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-          {tocItems.length}
-        </div>
-      </motion.button>
+      </AnimatePresence>
 
       {/* 全屏目錄覆蓋層 */}
       <AnimatePresence>

@@ -1,17 +1,41 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, List, Eye, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useBlogTableOfContents } from './hooks'
 import { BlogTableOfContentsProps, BLOG_ANIMATIONS } from './types'
 
+// 復用在手機版組件中建立的 Hook
+const useScrollDirection = () => {
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>('up')
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY && currentScrollY > 200) {
+        setScrollDirection('down')
+      } else if (currentScrollY < lastScrollY) {
+        setScrollDirection('up')
+      }
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
+  return scrollDirection
+}
+
 const BlogTableOfContents: React.FC<BlogTableOfContentsProps> = ({ 
   content, 
   className 
 }) => {
   const tocRef = useRef<HTMLDivElement>(null)
+  const scrollDirection = useScrollDirection()
   
   const {
     tocItems,
@@ -25,9 +49,12 @@ const BlogTableOfContents: React.FC<BlogTableOfContentsProps> = ({
   // 如果沒有目錄項目，不渲染組件
   if (tocItems.length === 0) return null
 
+  // 結合原始可見性邏輯與滾動方向
+  const shouldBeVisible = isVisible && scrollDirection === 'up'
+
   return (
     <AnimatePresence>
-      {isVisible && (
+      {shouldBeVisible && (
         <motion.div
           ref={tocRef}
           initial={BLOG_ANIMATIONS.SLIDE_IN_RIGHT.initial}

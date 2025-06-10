@@ -137,14 +137,14 @@ export const CaseCard = React.memo(({
               </svg>
               精選
             </div>
-          </div>
-        )}
-
+            </div>
+          )}
+          
         {/* 類別標籤 */}
         <div className="absolute top-4 right-4 z-20">
           <div className="px-3 py-1.5 bg-black/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
             {caseStudy.category}
-          </div>
+            </div>
         </div>
         
         {/* 圖片區域 */}
@@ -169,26 +169,26 @@ export const CaseCard = React.memo(({
             variants={imageVariants}
             className="relative w-full h-full"
           >
-            <Image
-              src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
-              alt={caseStudy.name}
-              fill
-              sizes={isCircular 
+          <Image
+            src={imgStatus.error ? '/images/case-placeholder.jpg' : imgSrc}
+            alt={caseStudy.name}
+            fill
+            sizes={isCircular 
                 ? "200px"
-                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              }
+              : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            }
               className={cn(
                 "object-cover transition-all duration-700",
                 isCircular ? 'object-center' : '',
                 imgStatus.loading ? 'opacity-0' : 'opacity-100'
               )}
-              priority={priority || index <= 2}
-              loading={imageLoadingStrategy}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              fetchPriority={priority || index <= 2 ? 'high' : 'auto'}
-              quality={imageQuality}
-            />
+            priority={priority || index <= 2}
+            loading={imageLoadingStrategy}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            fetchPriority={priority || index <= 2 ? 'high' : 'auto'}
+            quality={imageQuality}
+          />
           </motion.div>
           
           {/* 懸浮覆蓋層 */}
@@ -212,14 +212,14 @@ export const CaseCard = React.memo(({
           {/* 標題區域 */}
           <div className="mb-4">
             <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
-              {caseStudy.name}
-            </h3>
-            
-            {caseStudy.description && !isCompact && (
+            {caseStudy.name}
+          </h3>
+          
+          {caseStudy.description && !isCompact && (
               <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
-                {caseStudy.description}
-              </p>
-            )}
+              {caseStudy.description}
+            </p>
+          )}
           </div>
           
           {/* 績效指標 - 現代化設計 */}
@@ -228,7 +228,7 @@ export const CaseCard = React.memo(({
               <div className="grid grid-cols-2 gap-3">
                 {caseStudy.metrics.slice(0, 2).map((metric, idx) => (
                   <motion.div 
-                    key={idx}
+                    key={idx} 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 * idx }}
@@ -236,10 +236,10 @@ export const CaseCard = React.memo(({
                   >
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-4 rounded-2xl border border-gray-100 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
                       <div className="font-bold text-primary text-xl leading-none mb-2 group-hover/metric:scale-110 transition-transform duration-300">
-                        {formatMetricValue(metric.value, metric.prefix, metric.suffix)}
-                      </div>
+                      {formatMetricValue(metric.value, metric.prefix, metric.suffix)}
+                    </div>
                       <div className="text-gray-600 text-xs font-medium">
-                        {metric.label}
+                      {metric.label}
                       </div>
                       
                       {/* 裝飾性元素 */}
@@ -275,7 +275,7 @@ export const CaseCard = React.memo(({
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-xl"></div>
         </div>
-      </div>
+    </div>
     </motion.div>
   );
 });
