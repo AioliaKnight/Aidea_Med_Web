@@ -4,8 +4,8 @@ summary: '疫情改變了患者的就醫習慣，從網路預約到遠距問診�
 coverImage: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1920'
 publishedAt: '2024-07-10'
 author:
-  name: 'Leo'
-  avatar: '/images/team/member-3.jpg'
+  name: 'Queena'
+  avatar: '/images/team/member-5.jpg'
   title: '創意內容總監'
 tags:
   - '診所行銷'
