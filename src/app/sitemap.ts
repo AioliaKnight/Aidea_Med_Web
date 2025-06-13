@@ -16,7 +16,10 @@ import { getAllBlogPosts } from '@/lib/blog-server'
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 從環境變數讀取基礎URL，如果不存在則使用預設值
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com'
+  // 確保在開發環境中也使用正確的生產環境 URL
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? (process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aideamed.com')
+    : 'https://www.aideamed.com'
   
   // 取得目前日期作為最後更新時間
   const currentDate = new Date()
