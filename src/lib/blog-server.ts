@@ -56,12 +56,12 @@ export async function getAllBlogPosts(): Promise<Post[]> {
           title: frontmatter.title,
           summary: frontmatter.summary || '',
           content: contentHtml,
-          coverImage: frontmatter.coverImage || '/images/default-cover.jpg',
+          coverImage: frontmatter.coverImage || '/images/blog/default.jpg',
           publishedAt: frontmatter.publishedAt || new Date().toISOString(),
           updatedAt: frontmatter.updatedAt,
           author: {
             name: frontmatter.author?.name || '團隊編輯',
-            avatar: frontmatter.author?.avatar || '/images/team/default-avatar.jpg',
+            avatar: frontmatter.author?.avatar || '/images/testimonials/default-avatar.jpg',
             title: frontmatter.author?.title || '內容創作者'
           },
           tags: frontmatter.tags || [],
@@ -180,12 +180,12 @@ async function processMarkdownFile(fileContents: string, slug: string): Promise<
     title: frontmatter.title,
     summary: frontmatter.summary || '',
     content: contentHtml,
-    coverImage: frontmatter.coverImage || '/images/default-cover.jpg',
+    coverImage: frontmatter.coverImage || '/images/blog/default.jpg',
     publishedAt: frontmatter.publishedAt || new Date().toISOString(),
     updatedAt: frontmatter.updatedAt,
     author: {
       name: frontmatter.author?.name || '團隊編輯',
-      avatar: frontmatter.author?.avatar || '/images/team/default-avatar.jpg',
+      avatar: frontmatter.author?.avatar || '/images/testimonials/default-avatar.jpg',
       title: frontmatter.author?.title || '內容創作者'
     },
     tags: frontmatter.tags || [],

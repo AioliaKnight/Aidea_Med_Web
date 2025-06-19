@@ -459,7 +459,7 @@ export const teamMetadata: Metadata = {
     url: `${siteConfig.url}/team`,
     images: [
       {
-        url: `${siteConfig.url}/images/team/team-og.jpg`,
+        url: `${siteConfig.url}/images/team/office-1.png`,
         width: 1200,
         height: 630,
         alt: 'Aidea:Med 專業醫療行銷團隊'
@@ -557,8 +557,8 @@ export const organizationSchema = {
   logo: {
     '@type': 'ImageObject',
     '@id': 'https://www.aideamed.com#logo',
-    url: `${siteConfig.url}/logo.png`,
-    contentUrl: `${siteConfig.url}/logo.png`,
+    url: `${siteConfig.url}/logo-w.png`,
+    contentUrl: `${siteConfig.url}/logo-w.png`,
     width: 600,
     height: 60
   },
@@ -721,14 +721,7 @@ export const organizationSchema = {
       },
       'name': '醫療行銷知識中心'
     },
-    {
-      '@type': 'ViewAction',
-      'target': {
-        '@type': 'EntryPoint',
-        'urlTemplate': `${siteConfig.url}/case`
-      },
-      'name': '醫療行銷成功案例'
-    }
+
   ],
   areaServed: [
     {
