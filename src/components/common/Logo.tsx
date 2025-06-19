@@ -69,7 +69,7 @@ const getImagePath = (path: string): string => {
   return isDevelopment ? path : `${baseUrl}${path}`
 }
 
-// Logo變體對應的圖片路徑
+// Logo變體對應的圖片路徑 - 統一使用白色logo
 const logoVariants = {
   white: {
     webp: getImagePath('/logo-w.webp'),
@@ -77,14 +77,14 @@ const logoVariants = {
     placeholder: getImagePath('/logo-w_placeholder.webp')
   },
   black: {
-    webp: getImagePath('/logo-b.webp'),
-    png: getImagePath('/logo-b.png'),
-    placeholder: getImagePath('/logo-b_placeholder.webp')
+    webp: getImagePath('/logo-w.webp'),
+    png: getImagePath('/logo-w.png'),
+    placeholder: getImagePath('/logo-w_placeholder.webp')
   },
   primary: {
-    webp: getImagePath('/logo-r.webp'),
-    png: getImagePath('/logo-r.png'),
-    placeholder: getImagePath('/logo-r_placeholder.webp')
+    webp: getImagePath('/logo-w.webp'),
+    png: getImagePath('/logo-w.png'),
+    placeholder: getImagePath('/logo-w_placeholder.webp')
   }
 } as const
 

@@ -74,14 +74,7 @@
       "short_name": "服務",
       "description": "查看我們的醫療行銷服務",
       "url": "/service",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "成功案例",
-      "short_name": "案例",
-      "description": "查看醫療診所行銷成功案例",
-      "url": "/case",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+            "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
 } 
