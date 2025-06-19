@@ -391,7 +391,8 @@ function BlogDetailSkeleton() {
   )
 }
 
-// 添加 AuthorCredentials 組件顯示作者專業資格
+// AuthorCredentials 組件 - 目前未使用但保留供未來使用
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AuthorCredentials({ author }: { author: BlogPostAuthor }) {
   if (!author.credentials && !author.expertise) return null;
   
@@ -418,7 +419,8 @@ function AuthorCredentials({ author }: { author: BlogPostAuthor }) {
   );
 }
 
-// 添加 ReferencesSection 組件顯示參考文獻
+// ReferencesSection 組件 - 目前未使用但保留供未來使用
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ReferencesSection({ references }: { references?: Reference[] }) {
   if (!references || !references.length) return null;
   
@@ -459,7 +461,8 @@ function ReferencesSection({ references }: { references?: Reference[] }) {
   );
 }
 
-// 添加 ExpertReviewBadge 組件顯示專業審閱信息
+// ExpertReviewBadge 組件 - 目前未使用但保留供未來使用
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ExpertReviewBadge({ reviewedBy, lastReviewed }: { reviewedBy?: BlogPostReviewer, lastReviewed?: string }) {
   if (!reviewedBy) return null;
   

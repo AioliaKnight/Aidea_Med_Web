@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useState, Suspense, useRef, useCallback, useMemo, memo, lazy } from 'react'
-import { motion, useAnimation, AnimatePresence } from 'framer-motion'
+import React, { useEffect, useState, Suspense, useRef, useCallback, useMemo, memo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -9,17 +9,12 @@ import Image from 'next/image'
 import { 
   Stethoscope, 
   BarChart2, 
-  Users, 
   Handshake,
   Award,
-  ArrowRight,
 } from 'lucide-react'
-import { Logo, CTASection, AnimatedSection } from '@/components/common'
+import { CTASection } from '@/components/common'
 import { 
-  heroTitleVariants, 
-  heroSubtitleVariants,
-  marketingStatementVariants,
-  tagAnimationVariants
+  heroTitleVariants
 } from '@/utils/animations'
 
 // 將常量移到文件頂部，避免重新創建
@@ -55,15 +50,16 @@ const FEATURES = [
 
 // 動態載入組件，降低初始載入時間
 
-const ContactForm = dynamic(() => import('@/components/contact/ContactForm'), {
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
-  ssr: true
-})
+// 這些組件目前未使用，但保留供未來功能使用
+// const ContactForm = dynamic(() => import('@/components/contact/ContactForm'), {
+//   loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true" />,
+//   ssr: true
+// })
 
-const ContactInfo = dynamic(() => import('@/components/contact/ContactInfo'), {
-  loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
-  ssr: true
-})
+// const ContactInfo = dynamic(() => import('@/components/contact/ContactInfo'), {
+//   loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true" />,
+//   ssr: true
+// })
 
 // 將CountUp改為單獨的動態導入
 const CountUp = dynamic(() => import('react-countup'), {

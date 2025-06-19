@@ -1,8 +1,6 @@
 import { 
   sharedMetadata, 
   organizationSchema, 
-  localBusinessSchema, 
-  medicalServicesFaq,
   brandingWebsiteSchema,
   breadcrumbSchema,
   enhancedLocalBusinessSchema,
