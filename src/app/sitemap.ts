@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next'
-import { caseStudies } from '@/data/cases'
 import { getAllBlogPosts } from '@/lib/blog-server'
 
 /**
@@ -44,12 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
-    {
-      url: `${baseUrl}/case`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
+
     {
       url: `${baseUrl}/contact`,
       lastModified: currentDate,
@@ -80,50 +74,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
   
-  // 動態案例頁面 - 使用實際案例資料
-  const caseRoutes: MetadataRoute.Sitemap = Array.isArray(caseStudies) 
-    ? caseStudies.map(caseStudy => {
-        // 檢查案例是否與醫療廣告法規相關
-        const caseHasTags = caseStudy && 
-                           typeof caseStudy === 'object' && 
-                           'tags' in caseStudy && 
-                           Array.isArray(caseStudy.tags);
-        
-        const isMedicalAdCase = caseHasTags && 
-          (caseStudy.tags as Array<string>).some((tag: string) => 
-            tag.includes('醫療廣告') || 
-            tag.includes('法規') || 
-            tag.includes('合規')
-          );
-        
-        // 計算最後修改日期
-        let lastModified = currentDate;
-        if (caseStudy.updatedDate) {
-          lastModified = new Date(caseStudy.updatedDate);
-        } else if (caseStudy.publishedDate) {
-          lastModified = new Date(caseStudy.publishedDate);
-        }
-        
-        // 計算變更頻率
-        let changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
-        const monthsOld = (currentDate.getFullYear() - lastModified.getFullYear()) * 12 + 
-                        (currentDate.getMonth() - lastModified.getMonth());
-                        
-        if (monthsOld < 1) {
-          changeFrequency = 'weekly';
-        } else if (monthsOld > 12) {
-          changeFrequency = 'yearly';
-        }
-      
-        return {
-          url: `${baseUrl}/case/${caseStudy.id}`,
-          lastModified,
-          changeFrequency,
-          // 提高醫療廣告相關案例的優先級
-          priority: isMedicalAdCase ? 0.85 : (caseStudy.featured ? 0.8 : 0.7),
-        };
-      })
-    : []
+  // 案例頁面已移除
+  const caseRoutes: MetadataRoute.Sitemap = []
   
   // 獲取部落格資料 - 使用檔案系統而非API
   let blogRoutes: MetadataRoute.Sitemap = []

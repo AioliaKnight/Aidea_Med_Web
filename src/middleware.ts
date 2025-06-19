@@ -68,10 +68,7 @@ const getCacheControlHeaders = (pathname: string): string => {
     return 'no-store, no-cache, must-revalidate, proxy-revalidate';
   }
   
-  // 案例頁面 - 中等快取時間
-  if (pathname.startsWith('/case/')) {
-    return 'public, max-age=7200, stale-while-revalidate=86400';
-  }
+
   
   // 團隊頁面 - 中等快取時間
   if (pathname.startsWith('/team/')) {

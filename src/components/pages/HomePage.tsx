@@ -54,10 +54,6 @@ const FEATURES = [
 ];
 
 // 動態載入組件，降低初始載入時間
-const CaseCard = dynamic(() => import('@/components/case/CaseCard').then(mod => mod.CaseCard), {
-  loading: () => <div className="h-full bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
-  ssr: true
-})
 
 const ContactForm = dynamic(() => import('@/components/contact/ContactForm'), {
   loading: () => <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true"></div>,
@@ -701,43 +697,42 @@ const HomePage = () => {
         />
           </Suspense>
           
-      {/* 合作客戶區塊 */}
+      {/* 專業能力展示區塊 */}
       <section className="py-16 border-t border-gray-100">
         <div className="container-custom">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">合作客戶</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">專業數據成果</h2>
           <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
             <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg">
-              投入行銷產業近十年，多年來獲得許多業主的肯定與支持，為醫療診所量身打造專屬的行銷方案
+              投入醫療行銷產業近十年，累積豐富實戰經驗，為診所量身打造專屬行銷策略
             </p>
             </div>
           
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 items-center">
-            {[
-              { src: '/images/cases/Case_artisticdc.jpg', alt: '雅德思牙醫診所' },
-              { src: '/images/cases/Case_ytdentalcare.jpg', alt: '雲天牙醫診所' },
-              { src: '/images/cases/Case_中華.jpg', alt: '中華牙醫診所' },
-              { src: '/images/cases/Case_品誠.jpg', alt: '品誠牙醫診所' },
-              { src: '/images/cases/Case_春生.jpg', alt: '春生牙醫診所' },
-              { src: '/images/cases/Case_家源.jpg', alt: '家源牙醫診所' },
-              { src: '/images/cases/Case_海蒂.jpg', alt: '海蒂牙醫診所' },
-              { src: '/images/cases/Case_皓皓.jpg', alt: '皓皓牙醫診所' },
-              { src: '/images/cases/Case_勤美民生.jpg', alt: '勤美民生牙醫診所' },
-              { src: '/images/cases/Case_經典聯合.jpg', alt: '經典聯合牙醫診所' }
-            ].map((client, index) => (
-              <div 
-                key={index}
-                className="flex items-center justify-center h-20 sm:h-24 md:h-28"
-              >
-                    <Image
-                  src={client.src}
-                  alt={client.alt}
-                  width={150}
-                  height={60}
-                  className="max-h-full w-auto object-contain"
-                    />
-                  </div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+                <CountUp end={10} duration={2.5} suffix="+" />
+              </div>
+              <p className="text-gray-600 font-medium">年行銷經驗</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+                <CountUp end={50} duration={2.5} suffix="+" />
+              </div>
+              <p className="text-gray-600 font-medium">合作診所</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+                <CountUp end={300} duration={2.5} suffix="%" />
+              </div>
+              <p className="text-gray-600 font-medium">平均成長率</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+                <CountUp end={95} duration={2.5} suffix="%" />
+              </div>
+              <p className="text-gray-600 font-medium">客戶滿意度</p>
+            </div>
         </div>
       </div>
     </section>

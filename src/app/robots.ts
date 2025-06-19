@@ -22,8 +22,6 @@ export default function robots(): MetadataRoute.Robots {
     '/',              // 首頁 (src/app/page.tsx)
     '/blog/',         // 部落格列表 (src/app/blog/page.tsx)
     '/blog/*',        // 部落格詳情 (src/app/blog/[slug]/page.tsx)
-    '/case/',         // 案例列表 (src/app/case/page.tsx)
-    '/case/*',        // 案例詳情 (src/app/case/[id]/page.tsx)
     '/service/',      // 服務介紹 (src/app/service/page.tsx)
     '/service/medical-ad-compliance/', // 醫療廣告法規 (src/app/service/medical-ad-compliance/page.tsx)
     '/team/',         // 團隊介紹 (src/app/team/page.tsx)
@@ -77,8 +75,6 @@ export default function robots(): MetadataRoute.Robots {
     '/blog/*',
     '/service/',
     '/service/medical-ad-compliance/',
-    '/case/',
-    '/case/*',
     '/team/',
   ];
   
@@ -94,7 +90,6 @@ export default function robots(): MetadataRoute.Robots {
     ...searchEngineDisallow,
     '/contact/*',     // 保護聯絡資訊
     '/team/*',        // 保護團隊資訊
-    '/case/*',        // 保護客戶案例
     '/privacy/*',     // 保護隱私政策
   ];
   
@@ -139,7 +134,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: [
           ...mediaContentPaths,
           '/blog/',     // 部落格圖片
-          '/case/',     // 案例圖片
           '/team/',     // 團隊照片
           '/service/',  // 服務相關圖片
         ],
@@ -174,7 +168,6 @@ export default function robots(): MetadataRoute.Robots {
           ...searchEngineDisallow,
           '/service/',
           '/team/',
-          '/case/',
           '/contact/',
           '/privacy/',
         ],
