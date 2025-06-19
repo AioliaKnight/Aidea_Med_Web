@@ -205,47 +205,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 繼續處理已有的資料，不因部落格獲取失敗而中斷整個 sitemap 生成
   }
 
-  // 新增：圖片 sitemap 路由（用於 Google 圖片搜尋優化）
-  const imageRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/images/sitemap`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    }
-  ]
-
-  // 新增：多語言支援路由（未來擴展用）
-  const languageRoutes: MetadataRoute.Sitemap = [
-    // 目前只支援繁體中文，未來可擴展
-    // {
-    //   url: `${baseUrl}/en`,
-    //   lastModified: currentDate,
-    //   changeFrequency: 'monthly',
-    //   priority: 0.8,
-    // }
-  ]
-
-  // 新增：API 文檔路由（如果有公開 API）
-  const apiRoutes: MetadataRoute.Sitemap = [
-    // 未來如果提供公開 API 文檔
-    // {
-    //   url: `${baseUrl}/api/docs`,
-    //   lastModified: currentDate,
-    //   changeFrequency: 'monthly',
-    //   priority: 0.6,
-    // }
-  ]
+  // ✅ 改善：移除不必要的圖片 sitemap 路由
+  // 圖片 sitemap 應該作為獨立的 XML 處理，不應與主要 sitemap 混合
   
+  // ✅ 改善：移除目前不需要的多語言和API路由
+  // 未來擴展時可重新啟用
+
   // 組合所有實際存在的路由
   const allRoutes = [
     ...staticRoutes, 
     ...serviceDetailRoutes, 
     ...caseRoutes, 
-    ...blogRoutes,
-    ...imageRoutes,
-    ...languageRoutes,
-    ...apiRoutes
+    ...blogRoutes
   ].filter(route => route.url) // 過濾掉空的 URL
 
   // 排序：優先級高的在前，相同優先級按最後修改時間排序
@@ -256,7 +227,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return new Date(b.lastModified || 0).getTime() - new Date(a.lastModified || 0).getTime()
   })
 
-  // Generated sitemap with all routes successfully
+  // 確保 sitemap 項目總數不超過 Google 建議的 50,000 條限制
+  if (allRoutes.length > 50000) {
+    console.warn(`Sitemap has ${allRoutes.length} items, consider using sitemap index`);
+    return allRoutes.slice(0, 50000);
+  }
+
+  // ✅ 新增：記錄 sitemap 生成統計
+  console.log(`✅ Sitemap generated successfully with ${allRoutes.length} routes:
+    - Static routes: ${staticRoutes.length}
+    - Service detail routes: ${serviceDetailRoutes.length}
+    - Case routes: ${caseRoutes.length}
+    - Blog routes: ${blogRoutes.length}`);
   
   return allRoutes
 } 
