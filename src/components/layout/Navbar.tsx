@@ -139,8 +139,7 @@ const NavItem = React.memo(({
         // 有子選單的項目
         <button
           className={cn(
-            "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105",
-            activeStyle
+            "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105"
           )}
           aria-expanded={isDropdownOpen}
           aria-haspopup="true"
@@ -148,8 +147,15 @@ const NavItem = React.memo(({
         >
           <div className="flex flex-col items-center">
             <div className="flex items-center">
-              <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
-              <ChevronDown className={cn("ml-1 w-4 h-4 transition-transform", isDropdownOpen ? "transform rotate-180" : "")} />
+              <span className={cn(
+                "text-[15px] font-medium text-center tracking-wide leading-tight",
+                activeStyle
+              )}>{item.name}</span>
+              <ChevronDown className={cn(
+                "ml-1 w-4 h-4 transition-transform",
+                isDropdownOpen ? "transform rotate-180" : "",
+                activeStyle
+              )} />
             </div>
             <span className={cn(
               "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
@@ -184,14 +190,16 @@ const NavItem = React.memo(({
     <Link
       href={item.href}
       className={cn(
-        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline",
-        activeStyle
+        "relative px-4 py-1.5 group transition-colors duration-300 flex flex-col items-center justify-center hover:scale-105 no-underline"
       )}
       aria-current={isActive ? 'page' : undefined}
       role="menuitem"
     >
       <div className="flex flex-col items-center">
-        <span className="text-[15px] font-medium text-center tracking-wide leading-tight">{item.name}</span>
+        <span className={cn(
+          "text-[15px] font-medium text-center tracking-wide leading-tight",
+          activeStyle
+        )}>{item.name}</span>
         <span className={cn(
           "text-xs mt-0.5 mb-0.5 font-light tracking-wider transition-colors duration-300 text-center",
           secondaryStyle
