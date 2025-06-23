@@ -192,6 +192,9 @@ export default function RootLayout({
 
         <ErrorBoundary>
           <div className="min-h-screen flex flex-col bg-white">
+            {/* 導航欄 */}
+            <Navbar />
+            
             <main id="main-content" className="flex-1">
               {children}
             </main>
