@@ -39,6 +39,9 @@ export { default as GoogleTagManager } from './GoogleTagManager'
 
 // SEO 優化組件
 export { default as SEOOptimizer } from './SEOOptimizer'
+export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
+export { default as SocialMediaOptimizer } from './SocialMediaOptimizer'
+export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
 // 注意：SEO 輔助函數已移至 @/lib/seo-utils 以支援服務器端使用
 
 // 性能監控組件
