@@ -51,7 +51,7 @@ const navStyles = {
 
 // 統一導航文字樣式
 const textStyles = {
-  // 默認狀態文字樣式
+  // 默認狀態文字樣式 - 紅色背景上的白色文字
   default: {
     active: 'text-white',
     normal: 'text-white/90 hover:text-white',
@@ -59,7 +59,7 @@ const textStyles = {
     normalSecondary: 'text-white/75 group-hover:text-white/90',
     indicator: 'bg-white'
   },
-  // 滾動狀態文字樣式
+  // 滾動狀態文字樣式 - 白色背景上的深色文字
   scrolled: {
     active: 'text-primary',
     normal: 'text-gray-800 hover:text-primary',
@@ -89,7 +89,7 @@ const dropdownItemStyles = {
 
 // 按鈕樣式
 const buttonStyles = {
-  default: 'bg-white text-primary hover:bg-white/95 transition-colors duration-300',
+  default: 'bg-white text-primary hover:bg-white/95 border border-white/20 transition-colors duration-300',
   scrolled: 'bg-primary text-white hover:bg-primary/90 transition-colors duration-300'
 }
 
