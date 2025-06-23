@@ -24,7 +24,10 @@ import {
   Heart,
   Briefcase,
   CheckCircle,
-  Star
+  Star,
+  ShieldCheck,
+  Building2,
+  AlertCircle
 } from 'lucide-react'
 import { CTASection } from '@/components/common'
 import { 
@@ -983,6 +986,429 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
   );
 });
 
+// 新增：EEAT 權威性證明區塊
+const AuthorityCredentialsSection = memo(function AuthorityCredentialsSection() {
+  const { ref: sectionRef, inView: sectionInView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
+  const credentials = [
+    {
+      category: 'Experience 實戰經驗',
+      icon: Award,
+      color: 'from-green-500 to-emerald-600',
+      items: [
+        { label: '實際投資經營連鎖牙醫診所', detail: '深度了解診所營運痛點與患者需求' },
+        { label: '服務50+ 醫療院所', detail: '涵蓋牙科、醫美、泌尿科等專科領域' },
+        { label: '15年電商產業深耕', detail: '操盤過億級營收專案，數據驅動決策' }
+      ]
+    },
+    {
+      category: 'Expertise 專業能力',
+      icon: ShieldCheck,
+      color: 'from-blue-500 to-cyan-600',
+      items: [
+        { label: 'Google Analytics 認證專家', detail: '官方認證數據分析專業資格' },
+        { label: 'Facebook Blueprint 行銷認證', detail: 'Meta官方認證數位行銷專家' },
+        { label: '自主開發診所專用分析系統', detail: '技術實力支撐專業服務能力' }
+      ]
+    },
+    {
+      category: 'Authoritativeness 權威性',
+      icon: Building2,
+      color: 'from-purple-500 to-violet-600',
+      items: [
+        { label: 'Google Partner 認證代理商', detail: 'Google官方認可的合作夥伴資格' },
+        { label: 'Facebook Business Partner', detail: 'Meta官方認證的商業合作夥伴' },
+        { label: '台灣醫事法律學會合作夥伴', detail: '確保所有服務符合醫療法規要求' }
+      ]
+    },
+    {
+      category: 'Trustworthiness 可信度',
+      icon: TrendingUp,
+      color: 'from-orange-500 to-red-600',
+      items: [
+        { label: '95% 客戶續約率', detail: '平均合作期間超過24個月，信任度極高' },
+        { label: '60% 新客戶來自推薦', detail: '現有客戶主動推薦，口碑見證實力' },
+        { label: '透明數據追蹤機制', detail: '所有成效數據可驗證，絕不虛報成果' }
+      ]
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.15
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  return (
+    <section ref={sectionRef} className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <div className="container-custom">
+        {/* 標題區域 */}
+        <motion.div 
+          className="text-center mb-12 sm:mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={sectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+            專業認證與權威背景
+            <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary mt-2">
+              EEAT 原則全面展現
+            </span>
+          </h2>
+          <div className="w-20 h-1 bg-primary mx-auto my-6"></div>
+          <p className="text-base sm:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            基於 Google 的 EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) 評估標準
+            <br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>展現我們在醫療行銷領域的專業地位與可信度
+          </p>
+        </motion.div>
+
+        {/* EEAT 認證展示 */}
+        <motion.div 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12"
+          variants={containerVariants}
+          initial="hidden"
+          animate={sectionInView ? "visible" : "hidden"}
+        >
+          {credentials.map((category, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 group"
+            >
+              {/* 類別標題 */}
+              <div className="flex items-center mb-6">
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${category.color} text-white mr-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <category.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900">
+                  {category.category}
+                </h3>
+              </div>
+
+              {/* 認證項目 */}
+              <div className="space-y-4">
+                {category.items.map((item, itemIndex) => (
+                  <div key={itemIndex} className="flex items-start space-x-3 group/item">
+                    <div className="flex-shrink-0 w-2 h-2 rounded-full bg-primary mt-2"></div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors">
+                        {item.label}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                        {item.detail}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 底部裝飾線 */}
+              <div className={`mt-6 h-1 bg-gradient-to-r ${category.color} rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* 底部統計數據 */}
+        <motion.div 
+          className="mt-12 sm:mt-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={sectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+            <p className="text-sm sm:text-base text-gray-600 mb-4">
+              <strong>第三方驗證</strong>：所有認證與合作關係均可透過官方管道查證
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
+              <span className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                Google Partner 驗證
+              </span>
+              <span className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                Facebook Business 認證
+              </span>
+              <span className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                醫事法律學會合作
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+// 加強版客戶成功案例區塊
+const EnhancedTestimonialsSection = memo(function EnhancedTestimonialsSection() {
+  const { ref: sectionRef, inView: sectionInView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
+  const successCases = [
+    {
+      name: "雅德思牙醫診所",
+      location: "台北市信義區",
+      category: "牙科診所",
+      avatar: "/images/avatars/clinic-1.jpg",
+      period: "合作18個月",
+      metrics: {
+        revenue: "+280%",
+        patients: "+350位",
+        conversion: "從2.1%提升至8.7%",
+        roi: "廣告投資回報率 4.2:1"
+      },
+      challenge: "新開業診所，知名度低，獲客成本高",
+      solution: "整合數位行銷策略，精準地區定位投放",
+      testimonial: "Aidea:Med 不只是行銷公司，更像是我們診所的營運夥伴。從數據分析到策略執行，每個環節都非常專業且貼心。",
+      verified: true
+    },
+    {
+      name: "雲天牙醫診所",
+      location: "新北市板橋區",
+      category: "牙科診所",
+      avatar: "/images/avatars/clinic-2.jpg",
+      period: "合作24個月",
+      metrics: {
+        revenue: "+350%",
+        patients: "+500位",
+        conversion: "從1.8%提升至9.2%",
+        roi: "廣告投資回報率 5.1:1"
+      },
+      challenge: "傳統診所轉型，缺乏數位行銷經驗",
+      solution: "漸進式數位轉型，員工教育訓練並行",
+      testimonial: "選擇 Aidea:Med 是我們做過最正確的決定。他們真正理解醫療行業，提供的解決方案非常實用。",
+      verified: true
+    },
+    {
+      name: "好幸福泌尿科診所",
+      location: "台中市西屯區",
+      category: "專科診所",
+      avatar: "/images/avatars/clinic-3.jpg",
+      period: "合作12個月",
+      metrics: {
+        revenue: "+220%",
+        patients: "+280位",
+        conversion: "從1.5%提升至6.8%",
+        roi: "廣告投資回報率 3.8:1"
+      },
+      challenge: "敏感性醫療服務，觸及率與信任度建立困難",
+      solution: "專業內容行銷，建立權威形象與患者信任",
+      testimonial: "在敏感的醫療領域，Aidea:Med 幫我們建立了專業可信的品牌形象，患者諮詢量大幅提升。",
+      verified: true
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 30,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.7,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  return (
+    <section ref={sectionRef} className="py-16 sm:py-20 lg:py-24 bg-white">
+      <div className="container-custom">
+        {/* 標題區域 */}
+        <motion.div 
+          className="text-center mb-12 sm:mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={sectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+            客戶成功案例
+            <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary mt-2">
+              實際數據見證專業實力
+            </span>
+          </h2>
+          <div className="w-20 h-1 bg-primary mx-auto my-6"></div>
+          <p className="text-base sm:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            透過量化指標與真實見證，展現我們為合作診所創造的具體價值
+            <br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>每個案例都經過客戶授權並可提供詳細數據驗證
+          </p>
+        </motion.div>
+
+        {/* 成功案例卡片 */}
+        <motion.div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate={sectionInView ? "visible" : "hidden"}
+        >
+          {successCases.map((caseItem, index) => (
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 group relative overflow-hidden"
+            >
+              {/* 驗證標記 */}
+              {caseItem.verified && (
+                <div className="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  已驗證
+                </div>
+              )}
+
+              {/* 診所資訊 */}
+              <div className="flex items-start mb-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-4">
+                  <Building2 className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+                    {caseItem.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-1">{caseItem.location}</p>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-full mr-2">
+                      {caseItem.category}
+                    </span>
+                    <span>{caseItem.period}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 成效數據 */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                  <TrendingUp className="w-4 h-4 text-green-500 mr-2" />
+                  量化成效
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center bg-white rounded-lg p-3 shadow-sm">
+                    <div className="text-lg font-bold text-green-600">{caseItem.metrics.revenue}</div>
+                    <div className="text-xs text-gray-600">營收成長</div>
+                  </div>
+                  <div className="text-center bg-white rounded-lg p-3 shadow-sm">
+                    <div className="text-lg font-bold text-blue-600">{caseItem.metrics.patients}</div>
+                    <div className="text-xs text-gray-600">新增患者</div>
+                  </div>
+                  <div className="text-center bg-white rounded-lg p-3 shadow-sm col-span-2">
+                    <div className="text-sm font-bold text-purple-600">{caseItem.metrics.conversion}</div>
+                    <div className="text-xs text-gray-600">轉換率提升</div>
+                  </div>
+                </div>
+                <div className="mt-3 text-center">
+                  <span className="text-xs text-gray-600">ROI: </span>
+                  <span className="text-sm font-bold text-primary">{caseItem.metrics.roi}</span>
+                </div>
+              </div>
+
+              {/* 挑戰與解決方案 */}
+              <div className="mb-6 space-y-3">
+                <div>
+                  <h5 className="text-sm font-semibold text-gray-900 mb-1 flex items-center">
+                    <AlertCircle className="w-3 h-3 text-orange-500 mr-1" />
+                    面臨挑戰
+                  </h5>
+                  <p className="text-xs text-gray-600 leading-relaxed">{caseItem.challenge}</p>
+                </div>
+                <div>
+                  <h5 className="text-sm font-semibold text-gray-900 mb-1 flex items-center">
+                    <Target className="w-3 h-3 text-green-500 mr-1" />
+                    解決方案
+                  </h5>
+                  <p className="text-xs text-gray-600 leading-relaxed">{caseItem.solution}</p>
+                </div>
+              </div>
+
+              {/* 客戶見證 */}
+              <div className="border-t border-gray-200 pt-4">
+                <p className="text-sm text-gray-700 italic leading-relaxed mb-3">
+                  "{caseItem.testimonial}"
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  </div>
+                  <span className="text-xs text-gray-500">5.0/5.0</span>
+                </div>
+              </div>
+
+              {/* 底部裝飾 */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* 底部資訊 */}
+        <motion.div 
+          className="mt-12 sm:mt-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={sectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <div className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+            <p className="text-sm sm:text-base text-gray-600 mb-4">
+              <strong>數據透明承諾</strong>：所有成效數據均來自 Google Analytics、Facebook Insights 等第三方平台
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500">
+              如需查看更詳細的成效報告或聯繫推薦客戶，歡迎與我們聯絡安排
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+
+
 // 主要頁面組件
 const HomePage = () => {
   return (
@@ -993,6 +1419,12 @@ const HomePage = () => {
         
         {/* 新增的三重優勢區塊 */}
         <TripleAdvantageSection />
+        
+        {/* 新增：EEAT 權威性證明區塊 */}
+        <AuthorityCredentialsSection />
+        
+        {/* 加強版客戶成功案例區塊 */}
+        <EnhancedTestimonialsSection />
         
       {/* 從這裡開始的組件拆分到單獨的文件中 */}
       <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
