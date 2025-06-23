@@ -418,6 +418,8 @@ declare global {
     };
   }
   
+  var dataLayer: any[];
+  
   interface Window {
     dataLayer: any[];
     gtag?: (command: string, action: string, params?: Record<string, any>) => void;

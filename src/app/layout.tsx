@@ -8,7 +8,6 @@ import {
   Loading, 
   BackToTopButton, 
   GoogleTagManager,
-  PerformanceMonitor,
   FloatingCTA,
   ErrorBoundary,
   BreadcrumbStructuredData,

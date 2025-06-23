@@ -4,6 +4,7 @@ import React, { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { FormStatus } from '@/types/form'
 
 export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   variant?: 'primary' | 'white' | 'black' | 'outline-white' | 'outline-red' | 'outline-black' | 'dark-overlay' | 'link'
@@ -15,12 +16,18 @@ export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   iconPosition?: 'left' | 'right'
   animate?: boolean
   href?: string
+  formStatus?: FormStatus
+  idleText?: string
+  submittingText?: string
+  successText?: string
+  errorText?: string
 }
 
 /**
  * 統一按鈕組件
  * 支援多種變體、尺寸和狀態
  * 當提供href時，會渲染為Link組件
+ * 支援表單狀態管理（整合SubmitButton功能）
  */
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
   variant = 'primary',
@@ -35,6 +42,11 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
   children,
   disabled,
   href,
+  formStatus,
+  idleText,
+  submittingText,
+  successText,
+  errorText,
   ...props
 }, ref) => {
   // 排除自定義props，避免傳遞到DOM元素
@@ -48,10 +60,48 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
     iconPosition: _iconPosition,
     animate: _animate,
     href: _href,
+    formStatus: _formStatus,
+    idleText: _idleText,
+    submittingText: _submittingText,
+    successText: _successText,
+    errorText: _errorText,
     // 也排除可能的錯誤props
     isLoading: _isLoading,
     ...domProps
   } = props as any
+
+  // 表單狀態邏輯（整合自SubmitButton）
+  const getFormStatusText = () => {
+    if (!formStatus) return children
+    
+    switch (formStatus) {
+      case FormStatus.SUBMITTING:
+        return submittingText || '提交中...'
+      case FormStatus.SUCCESS:
+        return successText || '提交成功'
+      case FormStatus.ERROR:
+        return errorText || '請重試'
+      default:
+        return idleText || children
+    }
+  }
+
+  const getFormStatusVariant = () => {
+    if (!formStatus) return variant
+    
+    switch (formStatus) {
+      case FormStatus.SUCCESS:
+        return 'outline-black'
+      case FormStatus.ERROR:
+        return 'outline-red'
+      default:
+        return variant
+    }
+  }
+
+  const isFormLoading = formStatus === FormStatus.SUBMITTING
+  const isFormDisabled = formStatus === FormStatus.SUBMITTING
+
   // 基礎樣式
   const baseClasses = cn(
     'inline-flex items-center justify-center font-medium transition-colors duration-200',
@@ -62,7 +112,9 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
 
   // 變體樣式
   const getVariantClasses = () => {
-    switch (variant) {
+    const currentVariant = getFormStatusVariant()
+    
+    switch (currentVariant) {
       case 'primary':
         return 'bg-primary text-white hover:bg-primary-dark focus:ring-primary'
       case 'white':
@@ -86,7 +138,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
 
   // 尺寸樣式
   const getSizeClasses = () => {
-    if (variant === 'link') return ''
+    if (getFormStatusVariant() === 'link') return ''
     
     switch (size) {
       case 'sm':
@@ -111,20 +163,20 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
 
   const buttonContent = (
     <>
-      {loading ? (
+      {(loading || isFormLoading) ? (
         <>
           <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          {loadingText || children}
+          {loadingText || getFormStatusText()}
         </>
       ) : (
         <>
           {icon && iconPosition === 'left' && (
             <span className="mr-2 -ml-1">{icon}</span>
           )}
-          {children}
+          {getFormStatusText()}
           {icon && iconPosition === 'right' && (
             <span className="ml-2 -mr-1">{icon}</span>
           )}
@@ -172,9 +224,9 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
       <motion.button
         ref={ref as React.Ref<HTMLButtonElement>}
         className={finalClasses}
-        disabled={disabled || loading}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        disabled={disabled || loading || isFormDisabled}
+        whileHover={{ scale: formStatus !== FormStatus.SUBMITTING ? 1.02 : 1 }}
+        whileTap={{ scale: formStatus !== FormStatus.SUBMITTING ? 0.98 : 1 }}
         transition={{ duration: 0.2 }}
         {...domProps}
       >
@@ -187,7 +239,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(({
     <button
       ref={ref as React.Ref<HTMLButtonElement>}
       className={finalClasses}
-      disabled={disabled || loading}
+      disabled={disabled || loading || isFormDisabled}
       {...domProps}
     >
       {buttonContent}

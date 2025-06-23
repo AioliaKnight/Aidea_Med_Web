@@ -246,4 +246,7 @@ export const FAQSection = memo<FAQSectionProps>(function FAQSection({
       </div>
     </section>
   );
-}); 
+});
+
+// 預設匯出
+export default FAQSection 
