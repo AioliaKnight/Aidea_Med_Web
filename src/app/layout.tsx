@@ -16,7 +16,8 @@ import {
   Loading, 
   BackToTopButton, 
   GoogleTagManager,
-  PerformanceMonitor 
+  PerformanceMonitor,
+  FloatingCTA 
 } from '@/components/common'
 import { notoSansTC } from '@/lib/fonts'
 
@@ -191,12 +192,15 @@ export default function RootLayout({
             {/* 全局回到頂部按鈕 - 調整出現閾值，提升動畫效果 */}
             <BackToTopButton 
               threshold={600} /* 增加閾值，使按鈕不會過早出現 */
-              position="bottom-24 right-9" /* 調整為有效的Tailwind類值 */
+              position="bottom-24 right-20" /* 調整位置避免與LINE按鈕重疊 */
               rounded={true}
               size="w-10 h-10" /* 增大按鈕尺寸提高可見性 */
               iconSize="h-6 w-6"
               autoHideDelay={4000} /* 停止滾動4秒後自動隱藏 */
             />
+            
+            {/* 浮動LINE CTA按鈕 */}
+            <FloatingCTA />
           </Suspense>
         </div>
 
