@@ -39,6 +39,7 @@ export { default as GoogleTagManager } from './GoogleTagManager'
 
 // SEO 優化組件
 export { default as SEOOptimizer } from './SEOOptimizer'
+export { default as OGImageOptimizer } from './OGImageOptimizer'
 export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
 export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
 

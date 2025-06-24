@@ -6,8 +6,11 @@ const siteConfig = {
   description: 'Aidea:Med是專業的牙醫診所與醫療診所行銷顧問公司，我們提供全方位的數位行銷解決方案，幫助醫療機構提升品牌形象與增加病患數量。',
   slogan: '為醫療診所注入數位活力，專業行銷解決方案',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com',
-  ogImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image.jpg`,
-  alternateImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image-alt.jpg`,
+  // 動態 OG 圖片 - 使用 API 路由生成
+  ogImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/api/og?title=${encodeURIComponent('Aidea:Med 醫療行銷顧問')}&subtitle=${encodeURIComponent('為醫療診所注入數位活力，專業行銷解決方案')}&type=general`,
+  // 靜態備用圖片
+  staticOgImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/og-image.jpg`,
+  alternateImage: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'}/api/og?title=${encodeURIComponent('醫療行銷專業服務')}&subtitle=${encodeURIComponent('值得信賴的醫療品牌顧問')}&type=general&theme=dark`,
   locale: 'zh-TW', // 新增 locale
   language: 'zh-Hant-TW', // 新增 language
   authors: [
@@ -258,13 +261,22 @@ const sharedOgConfig = {
       url: siteConfig.ogImage,
       width: 1200,
       height: 630,
-      alt: '牙醫診所行銷專家 - Aidea:Med',
+      alt: 'Aidea:Med 醫療行銷顧問服務 - 為醫療診所注入數位活力',
+      type: 'image/png',
+    },
+    {
+      url: siteConfig.staticOgImage,
+      width: 1200,
+      height: 630,
+      alt: 'Aidea:Med 靜態圖片 - 醫療行銷專業服務',
+      type: 'image/jpeg',
     },
     {
       url: siteConfig.alternateImage,
       width: 1200,
       height: 630,
-      alt: '醫療診所行銷解決方案 - Aidea:Med',
+      alt: 'Aidea:Med 替代圖片 - 醫療行銷專業服務',
+      type: 'image/png',
     }
   ],
 }
