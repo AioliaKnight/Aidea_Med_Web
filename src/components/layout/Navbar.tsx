@@ -56,7 +56,7 @@ const textStyles = {
     active: 'text-white',
     normal: 'text-white/90 hover:text-white',
     activeSecondary: 'text-white/90',
-    normalSecondary: 'text-white/75 group-hover:text-white/90',
+    normalSecondary: 'text-white/85 group-hover:text-white/95',
     indicator: 'bg-white'
   },
   // 滾動狀態文字樣式 - 白色背景上的深色文字
@@ -71,7 +71,7 @@ const textStyles = {
 
 // 下拉選單樣式
 const dropdownStyles = {
-  default: 'bg-primary/95 border border-white/10 shadow-lg',
+  default: 'bg-primary border border-white/10 shadow-lg',
   scrolled: 'bg-white border border-gray-100 shadow-lg'
 }
 
@@ -253,7 +253,7 @@ const NavItem = React.memo(({
                     key={child.href}
                     href={child.href}
                     className={cn(
-                      "block px-4 py-2 text-sm rounded-sm mx-1 my-1",
+                      "block px-4 py-2 text-sm rounded-sm mx-1 my-1 transition-colors duration-200",
                       pathname === child.href 
                         ? dropdownItemStyles[navMode].active 
                         : dropdownItemStyles[navMode].normal
@@ -262,8 +262,18 @@ const NavItem = React.memo(({
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <div>
-                      <div className="font-medium">{child.name}</div>
-                      <div className="text-xs opacity-75 mt-0.5">{child.nameEn}</div>
+                      <div className={cn(
+                        "font-medium",
+                        pathname === child.href
+                          ? navMode === 'scrolled' ? 'text-primary' : 'text-white'
+                          : navMode === 'scrolled' ? 'text-gray-800' : 'text-white/90'
+                      )}>{child.name}</div>
+                      <div className={cn(
+                        "text-xs mt-0.5 font-light tracking-wider transition-colors duration-300",
+                        pathname === child.href
+                          ? textStyles[navMode].activeSecondary
+                          : textStyles[navMode].normalSecondary
+                      )}>{child.nameEn}</div>
                     </div>
                   </Link>
                 ))}
@@ -451,22 +461,32 @@ export default function Navbar() {
                     <div>
                       <button
                         className={cn(
-                          "flex items-center justify-between w-full px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
+                          "flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-all duration-300",
                           isItemActive(item)
                             ? scrolled
-                              ? "bg-primary/10 text-primary"
-                              : "bg-white/10 text-white"
+                              ? "bg-primary/10"
+                              : "bg-white/10"
                             : scrolled
-                            ? "text-gray-700 hover:bg-gray-50"
-                            : "text-white/90 hover:bg-white/5"
+                            ? "hover:bg-gray-50"
+                            : "hover:bg-white/5"
                         )}
                         onClick={() => toggleMobileSubMenu(item.href)}
                         aria-expanded={expandedMobileItems.includes(item.href)}
                         aria-controls={`submenu-${item.href}`}
                       >
                         <div>
-                          <span className="block">{item.name}</span>
-                          <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
+                          <span className={cn(
+                            "block font-medium",
+                            isItemActive(item)
+                              ? scrolled ? "text-primary" : "text-white"
+                              : scrolled ? "text-gray-700" : "text-white/90"
+                          )}>{item.name}</span>
+                          <span className={cn(
+                            "block text-xs mt-0.5 font-light tracking-wider",
+                            isItemActive(item)
+                              ? scrolled ? textStyles.scrolled.activeSecondary : textStyles.default.activeSecondary
+                              : scrolled ? textStyles.scrolled.normalSecondary : textStyles.default.normalSecondary
+                          )}>{item.nameEn}</span>
                         </div>
                         <ChevronDown 
                           className={cn(
@@ -495,17 +515,27 @@ export default function Navbar() {
                                     "block px-3 py-2 rounded-lg transition-all duration-300",
                                     pathname === child.href
                                       ? scrolled
-                                        ? "bg-primary/5 text-primary"
-                                        : "bg-white/5 text-white"
+                                        ? "bg-primary/5"
+                                        : "bg-white/5"
                                       : scrolled
-                                      ? "text-gray-600 hover:bg-gray-50"
-                                      : "text-white/80 hover:bg-white/5"
+                                      ? "hover:bg-gray-50"
+                                      : "hover:bg-white/5"
                                   )}
                                   onClick={toggleMobileMenu}
                                   aria-current={pathname === child.href ? 'page' : undefined}
                                 >
-                                  <span className="block">{child.name}</span>
-                                  <span className="block text-xs mt-0.5 opacity-75">{child.nameEn}</span>
+                                  <span className={cn(
+                                    "block",
+                                    pathname === child.href
+                                      ? scrolled ? "text-primary" : "text-white"
+                                      : scrolled ? "text-gray-600" : "text-white/90"
+                                  )}>{child.name}</span>
+                                  <span className={cn(
+                                    "block text-xs mt-0.5 font-light tracking-wider",
+                                    pathname === child.href
+                                      ? scrolled ? textStyles.scrolled.activeSecondary : textStyles.default.activeSecondary
+                                      : scrolled ? textStyles.scrolled.normalSecondary : textStyles.default.normalSecondary
+                                  )}>{child.nameEn}</span>
                                 </Link>
                               ))}
                             </div>
@@ -517,21 +547,31 @@ export default function Navbar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "block px-3 py-2.5 font-medium rounded-lg transition-all duration-300",
+                    "block px-3 py-2.5 rounded-lg transition-all duration-300",
                     pathname === item.href
                       ? scrolled
-                        ? "bg-primary/10 text-primary"
-                        : "bg-white/10 text-white"
+                        ? "bg-primary/10"
+                        : "bg-white/10"
                       : scrolled
-                      ? "text-gray-700 hover:bg-gray-50"
-                      : "text-white/90 hover:bg-white/5"
+                      ? "hover:bg-gray-50"
+                      : "hover:bg-white/5"
                   )}
                   onClick={toggleMobileMenu}
                   role="menuitem"
                   aria-current={pathname === item.href ? 'page' : undefined}
                 >
-                  <span className="block">{item.name}</span>
-                  <span className="block text-xs mt-0.5 opacity-75">{item.nameEn}</span>
+                  <span className={cn(
+                    "block font-medium",
+                    pathname === item.href
+                      ? scrolled ? "text-primary" : "text-white"
+                      : scrolled ? "text-gray-700" : "text-white/90"
+                  )}>{item.name}</span>
+                  <span className={cn(
+                    "block text-xs mt-0.5 font-light tracking-wider",
+                    pathname === item.href
+                      ? scrolled ? textStyles.scrolled.activeSecondary : textStyles.default.activeSecondary
+                      : scrolled ? textStyles.scrolled.normalSecondary : textStyles.default.normalSecondary
+                  )}>{item.nameEn}</span>
                 </Link>
                   )}
                 </div>
