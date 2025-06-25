@@ -1,7 +1,7 @@
 ---
 title: '對比BA照怎麼放才不違法？診所社群內容三步驟安心審查法'
 summary: '一張對比照可能變成罰單起點。深度解析診所社群內容合規三大審查重點，從書面同意、療效保證到招攬意圖，幫助診所建立安心行銷的內容經營策略。'
-coverImage:  'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1920'
+coverImage: '/images/blog/medical-social-media-compliance-guide.jpg'
 publishedAt: '2025-06-06'
 author:
   name: 'Chloe'
