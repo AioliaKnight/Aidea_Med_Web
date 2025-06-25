@@ -158,7 +158,17 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
           'case-study', 'pro-tip', 'action-plan', 'cta-section',
           'warning-box', 'info-box', 'note-box', 'image-gallery',
           'expert-quote', 'product-recommendation', 'timeline',
-          'step-guide', 'legal-note', 'faq-section', 'faq-item'
+          'step-guide', 'legal-note', 'faq-section', 'faq-item',
+          'expert-credentials', 'problem-analysis',
+          'service-overview', 'service-item', 'service-details',
+          'research-note', 'results-section', 'results-grid',
+          'advantages-section', 'advantage-item', 'data-verification',
+          'series-note', 'key-insight', 'example-box', 'insight-box',
+          'application-tips', 'format-examples', 'case-image',
+          'before-after', 'before', 'after', 'results', 'key-takeaway',
+          'model-progress', 'stage-goal', 'next-preview', 'service-highlights',
+          'service-card', 'case-studies', 'key-takeaways', 'company-advantages',
+          'advantage-highlight', 'cta-buttons', 'article-footer'
         ];
         
         // 檢查是否是任何一個自定義樣式類別
@@ -406,8 +416,22 @@ const BlogContent: React.FC<BlogContentProps> = ({ content, className }) => {
         "[&_.step_h4]:text-lg [&_.step_h4]:font-bold [&_.step_h4]:mb-2 [&_.step_h4]:text-primary",
         "[&_.step_p]:mb-2 [&_.step_p:last-child]:mb-0",
         
-        // 自訂區塊在移動裝置上的通用樣式
-        "[&_.stat-highlight],[&_.response-model],[&_.action-checklist],[&_.case-study],[&_.pro-tip],[&_.action-plan],[&_.cta-section],[&_.warning-box],[&_.info-box],[&_.note-box],[&_.expert-quote]:p-4 sm:[&_.stat-highlight],[&_.response-model],[&_.action-checklist],[&_.case-study],[&_.pro-tip],[&_.action-plan],[&_.cta-section],[&_.warning-box],[&_.info-box],[&_.note-box],[&_.expert-quote]:p-6",
+        // ---------- 簡化醫療專業區塊基本樣式 ----------
+        
+        // 通用自定義區塊的基本可見性
+        "[&_.expert-credentials]:block [&_.expert-credentials]:visible [&_.expert-credentials]:opacity-100",
+        "[&_.problem-analysis]:block [&_.problem-analysis]:visible [&_.problem-analysis]:opacity-100",
+
+        "[&_.service-overview]:block [&_.service-overview]:visible [&_.service-overview]:opacity-100",
+        "[&_.service-item]:block [&_.service-item]:visible [&_.service-item]:opacity-100",
+        "[&_.service-details]:block [&_.service-details]:visible [&_.service-details]:opacity-100",
+        "[&_.research-note]:block [&_.research-note]:visible [&_.research-note]:opacity-100",
+        "[&_.results-section]:block [&_.results-section]:visible [&_.results-section]:opacity-100",
+        "[&_.results-grid]:block [&_.results-grid]:visible [&_.results-grid]:opacity-100",
+
+        "[&_.advantages-section]:block [&_.advantages-section]:visible [&_.advantages-section]:opacity-100",
+        "[&_.advantage-item]:block [&_.advantage-item]:visible [&_.advantage-item]:opacity-100",
+        "[&_.data-verification]:block [&_.data-verification]:visible [&_.data-verification]:opacity-100",
         
         className
       )}
@@ -438,7 +462,10 @@ function enhanceHtmlContent(content: string): string {
     'response-model', 'action-checklist', 'case-study', 'pro-tip', 
     'action-plan', 'cta-section', 'warning-box', 'info-box', 
     'note-box', 'image-gallery', 'expert-quote', 'product-recommendation', 
-    'timeline', 'step-guide'
+    'timeline', 'step-guide', 'expert-credentials', 'problem-analysis',
+    'service-overview', 'service-item', 'service-details',
+    'research-note', 'results-section', 'results-grid',
+    'advantages-section', 'advantage-item', 'data-verification'
   ];
   
   // 確保每個自定義類別都可以被正確識別，如果必要可以添加debug類別
@@ -467,7 +494,7 @@ function enhanceHtmlContent(content: string): string {
     enhancedContent = enhancedContent.replace(blockRegex, (match, innerContent) => {
       // 確保h4標題可見
       let processedInnerContent = innerContent.replace(/<h([1-6])([^>]*)>/g, 
-        `<h$1$2 style="display:block !important; visibility:visible !important; opacity:1 !important; margin-bottom:0.75rem !important;">`);
+        `<h$1$2 style="display:block !important; visibility:visible !important; opacity:1 !important;">`);
       
       // 確保段落可見
       processedInnerContent = processedInnerContent.replace(/<p([^>]*)>/g, 

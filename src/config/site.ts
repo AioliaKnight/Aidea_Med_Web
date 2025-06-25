@@ -58,7 +58,7 @@ export const siteConfig: SiteConfig = {
   // 社交媒體
   social: {
     facebook: 'https://www.facebook.com/www.aideamed',
-    instagram: 'https://www.instagram.com/aidea_med/',
+    instagram: 'https://www.instagram.com/aidea.med/',
     line: 'https://lin.ee/ZPdkmHh'
   },
   

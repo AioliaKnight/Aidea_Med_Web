@@ -751,34 +751,39 @@
   .prose div.cta-section,
   .prose div.warning-box,
   .prose div.info-box,
-  .prose div.note-box,
-  .prose div.image-gallery,
   .prose div.expert-quote,
-  .prose div.product-recommendation,
-  .prose div.timeline,
   .prose div.step-guide,
   .prose div.legal-note,
   .prose div.faq-section,
-  .prose div.faq-item {
+  .prose div.faq-item,
+  .prose div.expert-credentials,
+
+  .prose div.service-overview,
+  .prose div.service-item,
+  .prose div.service-details,
+  .prose div.research-note,
+  .prose div.results-section,
+  .prose div.results-grid,
+  .prose div.advantages-section,
+  .prose div.advantage-item,
+  .prose div.data-verification {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    margin: 2rem 0 !important;
-    padding: 1rem !important;
-    border-radius: 0.5rem !important;
   }
   
-  .prose div h1,
-  .prose div h2,
-  .prose div h3,
-  .prose div h4,
-  .prose div h5,
-  .prose div h6 {
+  /* 通用標題樣式 - 只適用於沒有特定樣式的元素 */
+  .prose div h1:not(.problem-analysis h1):not(.results-grid h1),
+  .prose div h2:not(.problem-analysis h2):not(.results-grid h2),
+  .prose div h3:not(.problem-analysis h3):not(.results-grid h3),
+  .prose div h4:not(.problem-analysis h4):not(.results-grid h4),
+  .prose div h6:not(.problem-analysis h6):not(.results-grid h6) {
     display: block !important;
     margin-bottom: 0.5rem !important;
   }
   
-  .prose div p {
+  /* 通用段落樣式 - 排除特定組件 */
+  .prose div p:not(.problem-analysis p):not(.results-grid p) {
     display: block !important;
     margin-bottom: 0.5rem !important;
   }
@@ -810,7 +815,7 @@
   }
   
   .prose div.legal-note h4:before {
-    content: '⚖️' !important;
+    content: '' !important;
     margin-right: 0.5rem !important;
   }
   
@@ -884,6 +889,612 @@
   .prose div.cta-section a.cta-button:hover {
     background-color: #1d4ed8 !important;
     text-decoration: none !important;
+  }
+
+  /* 專家認證區塊樣式 */
+  .prose div.expert-credentials {
+    border: 2px solid #e62733 !important;
+    background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%) !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    position: relative !important;
+  }
+
+  /* emoji 已移除，改為純平面化設計 */
+
+  .prose div.expert-credentials h4 {
+    color: #e62733 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .prose div.expert-credentials p {
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .prose div.expert-credentials ul {
+    margin-left: 1rem !important;
+  }
+
+  .prose div.expert-credentials li {
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 500 !important;
+  }
+
+  /* 警告提示區塊樣式 */
+  .prose div.warning-box {
+    border-left: 5px solid #f59e0b !important;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1) !important;
+  }
+
+  .prose div.warning-box h4 {
+    color: #d97706 !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* emoji 已移除，改為純平面化設計 */
+
+
+
+  /* 服務項目區塊樣式 */
+  .prose div.service-overview {
+    background-color: #ffffff !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 1rem !important;
+    padding: 0 !important;
+    margin: 2rem 0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .prose div.service-overview h4 {
+    background: linear-gradient(135deg, #e62733 0%, #dc2626 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    padding: 1.5rem !important;
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .prose div.service-item {
+    border-bottom: 1px solid #f3f4f6 !important;
+    padding: 2rem 1.5rem !important;
+    margin: 0 !important;
+    background-color: #ffffff !important;
+  }
+
+  .prose div.service-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .prose div.service-item h5 {
+    color: #e62733 !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 0.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* emoji 已移除，改為純平面化設計 */
+
+  .prose div.service-item p {
+    margin-bottom: 1rem !important;
+    color: #374151 !important;
+    font-weight: 500 !important;
+  }
+
+  .prose div.service-details {
+    background-color: #f9fafb !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    margin-top: 1rem !important;
+  }
+
+  .prose div.service-details ul {
+    margin-left: 1rem !important;
+  }
+
+  .prose div.service-details li {
+    color: #4b5563 !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* 案例研究區塊樣式 */
+  .prose div.case-study {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-left: 5px solid #0ea5e9 !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.1) !important;
+  }
+
+  .prose div.case-study h4 {
+    color: #0284c7 !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* emoji 已移除，改為純平面化設計 */
+
+  .prose div.case-study p {
+    color: #0369a1 !important;
+    font-style: italic !important;
+    margin-bottom: 0.75rem !important;
+    padding: 0.5rem !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 0.25rem !important;
+  }
+
+  /* 研究說明區塊樣式 */
+  .prose div.research-note {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    margin-top: 1.5rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .prose div.research-note p {
+    color: #475569 !important;
+    margin: 0 !important;
+    font-style: italic !important;
+    line-height: 1.5 !important;
+  }
+
+  .prose div.research-note p strong {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+  }
+
+  /* 數據統計區塊樣式 */
+  .prose div.stat-highlight {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+    border: 2px solid #e62733 !important;
+    border-radius: 1rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    text-align: center !important;
+    box-shadow: 0 4px 6px -1px rgba(230, 39, 51, 0.1) !important;
+  }
+
+  .prose div.stat-highlight h4 {
+    color: #e62733 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .prose div.stat-highlight .number {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: #e62733 !important;
+    line-height: 1 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* 專業提示區塊樣式 */
+  .prose div.pro-tip {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+    border-left: 5px solid #22c55e !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.1) !important;
+  }
+
+  .prose div.pro-tip h4 {
+    color: #16a34a !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .prose div.pro-tip h4::before {
+    content: '' !important;
+    margin-right: 0.5rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  /* 行動清單區塊樣式 */
+  .prose div.action-checklist {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+  }
+
+  .prose div.action-checklist h4 {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .prose div.action-checklist h4::before {
+    content: '' !important;
+    margin-right: 0.5rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  .prose div.action-checklist ul {
+    margin-left: 1rem !important;
+  }
+
+  .prose div.action-checklist li {
+    color: #475569 !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.6 !important;
+    position: relative !important;
+  }
+
+  .prose div.action-checklist li::before {
+    content: '•' !important;
+    color: #e62733 !important;
+    font-weight: bold !important;
+    margin-right: 0.5rem !important;
+  }
+
+  /* 資訊提示區塊樣式 */
+  .prose div.info-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border-left: 5px solid #3b82f6 !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1) !important;
+  }
+
+  .prose div.info-box h4 {
+    color: #2563eb !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .prose div.info-box h4::before {
+    content: '' !important;
+    margin-right: 0.5rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  /* 專家引言區塊樣式 */
+  .prose div.expert-quote {
+    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%) !important;
+    border: 2px solid #f59e0b !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    position: relative !important;
+    font-style: italic !important;
+  }
+
+  .prose div.expert-quote::before {
+    content: '"' !important;
+    position: absolute !important;
+    top: -0.25rem !important;
+    left: 1rem !important;
+    font-size: 3rem !important;
+    color: #f59e0b !important;
+    font-family: serif !important;
+    line-height: 1 !important;
+  }
+
+  .prose div.expert-quote p {
+    color: #92400e !important;
+    font-size: 1.125rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1rem !important;
+    padding-left: 2rem !important;
+  }
+
+  /* 結果展示區塊樣式 */
+  .prose div.results-section {
+    background-color: #ffffff !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    margin: 3rem 0 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Results grid 樣式 - 最高優先級 */
+
+
+
+
+  /* 優勢亮點區塊樣式 */
+  .prose div.advantages-section {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 1rem !important;
+    padding: 0 !important;
+    margin: 2rem 0 !important;
+    overflow: hidden !important;
+  }
+
+  .prose div.advantage-item {
+    border-bottom: 1px solid #f3f4f6 !important;
+    padding: 1.5rem 2rem !important;
+    margin: 0 !important;
+    background-color: #ffffff !important;
+  }
+
+  .prose div.advantage-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .prose div.advantage-item h4 {
+    color: #e62733 !important;
+    font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    margin-bottom: 0.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .prose div.advantage-item h4::before {
+    content: '' !important;
+    margin-right: 0.5rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* 數據驗證說明區塊 */
+  .prose div.data-verification {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 1.5rem 0 !important;
+    font-size: 0.875rem !important;
+  }
+
+  .prose div.data-verification h4 {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .prose div.data-verification h4::before {
+    content: '' !important;
+    margin-right: 0.5rem !important;
+    font-size: 1rem !important;
+  }
+
+  .prose div.data-verification p {
+    color: #64748b !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .prose div.data-verification ul {
+    margin-left: 1rem !important;
+  }
+
+  .prose div.data-verification li {
+    color: #64748b !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* 已移除 problem-item 和 result-item 樣式 - 不再使用 */
+
+
+  /* 確保其他自定義區塊也能正確顯示 (problem-analysis和results-grid已有專用樣式) */
+  .prose .expert-credentials,
+  .prose .service-overview,
+  .prose .service-item,
+  .prose .service-details,
+  .prose .research-note,
+  .prose .results-section,
+  .prose .advantages-section,
+  .prose .advantage-item,
+  .prose .data-verification,
+  .prose div.expert-credentials,
+  .prose div.service-overview,
+  .prose div.service-item,
+  .prose div.service-details,
+  .prose div.research-note,
+  .prose div.results-section,
+  .prose div.advantages-section,
+  .prose div.advantage-item,
+  .prose div.data-verification {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background-color: #f8fafc !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 1.5rem 0 !important;
+    min-height: 40px !important;
+    position: relative !important;
+  }
+
+  /* 其他常用區塊基本樣式 */
+  .prose div.series-note,
+  .prose div.key-insight,
+  .prose div.example-box,
+  .prose div.insight-box,
+  .prose div.application-tips,
+  .prose div.format-examples,
+  .prose div.key-takeaway,
+  .prose div.model-progress,
+  .prose div.stage-goal,
+  .prose div.next-preview,
+  .prose div.key-takeaways {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    padding: 1.5rem !important;
+    margin: 1.5rem 0 !important;
+  }
+
+  .prose div.case-image {
+    margin: 2rem 0 !important;
+    text-align: center !important;
+    border-radius: 0.75rem !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .prose div.before-after {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+    margin: 2rem 0 !important;
+  }
+
+  .prose div.before,
+  .prose div.after {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+  }
+
+  .prose div.service-highlights {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 1.5rem !important;
+    margin: 2rem 0 !important;
+  }
+
+  .prose div.service-card {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .prose div.case-studies {
+    background-color: #f8fafc !important;
+    border-radius: 0.75rem !important;
+    padding: 0 !important;
+    margin: 2rem 0 !important;
+    overflow: hidden !important;
+  }
+
+  .prose div.company-advantages {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 1rem !important;
+    margin: 2rem 0 !important;
+  }
+
+  .prose div.advantage-highlight {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    text-align: center !important;
+  }
+
+  .prose div.cta-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin: 2rem 0 !important;
+    text-align: center !important;
+  }
+
+  @media (min-width: 640px) {
+    .prose div.cta-buttons {
+      flex-direction: row !important;
+      justify-content: center !important;
+    }
+  }
+
+  .prose div.article-footer {
+    border-top: 2px solid #e5e7eb !important;
+    margin-top: 3rem !important;
+    padding-top: 2rem !important;
+    text-align: center !important;
+    color: #6b7280 !important;
+  }
+
+  /* CTA按鈕樣式 */
+  .prose a.cta-button,
+  .prose a.cta-primary {
+    display: inline-block !important;
+    background-color: #e62733 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 0.5rem !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 6px -1px rgba(230, 39, 51, 0.2) !important;
+  }
+
+  .prose a.cta-button:hover,
+  .prose a.cta-primary:hover {
+    background-color: #dc2626 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 8px -1px rgba(230, 39, 51, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .prose a.cta-secondary {
+    display: inline-block !important;
+    background-color: transparent !important;
+    color: #e62733 !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 2rem !important;
+    border: 2px solid #e62733 !important;
+    border-radius: 0.5rem !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .prose a.cta-secondary:hover {
+    background-color: #e62733 !important;
+    color: #ffffff !important;
+  }
+
+  /* 響應式調整 */
+  @media (max-width: 640px) {
+    .prose div.before-after {
+      grid-template-columns: 1fr !important;
+    }
+    
+
+    
+    .prose div.service-highlights,
+    .prose div.company-advantages {
+      grid-template-columns: 1fr !important;
+    }
   }
 }
 
@@ -1298,6 +1909,167 @@ a.underline-effect::after {
   transition: width var(--duration-normal) var(--ease-out);
   text-decoration: none !important;
 }
+
+/* =================================
+   SPECIAL COMPONENTS - PROBLEM ANALYSIS
+   ================================= */
+
+/* Problem Analysis 區塊 */
+div.problem-analysis,
+.problem-analysis,
+.prose div.problem-analysis,
+.prose .problem-analysis {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  padding: 0 !important;
+  margin: 2rem 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.problem-analysis > h4,
+.prose div.problem-analysis > h4,
+.prose .problem-analysis > h4 {
+  background: #e62733 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  padding: 1rem 1.5rem !important;
+  margin: 0 !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  border-bottom: 2px solid #dc2626 !important;
+}
+
+.problem-analysis h5,
+.prose div.problem-analysis h5,
+.prose .problem-analysis h5 {
+  color: #e62733 !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.5rem 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.problem-analysis p,
+.prose div.problem-analysis p,
+.prose .problem-analysis p {
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 1rem 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.problem-analysis > *:not(h4),
+.prose div.problem-analysis > *:not(h4),
+.prose .problem-analysis > *:not(h4) {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+.problem-analysis > *:last-child,
+.prose div.problem-analysis > *:last-child,
+.prose .problem-analysis > *:last-child {
+  padding-bottom: 1.5rem !important;
+}
+
+.problem-analysis > *:first-child:not(h4),
+.prose div.problem-analysis > *:first-child:not(h4),
+.prose .problem-analysis > *:first-child:not(h4) {
+  padding-top: 1.5rem !important;
+}
+
+/* =================================
+   SPECIAL COMPONENTS - RESULTS GRID
+   ================================= */
+
+/* Results Grid 區塊 */
+div.results-grid,
+.results-grid,
+.prose div.results-grid,
+.prose .results-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.5rem !important;
+  margin: 2rem 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid > div,
+.prose div.results-grid > div,
+.prose .results-grid > div {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-left: 4px solid #e62733 !important;
+  border-radius: 0.5rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid > div:hover,
+.prose div.results-grid > div:hover,
+.prose .results-grid > div:hover {
+  border-left-width: 6px !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.results-grid h5,
+.prose div.results-grid h5,
+.prose .results-grid h5 {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  color: #e62733 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  padding: 1rem 1.5rem !important;
+  margin: 0 !important;
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid p,
+.prose div.results-grid p,
+.prose .results-grid p {
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+  padding: 1rem 1.5rem 1.5rem 1.5rem !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* 響應式調整 */
+@media (max-width: 640px) {
+  .results-grid,
+  .prose div.results-grid,
+  .prose .results-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+/* =================================
+   BLOG PERFORMANCE OPTIMIZATION
+   ================================= */
 
 /* Blog 組件性能優化 CSS */
 .blog-content-div {
