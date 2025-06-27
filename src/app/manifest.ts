@@ -9,37 +9,85 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
-    theme_color: '#4A6CF7',
+    theme_color: '#e62733',
     
     orientation: 'portrait-primary',
     scope: '/',
     
     icons: [
       {
-        src: '/icons/android-chrome-192x192.png',
+        src: '/icons/icon-72x72.png',
+        sizes: '72x72',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/icons/icon-96x96.png',
+        sizes: '96x96',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/icons/icon-128x128.png',
+        sizes: '128x128',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/icons/icon-144x144.png',
+        sizes: '144x144',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/icons/icon-152x152.png',
+        sizes: '152x152',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/icons/icon-192x192.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'maskable'
       },
       {
-        src: '/icons/android-chrome-512x512.png',
+        src: '/icons/icon-384x384.png',
+        sizes: '384x384',
+        type: 'image/png',
+        purpose: 'maskable'
+      },
+      {
+        src: '/icons/icon-512x512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable'
       },
       {
-        src: '/icons/apple-touch-icon.png',
+        src: '/android-chrome-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/android-chrome-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any'
+      },
+      {
+        src: '/apple-touch-icon.png',
         sizes: '180x180',
         type: 'image/png',
         purpose: 'any'
       },
       {
-        src: '/icons/favicon-32x32.png',
+        src: '/favicon-32x32.png',
         sizes: '32x32',
         type: 'image/png'
       },
       {
-        src: '/icons/favicon-16x16.png',
+        src: '/favicon-16x16.png',
         sizes: '16x16',
         type: 'image/png'
       }
@@ -69,20 +117,7 @@ export default function manifest(): MetadataRoute.Manifest {
         url: '/service',
         icons: [
           {
-            src: '/icons/service-shortcut.png',
-            sizes: '96x96',
-            type: 'image/png'
-          }
-        ]
-      },
-      {
-        name: '成功案例',
-        short_name: '案例',
-        description: '查看醫療行銷成功案例',
-        url: '/case',
-        icons: [
-          {
-            src: '/icons/case-shortcut.png',
+            src: '/icons/icon-96x96.png',
             sizes: '96x96',
             type: 'image/png'
           }
@@ -95,7 +130,7 @@ export default function manifest(): MetadataRoute.Manifest {
         url: '/contact',
         icons: [
           {
-            src: '/icons/contact-shortcut.png',
+            src: '/icons/icon-96x96.png',
             sizes: '96x96',
             type: 'image/png'
           }
@@ -108,7 +143,20 @@ export default function manifest(): MetadataRoute.Manifest {
         url: '/blog',
         icons: [
           {
-            src: '/icons/blog-shortcut.png',
+            src: '/icons/icon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png'
+          }
+        ]
+      },
+      {
+        name: '團隊介紹',
+        short_name: '團隊',
+        description: '認識Aidea:Med專業團隊',
+        url: '/team',
+        icons: [
+          {
+            src: '/icons/icon-96x96.png',
             sizes: '96x96',
             type: 'image/png'
           }
@@ -116,77 +164,14 @@ export default function manifest(): MetadataRoute.Manifest {
       }
     ],
     
-    // 螢幕截圖 (用於 PWA 安裝提示)
-    screenshots: [
-      {
-        src: '/screenshots/homepage-desktop.png',
-        sizes: '1280x720',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'Aidea:Med 首頁 - 桌面版'
-      },
-      {
-        src: '/screenshots/homepage-mobile.png',
-        sizes: '375x667',
-        type: 'image/png',
-        form_factor: 'narrow',
-        label: 'Aidea:Med 首頁 - 手機版'
-      },
-      {
-        src: '/screenshots/services-desktop.png',
-        sizes: '1280x720',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: '服務項目頁面 - 桌面版'
-      },
-      {
-        src: '/screenshots/services-mobile.png',
-        sizes: '375x667',
-        type: 'image/png',
-        form_factor: 'narrow',
-        label: '服務項目頁面 - 手機版'
-      }
-    ],
-    
-    // 協議處理
-    protocol_handlers: [
-      {
-        protocol: 'mailto',
-        url: '/contact?action=email&email=%s'
-      },
-      {
-        protocol: 'tel',
-        url: '/contact?action=call&phone=%s'
-      }
-    ],
-    
-    // 檔案處理 (用於分享功能)
-    file_handlers: [
-      {
-        action: '/contact',
-        accept: {
-          'text/plain': ['.txt'],
-          'application/pdf': ['.pdf'],
-          'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-        }
-      }
-    ],
-    
-    // 分享目標
+    // 分享目標 (簡化版)
     share_target: {
       action: '/contact',
-      method: 'POST',
-      enctype: 'multipart/form-data',
+      method: 'GET',
       params: {
         title: 'title',
         text: 'text',
-        url: 'url',
-        files: [
-          {
-            name: 'file',
-            accept: ['image/*', 'application/pdf']
-          }
-        ]
+        url: 'url'
       }
     }
   }
