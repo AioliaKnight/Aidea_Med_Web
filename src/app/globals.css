@@ -783,9 +783,16 @@
   }
   
   /* 通用段落樣式 - 排除特定組件 */
-  .prose div p:not(.problem-analysis p):not(.results-grid p) {
+  .prose div p {
     display: block !important;
     margin-bottom: 0.5rem !important;
+  }
+  
+  /* 特定組件段落樣式覆蓋通用樣式 */
+  .prose .problem-analysis p,
+  .prose .results-grid p,
+  .prose .warning-box .problem-analysis p {
+    /* 這些樣式會被各自的組件樣式覆蓋 */
   }
   
   .prose div ul,
@@ -1914,11 +1921,15 @@ a.underline-effect::after {
    SPECIAL COMPONENTS - PROBLEM ANALYSIS
    ================================= */
 
-/* Problem Analysis 區塊 */
+/* Problem Analysis 區塊 - 強制顯示樣式 */
 div.problem-analysis,
 .problem-analysis,
 .prose div.problem-analysis,
-.prose .problem-analysis {
+.prose .problem-analysis,
+.prose div.warning-box .problem-analysis,
+.prose .warning-box .problem-analysis,
+div[class*="problem-analysis"],
+.prose div[class*="problem-analysis"] {
   background: #ffffff !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 0.75rem !important;
@@ -1928,6 +1939,8 @@ div.problem-analysis,
   visibility: visible !important;
   opacity: 1 !important;
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .problem-analysis > h4,
@@ -1943,9 +1956,16 @@ div.problem-analysis,
   border-bottom: 2px solid #dc2626 !important;
 }
 
+/* Problem Analysis 標題樣式 - 強制顯示 */
 .problem-analysis h5,
 .prose div.problem-analysis h5,
-.prose .problem-analysis h5 {
+.prose .problem-analysis h5,
+.prose div.warning-box .problem-analysis h5,
+.prose .warning-box .problem-analysis h5,
+div[class*="problem-analysis"] h5,
+.prose div[class*="problem-analysis"] h5,
+.problem-analysis > h5,
+div.problem-analysis > h5 {
   color: #e62733 !important;
   font-weight: 600 !important;
   font-size: 1rem !important;
@@ -1954,11 +1974,21 @@ div.problem-analysis,
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  line-height: 1.4 !important;
 }
 
+/* Problem Analysis 段落樣式 - 強制顯示 */
 .problem-analysis p,
 .prose div.problem-analysis p,
-.prose .problem-analysis p {
+.prose .problem-analysis p,
+.prose div.warning-box .problem-analysis p,
+.prose .warning-box .problem-analysis p,
+div[class*="problem-analysis"] p,
+.prose div[class*="problem-analysis"] p,
+.problem-analysis > p,
+div.problem-analysis > p {
   color: #374151 !important;
   line-height: 1.6 !important;
   margin: 0 0 1rem 0 !important;
@@ -1966,25 +1996,140 @@ div.problem-analysis,
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  font-size: 0.95rem !important;
 }
 
 .problem-analysis > *:not(h4),
 .prose div.problem-analysis > *:not(h4),
-.prose .problem-analysis > *:not(h4) {
+.prose .problem-analysis > *:not(h4),
+.prose div.warning-box .problem-analysis > *:not(h4),
+.prose .warning-box .problem-analysis > *:not(h4) {
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
 }
 
 .problem-analysis > *:last-child,
 .prose div.problem-analysis > *:last-child,
-.prose .problem-analysis > *:last-child {
+.prose .problem-analysis > *:last-child,
+.prose .warning-box .problem-analysis > *:last-child {
   padding-bottom: 1.5rem !important;
 }
 
 .problem-analysis > *:first-child:not(h4),
 .prose div.problem-analysis > *:first-child:not(h4),
-.prose .problem-analysis > *:first-child:not(h4) {
+.prose .problem-analysis > *:first-child:not(h4),
+.prose div.warning-box .problem-analysis > *:first-child:not(h4),
+.prose .warning-box .problem-analysis > *:first-child:not(h4) {
   padding-top: 1.5rem !important;
+}
+
+/* Problem Analysis 中的 strong 標籤樣式 */
+.problem-analysis strong,
+.prose div.problem-analysis strong,
+.prose .problem-analysis strong,
+.prose div.warning-box .problem-analysis strong,
+.prose .warning-box .problem-analysis strong,
+div[class*="problem-analysis"] strong {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  display: inline !important;
+}
+
+/* 除錯樣式 - 確保 problem-analysis 區塊中的所有元素都可見 */
+.problem-analysis *,
+div[class*="problem-analysis"] * {
+  max-width: none !important;
+  max-height: none !important;
+  clip: none !important;
+  clip-path: none !important;
+  overflow: visible !important;
+}
+
+/* 終極樣式修正 - 直接針對嵌套結構 */
+.warning-box .problem-analysis h5 {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #e62733 !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.5rem 0 !important;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.warning-box .problem-analysis p {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 1rem 0 !important;
+  padding: 0 !important;
+  font-size: 0.95rem !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.warning-box .problem-analysis strong {
+  display: inline !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  background: none !important;
+  border: none !important;
+}
+
+/* 同樣修正 results-grid 的樣式問題 */
+.results-section .results-grid h5,
+.results-grid h5 {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #e62733 0%, #d32f2f 100%) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.75rem 0 !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  line-height: 1.3 !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.results-section .results-grid p,
+.results-grid p {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 0.5rem 0 !important;
+  padding: 0 1.25rem !important;
+  font-size: 0.9rem !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.results-section .results-grid em,
+.results-grid em {
+  display: inline !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #6b7280 !important;
+  font-style: italic !important;
+  font-size: 0.85rem !important;
+  background: none !important;
+  border: none !important;
 }
 
 /* =================================
@@ -2145,3 +2290,751 @@ img[data-src].loaded {
   height: 100%;
   object-fit: cover;
 } 
+
+/* =======================================
+   BLOG CONTENT STYLES - REORGANIZED
+   ======================================= */
+
+/* 基礎可見性確保 */
+.prose div {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* 通用標題和段落基礎樣式 */
+.prose div h1, .prose div h2, .prose div h3, .prose div h4, .prose div h5, .prose div h6 {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.prose div p {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.prose div ul, .prose div ol {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding-left: 1.5rem !important;
+  margin: 0.5rem 0 !important;
+}
+
+.prose div li {
+  display: list-item !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* =======================================
+   SPECIALIZED COMPONENTS
+   ======================================= */
+
+/* Legal Note */
+.prose div.legal-note {
+  background: #f8fafc !important;
+  border-left: 4px solid #e62733 !important;
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+.prose div.legal-note h4 {
+  color: #e62733 !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.legal-note h4:before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  font-size: 1.25rem !important;
+}
+
+/* FAQ Section */
+.prose div.faq-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 3rem 0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.prose div.faq-section h3 {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  margin: 0 0 1.5rem 0 !important;
+  text-align: center !important;
+  position: relative !important;
+  padding-bottom: 1rem !important;
+}
+
+/* FAQ Item */
+.prose div.faq-item {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.prose div.faq-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.prose div.faq-item h4 {
+  color: #e62733 !important;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 0.75rem 0 !important;
+}
+
+/* CTA Section */
+.prose div.cta-section {
+  background: linear-gradient(135deg, #e62733 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  padding: 3rem 2rem !important;
+  margin: 3rem 0 !important;
+  border-radius: 1rem !important;
+  text-align: center !important;
+}
+
+.prose div.cta-section h3 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.875rem !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+.prose div.cta-section p {
+  color: #fef2f2 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 2rem 0 !important;
+}
+
+.prose div.cta-section a.cta-button {
+  background: #ffffff !important;
+  color: #e62733 !important;
+  padding: 1rem 2rem !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.3s ease !important;
+}
+
+.prose div.cta-section a.cta-button:hover {
+  background: #f9fafb !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(230, 39, 51, 0.2) !important;
+}
+
+/* Expert Credentials */
+.prose div.expert-credentials {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: #ffffff !important;
+  padding: 2rem !important;
+  margin: 2rem 0 !important;
+  border-radius: 1rem !important;
+  border-left: 5px solid #e62733 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.prose div.expert-credentials h4 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.expert-credentials p {
+  color: #e2e8f0 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.75rem 0 !important;
+}
+
+.prose div.expert-credentials ul {
+  margin: 1rem 0 0 0 !important;
+  padding-left: 0 !important;
+}
+
+.prose div.expert-credentials li {
+  color: #cbd5e1 !important;
+  padding: 0.25rem 0 !important;
+  list-style: none !important;
+  position: relative !important;
+  padding-left: 1.5rem !important;
+}
+
+/* Warning Box */
+.prose div.warning-box {
+  background: #fff7ed !important;
+  border: 2px solid #fed7aa !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+}
+
+.prose div.warning-box h4 {
+  color: #ea580c !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  margin: 0 0 1.5rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 2px solid #fed7aa !important;
+}
+
+/* Service Overview */
+.prose div.service-overview {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.prose div.service-overview h4 {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  margin: 0 0 1.5rem 0 !important;
+  text-align: center !important;
+  position: relative !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 3px solid #e62733 !important;
+}
+
+/* Service Item */
+.prose div.service-item {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.prose div.service-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.prose div.service-item h5 {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 0.75rem 0 !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 2px solid #e62733 !important;
+  position: relative !important;
+}
+
+.prose div.service-item p {
+  color: #6b7280 !important;
+  font-size: 0.95rem !important;
+  margin: 0 0 1rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+/* Service Details */
+.prose div.service-details {
+  background: #f9fafb !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem 1.5rem !important;
+  margin-top: 1rem !important;
+  border-left: 3px solid #e62733 !important;
+}
+
+.prose div.service-details ul {
+  margin: 0.5rem 0 !important;
+  padding-left: 1.5rem !important;
+}
+
+.prose div.service-details li {
+  color: #374151 !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Case Study */
+.prose div.case-study {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+  border: 1px solid #7dd3fc !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+}
+
+.prose div.case-study h4 {
+  color: #0c4a6e !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 2px solid #0ea5e9 !important;
+}
+
+.prose div.case-study p {
+  color: #0f172a !important;
+  line-height: 1.7 !important;
+  margin: 0 0 1rem 0 !important;
+  font-size: 1rem !important;
+}
+
+/* Research Note */
+.prose div.research-note {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  border-left: 4px solid #64748b !important;
+}
+
+.prose div.research-note p {
+  color: #475569 !important;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+  line-height: 1.6 !important;
+  font-style: italic !important;
+}
+
+.prose div.research-note p strong {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+}
+
+/* Stat Highlight */
+.prose div.stat-highlight {
+  background: linear-gradient(135deg, #e62733 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  padding: 2rem !important;
+  border-radius: 1rem !important;
+  text-align: center !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.prose div.stat-highlight h4 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+.prose div.stat-highlight .number {
+  display: block !important;
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  line-height: 1 !important;
+  margin: 0.5rem 0 !important;
+}
+
+/* Pro Tip */
+.prose div.pro-tip {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  border: 1px solid #a7f3d0 !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+}
+
+.prose div.pro-tip h4 {
+  color: #065f46 !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.pro-tip h4::before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  font-size: 1.25rem !important;
+}
+
+/* Action Checklist */
+.prose div.action-checklist {
+  background: #fefce8 !important;
+  border: 1px solid #fde047 !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+}
+
+.prose div.action-checklist h4 {
+  color: #a16207 !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.action-checklist h4::before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  font-size: 1.25rem !important;
+}
+
+.prose div.action-checklist ul {
+  margin: 1rem 0 0 0 !important;
+  padding-left: 0 !important;
+}
+
+.prose div.action-checklist li {
+  color: #713f12 !important;
+  padding: 0.5rem 0 !important;
+  list-style: none !important;
+  position: relative !important;
+  padding-left: 2rem !important;
+}
+
+.prose div.action-checklist li::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  color: #16a34a !important;
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
+}
+
+/* Info Box */
+.prose div.info-box {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  border: 1px solid #93c5fd !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+}
+
+.prose div.info-box h4 {
+  color: #1e40af !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.info-box h4::before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  font-size: 1.25rem !important;
+}
+
+/* Expert Quote */
+.prose div.expert-quote {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  padding: 2rem !important;
+  border-radius: 1rem !important;
+  margin: 2rem 0 !important;
+  position: relative !important;
+  border-left: 5px solid #e62733 !important;
+}
+
+.prose div.expert-quote::before {
+  content: "\"" !important;
+  position: absolute !important;
+  top: -0.5rem !important;
+  left: 1rem !important;
+  font-size: 4rem !important;
+  color: #e62733 !important;
+  font-family: serif !important;
+  line-height: 1 !important;
+  opacity: 0.7 !important;
+}
+
+.prose div.expert-quote p {
+  color: #f3f4f6 !important;
+  font-size: 1.125rem !important;
+  line-height: 1.7 !important;
+  margin: 0 0 1rem 0 !important;
+  font-style: italic !important;
+  padding-left: 1rem !important;
+}
+
+/* Results Section */
+.prose div.results-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 1.5rem !important;
+  padding: 2.5rem !important;
+  margin: 3rem 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Advantages Section */
+.prose div.advantages-section {
+  background: #fafafa !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem 0 !important;
+}
+
+/* Advantage Item */
+.prose div.advantage-item {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.prose div.advantage-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.prose div.advantage-item h4 {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 0.75rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.advantage-item h4::before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  color: #e62733 !important;
+  font-weight: bold !important;
+}
+
+/* Data Verification */
+.prose div.data-verification {
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  border-left: 4px solid #16a34a !important;
+}
+
+.prose div.data-verification h4 {
+  color: #15803d !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.prose div.data-verification h4::before {
+  content: "" !important;
+  margin-right: 0.5rem !important;
+  font-size: 1.25rem !important;
+}
+
+.prose div.data-verification p {
+  color: #166534 !important;
+  font-size: 0.95rem !important;
+  margin: 0 0 1rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+.prose div.data-verification ul {
+  margin: 0.5rem 0 !important;
+  padding-left: 1.5rem !important;
+}
+
+.prose div.data-verification li {
+  color: #14532d !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+}
+
+/* =======================================
+   PROBLEM ANALYSIS - SPECIAL HANDLING
+   ======================================= */
+
+.problem-analysis,
+.prose .problem-analysis,
+.prose div.problem-analysis,
+.prose div.warning-box .problem-analysis,
+.warning-box .problem-analysis {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  margin: 2rem 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.problem-analysis > *:not(h4) {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+.problem-analysis > *:first-child:not(h4) {
+  padding-top: 1.5rem !important;
+}
+
+.problem-analysis > *:last-child {
+  padding-bottom: 1.5rem !important;
+}
+
+.problem-analysis h4,
+.prose .problem-analysis h4,
+.warning-box .problem-analysis h4 {
+  background: linear-gradient(135deg, #e62733 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+  padding: 1rem 1.5rem !important;
+  margin: 0 !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  border-bottom: 2px solid #dc2626 !important;
+}
+
+.problem-analysis h5,
+.prose .problem-analysis h5,
+.warning-box .problem-analysis h5 {
+  color: #e62733 !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.5rem 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  line-height: 1.4 !important;
+}
+
+.problem-analysis p,
+.prose .problem-analysis p,
+.warning-box .problem-analysis p {
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 1rem 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-size: 0.95rem !important;
+}
+
+.problem-analysis strong,
+.prose .problem-analysis strong,
+.warning-box .problem-analysis strong {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  display: inline !important;
+}
+
+/* =======================================
+   RESULTS GRID - SPECIAL HANDLING
+   ======================================= */
+
+.results-grid,
+.prose .results-grid,
+.prose div.results-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.5rem !important;
+  margin: 2rem 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid > div,
+.prose .results-grid > div {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  border-left: 4px solid #e62733 !important;
+  transition: all 0.3s ease !important;
+  overflow: hidden !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid > div:hover,
+.prose .results-grid > div:hover {
+  border-left-color: #dc2626 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.results-grid h5,
+.prose .results-grid h5 {
+  background: linear-gradient(135deg, #e62733 0%, #d32f2f 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin: 0 0 0.75rem 0 !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  line-height: 1.3 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid p,
+.prose .results-grid p {
+  color: #374151 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 0.5rem 0 !important;
+  padding: 0 1.25rem !important;
+  font-size: 0.9rem !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.results-grid em,
+.prose .results-grid em {
+  color: #6b7280 !important;
+  font-style: italic !important;
+  font-size: 0.85rem !important;
+}
+
+.results-grid > div:last-child p:last-child,
+.prose .results-grid > div:last-child p:last-child {
+  padding-bottom: 1.25rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .results-grid,
+  .prose .results-grid,
+  .prose div.results-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
