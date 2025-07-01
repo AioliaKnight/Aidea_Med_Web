@@ -783,7 +783,7 @@ export default function ServicePage() {
             transition={{ duration: 0.6, delay: 0.5 }}
           >
             <Heading level="h3" size="xs" className="mb-5 text-primary text-center border-b border-gray-700 pb-2 font-bold">診所數位行銷成效</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 place-items-center">
               <div className="bg-gradient-to-br from-gray-800 to-black p-4 rounded-md shadow-sm">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-gray-100 font-medium text-sm">診所知名度提升</span>
@@ -850,7 +850,7 @@ export default function ServicePage() {
       
       {/* 醫療市場統計數據區 */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
-        <div className="container-custom max-w-5xl">
+        <div className="container-custom max-w-5xl mx-auto">
           <motion.div 
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -896,7 +896,7 @@ export default function ServicePage() {
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 place-items-center">
             {/* 診所數量統計卡片 */}
             <motion.div 
               className="bg-white p-5 border border-gray-200"
