@@ -307,13 +307,12 @@ const HeroSection = memo(function HeroSection() {
     >
       {/* 優化背景 */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
-        
-          <Image 
+        <div className="absolute inset-0 bg-primary"></div>
+        <Image 
           src="/images/bgline-w-small.webp"
-            alt=""
-            fill
-            priority={true}
+          alt=""
+          fill
+          priority={true}
           sizes="(max-width: 768px) 100vw, 100vw"
           quality={30}
           fetchPriority="high"
@@ -463,7 +462,7 @@ const MarketingSection = memo(function MarketingSection() {
     >
       {/* 背景設計 */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary to-primary-dark"></div>
+        <div className="absolute inset-0 bg-primary"></div>
         <Image 
           src="/images/bgline-w-small.webp"
           alt=""
@@ -475,7 +474,7 @@ const MarketingSection = memo(function MarketingSection() {
           style={{ objectPosition: 'center' }}
           aria-hidden="true"
         />
-              </div>
+      </div>
 
       <div className="container-custom relative z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -585,19 +584,19 @@ const FeatureSection = memo(function FeatureSection() {
               <h3 className="text-lg font-semibold mb-3 text-gray-800">醫療行銷專家能為您的診所提供什麼？</h3>
               <ul className="text-left text-gray-700 space-y-2 mb-4">
                 <li className="flex items-start">
-                  <span className="text-primary mr-2">✓</span> 
+                  <span className="w-2 h-2 bg-primary rounded-full inline-block mr-2"></span>
                   <span>專業醫療行銷策略，符合衛福部法規且提升診所形象</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary mr-2">✓</span> 
+                  <span className="w-2 h-2 bg-primary rounded-full inline-block mr-2"></span>
                   <span>AI驅動的精準數據分析，將診所營運數據轉化為實用洞察</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary mr-2">✓</span> 
+                  <span className="w-2 h-2 bg-primary rounded-full inline-block mr-2"></span>
                   <span>醫療專業品牌打造，建立難以複製的診所差異化優勢</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary mr-2">✓</span> 
+                  <span className="w-2 h-2 bg-primary rounded-full inline-block mr-2"></span>
                   <span>長期成長策略規劃，而非短期的行銷活動</span>
                 </li>
               </ul>
@@ -665,11 +664,11 @@ const FeatureSection = memo(function FeatureSection() {
                     {index === 0 && (
                       <>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>深入了解醫療產業法規限制</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>十年專業經驗轉化患者信任</span>
                         </li>
                       </>
@@ -677,11 +676,11 @@ const FeatureSection = memo(function FeatureSection() {
                     {index === 1 && (
                       <>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>AI分析患者行為與需求模式</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>智能優化行銷預算分配</span>
                         </li>
                       </>
@@ -689,11 +688,11 @@ const FeatureSection = memo(function FeatureSection() {
                     {index === 2 && (
                       <>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>精準捕捉診所獨特價值定位</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>建立難以複製的品牌形象</span>
                         </li>
                       </>
@@ -701,11 +700,11 @@ const FeatureSection = memo(function FeatureSection() {
                     {index === 3 && (
                       <>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>提供診所成長全階段支持</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="text-primary text-xs mr-1">•</span> 
+                          <span className="w-2 h-2 bg-primary rounded-full inline-block mr-1"></span>
                           <span>建立持續發展品牌生態系統</span>
                         </li>
                       </>
@@ -731,73 +730,67 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
   const advantages = [
     {
       title: '電商思維',
-      subtitle: 'E-commerce Mindset',
+      subtitle: '數據驅動、精準投放、敏捷反應',
       icon: ShoppingCart,
-      color: 'from-blue-500 to-indigo-600',
-      bgPattern: 'bg-gradient-to-br from-blue-50 to-indigo-50',
       items: [
         {
           icon: LineChart,
           title: '數據驅動決策',
-          description: '運用電商級數據分析，追蹤每一分行銷預算的 ROI，讓投資效益清晰可見'
+          description: '每一分預算都能量化ROI，投資效益一目了然'
         },
         {
           icon: Target,
           title: '精準投放策略',
-          description: '借鑑電商漏斗優化經驗，建立診所專屬的患者獲取與轉換系統'
+          description: '借鏡電商漏斗，建立專屬患者轉換系統'
         },
         {
           icon: Zap,
           title: '市場敏感度',
-          description: '電商圈的快速反應能力，即時捕捉醫療市場變化與患者需求趨勢'
+          description: '快速掌握市場變化，搶佔先機'
         }
       ]
     },
     {
       title: '醫療專業',
-      subtitle: 'Medical Expertise',
+      subtitle: '合規深度、心理洞察、創新應用',
       icon: Stethoscope,
-      color: 'from-emerald-500 to-teal-600',
-      bgPattern: 'bg-gradient-to-br from-emerald-50 to-teal-50',
       items: [
         {
           icon: Shield,
           title: '法規合規專精',
-          description: '深度理解醫療廣告法規，確保所有行銷活動完全合規，避免法律風險'
+          description: '深度理解醫療法規，行銷活動完全合規'
         },
         {
           icon: Heart,
           title: '患者心理洞察',
-          description: '掌握醫療消費者的決策心理，設計符合就醫行為的行銷策略'
+          description: '掌握患者決策心理，設計有效策略'
         },
         {
           icon: Lightbulb,
           title: '醫療創新應用',
-          description: '將 AI 技術與醫療行銷結合，提升診所營運效率與患者體驗'
+          description: 'AI結合醫療行銷，提升營運效率'
         }
       ]
     },
     {
       title: '實戰經驗',
-      subtitle: 'Proven Experience',
+      subtitle: '經營實戰、案例驗證、整合服務',
       icon: Briefcase,
-      color: 'from-red-500 to-pink-600',
-      bgPattern: 'bg-gradient-to-br from-red-50 to-pink-50',
       items: [
         {
           icon: Award,
           title: '診所營運實戰',
-          description: '實際營運診所的第一手經驗，深度理解診所經營的痛點與需求'
+          description: '第一手經驗，深刻理解經營痛點'
         },
         {
           icon: Star,
           title: '成功案例驗證',
-          description: '雅德思牙醫、雲天牙醫、好幸福泌尿科等成功案例，證明策略有效性'
+          description: '多家診所實證，策略成效可驗證'
         },
         {
           icon: CheckCircle,
           title: '一條龍整合服務',
-          description: '從品牌策略到執行落地，提供完整的醫療行銷解決方案'
+          description: '從策略到執行，完整解決方案'
         }
       ]
     }
@@ -844,14 +837,12 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
             三重優勢
             <span className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl text-primary mt-1 sm:mt-2">
-              造就不可複製的競爭力
+              結合電商思維、醫療專業、實戰經驗，打造不可複製的競爭力
             </span>
           </h2>
           <div className="w-16 sm:w-20 h-1 bg-primary mx-auto my-4 sm:my-6"></div>
           <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            結合電商思維的數據驅動、醫療專業的合規深度、實戰經驗的務實落地
-            <br className="hidden sm:block" />
-            <span className="sm:hidden"> </span>為您的診所打造真正有效的行銷策略
+            數據驅動、合規深度、務實落地，為您的診所打造真正有效的行銷策略
           </p>
         </motion.div>
 
@@ -868,17 +859,15 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
               variants={itemVariants}
               className="relative group"
             >
-              {/* 卡片主體 - 手機優化 */}
-              <div className={`${advantage.bgPattern} border border-gray-100 rounded-xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 h-full overflow-hidden relative`}>
-                
-                {/* 背景裝飾元素 */}
-                <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
-                  <div className={`w-full h-full rounded-full bg-gradient-to-br ${advantage.color} transform rotate-45 translate-x-8 -translate-y-8`}></div>
+              {/* 卡片主體 - 平面化設計 */}
+              <div className="bg-white border border-gray-100 rounded-xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 h-full overflow-hidden relative">
+                {/* 裝飾圓（品牌紅淡色） */}
+                <div className="absolute top-0 right-0 w-20 h-20 opacity-10 pointer-events-none">
+                  <div className="w-full h-full rounded-full bg-primary/10 transform rotate-45 translate-x-8 -translate-y-8"></div>
                 </div>
-                
-                {/* 圖標與標題 - 手機優化 */}
+                {/* 主icon - 品牌紅底白icon */}
                 <div className="text-center mb-6 sm:mb-8 relative z-10">
-                  <div className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-r ${advantage.color} text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary text-white mb-3 sm:mb-4">
                     <advantage.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
@@ -888,8 +877,7 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
                     {advantage.subtitle}
                   </p>
                 </div>
-
-                {/* 優勢項目 - 手機優化 */}
+                {/* 優勢項目 - 品牌紅icon+標題 */}
                 <div className="space-y-4 sm:space-y-6 relative z-10">
                   {advantage.items.map((item, itemIndex) => (
                     <motion.div
@@ -904,7 +892,7 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
                       }}
                     >
                       <div className="flex-shrink-0 mt-0.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm group-hover/item:bg-white transition-colors duration-300">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white flex items-center justify-center shadow-sm">
                           {React.createElement(item.icon, { size: 14, className: "text-primary" })}
                         </div>
                       </div>
@@ -920,12 +908,11 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
                   ))}
                 </div>
               </div>
-
-              {/* 連接線效果（僅在大螢幕顯示）- 保持原有設計 */}
+              {/* 連接線效果（僅在大螢幕顯示）- 品牌紅單色 */}
               {index < advantages.length - 1 && (
                 <div className="hidden lg:block absolute top-1/2 -right-6 transform -translate-y-1/2 z-20">
                   <motion.div
-                    className="w-12 h-0.5 bg-gradient-to-r from-primary to-gray-300"
+                    className="w-12 h-0.5 bg-primary"
                     initial={{ scaleX: 0 }}
                     animate={sectionInView ? { scaleX: 1 } : { scaleX: 0 }}
                     transition={{ duration: 0.8, delay: 0.5 + (index * 0.2) }}
@@ -941,8 +928,7 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
             </motion.div>
           ))}
         </motion.div>
-
-        {/* 底部統計數據 - 手機優化 */}
+        {/* 底部統計數據 - 平面化設計 */}
         <motion.div 
           className="mt-12 sm:mt-16 pt-8 sm:pt-12 border-t border-gray-100"
           initial={{ opacity: 0, y: 30 }}
@@ -957,7 +943,6 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
               三重優勢結合，為合作診所創造可量化的實際效益
             </p>
           </div>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {[
               { value: 10, suffix: '+', label: '年深度實戰經驗', delay: 0.8 },
@@ -974,9 +959,9 @@ const TripleAdvantageSection = memo(function TripleAdvantageSection() {
                 >
                   <CountUp end={stat.value} duration={2.5} suffix={stat.suffix} />
                 </motion.div>
-                <p className="text-gray-600 font-medium text-xs sm:text-sm leading-tight">
+                <div className="text-xs sm:text-sm text-gray-600 font-medium">
                   {stat.label}
-                </p>
+                </div>
               </div>
             ))}
           </div>
@@ -1065,7 +1050,7 @@ const AuthorityCredentialsSection = memo(function AuthorityCredentialsSection() 
   };
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <section ref={sectionRef} className="py-16 sm:py-20 lg:py-24 bg-gray-50">
       <div className="container-custom">
         {/* 標題區域 */}
         <motion.div 
@@ -1103,8 +1088,8 @@ const AuthorityCredentialsSection = memo(function AuthorityCredentialsSection() 
             >
               {/* 類別標題 */}
               <div className="flex items-center mb-6">
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${category.color} text-white mr-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <category.icon className="w-6 h-6" />
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <category.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                   {category.category}
@@ -1129,7 +1114,7 @@ const AuthorityCredentialsSection = memo(function AuthorityCredentialsSection() 
               </div>
 
               {/* 底部裝飾線 */}
-              <div className={`mt-6 h-1 bg-gradient-to-r ${category.color} rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
+              <div className="mt-6 h-1 bg-primary rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
             </motion.div>
           ))}
         </motion.div>
@@ -1290,12 +1275,12 @@ const EnhancedTestimonialsSection = memo(function EnhancedTestimonialsSection() 
             <motion.div
               key={index}
               variants={cardVariants}
-              className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 group relative overflow-hidden"
+              className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 group relative overflow-hidden"
             >
               {/* 驗證標記 */}
               {caseItem.verified && (
                 <div className="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                  <CheckCircle className="w-3 h-3 mr-1" />
+                  <CheckCircle className="w-3 h-3 text-white mr-1" />
                   已驗證
                 </div>
               )}
@@ -1321,21 +1306,21 @@ const EnhancedTestimonialsSection = memo(function EnhancedTestimonialsSection() 
 
               {/* 成效數據 */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                  <TrendingUp className="w-4 h-4 text-green-500 mr-2" />
+                <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                  <TrendingUp className="w-4 h-4 text-primary mr-2" />
                   量化成效
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center bg-white rounded-lg p-3 shadow-sm">
-                    <div className="text-lg font-bold text-green-600">{caseItem.metrics.revenue}</div>
+                  <div className="text-center bg-gray-50 rounded-lg p-3 shadow-sm">
+                    <div className="text-lg font-bold text-primary">{caseItem.metrics.revenue}</div>
                     <div className="text-xs text-gray-600">營收成長</div>
                   </div>
-                  <div className="text-center bg-white rounded-lg p-3 shadow-sm">
-                    <div className="text-lg font-bold text-blue-600">{caseItem.metrics.patients}</div>
+                  <div className="text-center bg-gray-50 rounded-lg p-3 shadow-sm">
+                    <div className="text-lg font-bold text-primary">{caseItem.metrics.patients}</div>
                     <div className="text-xs text-gray-600">新增患者</div>
                   </div>
-                  <div className="text-center bg-white rounded-lg p-3 shadow-sm col-span-2">
-                    <div className="text-sm font-bold text-purple-600">{caseItem.metrics.conversion}</div>
+                  <div className="text-center bg-gray-50 rounded-lg p-3 shadow-sm col-span-2">
+                    <div className="text-sm font-bold text-primary">{caseItem.metrics.conversion}</div>
                     <div className="text-xs text-gray-600">轉換率提升</div>
                   </div>
                 </div>
@@ -1349,14 +1334,14 @@ const EnhancedTestimonialsSection = memo(function EnhancedTestimonialsSection() 
               <div className="mb-6 space-y-3">
                 <div>
                   <h5 className="text-sm font-semibold text-gray-900 mb-1 flex items-center">
-                    <AlertCircle className="w-3 h-3 text-orange-500 mr-1" />
+                    <AlertCircle className="w-3 h-3 text-primary mr-1" />
                     面臨挑戰
                   </h5>
                   <p className="text-xs text-gray-600 leading-relaxed">{caseItem.challenge}</p>
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-gray-900 mb-1 flex items-center">
-                    <Target className="w-3 h-3 text-green-500 mr-1" />
+                    <Target className="w-3 h-3 text-primary mr-1" />
                     解決方案
                   </h5>
                   <p className="text-xs text-gray-600 leading-relaxed">{caseItem.solution}</p>
@@ -1370,18 +1355,18 @@ const EnhancedTestimonialsSection = memo(function EnhancedTestimonialsSection() 
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-primary fill-current" />
+                    <Star className="w-4 h-4 text-primary fill-current" />
+                    <Star className="w-4 h-4 text-primary fill-current" />
+                    <Star className="w-4 h-4 text-primary fill-current" />
+                    <Star className="w-4 h-4 text-primary fill-current" />
                   </div>
                   <span className="text-xs text-gray-500">5.0/5.0</span>
                 </div>
               </div>
 
               {/* 底部裝飾 */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
             </motion.div>
           ))}
         </motion.div>
