@@ -90,7 +90,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, relatedPosts = [] }) => {
         {/* 移動端目錄 */}
         <BlogMobileTableOfContents content={post.content} />
 
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <article className="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           {/* 文章標題區域 */}
           <header className="mb-8 sm:mb-12">
             <div className="text-center">

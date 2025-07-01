@@ -694,7 +694,7 @@ export default function ServicePage() {
           {/* 數據面板 - 響應式優化設計 */}
           {/* 桌面版面板 */}
           <motion.div
-            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-gradient-to-br from-gray-800 to-black p-6 w-80 z-10 border-l-4 border-primary shadow-lg rounded-md"
+            className="hidden lg:block absolute right-4 xl:right-16 top-40 bg-gray-900 p-6 w-80 z-10 border-l-4 border-primary shadow-lg rounded-md"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}

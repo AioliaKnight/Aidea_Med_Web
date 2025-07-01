@@ -178,8 +178,6 @@ module.exports = {
         'image-fade': 'imageFade 0.3s ease-in-out',
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(to right, var(--color-primary), var(--color-primary-dark))',
-        'gradient-dark': 'linear-gradient(to right, var(--color-black), var(--color-black-light))',
         'dot-pattern': 'url("/images/pattern-dot.png")',
       },
       typography: (theme) => ({

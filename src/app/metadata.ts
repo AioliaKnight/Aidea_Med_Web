@@ -330,7 +330,6 @@ export const sharedMetadata: Metadata = {
     shortcut: '/favicon-16x16.png',
     apple: [
       { url: '/apple-touch-icon.png' },
-      { url: '/apple-touch-icon-152x152.png', sizes: '152x152', type: 'image/png' },
     ],
     other: [
       { rel: 'mask-icon', url: '/safari-pinned-tab.svg' },
