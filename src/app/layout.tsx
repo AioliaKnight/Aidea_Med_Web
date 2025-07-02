@@ -189,6 +189,9 @@ export default function RootLayout({
           跳到主要內容
         </a>
 
+        {/* Google Tag Manager */}
+        <GoogleTagManager />
+        
         <ErrorBoundary>
           <div className="min-h-screen flex flex-col bg-white">
             {/* 導航欄 */}
@@ -205,6 +208,10 @@ export default function RootLayout({
           <BackToTopButton />
           <FloatingCTA />
         </ErrorBoundary>
+        
+        {/* Vercel Analytics */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
