@@ -101,6 +101,9 @@ export const getDefaultDirectives = () => {
       'https://graph.instagram.com',
       'https://*.facebook.com',
       'https://connect.facebook.net',
+      // oEmbed API 端點
+      'https://www.facebook.com',
+      'https://threads.net',
       // 醫療相關API
       'https://api.healthdata.tw',
       'https://api.dentaltw.com',
