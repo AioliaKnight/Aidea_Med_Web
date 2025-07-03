@@ -37,6 +37,9 @@ export { default as AnimatedSection } from './AnimatedSection'
 // Google Tag Manager初始化組件
 export { default as GoogleTagManager } from './GoogleTagManager'
 
+// Instagram Feed 組件
+export { default as InstagramFeed } from './InstagramFeed'
+
 // SEO 優化組件
 export { default as SEOOptimizer } from './SEOOptimizer'
 export { default as OGImageOptimizer } from './OGImageOptimizer'

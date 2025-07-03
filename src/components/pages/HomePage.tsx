@@ -29,7 +29,7 @@ import {
   Building2,
   AlertCircle
 } from 'lucide-react'
-import { CTASection } from '@/components/common'
+import { CTASection, InstagramFeed } from '@/components/common'
 import { 
   heroTitleVariants
 } from '@/utils/animations'
@@ -1410,6 +1410,9 @@ const HomePage = () => {
         
         {/* 加強版客戶成功案例區塊 */}
         <EnhancedTestimonialsSection />
+        
+        {/* Instagram 動態展示區塊 */}
+        <InstagramFeed />
         
       {/* 從這裡開始的組件拆分到單獨的文件中 */}
       <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse"></div>}>
