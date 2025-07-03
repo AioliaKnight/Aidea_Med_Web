@@ -47,7 +47,6 @@ export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
 export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
 export { default as FacebookSDK } from './FacebookSDK'
 export { 
-  default as FacebookLikeButton, 
   FacebookLikeButton,
   FacebookComments,
   FacebookShareButton 
