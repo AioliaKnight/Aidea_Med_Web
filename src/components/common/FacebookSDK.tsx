@@ -75,7 +75,7 @@ export const FacebookSDK: React.FC<FacebookSDKProps> = ({
       script.async = true
       script.defer = true
       script.crossOrigin = 'anonymous'
-      script.src = 'https://connect.facebook.net/zh_TW/sdk.js'
+      script.src = 'https://connect.facebook.net/en_US/sdk.js'
       
       // 載入完成後的回調
       script.onload = () => {

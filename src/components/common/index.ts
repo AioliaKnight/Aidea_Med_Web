@@ -46,6 +46,13 @@ export { default as OGImageOptimizer } from './OGImageOptimizer'
 export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
 export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
 export { default as FacebookSDK } from './FacebookSDK'
+export { 
+  default as FacebookLikeButton, 
+  FacebookLikeButton,
+  FacebookComments,
+  FacebookShareButton 
+} from './FacebookLikeButton'
+export { default as SocialMediaSection } from './SocialMediaSection'
 export { default as SocialEmbed } from './SocialEmbed'
 
 // 浮動CTA按鈕

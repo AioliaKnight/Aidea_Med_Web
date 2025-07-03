@@ -204,6 +204,13 @@ export const getDefaultDirectives = () => {
       'https://www.youtube.com',
       'https://player.vimeo.com',
       'https://embed.medicalmonk.com',
+      // Facebook 和 Instagram 嵌入
+      'https://www.facebook.com',
+      'https://*.facebook.com',
+      'https://staticxx.facebook.com',
+      'https://connect.facebook.net',
+      'https://www.instagram.com',
+      'https://*.instagram.com',
       ...medicalTrustedSources,
     ],
     
