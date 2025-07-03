@@ -52,6 +52,13 @@ export const getDefaultDirectives = () => {
       'https://www.google-analytics.com',
       'https://ssl.google-analytics.com',
       'https://tagmanager.google.com',
+      // Facebook 和 Instagram API
+      'https://connect.facebook.net',
+      'https://*.facebook.net',
+      'https://*.facebook.com',
+      'https://graph.facebook.com',
+      'https://api.instagram.com',
+      'https://graph.instagram.com',
       // 醫療相關工具和分析
       'https://cdn.jsdelivr.net',
       'https://cdnjs.cloudflare.com',
@@ -88,6 +95,12 @@ export const getDefaultDirectives = () => {
       'https://vercel.live',
       'https://*.respond.io',
       'wss://*.respond.io',
+      // Facebook 和 Instagram API
+      'https://graph.facebook.com',
+      'https://api.instagram.com',
+      'https://graph.instagram.com',
+      'https://*.facebook.com',
+      'https://connect.facebook.net',
       // 醫療相關API
       'https://api.healthdata.tw',
       'https://api.dentaltw.com',
@@ -112,6 +125,11 @@ export const getDefaultDirectives = () => {
       'https://www.google-analytics.com',
       'https://stats.g.doubleclick.net',
       'https://www.googletagmanager.com',
+      // Facebook 和 Instagram 圖片
+      'https://*.facebook.com',
+      'https://*.fbcdn.net',
+      'https://*.instagram.com',
+      'https://*.cdninstagram.com',
       // 圖像CDN服務
       'https://*.imgix.net',
       'https://*.cloudinary.com',

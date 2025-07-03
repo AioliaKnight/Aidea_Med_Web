@@ -11,7 +11,8 @@ import {
   FloatingCTA,
   ErrorBoundary,
   BreadcrumbStructuredData,
-  WebVitalsOptimizer
+  WebVitalsOptimizer,
+  FacebookSDK
 } from '@/components/common'
 import { 
   sharedMetadata, 
@@ -191,6 +192,9 @@ export default function RootLayout({
 
         {/* Google Tag Manager */}
         <GoogleTagManager />
+        
+        {/* Facebook JavaScript SDK */}
+        <FacebookSDK />
         
         <ErrorBoundary>
           <div className="min-h-screen flex flex-col bg-white">

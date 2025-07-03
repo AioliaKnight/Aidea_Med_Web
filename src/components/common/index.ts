@@ -45,6 +45,7 @@ export { default as SEOOptimizer } from './SEOOptimizer'
 export { default as OGImageOptimizer } from './OGImageOptimizer'
 export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
 export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
+export { default as FacebookSDK } from './FacebookSDK'
 
 // 浮動CTA按鈕
 export { default as FloatingCTA } from './FloatingCTA'
