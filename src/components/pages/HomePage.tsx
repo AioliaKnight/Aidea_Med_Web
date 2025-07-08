@@ -34,6 +34,29 @@ import {
   heroTitleVariants
 } from '@/utils/animations'
 
+// 動態載入非關鍵組件，提升初始載入性能
+const CountUp = dynamic(() => import('react-countup'), {
+  loading: () => <div className="text-2xl sm:text-3xl font-bold">99%</div>,
+  ssr: false
+})
+
+const FAQSection = dynamic(() => import('@/components/common').then(mod => ({ default: mod.FAQSection })), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse rounded-lg" />,
+  ssr: false
+})
+
+// 分離大型數據結構到外部文件或延遲載入
+const useFAQData = () => {
+  return useMemo(() => [
+    {
+      question: '診所沒有大量預算，有適合的行銷方案嗎？',
+      answer: '我們相信優質的醫療行銷不應該只是大型診所的專利...',
+      category: '成本效益'
+    },
+    // ... 其他 FAQ 數據
+  ], [])
+}
+
 // 將常量移到文件頂部，避免重新創建
 const TAGS = [
   { id: 'ai', name: '#AI' },
@@ -77,12 +100,6 @@ const FEATURES = [
 //   loading: () => <div className="h-[300px] bg-gray-100 animate-pulse rounded-lg" aria-hidden="true" />,
 //   ssr: true
 // })
-
-// 將CountUp改為單獨的動態導入
-const CountUp = dynamic(() => import('react-countup'), {
-  loading: () => <div className="text-2xl sm:text-3xl font-bold">99%</div>,
-  ssr: false
-})
 
 // 使用通用的 FAQ 組件
 import { FAQSection } from '@/components/common'

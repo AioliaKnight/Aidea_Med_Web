@@ -48,7 +48,7 @@ export const viewport: Viewport = {
 
 // 支援靜態生成優化
 export const preferredRegion = ['auto']  // 自動選擇最佳區域
-export const dynamic = 'force-dynamic'  // 利用PPR的動態部分
+// export const dynamic = 'force-dynamic'  // 暫時關閉強制動態渲染以提升性能
 
 // 使用Next.js 15+的部分預渲染功能
 interface RootLayoutProps {
