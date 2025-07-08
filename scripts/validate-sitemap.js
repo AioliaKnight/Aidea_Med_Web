@@ -16,7 +16,6 @@ const { DOMParser } = require('xmldom')
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'
 const LOCAL_BUILD_DIR = path.join(process.cwd(), '.next')
 const SITEMAP_PATH = '/sitemap.xml'
-const IMAGE_SITEMAP_PATH = '/images/sitemap.xml'
 
 // 顏色輸出
 const colors = {
