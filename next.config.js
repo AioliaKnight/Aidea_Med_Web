@@ -245,9 +245,12 @@ const withPWA = require('next-pwa')({
   ]
 })
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+// 條件性載入 bundle analyzer，避免生產環境錯誤
+const withBundleAnalyzer = process.env.ANALYZE === 'true' 
+  ? require('@next/bundle-analyzer')({
+      enabled: true,
+    })
+  : (config) => config // 如果不需要分析，返回配置不變
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
