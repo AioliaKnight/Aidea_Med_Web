@@ -25,13 +25,8 @@ import { notoSansTC } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import { siteConfig } from '@/config/site'
 import '@/app/globals.css'
-import NextDynamic from 'next/dynamic'
-
-// 動態載入 Service Worker 組件以避免 SSR 問題
-const ServiceWorkerProvider = NextDynamic(
-  () => import('@/components/common').then(mod => ({ default: mod.ServiceWorkerProvider })),
-  { ssr: false }
-)
+// 直接導入 Service Worker 組件 (已標記為 'use client')
+import { ServiceWorkerProvider } from '@/components/common'
 
 export const metadata: Metadata = sharedMetadata
 
@@ -72,7 +67,7 @@ export default function RootLayout({
     logo: `${siteConfig.url}/images/logo-w.png`,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+886-2-1234-5678',
+      telephone: '+886-2-2748-8919',
       contactType: '客戶服務',
       availableLanguage: ['Chinese', 'zh-TW']
     },
@@ -80,10 +75,10 @@ export default function RootLayout({
       '@type': 'PostalAddress',
       addressCountry: 'TW',
       addressRegion: '台北市',
-      addressLocality: '信義區'
+      addressLocality: '大安區'
     },
-    foundingDate: '2023',
-    numberOfEmployees: '10-50',
+    foundingDate: '2025',
+    numberOfEmployees: '01-01',
     knowsAbout: [
       '醫療行銷',
       '診所經營',
