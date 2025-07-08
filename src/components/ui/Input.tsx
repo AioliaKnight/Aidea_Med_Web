@@ -1,6 +1,6 @@
 'use client'
 
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useId } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
@@ -43,8 +43,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    // 生成唯一ID
-    const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`
+    // 生成唯一ID，確保在重渲染時保持一致
+    const generatedId = useId()
+    const inputId = id || generatedId
     
     // 基本樣式
     const baseInputClasses = 'w-full px-4 py-3 border border-gray-200 focus:outline-none focus:border-primary focus:ring-0 transition-colors'
