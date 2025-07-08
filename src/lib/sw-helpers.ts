@@ -120,7 +120,6 @@ export const setupPerformanceMonitoring = (): void => {
     import('web-vitals').then((webVitals) => {
       // 收集 Core Web Vitals
       if (webVitals.onCLS) webVitals.onCLS(sendToAnalytics);
-      if (webVitals.onFID) webVitals.onFID(sendToAnalytics);
       if (webVitals.onFCP) webVitals.onFCP(sendToAnalytics);
       if (webVitals.onLCP) webVitals.onLCP(sendToAnalytics);
       if (webVitals.onTTFB) webVitals.onTTFB(sendToAnalytics);
@@ -131,7 +130,7 @@ export const setupPerformanceMonitoring = (): void => {
   }
 
   // 監控記憶體使用
-  if ('memory' in performance) {
+  if (typeof window !== 'undefined' && 'performance' in window && performance.memory) {
     monitorMemoryUsage();
   }
 
@@ -159,7 +158,7 @@ export const setupPerformanceMonitoring = (): void => {
 // 發送分析數據到後端
 export const sendToAnalytics = (metric: any): void => {
   try {
-    const body = JSON.stringify({
+    const analyticsData = {
       metric,
       url: window.location.href,
       timestamp: new Date().toISOString(),
@@ -169,22 +168,21 @@ export const sendToAnalytics = (metric: any): void => {
         height: window.innerHeight
       },
       connection: getConnectionInfo()
-    });
+    };
 
-    // 使用 sendBeacon API 確保數據能夠發送
-    if ('sendBeacon' in navigator) {
-      navigator.sendBeacon('/api/performance', body);
-    } else {
-      // 降級方案：使用 fetch
-      fetch('/api/performance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body,
-        keepalive: true
-      }).catch((error) => {
-        console.warn('性能數據發送失敗:', error);
+    // 現在只記錄到控制台，不發送到後端
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Performance metrics:', analyticsData);
+    }
+    
+    // 可選：發送到第三方分析服務
+    // 例如：Google Analytics、Vercel Analytics 等
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'web_vitals', {
+        event_category: 'Performance',
+        metric_name: metric.name,
+        metric_value: metric.value,
+        page_path: window.location.pathname
       });
     }
   } catch (error) {
@@ -206,40 +204,24 @@ export const getConnectionInfo = (): any => {
   return { effectiveType: 'unknown' };
 };
 
-// 監控記憶體使用
+// 監控記憶體使用情況
 export const monitorMemoryUsage = (): void => {
   const checkMemory = () => {
-    if ('memory' in performance) {
-      // @ts-ignore
+    if (typeof window !== 'undefined' && 'performance' in window && performance.memory) {
       const memory = performance.memory;
-      const usage = {
-        used: Math.round(memory.usedJSHeapSize / 1048576), // MB
-        total: Math.round(memory.totalJSHeapSize / 1048576), // MB
-        limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
-        percentage: Math.round((memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100)
-      };
-
-      // 如果記憶體使用超過 80%，發出警告
-      if (usage.percentage > 80) {
-        console.warn('記憶體使用率過高:', usage);
-        
-        // 可以觸發垃圾回收或其他優化措施
-        if ('gc' in window) {
-          // @ts-ignore
-          window.gc();
-        }
+      const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+      const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
+      
+      console.log(`記憶體使用量: ${usedMB}MB / ${totalMB}MB`);
+      
+      if (memory.usedJSHeapSize / memory.jsHeapSizeLimit > 0.9) {
+        console.warn('記憶體使用量過高！');
       }
-
-      return usage;
     }
-    return null;
   };
 
-  // 每 30 秒檢查一次記憶體使用
+  // 每30秒檢查一次記憶體
   setInterval(checkMemory, 30000);
-  
-  // 初始檢查
-  checkMemory();
 };
 
 // 智能預載入功能

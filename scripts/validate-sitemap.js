@@ -44,10 +44,6 @@ async function validateSitemaps() {
     log('\n📄 驗證主要 Sitemap...', 'cyan')
     await validateMainSitemap()
     
-    // 驗證圖片 sitemap
-    log('\n🖼️  驗證圖片 Sitemap...', 'cyan')
-    await validateImageSitemap()
-    
     // 驗證 robots.txt
     log('\n🤖 驗證 robots.txt...', 'cyan')
     await validateRobots()
@@ -151,49 +147,6 @@ async function validateMainSitemap() {
 }
 
 /**
- * 驗證圖片 sitemap
- */
-async function validateImageSitemap() {
-  const imageSitemapUrl = `${BASE_URL}${IMAGE_SITEMAP_PATH}`
-  
-  try {
-    const xmlContent = await fetchContent(imageSitemapUrl)
-    const doc = new DOMParser().parseFromString(xmlContent, 'text/xml')
-    
-    // 檢查 XML 格式
-    const parseErrors = doc.getElementsByTagName('parsererror')
-    if (parseErrors.length > 0) {
-      throw new Error('圖片 Sitemap XML 格式錯誤')
-    }
-    
-    // 檢查圖片元素
-    const images = doc.getElementsByTagNameNS('http://www.google.com/schemas/sitemap-image/1.1', 'image')
-    log(`  📊 找到 ${images.length} 個圖片`, 'green')
-    
-    if (images.length === 0) {
-      log('  ⚠️  沒有找到任何圖片', 'yellow')
-      return
-    }
-    
-    // 驗證圖片 URL
-    let validImages = 0
-    for (let i = 0; i < Math.min(images.length, 10); i++) {
-      const image = images[i]
-      const loc = image.getElementsByTagNameNS('http://www.google.com/schemas/sitemap-image/1.1', 'loc')[0]?.textContent
-      
-      if (loc && isValidUrl(loc)) {
-        validImages++
-      }
-    }
-    
-    log(`  ✅ 圖片 Sitemap 驗證通過 (檢查了前 ${Math.min(images.length, 10)} 個圖片)`, 'green')
-    
-  } catch (error) {
-    log(`  ⚠️  圖片 Sitemap 驗證失敗: ${error.message}`, 'yellow')
-  }
-}
-
-/**
  * 驗證 robots.txt
  */
 async function validateRobots() {
@@ -227,7 +180,6 @@ async function validateRobots() {
 async function performanceTest() {
   const tests = [
     { url: `${BASE_URL}${SITEMAP_PATH}`, name: '主要 Sitemap' },
-    { url: `${BASE_URL}${IMAGE_SITEMAP_PATH}`, name: '圖片 Sitemap' },
     { url: `${BASE_URL}/robots.txt`, name: 'robots.txt' },
   ]
   

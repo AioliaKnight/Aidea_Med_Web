@@ -184,10 +184,9 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     
-    // 站點地圖位置
+    // 主要 sitemap
     sitemap: [
       `${siteConfig.siteUrl}/sitemap.xml`,
-      `${siteConfig.siteUrl}/images/sitemap.xml`,
     ],
     
     // 主機設定

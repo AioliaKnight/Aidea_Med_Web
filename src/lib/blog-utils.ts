@@ -59,8 +59,8 @@ export function generateBlogMetadata(post: Post) {
     ? post.coverImage 
     : `${baseUrl}${post.coverImage}`;
   
-  // 動態生成 OG 圖片
-  const dynamicOGImage = `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.summary || '醫療行銷專業知識分享')}&type=blog`;
+  // 使用靜態 OG 圖片替代動態生成
+  const staticOGImage = `${baseUrl}/images/blog/default_lg.jpg`;
     
   // 移除 HTML 標籤，獲得純文本摘要
   const plainTextSummary = post.summary ? post.summary.replace(/<[^>]*>/g, '') : '';
@@ -92,11 +92,11 @@ export function generateBlogMetadata(post: Post) {
       siteName: 'Aidea:Med 醫療行銷顧問',
       images: [
         {
-          url: dynamicOGImage,
+          url: staticOGImage,
           width: 1200,
           height: 630,
           alt: post.title,
-          type: 'image/png'
+          type: 'image/jpeg'
         },
         {
           url: imageUrl,
@@ -111,7 +111,7 @@ export function generateBlogMetadata(post: Post) {
       card: 'summary_large_image',
       title: post.title,
       description: plainTextSummary,
-      images: [dynamicOGImage, imageUrl],
+      images: [staticOGImage, imageUrl],
       creator: '@aideamed',
       site: '@aideamed'
     }

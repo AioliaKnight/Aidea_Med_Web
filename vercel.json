@@ -258,6 +258,7 @@
       ]
     }
   ],
+  "trailingSlash": false,
   "github": {
     "silent": true,
     "autoAlias": true,
@@ -267,25 +268,5 @@
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "trailingSlash": false,
-  "crons": [
-    {
-      "path": "/api/health-check",
-      "schedule": "0 */6 * * *"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/health",
-      "destination": "/api/health-check"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/healthz",
-      "destination": "/api/health-check",
-      "statusCode": 301
-    }
-  ]
+  }
 } 
