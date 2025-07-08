@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "tinacms dev -c \"next dev\"",
-    "build": "tinacms build && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
@@ -16,10 +16,7 @@
     "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build",
     "optimize-images": "node scripts/optimize-images.js",
     "perf": "npm run build && npm run start",
-    "audit-bundle": "npm run analyze && npx bundlesize",
-    "tina:init": "tinacms init",
-    "tina:build": "tinacms build",
-    "tina:dev": "tinacms dev"
+    "audit-bundle": "npm run analyze && npx bundlesize"
   },
   "overrides": {
     "react-is": "^19.1.0",
