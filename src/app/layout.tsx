@@ -23,10 +23,17 @@ import {
 } from './metadata'
 import { notoSansTC } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
-
+import { siteConfig } from '@/config/site'
 import '@/app/globals.css'
+import NextDynamic from 'next/dynamic'
 
-export const metadata = sharedMetadata
+// 動態載入 Service Worker 組件以避免 SSR 問題
+const ServiceWorkerProvider = NextDynamic(
+  () => import('@/components/common').then(mod => ({ default: mod.ServiceWorkerProvider })),
+  { ssr: false }
+)
+
+export const metadata: Metadata = sharedMetadata
 
 // 直接定義 viewport 設定
 export const viewport: Viewport = {
@@ -56,10 +63,74 @@ interface RootLayoutProps {
 export default function RootLayout({
   children
 }: RootLayoutProps) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/images/logo-w.png`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+886-2-1234-5678',
+      contactType: '客戶服務',
+      availableLanguage: ['Chinese', 'zh-TW']
+    },
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'TW',
+      addressRegion: '台北市',
+      addressLocality: '信義區'
+    },
+    foundingDate: '2023',
+    numberOfEmployees: '10-50',
+    knowsAbout: [
+      '醫療行銷',
+      '診所經營',
+      '數位行銷',
+      '內容策略',
+      '醫療廣告合規'
+    ],
+    serviceArea: {
+      '@type': 'Country',
+      name: '台灣'
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: '醫療行銷服務',
+      itemListElement: [
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: '醫療廣告合規諮詢',
+            description: '協助診所符合廣告法規，避免法律風險'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: '診所品牌策略',
+            description: '打造專業醫療品牌形象，提升患者信任度'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: '數位行銷規劃',
+            description: '運用數位工具精準觸及目標患者群體'
+          }
+        }
+      ]
+    }
+  }
+
   return (
     <html 
       lang="zh-TW" 
-      className={`${notoSansTC.variable}`} 
+      className={`${notoSansTC.variable}`}
       suppressHydrationWarning
       // 添加結構化資料屬性以增強EEAT
       itemScope
@@ -168,6 +239,10 @@ export default function RootLayout({
             __html: JSON.stringify(breadcrumbSchema) 
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body suppressHydrationWarning className={notoSansTC.className}>
         {/* Google Tag Manager (noscript) */}
@@ -191,6 +266,9 @@ export default function RootLayout({
 
         {/* Google Tag Manager */}
         <GoogleTagManager />
+        
+        {/* Service Worker 功能提供者 */}
+        <ServiceWorkerProvider />
         
         <ErrorBoundary>
           <div className="min-h-screen flex flex-col bg-white">

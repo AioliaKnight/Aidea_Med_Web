@@ -46,6 +46,9 @@ export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
 // 浮動CTA按鈕
 export { default as FloatingCTA } from './FloatingCTA'
 
+// Service Worker 功能提供者
+export { default as ServiceWorkerProvider } from './ServiceWorkerProvider'
+
 /**
  * 添加以下導出功能:
  * 1. 可以直接使用index匯出的方式 @/components/common

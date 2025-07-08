@@ -3,93 +3,42 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 增加到 5 MB
+  maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 增加到 8 MB
+  buildExcludes: [/middleware-manifest\.json$/], // 排除不必要的文件
+  scope: '/', // 設定服務範圍
+  sw: 'sw.js', // 指定 Service Worker 文件名
   runtimeCaching: [
     {
-      // API 請求緩存策略
-      urlPattern: ({ url }) => {
+      // 首頁和重要頁面 - 優先網路，快速回退緩存
+      urlPattern: ({ url, request }) => {
         const isSameOrigin = self.origin === url.origin;
-        return isSameOrigin && url.pathname.startsWith('/api/');
+        const isImportantPage = ['/', '/service', '/contact', '/team'].includes(url.pathname);
+        return isSameOrigin && request.destination === 'document' && isImportantPage;
       },
       handler: 'NetworkFirst',
       options: {
-        cacheName: 'api-cache',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60 // 1 小時
-        },
-        networkTimeoutSeconds: 10, // 10 秒網絡超時自動使用緩存
-      }
-    },
-    {
-      // 靜態頁面緩存策略
-      urlPattern: ({ request, url }) => {
-        const isSameOrigin = self.origin === url.origin;
-        // HTML 請求但不包括 API 路徑
-        return isSameOrigin && request.destination === 'document' && !url.pathname.startsWith('/api/');
-      },
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages-cache',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60 // 1 天
-        }
-      }
-    },
-    {
-      // 圖片資源緩存策略 - 優先使用緩存
-      urlPattern: /\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'images-cache',
-        expiration: {
-          maxEntries: 200, // 增加緩存數量
-          maxAgeSeconds: 60 * 24 * 60 * 60 // 增加到 60 天
-        },
-        cacheableResponse: {
-          statuses: [0, 200]
-        }
-      }
-    },
-    {
-      // 背景圖片專用緩存策略 - 更積極的緩存
-      urlPattern: /bgline-w.*\.(png|webp)$/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'background-images-cache',
+        cacheName: 'important-pages',
         expiration: {
           maxEntries: 20,
-          maxAgeSeconds: 90 * 24 * 60 * 60 // 90天
+          maxAgeSeconds: 2 * 60 * 60 // 2 小時
         },
+        networkTimeoutSeconds: 3, // 快速回退
         cacheableResponse: {
           statuses: [0, 200]
         }
       }
     },
     {
-      // 字體資源緩存策略 - 優先使用緩存，長期有效
-      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'google-fonts',
-        expiration: {
-          maxEntries: 30,
-          maxAgeSeconds: 365 * 24 * 60 * 60 // 1 年
-        },
-        cacheableResponse: {
-          statuses: [0, 200]
-        }
-      }
-    },
-    {
-      // JS, CSS 資源緩存策略
-      urlPattern: /\.(js|css)$/,
+      // Blog 文章 - 較長緩存，內容相對穩定
+      urlPattern: ({ url, request }) => {
+        const isSameOrigin = self.origin === url.origin;
+        return isSameOrigin && request.destination === 'document' && url.pathname.startsWith('/blog/');
+      },
       handler: 'StaleWhileRevalidate',
       options: {
-        cacheName: 'static-resources',
+        cacheName: 'blog-pages',
         expiration: {
-          maxEntries: 70,
+          maxEntries: 100,
           maxAgeSeconds: 7 * 24 * 60 * 60 // 7 天
         },
         cacheableResponse: {
@@ -98,34 +47,199 @@ const withPWA = require('next-pwa')({
       }
     },
     {
-      // 外部資源的緩存策略
+      // API 請求 - 智能緩存策略
       urlPattern: ({ url }) => {
-        return !url.pathname.startsWith('/api/') && 
-               !url.pathname.endsWith('.json') && 
-               !url.pathname.endsWith('.xml') && 
-               url.origin !== self.origin;
+        const isSameOrigin = self.origin === url.origin;
+        return isSameOrigin && url.pathname.startsWith('/api/');
       },
       handler: 'NetworkFirst',
       options: {
-        cacheName: 'external-resources',
+        cacheName: 'api-cache',
         expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60 * 24 // 1 天
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 60 // 30 分鐘
         },
-        networkTimeoutSeconds: 10
+        networkTimeoutSeconds: 5,
+        cacheableResponse: {
+          statuses: [0, 200]
+        },
+        // 添加請求/回應處理插件
+        plugins: [
+          {
+            cacheWillUpdate: async ({ response }) => {
+              // 只緩存成功的 API 回應
+              return response.status === 200 ? response : null;
+            },
+            cacheKeyWillBeUsed: async ({ request }) => {
+              // 標準化 API 請求的緩存鍵
+              const url = new URL(request.url);
+              return `${url.pathname}${url.search}`;
+            }
+          }
+        ]
       }
     },
     {
-      // 其他全部資源的備用緩存策略
+      // 圖片資源 - 三層緩存策略
+      urlPattern: /\.(png|jpg|jpeg|svg|gif|webp|avif|ico)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'images-cache',
+        expiration: {
+          maxEntries: 300, // 增加緩存數量
+          maxAgeSeconds: 90 * 24 * 60 * 60, // 90 天
+          purgeOnQuotaError: true // 配額不足時自動清理
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        },
+        plugins: [
+          {
+            cacheKeyWillBeUsed: async ({ request }) => {
+              // 圖片緩存鍵優化
+              const url = new URL(request.url);
+              return url.href.split('?')[0]; // 忽略查詢參數
+            }
+          }
+        ]
+      }
+    },
+    {
+      // 關鍵背景圖片 - 最高優先級緩存
+      urlPattern: /bgline-w.*\.(png|webp)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'critical-images',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 180 * 24 * 60 * 60 // 180 天
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        }
+      }
+    },
+    {
+      // Google Fonts - 永久緩存策略
+      urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 365 * 24 * 60 * 60 // 1 年
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        }
+      }
+    },
+    {
+      // JS, CSS 資源 - 版本化緩存
+      urlPattern: /\.(js|css)$/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'static-assets',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60 // 30 天
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        },
+        plugins: [
+          {
+            cacheKeyWillBeUsed: async ({ request }) => {
+              // 包含版本號的資源使用完整 URL
+              const url = new URL(request.url);
+              return url.href;
+            }
+          }
+        ]
+      }
+    },
+    {
+      // 社群媒體和 CDN 資源
+      urlPattern: ({ url }) => {
+        const cdnHosts = [
+          'cdn.jsdelivr.net',
+          'unpkg.com', 
+          'cdnjs.cloudflare.com',
+          'images.unsplash.com'
+        ];
+        return cdnHosts.some(host => url.hostname.includes(host));
+      },
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'cdn-cache',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 7 * 24 * 60 * 60 // 7 天
+        },
+        cacheableResponse: {
+          statuses: [0, 200]
+        }
+      }
+    },
+    {
+      // 外部分析和追蹤腳本 - 網路優先
+      urlPattern: ({ url }) => {
+        const analyticsHosts = [
+          'www.googletagmanager.com',
+          'www.google-analytics.com',
+          'analytics.google.com'
+        ];
+        return analyticsHosts.some(host => url.hostname.includes(host));
+      },
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'analytics-cache',
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 60 * 60 // 1 小時
+        },
+        networkTimeoutSeconds: 3
+      }
+    },
+    {
+      // 其他文檔資源 - 智能緩存
+      urlPattern: ({ request, url }) => {
+        const isSameOrigin = self.origin === url.origin;
+        return isSameOrigin && request.destination === 'document';
+      },
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages-cache',
+        expiration: {
+          maxEntries: 80,
+          maxAgeSeconds: 24 * 60 * 60 // 1 天
+        },
+        networkTimeoutSeconds: 5,
+        plugins: [
+          {
+            cacheWillUpdate: async ({ response, request }) => {
+              // 只緩存成功的頁面回應
+              if (response && response.status === 200) {
+                const contentType = response.headers.get('content-type');
+                return contentType && contentType.includes('text/html') ? response : null;
+              }
+              return null;
+            }
+          }
+        ]
+      }
+    },
+    {
+      // 備用緩存策略 - 處理所有其他請求
       urlPattern: /.*/,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'fallback-cache',
         expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 24 * 60 * 60 // 1 天
+          maxEntries: 50,
+          maxAgeSeconds: 12 * 60 * 60 // 12 小時
         },
-        networkTimeoutSeconds: 10
+        networkTimeoutSeconds: 8
       }
     }
   ]
