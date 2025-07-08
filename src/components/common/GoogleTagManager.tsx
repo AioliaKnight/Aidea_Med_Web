@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useState, useRef } from 'react'
+import { useEffect, useCallback, useState, useRef, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { initDataLayer, pushEvent } from '@/lib/analytics'
@@ -17,11 +17,11 @@ declare global {
 }
 
 /**
- * Google Tag Manager 組件
+ * Google Tag Manager 內部組件
  * 負責初始化 GTM 並設置基本 dataLayer
  * GA4 設置將透過 GTM 後台進行配置
  */
-const GoogleTagManager = () => {
+const GoogleTagManagerInternal = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isInitialized, setIsInitialized] = useState(false)
@@ -193,6 +193,23 @@ const GoogleTagManager = () => {
         />
       </noscript>
     </>
+  )
+}
+
+/**
+ * Google Tag Manager 主組件
+ * 使用 Suspense 邊界包裝，避免 useSearchParams CSR bailout 錯誤
+ */
+const GoogleTagManager = () => {
+  // 如果分析功能被禁用，則返回空組件
+  if (!ENABLE_ANALYTICS) {
+    return null;
+  }
+  
+  return (
+    <Suspense fallback={null}>
+      <GoogleTagManagerInternal />
+    </Suspense>
   )
 }
 

@@ -35,9 +35,6 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     optimizeServerReact: true,
-    turbotrace: {
-      logLevel: 'error'
-    },
     optimizePackageImports: ['lucide-react', '@phosphor-icons/react', 'react-icons', 'framer-motion', '@heroicons/react'],
     optimisticClientCache: true,
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'INP', 'TTFB'],
@@ -166,7 +163,6 @@ const nextConfig = {
     }
     return config
   },
-  swcMinify: true,
 }
 
 module.exports = withBundleAnalyzer(withPWA(nextConfig)) 
