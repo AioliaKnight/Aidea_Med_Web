@@ -3,4 +3,5 @@
  */
  
 export { useBlogInteraction } from './useBlogInteraction'
-export { useBlogTableOfContents } from './useBlogTableOfContents' 
+export { useBlogTableOfContents } from './useBlogTableOfContents'
+export { useScrollDirection } from './useScrollDirection' 

@@ -2,7 +2,8 @@
 title: '3秒抓住患者注意力：專業說得像人話，行銷起步贏一半'
 summary: '在資訊爆炸的社群時代，如何讓病患在滑手機的3秒鐘裡停下來看你的診所？關鍵在於把專業說得像人話，讓病患覺得這是跟他有關的內容。'
 coverImage: '/images/blog/3-second-patient-attention-grabber.jpg'
-publishedAt: '2025-01-20'
+publishedAt: '2025-01-20T00:00:00.000Z'
+updatedAt: '2025-01-20T00:00:00.000Z'
 author:
   name: 'Queena'
   avatar: '/images/team/member-5.jpg'

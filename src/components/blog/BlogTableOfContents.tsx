@@ -4,38 +4,15 @@ import React, { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, List, Eye, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useBlogTableOfContents } from './hooks'
+import { useBlogTableOfContents, useScrollDirection } from './hooks'
 import { BlogTableOfContentsProps, BLOG_ANIMATIONS } from './types'
-
-// 復用在手機版組件中建立的 Hook
-const useScrollDirection = () => {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>('up')
-  const [lastScrollY, setLastScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY && currentScrollY > 200) {
-        setScrollDirection('down')
-      } else if (currentScrollY < lastScrollY) {
-        setScrollDirection('up')
-      }
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
-
-  return scrollDirection
-}
 
 const BlogTableOfContents: React.FC<BlogTableOfContentsProps> = ({ 
   content, 
   className 
 }) => {
   const tocRef = useRef<HTMLDivElement>(null)
-  const scrollDirection = useScrollDirection()
+  const scrollDirection = useScrollDirection(200)
   
   const {
     tocItems,

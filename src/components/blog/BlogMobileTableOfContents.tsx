@@ -4,31 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { List, X, ChevronRight, Clock, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useBlogTableOfContents } from './hooks/useBlogTableOfContents'
+import { useBlogTableOfContents, useScrollDirection } from './hooks'
 import { TocItem } from './types'
-
-// 新增一個 Hook 來偵測滾動方向
-const useScrollDirection = () => {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null)
-  const [lastScrollY, setLastScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setScrollDirection('down')
-      } else {
-        setScrollDirection('up')
-      }
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
-
-  return scrollDirection
-}
 
 interface BlogMobileTableOfContentsProps {
   content: string

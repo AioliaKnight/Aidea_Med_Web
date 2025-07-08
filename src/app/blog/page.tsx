@@ -1,6 +1,6 @@
 import { PageHeader } from '@/components/common'
 import { Suspense } from 'react'
-import { BlogList } from '@/components/blog'
+import { BlogList, BlogMobileOptimizer } from '@/components/blog'
 import { getAllBlogPosts } from '@/lib/blog-server'
 
 export const metadata = {
@@ -38,7 +38,7 @@ export default async function Page() {
   const posts = await getAllBlogPosts();
   
   return (
-    <>
+    <BlogMobileOptimizer>
       <PageHeader
         title="行銷新知"
         description="探索醫療行銷的最新趨勢、診所經營策略和數位工具應用"
@@ -50,6 +50,6 @@ export default async function Page() {
       <Suspense fallback={<BlogPageSkeleton />}>
         <BlogList initialPosts={posts} />
       </Suspense>
-    </>
+    </BlogMobileOptimizer>
   )
 } 
