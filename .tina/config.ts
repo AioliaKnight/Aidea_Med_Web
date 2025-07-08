@@ -186,7 +186,8 @@ export default defineConfig({
             isBody: true,
             templates: [
               {
-                name: "intro-summary",
+                name: "intro_summary",
+                nameOverride: "intro-summary",
                 label: "文章導言",
                 fields: [
                   {
@@ -197,7 +198,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "warning-box",
+                name: "warning_box",
+                nameOverride: "warning-box",
                 label: "警告框",
                 fields: [
                   {
@@ -213,7 +215,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "key-insight",
+                name: "key_insight",
+                nameOverride: "key-insight",
                 label: "關鍵洞察",
                 fields: [
                   {
@@ -229,7 +232,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "before-after",
+                name: "before_after",
+                nameOverride: "before-after",
                 label: "前後對比",
                 fields: [
                   {
@@ -269,7 +273,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "example-box",
+                name: "example_box",
+                nameOverride: "example-box",
                 label: "範例框",
                 fields: [
                   {
@@ -285,7 +290,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "case-study",
+                name: "case_study",
+                nameOverride: "case-study",
                 label: "案例研究",
                 fields: [
                   {
@@ -301,7 +307,8 @@ export default defineConfig({
                 ],
               },
               {
-                name: "cta-section",
+                name: "cta_section",
+                nameOverride: "cta-section",
                 label: "行動呼籲區塊",
                 fields: [
                   {
