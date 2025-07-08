@@ -37,25 +37,17 @@ export { default as AnimatedSection } from './AnimatedSection'
 // Google Tag Manager初始化組件
 export { default as GoogleTagManager } from './GoogleTagManager'
 
-// Instagram Feed 組件
-export { default as InstagramFeed } from './InstagramFeed'
-
 // SEO 優化組件
 export { default as SEOOptimizer } from './SEOOptimizer'
 export { default as OGImageOptimizer } from './OGImageOptimizer'
 export { default as BreadcrumbStructuredData } from './BreadcrumbStructuredData'
 export { default as WebVitalsOptimizer } from './WebVitalsOptimizer'
-export { default as FacebookSDK } from './FacebookSDK'
-export { 
-  FacebookLikeButton,
-  FacebookComments,
-  FacebookShareButton 
-} from './FacebookLikeButton'
-export { default as SocialMediaSection } from './SocialMediaSection'
-export { default as SocialEmbed } from './SocialEmbed'
 
 // 浮動CTA按鈕
 export { default as FloatingCTA } from './FloatingCTA'
+
+// TinaCMS Provider
+export { TinaCMSProvider } from './TinaCMSProvider'
 
 /**
  * 添加以下導出功能:

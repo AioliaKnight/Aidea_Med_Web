@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "tinacms dev -c \"next dev\"",
+    "build": "tinacms build && next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
@@ -16,7 +16,10 @@
     "rebuild": "npm run clean && rimraf node_modules/.cache && npm run build",
     "optimize-images": "node scripts/optimize-images.js",
     "perf": "npm run build && npm run start",
-    "audit-bundle": "npm run analyze && npx bundlesize"
+    "audit-bundle": "npm run analyze && npx bundlesize",
+    "tina:init": "tinacms init",
+    "tina:build": "tinacms build",
+    "tina:dev": "tinacms dev"
   },
   "overrides": {
     "react-is": "^19.1.0",
@@ -49,6 +52,9 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@tinacms/auth": "^1.1.0",
+    "@tinacms/cli": "^1.10.0",
+    "@tinacms/datalayer": "^1.4.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
@@ -86,6 +92,7 @@
     "resend": "^4.2.0",
     "rimraf": "^6.0.1",
     "tailwind-merge": "^3.0.2",
+    "tinacms": "^2.8.0",
     "web-vitals": "^4.2.4",
     "zod": "^3.24.2"
   },
