@@ -10,6 +10,8 @@
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "validate": "npm run lint && npm run type-check",
+    "validate-sitemap": "node scripts/validate-sitemap.js",
+    "test:seo": "npm run validate-sitemap",
     "clean": "rimraf .next out",
     "prebuild": "npm run clean",
     "analyze": "cross-env ANALYZE=true next build",
@@ -126,7 +128,8 @@
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
     "to-ico": "^1.1.5",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "xmldom": "^0.6.0"
   },
   "description": "醫療行銷與牙醫診所行銷的整合行銷顧問公司網站",
   "main": "next.config.js",

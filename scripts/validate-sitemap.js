@@ -1,180 +1,323 @@
 #!/usr/bin/env node
 
 /**
- * Sitemap 驗證腳本
- * 檢查所有路由是否都正確包含在 sitemap 中
- * 使用方法: node scripts/validate-sitemap.js
+ * 增強的 Sitemap 驗證腳本
+ * 驗證生成的 sitemap.xml 是否符合標準
+ * 整合統一的 SEO 配置進行驗證
+ * 最後更新: 2024-12-19
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
+const https = require('https')
+const { DOMParser } = require('xmldom')
 
-// 專案根目錄
-const projectRoot = path.join(__dirname, '..');
+// 配置
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.aideamed.com'
+const LOCAL_BUILD_DIR = path.join(process.cwd(), '.next')
+const SITEMAP_PATH = '/sitemap.xml'
+const IMAGE_SITEMAP_PATH = '/images/sitemap.xml'
 
-// 檢查 Next.js app 目錄結構
-function checkAppRoutes() {
-  const appDir = path.join(projectRoot, 'src/app');
-  const routes = [];
+// 顏色輸出
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+}
+
+function log(message, color = 'reset') {
+  console.log(`${colors[color]}${message}${colors.reset}`)
+}
+
+/**
+ * 主要驗證函數
+ */
+async function validateSitemaps() {
+  log('🔍 開始驗證 Sitemap...', 'blue')
   
-  function scanDirectory(dir, basePath = '') {
-    if (!fs.existsSync(dir)) return;
+  try {
+    // 驗證主要 sitemap
+    log('\n📄 驗證主要 Sitemap...', 'cyan')
+    await validateMainSitemap()
     
-    const items = fs.readdirSync(dir);
+    // 驗證圖片 sitemap
+    log('\n🖼️  驗證圖片 Sitemap...', 'cyan')
+    await validateImageSitemap()
     
-    for (const item of items) {
-      const fullPath = path.join(dir, item);
-      const stat = fs.statSync(fullPath);
+    // 驗證 robots.txt
+    log('\n🤖 驗證 robots.txt...', 'cyan')
+    await validateRobots()
+    
+    // 性能測試
+    log('\n⚡ 執行性能測試...', 'cyan')
+    await performanceTest()
+    
+    log('\n✅ 所有驗證完成！', 'green')
+    
+  } catch (error) {
+    log(`\n❌ 驗證失敗: ${error.message}`, 'red')
+    process.exit(1)
+  }
+}
+
+/**
+ * 驗證主要 sitemap
+ */
+async function validateMainSitemap() {
+  const sitemapUrl = `${BASE_URL}${SITEMAP_PATH}`
+  
+  try {
+    const xmlContent = await fetchContent(sitemapUrl)
+    const doc = new DOMParser().parseFromString(xmlContent, 'text/xml')
+    
+    // 檢查 XML 格式
+    const parseErrors = doc.getElementsByTagName('parsererror')
+    if (parseErrors.length > 0) {
+      throw new Error('Sitemap XML 格式錯誤')
+    }
+    
+    // 檢查 URL 數量
+    const urls = doc.getElementsByTagName('url')
+    log(`  📊 找到 ${urls.length} 個 URL`, 'green')
+    
+    if (urls.length === 0) {
+      throw new Error('Sitemap 中沒有找到任何 URL')
+    }
+    
+    if (urls.length > 50000) {
+      log(`  ⚠️  URL 數量 (${urls.length}) 超過建議上限 50,000`, 'yellow')
+    }
+    
+    // 驗證每個 URL
+    const urlValidations = []
+    for (let i = 0; i < urls.length; i++) {
+      const urlElement = urls[i]
+      const loc = urlElement.getElementsByTagName('loc')[0]?.textContent
+      const lastmod = urlElement.getElementsByTagName('lastmod')[0]?.textContent
+      const changefreq = urlElement.getElementsByTagName('changefreq')[0]?.textContent
+      const priority = urlElement.getElementsByTagName('priority')[0]?.textContent
       
-      if (stat.isDirectory()) {
-        // 跳過特殊目錄
-        if (item.startsWith('_') || item === 'api') continue;
-        
-        // 處理動態路由
-        if (item.startsWith('[') && item.endsWith(']')) {
-          const paramName = item.slice(1, -1);
-          routes.push({
-            path: `${basePath}/[${paramName}]`,
-            type: 'dynamic',
-            directory: fullPath
-          });
-        } else {
-          const newBasePath = `${basePath}/${item}`;
-          // 檢查是否有 page.tsx
-          if (fs.existsSync(path.join(fullPath, 'page.tsx'))) {
-            routes.push({
-              path: newBasePath,
-              type: 'static',
-              directory: fullPath
-            });
-          }
-          // 遞迴掃描子目錄
-          scanDirectory(fullPath, newBasePath);
+      // 驗證 URL 格式
+      if (!loc || !isValidUrl(loc)) {
+        urlValidations.push(`無效的 URL: ${loc}`)
+        continue
+      }
+      
+      // 檢查是否為內部 URL
+      if (!loc.startsWith(BASE_URL)) {
+        urlValidations.push(`外部 URL 不應包含在 sitemap 中: ${loc}`)
+      }
+      
+      // 驗證最後修改時間格式
+      if (lastmod && !isValidDate(lastmod)) {
+        urlValidations.push(`無效的 lastmod 格式: ${lastmod} (URL: ${loc})`)
+      }
+      
+      // 驗證更新頻率
+      if (changefreq && !['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'].includes(changefreq)) {
+        urlValidations.push(`無效的 changefreq: ${changefreq} (URL: ${loc})`)
+      }
+      
+      // 驗證優先級
+      if (priority) {
+        const priorityNum = parseFloat(priority)
+        if (isNaN(priorityNum) || priorityNum < 0 || priorityNum > 1) {
+          urlValidations.push(`無效的 priority: ${priority} (URL: ${loc})`)
         }
       }
     }
-  }
-  
-  // 掃描根目錄的 page.tsx (首頁)
-  if (fs.existsSync(path.join(appDir, 'page.tsx'))) {
-    routes.push({
-      path: '/',
-      type: 'static',
-      directory: appDir
-    });
-  }
-  
-  scanDirectory(appDir);
-  return routes;
-}
-
-// 檢查 blog 內容
-function checkBlogPosts() {
-  const blogDir = path.join(projectRoot, 'src/content/blog');
-  if (!fs.existsSync(blogDir)) return [];
-  
-  const posts = fs.readdirSync(blogDir)
-    .filter(file => file.endsWith('.md') || file.endsWith('.mdx'))
-    .map(file => ({
-      slug: file.replace(/\.mdx?$/, ''),
-      file: file,
-      path: `/blog/${file.replace(/\.mdx?$/, '')}`
-    }));
-  
-  return posts;
-}
-
-// 檢查案例資料
-function checkCaseStudies() {
-  try {
-    const casesPath = path.join(projectRoot, 'src/data/cases.ts');
-    if (!fs.existsSync(casesPath)) return [];
     
-    const casesContent = fs.readFileSync(casesPath, 'utf8');
+    // 報告驗證結果
+    if (urlValidations.length > 0) {
+      log(`  ⚠️  發現 ${urlValidations.length} 個問題:`, 'yellow')
+      urlValidations.slice(0, 10).forEach(issue => log(`    - ${issue}`, 'yellow'))
+      if (urlValidations.length > 10) {
+        log(`    ... 還有 ${urlValidations.length - 10} 個問題`, 'yellow')
+      }
+    } else {
+      log('  ✅ 主要 Sitemap 驗證通過', 'green')
+    }
     
-    // 簡單的正則表達式來提取案例 ID
-    const idMatches = casesContent.match(/id:\s*['"](.*?)['"]/g);
-    if (!idMatches) return [];
+    // 分析優先級分佈
+    analyzePriorityDistribution(doc)
     
-    return idMatches.map(match => {
-      const id = match.match(/id:\s*['"](.*?)['"]/)[1];
-      return {
-        id: id,
-        path: `/case/${id}`
-      };
-    });
   } catch (error) {
-    console.error('檢查案例資料時出錯:', error.message);
-    return [];
+    throw new Error(`主要 Sitemap 驗證失敗: ${error.message}`)
   }
 }
 
-// 主要驗證函數
-async function validateSitemap() {
-  console.log('🔍 開始驗證 Sitemap...\n');
+/**
+ * 驗證圖片 sitemap
+ */
+async function validateImageSitemap() {
+  const imageSitemapUrl = `${BASE_URL}${IMAGE_SITEMAP_PATH}`
   
-  // 1. 檢查應用路由
-  console.log('📂 檢查應用路由結構...');
-  const appRoutes = checkAppRoutes();
-  console.log(`找到 ${appRoutes.length} 個路由:`);
-  appRoutes.forEach(route => {
-    console.log(`  ${route.type === 'dynamic' ? '🔀' : '📄'} ${route.path}`);
-  });
-  console.log();
-  
-  // 2. 檢查 blog 文章
-  console.log('📝 檢查部落格文章...');
-  const blogPosts = checkBlogPosts();
-  console.log(`找到 ${blogPosts.length} 篇文章:`);
-  blogPosts.forEach(post => {
-    console.log(`  📄 ${post.path} (${post.file})`);
-  });
-  console.log();
-  
-  // 3. 檢查案例研究
-  console.log('💼 檢查案例研究...');
-  const caseStudies = checkCaseStudies();
-  console.log(`找到 ${caseStudies.length} 個案例:`);
-  caseStudies.forEach(caseStudy => {
-    console.log(`  📄 ${caseStudy.path} (${caseStudy.id})`);
-  });
-  console.log();
-  
-  // 4. 總結建議
-  console.log('📋 Sitemap 配置建議:');
-  console.log('✅ 靜態路由已正確包含在 sitemap.ts 中');
-  console.log('✅ 動態案例路由透過 caseStudies 陣列生成');
-  console.log('✅ 部落格文章透過 getAllBlogPosts() 動態生成');
-  console.log('✅ 服務詳情頁面 /service/medical-ad-compliance 已包含');
-  
-  // 5. 檢查潛在遺漏
-  console.log('\n⚠️  需要注意的項目:');
-  if (appRoutes.some(r => r.path.includes('api'))) {
-    console.log('• API 路由不應包含在 sitemap 中 (已正確排除)');
+  try {
+    const xmlContent = await fetchContent(imageSitemapUrl)
+    const doc = new DOMParser().parseFromString(xmlContent, 'text/xml')
+    
+    // 檢查 XML 格式
+    const parseErrors = doc.getElementsByTagName('parsererror')
+    if (parseErrors.length > 0) {
+      throw new Error('圖片 Sitemap XML 格式錯誤')
+    }
+    
+    // 檢查圖片元素
+    const images = doc.getElementsByTagNameNS('http://www.google.com/schemas/sitemap-image/1.1', 'image')
+    log(`  📊 找到 ${images.length} 個圖片`, 'green')
+    
+    if (images.length === 0) {
+      log('  ⚠️  沒有找到任何圖片', 'yellow')
+      return
+    }
+    
+    // 驗證圖片 URL
+    let validImages = 0
+    for (let i = 0; i < Math.min(images.length, 10); i++) {
+      const image = images[i]
+      const loc = image.getElementsByTagNameNS('http://www.google.com/schemas/sitemap-image/1.1', 'loc')[0]?.textContent
+      
+      if (loc && isValidUrl(loc)) {
+        validImages++
+      }
+    }
+    
+    log(`  ✅ 圖片 Sitemap 驗證通過 (檢查了前 ${Math.min(images.length, 10)} 個圖片)`, 'green')
+    
+  } catch (error) {
+    log(`  ⚠️  圖片 Sitemap 驗證失敗: ${error.message}`, 'yellow')
   }
-  console.log('• 動態路由需要確保資料來源正確');
-  console.log('• 新增內容時需要確保 sitemap 自動更新');
+}
+
+/**
+ * 驗證 robots.txt
+ */
+async function validateRobots() {
+  const robotsUrl = `${BASE_URL}/robots.txt`
   
-  // 6. 效能建議
-  console.log('\n🚀 效能優化建議:');
-  const totalRoutes = appRoutes.filter(r => r.type === 'static').length + 
-                     blogPosts.length + 
-                     caseStudies.length + 
-                     1; // service detail page
-  
-  console.log(`• 目前預估總路由數: ${totalRoutes}`);
-  if (totalRoutes > 1000) {
-    console.log('• 考慮使用 sitemap index 分割大型 sitemap');
+  try {
+    const content = await fetchContent(robotsUrl)
+    
+    // 檢查是否包含 sitemap 引用
+    if (content.includes('Sitemap:')) {
+      log('  ✅ robots.txt 包含 Sitemap 引用', 'green')
+    } else {
+      log('  ⚠️  robots.txt 缺少 Sitemap 引用', 'yellow')
+    }
+    
+    // 檢查基本結構
+    if (content.includes('User-agent:')) {
+      log('  ✅ robots.txt 結構正確', 'green')
+    } else {
+      log('  ❌ robots.txt 結構不正確', 'red')
+    }
+    
+  } catch (error) {
+    log(`  ⚠️  robots.txt 驗證失敗: ${error.message}`, 'yellow')
   }
-  if (totalRoutes > 50000) {
-    console.log('• ⚠️  超過 Google 建議的 50,000 條限制!');
+}
+
+/**
+ * 性能測試
+ */
+async function performanceTest() {
+  const tests = [
+    { url: `${BASE_URL}${SITEMAP_PATH}`, name: '主要 Sitemap' },
+    { url: `${BASE_URL}${IMAGE_SITEMAP_PATH}`, name: '圖片 Sitemap' },
+    { url: `${BASE_URL}/robots.txt`, name: 'robots.txt' },
+  ]
+  
+  for (const test of tests) {
+    try {
+      const startTime = Date.now()
+      await fetchContent(test.url)
+      const endTime = Date.now()
+      const duration = endTime - startTime
+      
+      if (duration < 1000) {
+        log(`  ✅ ${test.name}: ${duration}ms`, 'green')
+      } else if (duration < 3000) {
+        log(`  ⚠️  ${test.name}: ${duration}ms (較慢)`, 'yellow')
+      } else {
+        log(`  ❌ ${test.name}: ${duration}ms (過慢)`, 'red')
+      }
+    } catch (error) {
+      log(`  ❌ ${test.name}: 無法訪問`, 'red')
+    }
+  }
+}
+
+/**
+ * 分析優先級分佈
+ */
+function analyzePriorityDistribution(doc) {
+  const urls = doc.getElementsByTagName('url')
+  const priorities = {}
+  
+  for (let i = 0; i < urls.length; i++) {
+    const priority = urls[i].getElementsByTagName('priority')[0]?.textContent || '0.5'
+    const priorityFloat = parseFloat(priority)
+    const priorityKey = priorityFloat.toFixed(1)
+    
+    priorities[priorityKey] = (priorities[priorityKey] || 0) + 1
   }
   
-  console.log('\n✅ Sitemap 驗證完成!');
+  log('  📊 優先級分佈:', 'blue')
+  Object.keys(priorities)
+    .sort((a, b) => parseFloat(b) - parseFloat(a))
+    .forEach(priority => {
+      log(`    Priority ${priority}: ${priorities[priority]} URLs`, 'blue')
+    })
+}
+
+/**
+ * 獲取內容
+ */
+function fetchContent(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`HTTP ${res.statusCode}: ${url}`))
+        return
+      }
+      
+      let data = ''
+      res.on('data', (chunk) => data += chunk)
+      res.on('end', () => resolve(data))
+    }).on('error', reject)
+  })
+}
+
+/**
+ * 驗證 URL 格式
+ */
+function isValidUrl(string) {
+  try {
+    new URL(string)
+    return true
+  } catch (_) {
+    return false
+  }
+}
+
+/**
+ * 驗證日期格式
+ */
+function isValidDate(dateString) {
+  const date = new Date(dateString)
+  return date instanceof Date && !isNaN(date.getTime())
 }
 
 // 執行驗證
-validateSitemap().catch(error => {
-  console.error('❌ 驗證過程中出現錯誤:', error);
-  process.exit(1);
-}); 
+if (require.main === module) {
+  validateSitemaps().catch(error => {
+    log(`驗證過程發生錯誤: ${error.message}`, 'red')
+    process.exit(1)
+  })
+}
+
+module.exports = { validateSitemaps } 

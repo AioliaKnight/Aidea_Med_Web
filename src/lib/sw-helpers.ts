@@ -30,10 +30,8 @@ export const registerServiceWorker = async (): Promise<void> => {
         console.log('Service Worker 已註冊並運行');
       }
 
-      // 定期檢查更新 (每 30 分鐘)
-      setInterval(() => {
-        registration.update();
-      }, 30 * 60 * 1000);
+      // 設定性能監控
+      setupPerformanceMonitoring();
 
     } catch (error) {
       console.error('Service Worker 註冊失敗:', error);
@@ -42,287 +40,259 @@ export const registerServiceWorker = async (): Promise<void> => {
 };
 
 // 顯示更新通知
-const showUpdateNotification = (): void => {
-  // 檢查是否支援通知 API
+export const showUpdateNotification = (): void => {
   if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('網站更新可用', {
-      body: '新版本已準備就緒，重新載入頁面以獲得最佳體驗',
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
-      tag: 'app-update',
-      renotify: false
+    new Notification('Aidea:Med 有新版本', {
+      body: '網站已更新，請重新載入頁面以獲得最佳體驗',
+      icon: '/favicon.ico',
+      badge: '/favicon.ico'
     });
   } else {
-    // 如果不支援通知，使用自定義 UI
-    showCustomUpdateBanner();
+    // 降級方案：使用簡單的 confirm 對話框
+    if (confirm('網站有新版本可用，是否要重新載入頁面？')) {
+      window.location.reload();
+    }
   }
 };
 
-// 自定義更新橫幅
-const showCustomUpdateBanner = (): void => {
-  const banner = document.createElement('div');
-  banner.id = 'update-banner';
-  banner.innerHTML = `
-    <div style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #e62733;
-      color: white;
-      padding: 12px;
-      text-align: center;
-      z-index: 10000;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    ">
-      <span>🚀 新版本可用！</span>
-      <button onclick="window.location.reload()" style="
-        margin-left: 10px;
-        background: white;
-        color: #e62733;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-      ">更新</button>
-      <button onclick="document.getElementById('update-banner').remove()" style="
-        margin-left: 5px;
-        background: transparent;
-        color: white;
-        border: 1px solid white;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-      ">稍後</button>
-    </div>
-  `;
-  document.body.appendChild(banner);
+// 檢查網路狀態
+export const checkNetworkStatus = (): void => {
+  const updateNetworkStatus = () => {
+    const status = navigator.onLine ? 'online' : 'offline';
+    document.body.setAttribute('data-network-status', status);
+    
+    // 發送網路狀態事件
+    window.dispatchEvent(new CustomEvent('networkStatusChange', {
+      detail: { status }
+    }));
 
-  // 10 秒後自動移除
-  setTimeout(() => {
-    banner.remove();
-  }, 10000);
-};
-
-// 監控網路狀態
-export const monitorNetworkStatus = (): void => {
-  let isOnline = navigator.onLine;
-
-  const updateOnlineStatus = () => {
-    const newStatus = navigator.onLine;
-    if (newStatus !== isOnline) {
-      isOnline = newStatus;
-      
-      if (isOnline) {
-        showNetworkNotification('網路已恢復', '您現在可以正常使用所有功能');
-        // 同步離線期間的數據
-        syncOfflineData();
-      } else {
-        showNetworkNotification('網路連線中斷', '您正在離線模式，部分功能可能受限');
-      }
+    if (!navigator.onLine) {
+      showOfflineNotification();
     }
   };
 
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+  // 初始檢查
+  updateNetworkStatus();
+
+  // 監聽網路狀態變化
+  window.addEventListener('online', updateNetworkStatus);
+  window.addEventListener('offline', updateNetworkStatus);
 };
 
-// 網路狀態通知
-const showNetworkNotification = (title: string, message: string): void => {
+// 顯示離線通知
+export const showOfflineNotification = (): void => {
   const notification = document.createElement('div');
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: ${navigator.onLine ? '#10b981' : '#f59e0b'};
-    color: white;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    z-index: 10001;
-    max-width: 300px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    animation: slideIn 0.3s ease-out;
+  notification.className = 'offline-notification';
+  notification.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #e62733;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 10000;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      text-align: center;
+    ">
+      🔌 目前處於離線狀態，某些功能可能無法使用
+    </div>
   `;
   
-  notification.innerHTML = `
-    <div style="font-weight: 600; margin-bottom: 4px;">${title}</div>
-    <div style="font-size: 14px; opacity: 0.9;">${message}</div>
-  `;
-
   document.body.appendChild(notification);
-
+  
+  // 3秒後自動移除通知
   setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease-in';
-    setTimeout(() => notification.remove(), 300);
-  }, 4000);
+    if (document.body.contains(notification)) {
+      document.body.removeChild(notification);
+    }
+  }, 3000);
 };
 
-// 同步離線數據
-const syncOfflineData = async (): Promise<void> => {
-  try {
-    // 檢查是否有離線期間收集的表單數據
-    const offlineData = localStorage.getItem('offline-form-data');
-    if (offlineData) {
-      const data = JSON.parse(offlineData);
-      
-      // 嘗試提交數據
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+// 設定性能監控
+export const setupPerformanceMonitoring = (): void => {
+  // 監控 Web Vitals
+  if (typeof window !== 'undefined') {
+    import('web-vitals').then((webVitals) => {
+      // 收集 Core Web Vitals
+      if (webVitals.onCLS) webVitals.onCLS(sendToAnalytics);
+      if (webVitals.onFID) webVitals.onFID(sendToAnalytics);
+      if (webVitals.onFCP) webVitals.onFCP(sendToAnalytics);
+      if (webVitals.onLCP) webVitals.onLCP(sendToAnalytics);
+      if (webVitals.onTTFB) webVitals.onTTFB(sendToAnalytics);
+      if (webVitals.onINP) webVitals.onINP(sendToAnalytics);
+    }).catch((error) => {
+      console.warn('Web Vitals 載入失敗:', error);
+    });
+  }
 
-      if (response.ok) {
-        localStorage.removeItem('offline-form-data');
-        showNetworkNotification('數據同步成功', '離線期間的表單已提交');
-      }
+  // 監控記憶體使用
+  if ('memory' in performance) {
+    monitorMemoryUsage();
+  }
+
+  // 監控長時間任務
+  if ('PerformanceObserver' in window) {
+    try {
+      const observer = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+          if (entry.duration > 50) { // 長於 50ms 的任務
+            console.warn('長時間任務檢測到:', {
+              duration: entry.duration,
+              startTime: entry.startTime,
+              name: entry.name
+            });
+          }
+        });
+      });
+      observer.observe({ entryTypes: ['longtask'] });
+    } catch (error) {
+      console.warn('長時間任務監控設定失敗:', error);
+    }
+  }
+};
+
+// 發送分析數據到後端
+export const sendToAnalytics = (metric: any): void => {
+  try {
+    const body = JSON.stringify({
+      metric,
+      url: window.location.href,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      viewport: {
+        width: window.innerWidth,
+        height: window.innerHeight
+      },
+      connection: getConnectionInfo()
+    });
+
+    // 使用 sendBeacon API 確保數據能夠發送
+    if ('sendBeacon' in navigator) {
+      navigator.sendBeacon('/api/performance', body);
+    } else {
+      // 降級方案：使用 fetch
+      fetch('/api/performance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body,
+        keepalive: true
+      }).catch((error) => {
+        console.warn('性能數據發送失敗:', error);
+      });
     }
   } catch (error) {
-    console.error('離線數據同步失敗:', error);
+    console.error('性能數據處理失敗:', error);
   }
 };
 
-// 預緩存關鍵資源
-export const precacheResources = async (): Promise<void> => {
-  if ('caches' in window) {
-    try {
-      const cache = await caches.open('critical-resources-v1');
-      
-      const criticalResources = [
-        '/',
-        '/service',
-        '/contact',
-        '/team',
-        '/manifest.json',
-        '/icons/icon-192x192.png',
-        '/images/logo-w.webp'
-      ];
-
-      await cache.addAll(criticalResources);
-      console.log('關鍵資源預緩存完成');
-    } catch (error) {
-      console.error('預緩存失敗:', error);
-    }
+// 獲取網路連接資訊
+export const getConnectionInfo = (): any => {
+  if ('connection' in navigator) {
+    const connection = (navigator as any).connection;
+    return {
+      effectiveType: connection?.effectiveType || 'unknown',
+      downlink: connection?.downlink || 0,
+      rtt: connection?.rtt || 0,
+      saveData: connection?.saveData || false
+    };
   }
+  return { effectiveType: 'unknown' };
 };
 
-// 監控緩存性能
-export const monitorCachePerformance = (): void => {
-  if ('performance' in window) {
-    // 監控資源載入時間
-    const observer = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        if (entry.transferSize === 0 && entry.decodedBodySize > 0) {
-          // 從緩存載入
-          console.log(`從緩存載入: ${entry.name} (${Math.round(entry.duration)}ms)`);
+// 監控記憶體使用
+export const monitorMemoryUsage = (): void => {
+  const checkMemory = () => {
+    if ('memory' in performance) {
+      // @ts-ignore
+      const memory = performance.memory;
+      const usage = {
+        used: Math.round(memory.usedJSHeapSize / 1048576), // MB
+        total: Math.round(memory.totalJSHeapSize / 1048576), // MB
+        limit: Math.round(memory.jsHeapSizeLimit / 1048576), // MB
+        percentage: Math.round((memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100)
+      };
+
+      // 如果記憶體使用超過 80%，發出警告
+      if (usage.percentage > 80) {
+        console.warn('記憶體使用率過高:', usage);
+        
+        // 可以觸發垃圾回收或其他優化措施
+        if ('gc' in window) {
+          // @ts-ignore
+          window.gc();
         }
       }
-    });
 
-    observer.observe({ entryTypes: ['resource'] });
-  }
-};
-
-// Web Vitals 追蹤
-export const trackWebVitals = (): void => {
-  // FCP (First Contentful Paint)
-  const fcpObserver = new PerformanceObserver((list) => {
-    for (const entry of list.getEntries()) {
-      if (entry.name === 'first-contentful-paint') {
-        console.log(`FCP: ${Math.round(entry.startTime)}ms`);
-        // 可以發送到 Google Analytics
-        trackCustomMetric('FCP', Math.round(entry.startTime));
-      }
+      return usage;
     }
-  });
+    return null;
+  };
 
-  try {
-    fcpObserver.observe({ entryTypes: ['paint'] });
-  } catch (error) {
-    console.warn('Performance Observer 不支援 paint 類型');
-  }
-
-  // LCP (Largest Contentful Paint)
-  const lcpObserver = new PerformanceObserver((list) => {
-    const entries = list.getEntries();
-    const lastEntry = entries[entries.length - 1];
-    console.log(`LCP: ${Math.round(lastEntry.startTime)}ms`);
-    trackCustomMetric('LCP', Math.round(lastEntry.startTime));
-  });
-
-  try {
-    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-  } catch (error) {
-    console.warn('Performance Observer 不支援 largest-contentful-paint 類型');
-  }
-};
-
-// 發送自定義指標
-const trackCustomMetric = (metricName: string, value: number): void => {
-  // 整合 Google Analytics 4
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', metricName, {
-      custom_parameter_1: value,
-      event_category: 'Performance',
-      event_label: metricName
-    });
-  }
-
-  // 或發送到其他分析服務
-  console.log(`📊 ${metricName}: ${value}ms`);
-};
-
-// 智能預載入
-export const intelligentPreload = (): void => {
-  // 監聽滑鼠懸停事件，預載入可能訪問的頁面
-  const links = document.querySelectorAll('a[href^="/"]');
+  // 每 30 秒檢查一次記憶體使用
+  setInterval(checkMemory, 30000);
   
-  links.forEach(link => {
-    link.addEventListener('mouseenter', (event) => {
-      const href = (event.target as HTMLAnchorElement).href;
-      
-      // 避免重複預載入
-      if (!href || preloadedUrls.has(href)) return;
-      
-      // 只預載入內部連結
-      if (href.startsWith(window.location.origin)) {
-        preloadPage(href);
-        preloadedUrls.add(href);
-      }
-    });
-  });
+  // 初始檢查
+  checkMemory();
 };
 
-const preloadedUrls = new Set<string>();
+// 智能預載入功能
+export const setupIntelligentPreloading = (): void => {
+  let preloadTimer: NodeJS.Timeout;
 
-const preloadPage = async (url: string): Promise<void> => {
-  try {
+  const preloadLink = (href: string) => {
+    // 檢查是否已經預載入
+    if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) {
+      return;
+    }
+
     const link = document.createElement('link');
     link.rel = 'prefetch';
-    link.href = url;
+    link.href = href;
     document.head.appendChild(link);
-  } catch (error) {
-    console.warn('頁面預載入失敗:', error);
-  }
+  };
+
+  // 為所有內部連結添加 hover 預載入
+  document.addEventListener('mouseover', (event) => {
+    const target = event.target as HTMLElement;
+    const link = target.closest('a');
+    
+    if (link && link.hostname === window.location.hostname) {
+      clearTimeout(preloadTimer);
+      preloadTimer = setTimeout(() => {
+        preloadLink(link.href);
+      }, 100); // 100ms 延遲避免過度預載入
+    }
+  });
+
+  // 清除預載入計時器
+  document.addEventListener('mouseout', (event) => {
+    const target = event.target as HTMLElement;
+    const link = target.closest('a');
+    
+    if (link) {
+      clearTimeout(preloadTimer);
+    }
+  });
 };
 
-// 初始化所有功能
+// 初始化所有 Service Worker 功能
 export const initializeServiceWorkerFeatures = (): void => {
-  if (typeof window !== 'undefined') {
-    registerServiceWorker();
-    monitorNetworkStatus();
-    precacheResources();
-    monitorCachePerformance();
-    trackWebVitals();
-    
-    // 頁面載入完成後啟用智能預載入
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', intelligentPreload);
-    } else {
-      intelligentPreload();
-    }
-  }
+  // 註冊 Service Worker
+  registerServiceWorker();
+  
+  // 檢查網路狀態
+  checkNetworkStatus();
+  
+  // 設定智能預載入
+  setupIntelligentPreloading();
+  
+  // 設定性能監控（在 registerServiceWorker 中已包含）
+  console.log('Service Worker 功能已初始化');
 }; 
