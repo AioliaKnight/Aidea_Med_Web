@@ -56,7 +56,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(png|jpg|jpeg|gif|webp|avif|svg|ico))",
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -73,20 +73,87 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css))",
+      "source": "/icons/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
         },
         {
-          "key": "Content-Encoding",
-          "value": "br, gzip"
+          "key": "Vary",
+          "value": "Accept"
         }
       ]
     },
     {
-      "source": "/(.*\\.(woff|woff2|eot|ttf|otf))",
+      "source": "/(.*)\\.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.jpg",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.webp",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.svg",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.woff2",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.woff",
       "headers": [
         {
           "key": "Cache-Control",
